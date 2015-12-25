@@ -2,14 +2,16 @@
 # See LICENSE for details.
 
 import os
+
 import configparser
+
 
 def load_config(from_dir):
 
     config = configparser.ConfigParser()
     config.read(os.path.join(from_dir, "towncrier.ini"))
 
-    if 'towncrier' not in config:
+    if 'towncrier' not in config.sections():
         raise ValueError("No [towncrier] section.")
 
     if 'package' not in config['towncrier']:
@@ -19,5 +21,6 @@ def load_config(from_dir):
     return {
         'package': config['towncrier']['package'],
         'package_dir': config['towncrier']['package_dir'],
-        'filename': config['towncrier'].get('filename', 'NEWS.rst')
+        'filename': config['towncrier'].get('filename', 'NEWS.rst'),
+        'sections': {'': ''},
     }
