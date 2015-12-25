@@ -22,19 +22,23 @@ Install from PyPI::
 
     pip install towncrier
 
-In your ``setup.cfg``, add the following lines::
-
+In your project root, add a ``towncrier.ini`` file, with the contents:
 
     [towncrier]
+    ; Your project name
+    package = mypackage
+    ; Where your project is kept -- current dir by default
+    package_dir = src/
+    ; The filename that it will write to, relative to the current dir
     filename = NEWS.rst
 
 Then put news fragments (see "News Fragments" below) into a "newsfiles" directory under your project.
 
 To produce the news file, run::
 
-    python setup.py buildnews
+    towncrier
 
-This command will remove the news files (with ``git rm``) and append the built news to the filename specified in ``setup.cfg``, and then stage the news file changes (with ``git add``).
+This command will remove the news files (with ``git rm``) and append the built news to the filename specified in ``towncrier.ini``, and then stage the news file changes (with ``git add``).
 It leaves committing the changes up to the user.
 
 
