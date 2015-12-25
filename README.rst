@@ -18,12 +18,15 @@ These fragments are also commonly called "topfiles" or "newsfiles" in Twisted pa
 Quick Start
 -----------
 
-In your ``setup.cfg``, add the following lines:
+Install from PyPI::
 
-```
-[towncrier]
-filename = NEWS.rst
-```
+    pip install towncrier
+
+In your ``setup.cfg``, add the following lines::
+
+
+    [towncrier]
+    filename = NEWS.rst
 
 Then put news fragments (see "News Fragments" below) into a "newsfiles" directory under your project.
 
