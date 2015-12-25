@@ -1,0 +1,8 @@
+#! /usr/bin/env python3
+
+import sys
+
+sys.path = ["src/"] + sys.path
+
+import towncrier
+towncrier._main()
