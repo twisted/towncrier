@@ -1,7 +1,7 @@
 Hear ye, hear ye, says the ``towncrier``
 ========================================
 
-``towncrier`` is a utility to produce useful, summarised news files for your Python 2 or Python 3 project.
+``towncrier`` is a utility to produce useful, summarised news files for your project.
 Rather than reading the Git history as some newer tools to produce it, or having one single file which developers all write to, ``towncrier`` reads "news fragments" which contain information `useful to end users`.
 
 Philosophy
@@ -20,7 +20,12 @@ Quick Start
 
 Install from PyPI::
 
-    pip install towncrier
+    python3 -m pip install towncrier
+
+.. note::
+
+   ``towncrier``, as a command line tool,  works on Python 3 only.
+   It is usable by projects written in other languages, as it does not directly import the project.
 
 In your project root, add a ``towncrier.ini`` file, with the contents:
 
