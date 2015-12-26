@@ -71,33 +71,35 @@ class FormatterTests(TestCase):
         """
         fragments = {
             "": {
+                "142.misc": u"",
                 "1.misc": u"",
                 "4.feature": u"Stuff!",
-                "2.feature": u"Foo added."
+                "2.feature": u"Foo added.",
+                "72.feature": u"Foo added.",
             },
             "Web": {
-                "3.bugfix": u"Web fixed."
+                "3.bugfix": u"Web fixed.",
             },
             "Names": {}
         }
 
         definitions = OrderedDict([
-            ("feature", "Features"),
-            ("bugfix", "Bugfixes"),
-            ("misc", "Misc"),
+            ("feature", ("Features", True)),
+            ("bugfix", ("Bugfixes", True)),
+            ("misc", ("Misc", False)),
         ])
 
         expected_output = (
 u"""Features
 --------
 
- - Foo added. (#2)
+ - Foo added. (#2, #72)
  - Stuff! (#4)
 
 Misc
 ----
 
-   #1
+   #1, #142
 
 
 Names

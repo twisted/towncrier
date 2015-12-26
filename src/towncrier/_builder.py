@@ -84,6 +84,8 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
     Render the fragments into a news file.
     """
 
+    fragments = split_fragments(fragments)
+
     result = StringIO()
 
     def _render(frags):
@@ -100,11 +102,47 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
             continue
 
 
-        for category_name, desc in definitions.items():
+        for category_name, category_info in definitions.items():
 
-            frags = fragments[section]
+            desc = category_info[0]
+            includes_text = category_info[1]
 
+            if category_name not in fragments[section]:
+                continue
 
+            frags = fragments[section][category_name]
 
+            result.write(desc + "\n")
 
-    return result.getvalue()
+            if not section:
+                result.write(major * len(desc) + "\n\n")
+            else:
+                result.write(minor * len(desc) + "\n\n")
+
+            if includes_text:
+
+                for text, tickets in sorted(frags.items(), key=lambda i: i[1][0]):
+
+                    tickets = ["#" + str(i) for i in tickets]
+
+                    to_wrap = " - " + text + " (" + ", ".join(tickets) + ")"
+
+                    result.write(textwrap.fill(to_wrap, subsequent_indent="   ") + "\n")
+
+            else:
+
+                all_tickets = []
+
+                for text, tickets in sorted(frags.items(), key=lambda i: i[1][0]):
+
+                    tickets = ["#" + str(i) for i in tickets]
+
+                    all_tickets = all_tickets + tickets
+
+                result.write("   " + textwrap.fill(", ".join(sorted(tickets)), subsequent_indent="   "))
+
+            result.write("\n")
+
+        result.write("\n")
+
+    return result.getvalue().rstrip() + "\n"
