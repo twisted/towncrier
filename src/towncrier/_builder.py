@@ -134,12 +134,10 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
                 all_tickets = []
 
                 for text, tickets in sorted(frags.items(), key=lambda i: i[1][0]):
+                    all_tickets = all_tickets + ["#" + str(i) for i in tickets]
 
-                    tickets = ["#" + str(i) for i in tickets]
-
-                    all_tickets = all_tickets + tickets
-
-                result.write("   " + textwrap.fill(", ".join(sorted(tickets)), subsequent_indent="   "))
+                result.write("   " + textwrap.fill(
+                    ", ".join(sorted(all_tickets)), subsequent_indent="   "))
 
             result.write("\n")
 
