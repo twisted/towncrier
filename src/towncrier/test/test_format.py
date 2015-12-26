@@ -3,6 +3,8 @@
 
 from twisted.trial.unittest import TestCase
 
+from collections import OrderedDict
+
 from .._builder import render_fragments, split_fragments, normalise
 
 class FormatterTests(TestCase):
@@ -17,6 +19,7 @@ class FormatterTests(TestCase):
 
         for case in cases:
             self.assertEqual(normalise(case[0]), case[1])
+
 
     def test_split(self):
 
@@ -69,28 +72,39 @@ class FormatterTests(TestCase):
         fragments = {
             "": {
                 "1.misc": u"",
+                "4.feature": u"Stuff!",
                 "2.feature": u"Foo added."
             },
             "Web": {
                 "3.bugfix": u"Web fixed."
-            }
+            },
+            "Names": {}
         }
 
-        definitions = {
-            "misc": None,
-            "":""
-        }
+        definitions = OrderedDict([
+            ("feature", "Features"),
+            ("bugfix", "Bugfixes"),
+            ("misc", "Misc"),
+        ])
 
         expected_output = (
 u"""Features
 --------
 
  - Foo added. (#2)
+ - Stuff! (#4)
 
 Misc
 ----
 
    #1
+
+
+Names
+-----
+
+No significant changes.
+
 
 Web
 ---
@@ -101,5 +115,5 @@ Bugfixes
  - Web fixed. (#3)
 """)
 
-        output = render_fragments(fragments)
+        output = render_fragments(fragments, definitions)
         self.assertEqual(output, expected_output)

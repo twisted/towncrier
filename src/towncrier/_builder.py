@@ -4,6 +4,9 @@
 from __future__ import absolute_import, division
 
 import os
+import textwrap
+
+from io import StringIO
 
 
 def normalise(text):
@@ -80,3 +83,28 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
     """
     Render the fragments into a news file.
     """
+
+    result = StringIO()
+
+    def _render(frags):
+        pass
+
+    for section in sorted(fragments.keys()):
+
+        if section:
+            result.write("\n" + section + "\n")
+            result.write(major * len(section) + "\n\n")
+
+        if not fragments[section]:
+            result.write("No significant changes.\n\n")
+            continue
+
+
+        for category_name, desc in definitions.items():
+
+            frags = fragments[section]
+
+
+
+
+    return result.getvalue()
