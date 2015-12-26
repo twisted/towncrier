@@ -27,8 +27,10 @@ class FormatterTests(TestCase):
             "": {
                 "1.misc": u"",
                 "2.feature": u"Foo added.",
+                "421.feature~": u"Foo added.",
                 "5.feature": u"Foo added.    \n",
-                "6.bugfix": u"Foo added."
+                "6.bugfix": u"Foo added.",
+                "NEWS": u"Some junk.",
             },
             "Web": {
                 "3.bugfix": u"Web fixed.    ",
@@ -59,7 +61,13 @@ class FormatterTests(TestCase):
 
         }
 
-        output = split_fragments(fragments)
+        definitions = OrderedDict([
+            ("feature", ("Features", True)),
+            ("bugfix", ("Bugfixes", True)),
+            ("misc", ("Misc", False)),
+        ])
+
+        output = split_fragments(fragments, definitions)
 
         self.assertEqual(expected_output, output)
 

@@ -34,6 +34,8 @@ def _main(draft, directory):
     definitions = OrderedDict([
         ("feature", ("Features", True)),
         ("bugfix", ("Bugfixes", True)),
+        ("doc", ("Improved Documentation", True)),
+        ("removal", ("Deprecations and Removals", True)),
         ("misc", ("Misc", False)),
     ])
 

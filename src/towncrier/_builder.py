@@ -50,7 +50,7 @@ def find_fragments(base_directory, sections):
     return content
 
 
-def split_fragments(fragments):
+def split_fragments(fragments, definitions):
 
     output = {}
 
@@ -60,8 +60,16 @@ def split_fragments(fragments):
         for filename, content in section_fragments.items():
 
             content = normalise(content)
+            parts = filename.split(".")
 
-            ticket, category = filename.split(".")
+            if len(parts) == 1:
+                continue
+            else:
+                ticket, category = parts
+
+            if category not in definitions:
+                continue
+
             ticket = int(ticket)
             texts = section.get(category, {})
 
@@ -83,7 +91,7 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
     """
     Render the fragments into a news file.
     """
-    fragments = split_fragments(fragments)
+    fragments = split_fragments(fragments, definitions)
 
     result = StringIO()
 
