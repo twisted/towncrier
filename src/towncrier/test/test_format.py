@@ -101,13 +101,13 @@ class FormatterTests(TestCase):
 u"""Features
 --------
 
- - Foo added. (#2, #72)
- - Stuff! (#4)
+- Foo added. (#2, #72)
+- Stuff! (#4)
 
 Misc
 ----
 
-   #1, #142
+- #1, #142
 
 
 Names
@@ -122,7 +122,7 @@ Web
 Bugfixes
 ~~~~~~~~
 
- - Web fixed. (#3)
+- Web fixed. (#3)
 """)
 
         fragments = split_fragments(fragments, definitions)
