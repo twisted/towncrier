@@ -16,6 +16,7 @@ from ._settings import load_config
 from ._builder import find_fragments, split_fragments, render_fragments
 from ._project import get_version, get_project_name
 from ._writer import append_to_newsfile
+from ._git import remove_files
 
 
 @click.command()
@@ -71,7 +72,9 @@ def _main(draft, directory):
                            name_and_version, rendered)
 
         click.echo("Removing newsfiles...")
-        click.echo(fragments)
+
+        files_to_remove = remove_files(directory, config['package_dir'],
+                                       config['package'], config['sections'], fragments)
 
 
 from ._version import __version__
