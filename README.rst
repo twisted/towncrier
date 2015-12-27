@@ -27,7 +27,7 @@ Install from PyPI::
    ``towncrier``, as a command line tool,  works on Python 3 only.
    It is usable by projects written in other languages, as it does not directly import the project.
 
-In your project root, add a ``towncrier.ini`` file, with the contents:
+In your project root, add a ``towncrier.ini`` file, with the contents::
 
     [towncrier]
     ; Your project name
@@ -37,7 +37,7 @@ In your project root, add a ``towncrier.ini`` file, with the contents:
     ; The filename that it will write to, relative to the current dir
     filename = NEWS.rst
 
-Then put news fragments (see "News Fragments" below) into a "newsfiles" directory under your project.
+Then put news fragments (see "News Fragments" below) into a "newsfragments" directory under your package (so, if your project is named "myproject", and it's kept under ``src``, your newsfragments dir would be ``src/myproject/newsfragments/``).
 
 To produce the news file, run::
 
@@ -56,7 +56,8 @@ These are:
 - ``.feature``: Signifying a new feature.
 - ``.bugfix``: Signifying a bug fix.
 - ``.doc``: Signifying a documentation improvement.
+- ``.removal``: Signifying a deprecation or removal of public API.
 - ``.misc``: A ticket has been closed, but it is not of interest to users.
 
 The start of the filename is the ticket number, and the content is what will end up in the news file.
-For example, if ticket #850 is about adding a new widget, the filename would be ``myproject/newsfiles/850.feature`` and the content would be ``myproject.widget has been added``.
+For example, if ticket #850 is about adding a new widget, the filename would be ``myproject/newsfragments/850.feature`` and the content would be ``myproject.widget has been added``.

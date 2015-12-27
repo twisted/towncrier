@@ -10,9 +10,6 @@ def detect_git(self):
 
     r = call(["git", "rev-parse", "--is-inside-work-tree"])
 
-    print(r)
-
-
 def remove_files(directory, package_dir, package, sections, fragments):
 
     base_dir = os.path.join(directory, package_dir, package)
@@ -40,3 +37,7 @@ def remove_files(directory, package_dir, package, sections, fragments):
 
     if click.confirm('Is it okay if I remove those files?'):
         call(["git", "rm", "--quiet"] + to_remove)
+
+def stage_newsfile(directory, filename):
+
+    call(["git", "add", os.path.join(directory, filename)])
