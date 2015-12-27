@@ -13,8 +13,9 @@ import click
 from collections import OrderedDict
 
 from ._settings import load_config
-from ._builder import find_fragments, render_fragments
-from ._project import get_version
+from ._builder import find_fragments, split_fragments, render_fragments
+from ._project import get_version, get_project_name
+from ._writer import append_to_newsfile
 
 
 @click.command()
@@ -28,14 +29,7 @@ def _main(draft, directory):
     directory = os.path.abspath(directory)
     config = load_config(directory)
 
-    fragments = find_fragments(
-        os.path.join(directory, config['package_dir'], config['package']),
-        config['sections'])
-
-    click.echo(config)
-    click.echo(fragments)
-
-    click.echo("\n-------\n")
+    click.echo("Finding news fragments...")
 
     # TODO make these customisable
     definitions = OrderedDict([
@@ -46,18 +40,38 @@ def _main(draft, directory):
         ("misc", ("Misc", False)),
     ])
 
+    fragments = find_fragments(
+        os.path.join(directory, config['package_dir'], config['package']),
+        config['sections'])
+
+    click.echo("Rendering fragments...")
+
+    fragments = split_fragments(fragments, definitions)
     rendered = render_fragments(fragments, definitions)
 
+    project_version = get_version(
+        os.path.join(directory, config['package_dir']),
+        config['package'])
+
+    project_name = get_project_name(
+        os.path.join(directory, config['package_dir']),
+        config['package'])
+
+    name_and_version = project_name + " " + project_version
+
     if draft:
+        click.echo("Draft only -- nothing has been written.")
+        click.echo("What is seen below is what would be written.\n")
+        click.echo(name_and_version)
+        click.echo("=" * len(name_and_version) + "\n")
         click.echo(rendered)
     else:
-        project_version = get_version(
-            os.path.join(directory, config['package_dir']),
-            config['package'])
+        click.echo("Writing to newsfile...")
+        append_to_newsfile(directory, config['filename'],
+                           name_and_version, rendered)
 
-
-        print(project_version)
-
+        click.echo("Removing newsfiles...")
+        click.echo(fragments)
 
 
 from ._version import __version__

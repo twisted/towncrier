@@ -125,5 +125,6 @@ Bugfixes
  - Web fixed. (#3)
 """)
 
+        fragments = split_fragments(fragments, definitions)
         output = render_fragments(fragments, definitions)
         self.assertEqual(output, expected_output)

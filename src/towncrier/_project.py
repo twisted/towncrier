@@ -28,9 +28,11 @@ def get_version(package_dir, package):
 
     sys.path.pop(0)
 
+    # Step 2: uhhhhhhh
+    # TBA
+
     if not module:
         raise Exception("Can't find your project :(")
-
 
     version = getattr(module, "__version__", None)
 
@@ -42,3 +44,37 @@ def get_version(package_dir, package):
 
     if isinstance(version, Version):
         return version.base()
+
+
+def get_project_name(package_dir, package):
+
+    # Step 1: Try the dumbest and simplest thing that could possibly work.
+    # Yes, that means importing it. Call the cops, I don't care.
+    sys.path = [package_dir] + sys.path
+
+    try:
+        module = import_module(package)
+    except ImportError:
+        # wups that didn't work
+        module = None
+
+    sys.path.pop(0)
+
+    # Step 2: uhhhhhhh
+    # TBA
+
+    if not module:
+        raise Exception("Can't find your project :(")
+
+    version = getattr(module, "__version__", None)
+
+    if not version:
+        # welp idk
+        return package.title()
+
+    if isinstance(version, str):
+        return package.title()
+
+    if isinstance(version, Version):
+        # Incremental has support for package names
+        return version.package

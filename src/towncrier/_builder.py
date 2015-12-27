@@ -89,8 +89,6 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
     """
     Render the fragments into a news file.
     """
-    fragments = split_fragments(fragments, definitions)
-
     result = StringIO()
 
     for section in sorted(fragments.keys()):
@@ -128,7 +126,6 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
                     to_wrap = " - " + text + " (" + ", ".join(tickets) + ")"
 
                     result.write(textwrap.fill(to_wrap, subsequent_indent="   ") + "\n")
-
             else:
 
                 all_tickets = []
@@ -144,23 +141,3 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
         result.write("\n")
 
     return result.getvalue().rstrip() + "\n"
-
-
-def append_to_newsfile(directory, filename, name, version, content):
-
-    news_file = os.path.join(directory, filename)
-
-    if not os.path.exists(news_file):
-        existing_content = ""
-    else:
-        with open(news_file, "r") as f:
-            existing_content = f.read()
-
-    with open(os.path.join(directory, filename), "w") as f:
-        top_line = " ".join([name, version])
-
-        f.write(top_line + "\n")
-        f.write("=" * len(top_line) + "\n\n")
-        f.write(content)
-        f.write("\n\n")
-        f.write(existing_content)

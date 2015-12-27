@@ -7,7 +7,8 @@ import os
 
 from collections import OrderedDict
 
-from .._builder import render_fragments, append_to_newsfile
+from .._builder import render_fragments, split_fragments
+from .._writer import append_to_newsfile
 
 class WritingTests(TestCase):
 
@@ -72,10 +73,11 @@ Old text.
         with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
             f.write("Old text.\n")
 
+        fragments = split_fragments(fragments, definitions)
+
         append_to_newsfile(tempdir,
                            "NEWS.rst",
-                           "MyProject",
-                           "1.0",
+                           "MyProject 1.0",
                            render_fragments(fragments, definitions))
 
 
