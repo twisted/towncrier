@@ -1,6 +1,10 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
+"""
+towncrier, a builder for your news files.
+"""
+
 from __future__ import absolute_import, division
 
 import os
@@ -10,6 +14,7 @@ from collections import OrderedDict
 
 from ._settings import load_config
 from ._builder import find_fragments, render_fragments
+from ._project import get_version
 
 
 @click.command()
@@ -17,7 +22,9 @@ from ._builder import find_fragments, render_fragments
               help="Render the news fragments, don't write to files, don't check versions.")
 @click.option('--dir', 'directory', default='.')
 def _main(draft, directory):
-
+    """
+    The main entry point.
+    """
     directory = os.path.abspath(directory)
     config = load_config(directory)
 
@@ -43,6 +50,16 @@ def _main(draft, directory):
 
     if draft:
         click.echo(rendered)
+    else:
+        project_version = get_version(
+            os.path.join(directory, config['package_dir']),
+            config['package'])
 
 
-__all__ = []
+        print(project_version)
+
+
+
+from ._version import __version__
+
+__all__ = ["__version__"]
