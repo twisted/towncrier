@@ -45,7 +45,7 @@ def _main(draft, directory):
         os.path.join(directory, config['package_dir'], config['package']),
         config['sections'])
 
-    click.echo("Rendering fragments...")
+    click.echo("Rendering news fragments...")
 
     fragments = split_fragments(fragments, definitions)
     rendered = render_fragments(fragments, definitions)
@@ -74,7 +74,7 @@ def _main(draft, directory):
         click.echo("Staging newsfile...")
         stage_newsfile(directory, config['filename'])
 
-        click.echo("Removing newsfiles...")
+        click.echo("Removing news fragments...")
         files_to_remove = remove_files(directory, config['package_dir'],
                                        config['package'], config['sections'], fragments)
 
