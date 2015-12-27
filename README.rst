@@ -39,7 +39,20 @@ In your project root, add a ``towncrier.ini`` file, with the contents::
 
 Then put news fragments (see "News Fragments" below) into a "newsfragments" directory under your package (so, if your project is named "myproject", and it's kept under ``src``, your newsfragments dir would be ``src/myproject/newsfragments/``).
 
-To produce the news file, run::
+To prevent git from removing the newsfragments directory, make a ``.gitignore`` file in it with::
+
+    !.gitignore
+
+This will keep the folder around, but otherwise "empty".
+
+Your project needs a ``__version__`` for it to work, in the top level package.
+This can be either a string literal, or an `Incremental <https://github.com/hawkowl/incremental>`_ version.
+
+To produce a draft of the news file, run::
+
+    towncrier --draft
+
+To produce the news file for real, run::
 
     towncrier
 
