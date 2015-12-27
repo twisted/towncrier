@@ -39,7 +39,4 @@ def remove_files(directory, package_dir, package, sections, fragments):
         click.echo(filename)
 
     if click.confirm('Is it okay if I remove those files?'):
-
         call(["git", "rm", "--quiet"] + to_remove)
-
-    print(to_remove)

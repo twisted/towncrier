@@ -76,6 +76,8 @@ def _main(draft, directory):
         files_to_remove = remove_files(directory, config['package_dir'],
                                        config['package'], config['sections'], fragments)
 
+        click.echo("Done!")
+
 
 from ._version import __version__
 
