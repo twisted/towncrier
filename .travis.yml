@@ -1,0 +1,20 @@
+language: python
+sudo: false
+
+install:
+  - pip install tox codecov
+
+env:
+  - TOX_ENV=flake8
+  - TOX_ENV=py33-tests
+  - TOX_ENV=py34-tests
+  - TOX_ENV=py35-tests
+
+script:
+  - tox -c tox.ini -e $TOX_ENV
+
+after_script:
+  - codecov
+
+matrix:
+  fast_finish: true
