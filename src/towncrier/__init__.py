@@ -24,7 +24,8 @@ from ._git import remove_files, stage_newsfile
               help=("Render the news fragments, don't write to files, "
                     "don't check versions."))
 @click.option('--dir', 'directory', default='.')
-def _main(draft, directory):
+@click.option('--version', 'project_version', default=None)
+def _main(draft, directory, project_version):
     """
     The main entry point.
     """
@@ -51,9 +52,10 @@ def _main(draft, directory):
     fragments = split_fragments(fragments, definitions)
     rendered = render_fragments(fragments, definitions)
 
-    project_version = get_version(
-        os.path.join(directory, config['package_dir']),
-        config['package'])
+    if not project_version:
+        project_version = get_version(
+            os.path.join(directory, config['package_dir']),
+            config['package'])
 
     project_name = get_project_name(
         os.path.join(directory, config['package_dir']),

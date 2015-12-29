@@ -27,6 +27,7 @@ def get_version(package_dir, package):
         module = None
 
     sys.path.pop(0)
+    del sys.modules[package]
 
     # Step 2: uhhhhhhh
     # TBA
@@ -45,6 +46,13 @@ def get_version(package_dir, package):
     if isinstance(version, Version):
         return version.base()
 
+    if isinstance(version, tuple):
+        return ".".join(map(str, version))
+
+    raise Exception(("I only know how to look at a __version__ that is a str, "
+                     "an Increment Version, or a tuple. If you can't provide "
+                     "that, use the --version argument and specify one."))
+
 
 def get_project_name(package_dir, package):
 
@@ -59,6 +67,7 @@ def get_project_name(package_dir, package):
         module = None
 
     sys.path.pop(0)
+    del sys.modules[package]
 
     # Step 2: uhhhhhhh
     # TBA
