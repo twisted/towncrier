@@ -101,7 +101,6 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
             result.write("No significant changes.\n\n")
             continue
 
-
         for category_name, category_info in definitions.items():
 
             desc = category_info[0]
@@ -121,16 +120,19 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
 
             if includes_text:
 
-                for text, tickets in sorted(frags.items(), key=lambda i: i[1][0]):
+                for text, tickets in sorted(frags.items(),
+                                            key=lambda i: i[1][0]):
                     tickets = ["#" + str(i) for i in tickets]
                     to_wrap = "- " + text + " (" + ", ".join(tickets) + ")"
 
-                    result.write(textwrap.fill(to_wrap, subsequent_indent="  ") + "\n")
+                    result.write(textwrap.fill(to_wrap,
+                                               subsequent_indent="  ") + "\n")
             else:
 
                 all_tickets = []
 
-                for text, tickets in sorted(frags.items(), key=lambda i: i[1][0]):
+                for text, tickets in sorted(frags.items(),
+                                            key=lambda i: i[1][0]):
                     all_tickets = all_tickets + ["#" + str(i) for i in tickets]
 
                 result.write("- " + textwrap.fill(

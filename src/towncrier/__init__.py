@@ -21,7 +21,8 @@ from ._git import remove_files, stage_newsfile
 
 @click.command()
 @click.option('--draft', 'draft', default=False, flag_value=True,
-              help="Render the news fragments, don't write to files, don't check versions.")
+              help=("Render the news fragments, don't write to files, "
+                    "don't check versions."))
 @click.option('--dir', 'directory', default='.')
 def _main(draft, directory):
     """
@@ -75,8 +76,8 @@ def _main(draft, directory):
         stage_newsfile(directory, config['filename'])
 
         click.echo("Removing news fragments...")
-        files_to_remove = remove_files(directory, config['package_dir'],
-                                       config['package'], config['sections'], fragments)
+        remove_files(directory, config['package_dir'],
+                     config['package'], config['sections'], fragments)
 
         click.echo("Done!")
 

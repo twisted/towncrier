@@ -7,6 +7,7 @@ import os
 
 from .._settings import load_config
 
+
 class SettingsTests(TestCase):
 
     def test_base(self):

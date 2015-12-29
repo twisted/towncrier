@@ -6,9 +6,6 @@ from subprocess import call
 import os
 import click
 
-def detect_git(self):
-
-    r = call(["git", "rev-parse", "--is-inside-work-tree"])
 
 def remove_files(directory, package_dir, package, sections, fragments):
 
@@ -37,6 +34,7 @@ def remove_files(directory, package_dir, package, sections, fragments):
 
     if click.confirm('Is it okay if I remove those files?'):
         call(["git", "rm", "--quiet"] + to_remove)
+
 
 def stage_newsfile(directory, filename):
 
