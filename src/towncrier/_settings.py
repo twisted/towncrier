@@ -20,7 +20,7 @@ def load_config(from_dir):
 
     return {
         'package': config['towncrier']['package'],
-        'package_dir': config['towncrier']['package_dir'],
+        'package_dir': config['towncrier'].get('package_dir', '.'),
         'filename': config['towncrier'].get('filename', 'NEWS.rst'),
         'sections': {'': ''},
     }
