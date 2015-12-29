@@ -10,6 +10,7 @@ from collections import OrderedDict
 from .._builder import render_fragments, split_fragments
 from .._writer import append_to_newsfile
 
+
 class WritingTests(TestCase):
 
     def test_append_at_top(self):
@@ -79,8 +80,6 @@ Old text.
                            "NEWS.rst",
                            "MyProject 1.0",
                            render_fragments(fragments, definitions))
-
-
 
         with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
             output = f.read()

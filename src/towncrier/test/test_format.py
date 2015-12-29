@@ -7,6 +7,7 @@ from collections import OrderedDict
 
 from .._builder import render_fragments, split_fragments, normalise
 
+
 class FormatterTests(TestCase):
 
     def test_normalise(self):
@@ -19,7 +20,6 @@ class FormatterTests(TestCase):
 
         for case in cases:
             self.assertEqual(normalise(case[0]), case[1])
-
 
     def test_split(self):
 
@@ -71,7 +71,6 @@ class FormatterTests(TestCase):
 
         self.assertEqual(expected_output, output)
 
-
     def test_basic(self):
         """
         Basic functionality -- getting a bunch of news fragments and formatting
@@ -97,8 +96,7 @@ class FormatterTests(TestCase):
             ("misc", ("Misc", False)),
         ])
 
-        expected_output = (
-u"""Features
+        expected_output = (u"""Features
 --------
 
 - Foo added. (#2, #72)

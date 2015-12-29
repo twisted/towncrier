@@ -10,6 +10,7 @@ from __future__ import absolute_import, division
 
 import os
 
+
 def append_to_newsfile(directory, filename, name_and_version, content):
 
     news_file = os.path.join(directory, filename)
