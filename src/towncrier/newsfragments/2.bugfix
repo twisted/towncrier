@@ -1,0 +1,1 @@
+towncrier now defaults to the current working directory for the package_dir settings variable.
