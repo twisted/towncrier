@@ -8,7 +8,6 @@ env:
   - TOX_ENV=flake8
   - TOX_ENV=py33-tests
   - TOX_ENV=py34-tests
-  - TOX_ENV=py35-tests
 
 script:
   - tox -c tox.ini -e $TOX_ENV
