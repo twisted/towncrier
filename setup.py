@@ -29,6 +29,7 @@ setup(
     packages=find_packages('src'),
     license="MIT",
     zip_safe=False,
+    description='Building newsfiles for your project.',
     long_description=open('README.rst').read(),
     entry_points={
         'console_scripts': [
