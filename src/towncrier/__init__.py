@@ -10,6 +10,8 @@ from __future__ import absolute_import, division
 import os
 import click
 
+from datetime import date
+
 from collections import OrderedDict
 
 from ._settings import load_config
@@ -19,13 +21,22 @@ from ._writer import append_to_newsfile
 from ._git import remove_files, stage_newsfile
 
 
+def _get_date():
+    return date.today().isoformat()
+
+
 @click.command()
 @click.option('--draft', 'draft', default=False, flag_value=True,
               help=("Render the news fragments, don't write to files, "
                     "don't check versions."))
 @click.option('--dir', 'directory', default='.')
 @click.option('--version', 'project_version', default=None)
-def _main(draft, directory, project_version):
+@click.option('--date', 'project_date', default=None)
+def _main(draft, directory, project_version, project_date):
+    return __main(draft, directory, project_version, project_date)
+
+
+def __main(draft, directory, project_version, project_date):
     """
     The main entry point.
     """
@@ -62,6 +73,12 @@ def _main(draft, directory, project_version):
         config['package'])
 
     name_and_version = project_name + " " + project_version
+
+    if project_date is None:
+        project_date = _get_date()
+
+    if project_date != "":
+        name_and_version += " (" + project_date + ")"
 
     if draft:
         click.echo("Draft only -- nothing has been written.")
