@@ -2,6 +2,27 @@
 
 .. towncrier release notes start
 
+towncrier 16.0.0 (2016-01-06)
+=============================
+
+Features
+--------
+
+- towncrier now automatically puts a date beside the version as it is
+  generated, using today's date. For repeatable builds, use the
+  ``--date`` switch and provide a date. For no date, use ``--date=``.
+  (#11)
+- towncrier will now add the version logs after ``.. towncrier release
+  notes start``, if it is in the file, allowing you to preserve text
+  at the top of the file. (#15)
+
+Improved Documentation
+----------------------
+
+- The README now mentions how to manually provide the version number,
+  for non-Py3 compatible projects. (#19)
+
+
 towncrier 15.1.0
 ================
 
