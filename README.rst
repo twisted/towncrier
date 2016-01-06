@@ -63,7 +63,7 @@ If you wish to have content at the top of the news file (for example, to say whe
 
   .. towncrier release notes start
 
-towncrier will then put the version notes after this comment, and leave your existing content above it where it is.
+towncrier will then put the version notes after this comment, and leave your existing content that was above it where it is.
 
 
 News Fragments
