@@ -85,3 +85,84 @@ Old text.
             output = f.read()
 
         self.assertEqual(expected_output, output)
+
+    def test_append_at_top_with_hint(self):
+        """
+        If there is a comment with C{.. towncrier release notes start},
+        towncrier will add the version notes after it.
+        """
+        fragments = {
+            "": {
+                "142.misc": u"",
+                "1.misc": u"",
+                "4.feature": u"Stuff!",
+                "2.feature": u"Foo added.",
+                "72.feature": u"Foo added.",
+            },
+            "Web": {
+                "3.bugfix": u"Web fixed.",
+            },
+            "Names": {}
+        }
+
+        definitions = OrderedDict([
+            ("feature", ("Features", True)),
+            ("bugfix", ("Bugfixes", True)),
+            ("misc", ("Misc", False)),
+        ])
+
+        expected_output = """Hello there! Here is some info.
+
+.. towncrier release notes start
+
+MyProject 1.0
+=============
+
+Features
+--------
+
+- Foo added. (#2, #72)
+- Stuff! (#4)
+
+Misc
+----
+
+- #1, #142
+
+
+Names
+-----
+
+No significant changes.
+
+
+Web
+---
+
+Bugfixes
+~~~~~~~~
+
+- Web fixed. (#3)
+
+
+Old text.
+"""
+
+        tempdir = self.mktemp()
+        os.mkdir(tempdir)
+
+        with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
+            f.write(("Hello there! Here is some info.\n\n"
+                     ".. towncrier release notes start\nOld text.\n"))
+
+        fragments = split_fragments(fragments, definitions)
+
+        append_to_newsfile(tempdir,
+                           "NEWS.rst",
+                           "MyProject 1.0",
+                           render_fragments(fragments, definitions))
+
+        with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
+            output = f.read()
+
+        self.assertEqual(expected_output, output)
