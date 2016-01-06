@@ -24,8 +24,9 @@ Install from PyPI::
 
 .. note::
 
-   ``towncrier``, as a command line tool,  works on Python 3 only.
-   It is usable by projects written in other languages, as it does not directly import the project.
+   ``towncrier``, as a command line tool, works on Python 3 only.
+   It is usable by projects written in other languages, provided you give it the version of the project when invoking it.
+   For Python 2/3 compatible projects, the version can be discovered automatically.
 
 In your project root, add a ``towncrier.ini`` file, with the contents::
 
@@ -45,8 +46,11 @@ To prevent git from removing the newsfragments directory, make a ``.gitignore`` 
 
 This will keep the folder around, but otherwise "empty".
 
-Your project needs a ``__version__`` for it to work, in the top level package.
-This can be either a string literal, or an `Incremental <https://github.com/hawkowl/incremental>`_ version.
+``towncrier`` needs to know what version your project is, and there are two ways you can give it:
+
+- For Python 2/3 compatible projects, a ``__version__`` in the top level package.
+  This can be either a string literal, a tuple, or an `Incremental <https://github.com/hawkowl/incremental>`_ version.
+- Manually passing ``--version=<myversionhere>`` when interacting with ``towncrier``.
 
 To produce a draft of the news file, run::
 
@@ -63,7 +67,7 @@ If you wish to have content at the top of the news file (for example, to say whe
 
   .. towncrier release notes start
 
-towncrier will then put the version notes after this comment, and leave your existing content that was above it where it is.
+``towncrier`` will then put the version notes after this comment, and leave your existing content that was above it where it is.
 
 
 News Fragments
