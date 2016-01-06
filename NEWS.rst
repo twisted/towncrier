@@ -1,3 +1,7 @@
+``towncrier`` issues are filed on `GitHub <https://github.com/hawkowl/towncrier/issues>`_, and each ticket number here corresponds to a closed GitHub issue.
+
+.. towncrier release notes start
+
 towncrier 15.1.0
 ================
 
