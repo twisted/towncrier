@@ -35,11 +35,11 @@ def append_to_newsfile(directory, filename, name_and_version, content):
     with open(os.path.join(directory, filename), "w") as f:
 
         if len(existing_content) > 1:
-            f.write(existing_content.pop(0))
-            f.write(TOWNCRIER_START + "\n")
+            f.write(existing_content.pop(0).rstrip())
+            f.write("\n" + TOWNCRIER_START + "\n")
 
         f.write(top_line)
         f.write(content)
         if existing_content[0]:
             f.write("\n\n")
-        f.write(existing_content[0])
+        f.write(existing_content[0].lstrip())
