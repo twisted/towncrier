@@ -152,7 +152,8 @@ Old text.
         os.mkdir(tempdir)
 
         with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
-            f.write("Hello there! Here is some info.\n\n.. towncrier release notes start\nOld text.\n")
+            f.write(("Hello there! Here is some info.\n\n"
+                     ".. towncrier release notes start\nOld text.\n"))
 
         fragments = split_fragments(fragments, definitions)
 
