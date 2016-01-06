@@ -7,14 +7,14 @@ Responsible for getting the version and name from a project.
 
 from __future__ import absolute_import, division
 
+import os
 import sys
 
 from importlib import import_module
 
 from incremental import Version
 
-
-def get_version(package_dir, package):
+def _get_package(package_dir, package):
 
     # Step 1: Try the dumbest and simplest thing that could possibly work.
     # Yes, that means importing it. Call the cops, I don't care.
@@ -22,18 +22,32 @@ def get_version(package_dir, package):
 
     try:
         module = import_module(package)
-    except ImportError:
+    except ImportError as e:
+        print("Tried to import {}, but ran into this error: {}".format(package,
+                                                                       e))
         # wups that didn't work
         module = None
 
+    # Don't leave trash in sys.path
     sys.path.pop(0)
-    del sys.modules[package]
+
+    try:
+        del sys.modules[package]
+    except KeyError:
+        pass
 
     # Step 2: uhhhhhhh
     # TBA
 
     if not module:
         raise Exception("Can't find your project :(")
+
+    return module
+
+
+def get_version(package_dir, package):
+
+    module = _get_package(package_dir, package)
 
     version = getattr(module, "__version__", None)
 
@@ -56,24 +70,7 @@ def get_version(package_dir, package):
 
 def get_project_name(package_dir, package):
 
-    # Step 1: Try the dumbest and simplest thing that could possibly work.
-    # Yes, that means importing it. Call the cops, I don't care.
-    sys.path = [package_dir] + sys.path
-
-    try:
-        module = import_module(package)
-    except ImportError:
-        # wups that didn't work
-        module = None
-
-    sys.path.pop(0)
-    del sys.modules[package]
-
-    # Step 2: uhhhhhhh
-    # TBA
-
-    if not module:
-        raise Exception("Can't find your project :(")
+    module = _get_package(package_dir, package)
 
     version = getattr(module, "__version__", None)
 

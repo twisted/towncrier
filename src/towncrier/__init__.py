@@ -65,11 +65,11 @@ def __main(draft, directory, project_version, project_date):
 
     if not project_version:
         project_version = get_version(
-            os.path.join(directory, config['package_dir']),
+            os.path.abspath(os.path.join(directory, config['package_dir'])),
             config['package'])
 
     project_name = get_project_name(
-        os.path.join(directory, config['package_dir']),
+        os.path.abspath(os.path.join(directory, config['package_dir'])),
         config['package'])
 
     name_and_version = project_name + " " + project_version
