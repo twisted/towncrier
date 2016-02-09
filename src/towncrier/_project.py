@@ -7,12 +7,12 @@ Responsible for getting the version and name from a project.
 
 from __future__ import absolute_import, division
 
-import os
 import sys
 
 from importlib import import_module
 
 from incremental import Version
+
 
 def _get_package(package_dir, package):
 
