@@ -19,6 +19,7 @@ from ._builder import find_fragments, split_fragments, render_fragments
 from ._project import get_version, get_project_name
 from ._writer import append_to_newsfile
 from ._git import remove_files, stage_newsfile
+from ._version import __version__
 
 
 def _get_date():
@@ -100,7 +101,5 @@ def __main(draft, directory, project_version, project_date):
 
         click.echo("Done!")
 
-
-from ._version import __version__
 
 __all__ = ["__version__"]
