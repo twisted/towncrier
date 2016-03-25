@@ -24,6 +24,7 @@ setup(
     setup_requires=['incremental'],
     install_requires=[
         'Click',
+        'incremental',
     ],
     package_dir={"": "src"},
     packages=find_packages('src'),
