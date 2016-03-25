@@ -70,7 +70,6 @@ def split_fragments(fragments, definitions):
             if category not in definitions:
                 continue
 
-            ticket = int(ticket)
             texts = section.get(category, {})
 
             if texts.get(content):
@@ -122,8 +121,16 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
 
                 for text, tickets in sorted(frags.items(),
                                             key=lambda i: i[1][0]):
-                    tickets = ["#" + str(i) for i in tickets]
-                    to_wrap = "- " + text + " (" + ", ".join(tickets) + ")"
+                    all_tickets = []
+
+                    for i in tickets:
+                        try:
+                            int(i)
+                            all_tickets.append("#" + i)
+                        except:
+                            all_tickets.append(i)
+
+                    to_wrap = "- " + text + " (" + ", ".join(all_tickets) + ")"
 
                     result.write(textwrap.fill(to_wrap,
                                                subsequent_indent="  ") + "\n")
@@ -133,7 +140,13 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
 
                 for text, tickets in sorted(frags.items(),
                                             key=lambda i: i[1][0]):
-                    all_tickets = all_tickets + ["#" + str(i) for i in tickets]
+
+                    for i in tickets:
+                        try:
+                            int(i)
+                            all_tickets.append("#" + i)
+                        except:
+                            all_tickets.append(i)
 
                 result.write("- " + textwrap.fill(
                     ", ".join(sorted(all_tickets)), subsequent_indent="  "))

@@ -26,6 +26,7 @@ class FormatterTests(TestCase):
         fragments = {
             "": {
                 "1.misc": u"",
+                "baz.misc": u"",
                 "2.feature": u"Foo added.",
                 "421.feature~": u"Foo added.",
                 "5.feature": u"Foo added.    \n",
@@ -41,21 +42,21 @@ class FormatterTests(TestCase):
         expected_output = {
             "": {
                 "misc": {
-                    '': [1],
+                    "": ["1", "baz"],
                 },
                 "feature": {
-                    u"Foo added.": [2, 5]
+                    u"Foo added.": ["2", "5"]
                 },
                 "bugfix": {
-                    u"Foo added.": [6]
+                    u"Foo added.": ["6"]
                 }
             },
             "Web": {
                 "bugfix": {
-                    u"Web fixed.": [3],
+                    u"Web fixed.": ["3"],
                 },
                 "feature": {
-                    u"Foo added.": [4]
+                    u"Foo added.": ["4"]
                 }
             }
 
@@ -80,9 +81,11 @@ class FormatterTests(TestCase):
             "": {
                 "142.misc": u"",
                 "1.misc": u"",
+                "bar.misc": u"",
                 "4.feature": u"Stuff!",
                 "2.feature": u"Foo added.",
                 "72.feature": u"Foo added.",
+                "baz.feature": u"Fun!",
             },
             "Web": {
                 "3.bugfix": u"Web fixed.",
@@ -101,11 +104,12 @@ class FormatterTests(TestCase):
 
 - Foo added. (#2, #72)
 - Stuff! (#4)
+- Fun! (baz)
 
 Misc
 ----
 
-- #1, #142
+- #1, #142, bar
 
 
 Names
