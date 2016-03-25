@@ -2,6 +2,29 @@
 
 .. towncrier release notes start
 
+towncrier 16.1.0 (2016-03-25)
+=============================
+
+Features
+--------
+
+- Ported to Python 2.7. (#27)
+- towncrier now supports non-numerical news fragment names. (#32)
+
+Bugfixes
+--------
+
+- towncrier would spew an unhelpful exception if it failed importing
+  your project when autodiscovering, now it does not. (#22)
+- incremental is now added as a runtime dependency for towncrier.
+  (#25)
+
+Misc
+----
+
+- #33
+
+
 towncrier 16.0.0 (2016-01-06)
 =============================
 

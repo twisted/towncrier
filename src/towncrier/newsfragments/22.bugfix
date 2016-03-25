@@ -1,1 +1,0 @@
-towncrier would spew an unhelpful exception if it failed importing your project when autodiscovering, now it does not.
