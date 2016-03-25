@@ -6,6 +6,8 @@ install:
 
 env:
   - TOX_ENV=flake8
+  - TOX_ENV=pypy-tests
+  - TOX_ENV=py27-tests
   - TOX_ENV=py33-tests
   - TOX_ENV=py34-tests
 

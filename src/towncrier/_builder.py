@@ -12,15 +12,15 @@ from io import StringIO
 def normalise(text):
 
     # Blitz newlines
-    text = text.replace("\r\n", "\n")
-    text = text.replace("\n", " ")
+    text = text.replace(u"\r\n", u"\n")
+    text = text.replace(u"\n", u" ")
 
     # No tabs!
-    text = text.replace("\t", " ")
+    text = text.replace(u"\t", u" ")
 
     # Remove double spaces
-    while "  " in text:
-        text = text.replace("  ", " ")
+    while u"  " in text:
+        text = text.replace(u"  ", u" ")
 
     # Remove left/right whitespace
     text = text.strip()
@@ -93,11 +93,11 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
     for section in sorted(fragments.keys()):
 
         if section:
-            result.write("\n" + section + "\n")
-            result.write(major * len(section) + "\n\n")
+            result.write(u"\n" + section + u"\n")
+            result.write(major * len(section) + u"\n\n")
 
         if not fragments[section]:
-            result.write("No significant changes.\n\n")
+            result.write(u"No significant changes.\n\n")
             continue
 
         for category_name, category_info in definitions.items():
@@ -110,12 +110,12 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
 
             frags = fragments[section][category_name]
 
-            result.write(desc + "\n")
+            result.write(desc + u"\n")
 
             if not section:
-                result.write(major * len(desc) + "\n\n")
+                result.write(major * len(desc) + u"\n\n")
             else:
-                result.write(minor * len(desc) + "\n\n")
+                result.write(minor * len(desc) + u"\n\n")
 
             if includes_text:
 
@@ -126,14 +126,16 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
                     for i in tickets:
                         try:
                             int(i)
-                            all_tickets.append("#" + i)
+                            all_tickets.append(u"#" + i)
                         except:
                             all_tickets.append(i)
 
-                    to_wrap = "- " + text + " (" + ", ".join(all_tickets) + ")"
+                    to_wrap = (u"- " + text + u" (" +
+                               u", ".join(all_tickets) + u")")
 
-                    result.write(textwrap.fill(to_wrap,
-                                               subsequent_indent="  ") + "\n")
+                    result.write(
+                        textwrap.fill(to_wrap,
+                                      subsequent_indent=u"  ") + u"\n")
             else:
 
                 all_tickets = []
@@ -144,15 +146,15 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
                     for i in tickets:
                         try:
                             int(i)
-                            all_tickets.append("#" + i)
+                            all_tickets.append(u"#" + i)
                         except:
                             all_tickets.append(i)
 
-                result.write("- " + textwrap.fill(
-                    ", ".join(sorted(all_tickets)), subsequent_indent="  "))
+                result.write(u"- " + textwrap.fill(
+                    u", ".join(sorted(all_tickets)), subsequent_indent=u"  "))
 
-            result.write("\n")
+            result.write(u"\n")
 
-        result.write("\n")
+        result.write(u"\n")
 
-    return result.getvalue().rstrip() + "\n"
+    return result.getvalue().rstrip() + u"\n"
