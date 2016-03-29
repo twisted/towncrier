@@ -5,7 +5,9 @@ from __future__ import absolute_import, division
 
 import os
 import textwrap
+import pkgresources
 
+from jinja2 import Template
 from io import StringIO
 
 
@@ -85,10 +87,26 @@ def split_fragments(fragments, definitions):
     return output
 
 
-def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
+def render_fragments(template, fragments, definitions, major=u"-", minor=u"~"):
     """
     Render the fragments into a news file.
     """
+
+    jinja_template = Template(template)
+
+    data = {}
+
+    for section in sorted(fragments.keys()):
+
+        data[section] = {}
+        data[section][definition] = definitions[section]
+        data[section][fragments] = fragment[section]
+
+
+
+
+    return jinja_template.render(**data)
+
     result = StringIO()
 
     for section in sorted(fragments.keys()):

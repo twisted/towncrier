@@ -9,6 +9,7 @@ from __future__ import absolute_import, division
 
 import os
 import click
+import pkg_resources
 
 from datetime import date
 
@@ -43,6 +44,9 @@ def __main(draft, directory, project_version, project_date):
     directory = os.path.abspath(directory)
     config = load_config(directory)
 
+    click.echo("Loading template...")
+    template = pkg_resources.resource_string(__name__, "templates/template.rst")
+
     click.echo("Finding news fragments...")
 
     # TODO make these customisable
@@ -61,7 +65,7 @@ def __main(draft, directory, project_version, project_date):
     click.echo("Rendering news fragments...")
 
     fragments = split_fragments(fragments, definitions)
-    rendered = render_fragments(fragments, definitions)
+    rendered = render_fragments(template, fragments, definitions)
 
     if not project_version:
         project_version = get_version(
