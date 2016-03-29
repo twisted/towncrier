@@ -103,6 +103,7 @@ Old text.
                 "4.feature": u"Stuff!",
                 "2.feature": u"Foo added.",
                 "72.feature": u"Foo added.",
+                "99.feature": u"Foo! " * 100
             },
             "Web": {
                 "3.bugfix": u"Web fixed.",
@@ -128,6 +129,13 @@ Features
 
 - Foo added. (#2, #72)
 - Stuff! (#4)
+- Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo!
+  Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo!
+  Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo!
+  Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo!
+  Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo!
+  Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo!
+  Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! (#99)
 
 Misc
 ----

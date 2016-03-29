@@ -57,7 +57,8 @@ def __main(draft, directory, project_version, project_date):
         ("feature", {"name": "Features", "showcontent": True}),
         ("bugfix", {"name": "Bugfixes", "showcontent": True}),
         ("doc", {"name": "Improved Documentation", "showcontent": True}),
-        ("removal", {"name": "Deprecations and Removals", "showcontent": True}),
+        ("removal", {"name": "Deprecations and Removals",
+                     "showcontent": True}),
         ("misc", {"name": "Misc", "showcontent": False}),
     ])
 

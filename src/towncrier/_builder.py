@@ -9,7 +9,6 @@ import textwrap
 from collections import OrderedDict
 
 from jinja2 import Template
-from io import StringIO
 
 
 def normalise(text):
@@ -120,6 +119,11 @@ def render_fragments(template, fragments, definitions, major=u"-", minor=u"~"):
 
             data[section_name][category_name] = categories
 
+    done = []
 
     res = jinja_template.render(sections=data, definitions=definitions)
-    return res
+
+    for line in res.split("\n"):
+        done.append(textwrap.fill(line, width=79, subsequent_indent=u"  "))
+
+    return "\n".join(done)
