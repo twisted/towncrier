@@ -3,6 +3,7 @@
 
 from twisted.trial.unittest import TestCase
 
+import pkg_resources
 import os
 
 from collections import OrderedDict
@@ -30,9 +31,9 @@ class WritingTests(TestCase):
         }
 
         definitions = OrderedDict([
-            ("feature", ("Features", True)),
-            ("bugfix", ("Bugfixes", True)),
-            ("misc", ("Misc", False)),
+            ("feature", {"name": "Features", "showcontent": True}),
+            ("bugfix", {"name": "Bugfixes", "showcontent": True}),
+            ("misc", {"name": "Misc", "showcontent": False}),
         ])
 
         expected_output = """MyProject 1.0
@@ -76,10 +77,13 @@ Old text.
 
         fragments = split_fragments(fragments, definitions)
 
+        template = pkg_resources.resource_string("towncrier",
+                                                 "templates/template.rst")
+
         append_to_newsfile(tempdir,
                            "NEWS.rst",
                            "MyProject 1.0",
-                           render_fragments(fragments, definitions))
+                           render_fragments(template, fragments, definitions))
 
         with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
             output = f.read()
@@ -106,9 +110,9 @@ Old text.
         }
 
         definitions = OrderedDict([
-            ("feature", ("Features", True)),
-            ("bugfix", ("Bugfixes", True)),
-            ("misc", ("Misc", False)),
+            ("feature", {"name": "Features", "showcontent": True}),
+            ("bugfix", {"name": "Bugfixes", "showcontent": True}),
+            ("misc", {"name": "Misc", "showcontent": False}),
         ])
 
         expected_output = """Hello there! Here is some info.
@@ -157,10 +161,13 @@ Old text.
 
         fragments = split_fragments(fragments, definitions)
 
+        template = pkg_resources.resource_string("towncrier",
+                                                 "templates/template.rst")
+
         append_to_newsfile(tempdir,
                            "NEWS.rst",
                            "MyProject 1.0",
-                           render_fragments(fragments, definitions))
+                           render_fragments(template, fragments, definitions))
 
         with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
             output = f.read()

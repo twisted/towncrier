@@ -26,6 +26,7 @@ setup(
     install_requires=[
         'Click',
         'incremental',
+        'jinja2',
     ],
     package_dir={"": "src"},
     packages=find_packages('src'),

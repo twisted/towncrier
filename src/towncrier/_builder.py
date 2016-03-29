@@ -1,11 +1,12 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
-from __future__ import absolute_import, division
+from __future__ import absolute_import, division, print_function
 
 import os
 import textwrap
-import pkgresources
+
+from collections import OrderedDict
 
 from jinja2 import Template
 from io import StringIO
@@ -72,6 +73,9 @@ def split_fragments(fragments, definitions):
             if category not in definitions:
                 continue
 
+            if definitions[category]["showcontent"] is False:
+                content = u""
+
             texts = section.get(category, {})
 
             if texts.get(content):
@@ -91,88 +95,31 @@ def render_fragments(template, fragments, definitions, major=u"-", minor=u"~"):
     Render the fragments into a news file.
     """
 
-    jinja_template = Template(template)
+    jinja_template = Template(template, trim_blocks=True)
 
     data = {}
 
-    for section in sorted(fragments.keys()):
+    for section_name, section_value in fragments.items():
 
-        data[section] = {}
-        data[section][definition] = definitions[section]
-        data[section][fragments] = fragment[section]
+        data[section_name] = {}
+
+        for category_name, category_value in section_value.items():
+            categories = OrderedDict()
+
+            for text, tickets in category_value.items():
+                ticket_numbers = []
+
+                for ticket in tickets:
+                    try:
+                        int(ticket)
+                        ticket_numbers.append(u"#" + ticket)
+                    except:
+                        ticket_numbers.append(ticket)
+
+                categories[text] = ticket_numbers
+
+            data[section_name][category_name] = categories
 
 
-
-
-    return jinja_template.render(**data)
-
-    result = StringIO()
-
-    for section in sorted(fragments.keys()):
-
-        if section:
-            result.write(u"\n" + section + u"\n")
-            result.write(major * len(section) + u"\n\n")
-
-        if not fragments[section]:
-            result.write(u"No significant changes.\n\n")
-            continue
-
-        for category_name, category_info in definitions.items():
-
-            desc = category_info[0]
-            includes_text = category_info[1]
-
-            if category_name not in fragments[section]:
-                continue
-
-            frags = fragments[section][category_name]
-
-            result.write(desc + u"\n")
-
-            if not section:
-                result.write(major * len(desc) + u"\n\n")
-            else:
-                result.write(minor * len(desc) + u"\n\n")
-
-            if includes_text:
-
-                for text, tickets in sorted(frags.items(),
-                                            key=lambda i: i[1][0]):
-                    all_tickets = []
-
-                    for i in tickets:
-                        try:
-                            int(i)
-                            all_tickets.append(u"#" + i)
-                        except:
-                            all_tickets.append(i)
-
-                    to_wrap = (u"- " + text + u" (" +
-                               u", ".join(all_tickets) + u")")
-
-                    result.write(
-                        textwrap.fill(to_wrap,
-                                      subsequent_indent=u"  ") + u"\n")
-            else:
-
-                all_tickets = []
-
-                for text, tickets in sorted(frags.items(),
-                                            key=lambda i: i[1][0]):
-
-                    for i in tickets:
-                        try:
-                            int(i)
-                            all_tickets.append(u"#" + i)
-                        except:
-                            all_tickets.append(i)
-
-                result.write(u"- " + textwrap.fill(
-                    u", ".join(sorted(all_tickets)), subsequent_indent=u"  "))
-
-            result.write(u"\n")
-
-        result.write(u"\n")
-
-    return result.getvalue().rstrip() + u"\n"
+    res = jinja_template.render(sections=data, definitions=definitions)
+    return res

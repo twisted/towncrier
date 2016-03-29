@@ -1,6 +1,10 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
+from __future__ import absolute_import, division
+
+import pkg_resources
+
 from twisted.trial.unittest import TestCase
 
 from collections import OrderedDict
@@ -63,9 +67,9 @@ class FormatterTests(TestCase):
         }
 
         definitions = OrderedDict([
-            ("feature", ("Features", True)),
-            ("bugfix", ("Bugfixes", True)),
-            ("misc", ("Misc", False)),
+            ("feature", {"name": "Features", "showcontent": True}),
+            ("bugfix", {"name": "Bugfixes", "showcontent": True}),
+            ("misc", {"name": "Misc", "showcontent": False}),
         ])
 
         output = split_fragments(fragments, definitions)
@@ -94,12 +98,13 @@ class FormatterTests(TestCase):
         }
 
         definitions = OrderedDict([
-            ("feature", ("Features", True)),
-            ("bugfix", ("Bugfixes", True)),
-            ("misc", ("Misc", False)),
+            ("feature", {"name": "Features", "showcontent": True}),
+            ("bugfix", {"name": "Bugfixes", "showcontent": True}),
+            ("misc", {"name": "Misc", "showcontent": False}),
         ])
 
-        expected_output = (u"""Features
+        expected_output = (u"""
+Features
 --------
 
 - Foo added. (#2, #72)
@@ -127,6 +132,9 @@ Bugfixes
 - Web fixed. (#3)
 """)
 
+        template = pkg_resources.resource_string("towncrier",
+                                                 "templates/template.rst")
+
         fragments = split_fragments(fragments, definitions)
-        output = render_fragments(fragments, definitions)
+        output = render_fragments(template, fragments, definitions)
         self.assertEqual(output, expected_output)
