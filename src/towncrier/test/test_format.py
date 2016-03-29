@@ -132,8 +132,9 @@ Bugfixes
 - Web fixed. (#3)
 """)
 
-        template = pkg_resources.resource_string("towncrier",
-                                                 "templates/template.rst")
+        template = pkg_resources.resource_string(
+            "towncrier",
+            "templates/template.rst").decode('utf8')
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(template, fragments, definitions)

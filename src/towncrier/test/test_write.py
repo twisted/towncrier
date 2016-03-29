@@ -77,8 +77,9 @@ Old text.
 
         fragments = split_fragments(fragments, definitions)
 
-        template = pkg_resources.resource_string("towncrier",
-                                                 "templates/template.rst")
+        template = pkg_resources.resource_string(
+            "towncrier",
+            "templates/template.rst").decode('utf8')
 
         append_to_newsfile(tempdir,
                            "NEWS.rst",
@@ -161,8 +162,9 @@ Old text.
 
         fragments = split_fragments(fragments, definitions)
 
-        template = pkg_resources.resource_string("towncrier",
-                                                 "templates/template.rst")
+        template = pkg_resources.resource_string(
+            "towncrier",
+            "templates/template.rst").decode('utf8')
 
         append_to_newsfile(tempdir,
                            "NEWS.rst",

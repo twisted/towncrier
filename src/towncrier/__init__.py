@@ -46,8 +46,9 @@ def __main(draft, directory, project_version, project_date):
     config = load_config(directory)
 
     click.echo("Loading template...")
-    template = pkg_resources.resource_string(__name__,
-                                             "templates/template.rst")
+    template = pkg_resources.resource_string(
+        __name__,
+        "templates/template.rst").decode('utf8')
 
     click.echo("Finding news fragments...")
 
