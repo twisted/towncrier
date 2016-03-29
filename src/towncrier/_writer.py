@@ -26,7 +26,7 @@ def append_to_newsfile(directory, filename, name_and_version, content):
 
     existing_content = existing_content.split(TOWNCRIER_START)
 
-    top_line = name_and_version + "\n" + "=" * len(name_and_version) + "\n\n"
+    top_line = name_and_version + "\n" + "=" * len(name_and_version) + "\n"
 
     if top_line in existing_content:
         raise ValueError(

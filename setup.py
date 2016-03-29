@@ -26,11 +26,13 @@ setup(
     install_requires=[
         'Click',
         'incremental',
+        'jinja2',
     ],
     package_dir={"": "src"},
     packages=find_packages('src'),
     license="MIT",
     zip_safe=False,
+    include_package_data=True,
     description='Building newsfiles for your project.',
     long_description=open('README.rst').read(),
     entry_points={

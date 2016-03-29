@@ -9,6 +9,7 @@ from __future__ import absolute_import, division
 
 import os
 import click
+import pkg_resources
 
 from datetime import date
 
@@ -44,15 +45,21 @@ def __main(draft, directory, project_version, project_date):
     directory = os.path.abspath(directory)
     config = load_config(directory)
 
+    click.echo("Loading template...")
+    template = pkg_resources.resource_string(
+        __name__,
+        "templates/template.rst").decode('utf8')
+
     click.echo("Finding news fragments...")
 
     # TODO make these customisable
     definitions = OrderedDict([
-        ("feature", ("Features", True)),
-        ("bugfix", ("Bugfixes", True)),
-        ("doc", ("Improved Documentation", True)),
-        ("removal", ("Deprecations and Removals", True)),
-        ("misc", ("Misc", False)),
+        ("feature", {"name": "Features", "showcontent": True}),
+        ("bugfix", {"name": "Bugfixes", "showcontent": True}),
+        ("doc", {"name": "Improved Documentation", "showcontent": True}),
+        ("removal", {"name": "Deprecations and Removals",
+                     "showcontent": True}),
+        ("misc", {"name": "Misc", "showcontent": False}),
     ])
 
     fragments = find_fragments(
@@ -62,7 +69,7 @@ def __main(draft, directory, project_version, project_date):
     click.echo("Rendering news fragments...")
 
     fragments = split_fragments(fragments, definitions)
-    rendered = render_fragments(fragments, definitions)
+    rendered = render_fragments(template, fragments, definitions)
 
     if not project_version:
         project_version = get_version(

@@ -1,12 +1,14 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
-from __future__ import absolute_import, division
+from __future__ import absolute_import, division, print_function
 
 import os
 import textwrap
 
-from io import StringIO
+from collections import OrderedDict
+
+from jinja2 import Template
 
 
 def normalise(text):
@@ -70,6 +72,9 @@ def split_fragments(fragments, definitions):
             if category not in definitions:
                 continue
 
+            if definitions[category]["showcontent"] is False:
+                content = u""
+
             texts = section.get(category, {})
 
             if texts.get(content):
@@ -84,77 +89,41 @@ def split_fragments(fragments, definitions):
     return output
 
 
-def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
+def render_fragments(template, fragments, definitions, major=u"-", minor=u"~"):
     """
     Render the fragments into a news file.
     """
-    result = StringIO()
 
-    for section in sorted(fragments.keys()):
+    jinja_template = Template(template, trim_blocks=True)
 
-        if section:
-            result.write(u"\n" + section + u"\n")
-            result.write(major * len(section) + u"\n\n")
+    data = {}
 
-        if not fragments[section]:
-            result.write(u"No significant changes.\n\n")
-            continue
+    for section_name, section_value in fragments.items():
 
-        for category_name, category_info in definitions.items():
+        data[section_name] = {}
 
-            desc = category_info[0]
-            includes_text = category_info[1]
+        for category_name, category_value in section_value.items():
+            categories = OrderedDict()
 
-            if category_name not in fragments[section]:
-                continue
+            for text, tickets in category_value.items():
+                ticket_numbers = []
 
-            frags = fragments[section][category_name]
+                for ticket in tickets:
+                    try:
+                        int(ticket)
+                        ticket_numbers.append(u"#" + ticket)
+                    except:
+                        ticket_numbers.append(ticket)
 
-            result.write(desc + u"\n")
+                categories[text] = ticket_numbers
 
-            if not section:
-                result.write(major * len(desc) + u"\n\n")
-            else:
-                result.write(minor * len(desc) + u"\n\n")
+            data[section_name][category_name] = categories
 
-            if includes_text:
+    done = []
 
-                for text, tickets in sorted(frags.items(),
-                                            key=lambda i: i[1][0]):
-                    all_tickets = []
+    res = jinja_template.render(sections=data, definitions=definitions)
 
-                    for i in tickets:
-                        try:
-                            int(i)
-                            all_tickets.append(u"#" + i)
-                        except:
-                            all_tickets.append(i)
+    for line in res.split("\n"):
+        done.append(textwrap.fill(line, width=79, subsequent_indent=u"  "))
 
-                    to_wrap = (u"- " + text + u" (" +
-                               u", ".join(all_tickets) + u")")
-
-                    result.write(
-                        textwrap.fill(to_wrap,
-                                      subsequent_indent=u"  ") + u"\n")
-            else:
-
-                all_tickets = []
-
-                for text, tickets in sorted(frags.items(),
-                                            key=lambda i: i[1][0]):
-
-                    for i in tickets:
-                        try:
-                            int(i)
-                            all_tickets.append(u"#" + i)
-                        except:
-                            all_tickets.append(i)
-
-                result.write(u"- " + textwrap.fill(
-                    u", ".join(sorted(all_tickets)), subsequent_indent=u"  "))
-
-            result.write(u"\n")
-
-        result.write(u"\n")
-
-    return result.getvalue().rstrip() + u"\n"
+    return "\n".join(done)
