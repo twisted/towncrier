@@ -20,6 +20,7 @@ from ._builder import find_fragments, split_fragments, render_fragments
 from ._project import get_version, get_project_name
 from ._writer import append_to_newsfile
 from ._git import remove_files, stage_newsfile
+from ._version import __version__
 
 
 def _get_date():
@@ -69,11 +70,11 @@ def __main(draft, directory, project_version, project_date):
 
     if not project_version:
         project_version = get_version(
-            os.path.join(directory, config['package_dir']),
+            os.path.abspath(os.path.join(directory, config['package_dir'])),
             config['package'])
 
     project_name = get_project_name(
-        os.path.join(directory, config['package_dir']),
+        os.path.abspath(os.path.join(directory, config['package_dir'])),
         config['package'])
 
     name_and_version = project_name + " " + project_version
@@ -104,7 +105,5 @@ def __main(draft, directory, project_version, project_date):
 
         click.echo("Done!")
 
-
-from ._version import __version__
 
 __all__ = ["__version__"]

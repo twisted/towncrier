@@ -1,6 +1,12 @@
 Hear ye, hear ye, says the ``towncrier``
 ========================================
 
+.. image:: https://travis-ci.org/hawkowl/towncrier.svg?branch=master
+    :target: https://travis-ci.org/hawkowl/towncrier
+
+.. image:: https://codecov.io/github/hawkowl/towncrier/coverage.svg?branch=master
+    :target: https://codecov.io/github/hawkowl/towncrier?branch=master
+
 ``towncrier`` is a utility to produce useful, summarised news files for your project.
 Rather than reading the Git history as some newer tools to produce it, or having one single file which developers all write to, ``towncrier`` reads "news fragments" which contain information `useful to end users`.
 
@@ -21,10 +27,12 @@ Quick Start
 Install from PyPI::
 
     python3 -m pip install towncrier
+    # OR:
+    python2 -m pip install towncrier
 
 .. note::
 
-   ``towncrier``, as a command line tool, works on Python 3 only.
+   ``towncrier``, as a command line tool, works on Python 2.7/3.3/3.4/3.5 only.
    It is usable by projects written in other languages, provided you give it the version of the project when invoking it.
    For Python 2/3 compatible projects, the version can be discovered automatically.
 
