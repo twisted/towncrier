@@ -27,10 +27,28 @@ def load_config(from_dir):
         raise ValueError(
             "The [towncrier] section has no required 'package' key.")
 
+    try:
+        start_string = config.get('towncrier', 'start_string')
+    except configparser.NoOptionError:
+        start_string = '.. towncrier release notes start\n'
+
+    try:
+        title_format = config.get('towncrier', 'title_format')
+    except configparser.NoOptionError:
+        title_format = '{name} {version}\n==========\n'
+
+    try:
+        template_fname = config.get('towncrier', 'template')
+    except configparser.NoOptionError:
+        template_fname = None
+
     return {
         'package': config.get('towncrier', 'package'),
         'package_dir': config.get('towncrier', 'package_dir'),
         'filename': config.get('towncrier', 'filename'),
         'directory': config.get('towncrier', 'directory'),
         'sections': {'': ''},
+        'template': template_fname,
+        'start_string': start_string,
+        'title_format': title_format,
     }

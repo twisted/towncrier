@@ -1,0 +1,1 @@
+Allow configration of the template file, title text and "magic comment"
