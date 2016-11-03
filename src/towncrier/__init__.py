@@ -62,9 +62,16 @@ def __main(draft, directory, project_version, project_date):
         ("misc", {"name": "Misc", "showcontent": False}),
     ])
 
+    if config.get("directory"):
+        base_directory = os.path.abspath(config["directory"])
+        fragment_directory = None
+    else:
+        base_directory = os.path.join(
+            directory, config['package_dir'], config['package'])
+        fragment_directory = "newsfragments"
+
     fragments = find_fragments(
-        os.path.join(directory, config['package_dir'], config['package']),
-        config['sections'])
+        base_directory, config['sections'], fragment_directory)
 
     click.echo("Rendering news fragments...")
 
@@ -103,8 +110,8 @@ def __main(draft, directory, project_version, project_date):
         stage_newsfile(directory, config['filename'])
 
         click.echo("Removing news fragments...")
-        remove_files(directory, config['package_dir'],
-                     config['package'], config['sections'], fragments)
+        remove_files(
+            base_directory, fragment_directory, config['sections'], fragments)
 
         click.echo("Done!")
 
