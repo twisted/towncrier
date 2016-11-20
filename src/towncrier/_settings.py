@@ -46,6 +46,7 @@ def load_config_ini(from_dir):
         ])
     }
 
+
 def load_config_toml(from_dir):
 
     with open(os.path.join(from_dir, "pyproject.toml"), 'r') as conffile:
@@ -67,7 +68,8 @@ def load_config_toml(from_dir):
         sections[x.get('name', '')] = x['path']
 
     for x in config["type"]:
-        types[x["directory"]] = {"name": x["name"], "showcontent": x["showcontent"]}
+        types[x["directory"]] = {"name": x["name"],
+                                 "showcontent": x["showcontent"]}
 
     return {
         'package': config.get('package'),
@@ -77,6 +79,7 @@ def load_config_toml(from_dir):
         'sections': sections,
         'types': types,
     }
+
 
 def load_config(from_dir):
     try:
