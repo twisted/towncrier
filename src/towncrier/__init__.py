@@ -13,8 +13,6 @@ import pkg_resources
 
 from datetime import date
 
-from collections import OrderedDict
-
 from ._settings import load_config
 from ._builder import find_fragments, split_fragments, render_fragments
 from ._project import get_version, get_project_name
@@ -53,14 +51,7 @@ def __main(draft, directory, project_version, project_date):
     click.echo("Finding news fragments...")
 
     # TODO make these customisable
-    definitions = OrderedDict([
-        ("feature", {"name": "Features", "showcontent": True}),
-        ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-        ("doc", {"name": "Improved Documentation", "showcontent": True}),
-        ("removal", {"name": "Deprecations and Removals",
-                     "showcontent": True}),
-        ("misc", {"name": "Misc", "showcontent": False}),
-    ])
+    definitions = config['types']
 
     if config.get("directory"):
         base_directory = os.path.abspath(config["directory"])

@@ -18,20 +18,15 @@
 {% else %}
 - {{ sections[section][category]['']|sort|join(', ') }}
 
-
 {% endif %}
 {% if sections[section][category]|length == 0 %}
 
 No significant changes.
-
-
 {% else %}
 {% endif %}
 {% endfor %}
 {% else %}
 
 No significant changes.
-
-
 {% endif %}
 {% endfor %}
