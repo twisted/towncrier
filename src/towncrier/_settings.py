@@ -14,7 +14,8 @@ def load_config(from_dir):
     config = configparser.ConfigParser(
         {
             'package_dir': '.',
-            'filename': 'NEWS.rst'
+            'filename': 'NEWS.rst',
+            'directory': None,
         }
     )
     config.read(os.path.join(from_dir, "towncrier.ini"))
@@ -30,5 +31,6 @@ def load_config(from_dir):
         'package': config.get('towncrier', 'package'),
         'package_dir': config.get('towncrier', 'package_dir'),
         'filename': config.get('towncrier', 'filename'),
+        'directory': config.get('towncrier', 'directory'),
         'sections': {'': ''},
     }

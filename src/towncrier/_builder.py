@@ -30,7 +30,7 @@ def normalise(text):
     return text
 
 
-def find_fragments(base_directory, sections):
+def find_fragments(base_directory, sections, fragment_directory):
     """
     Sections are a dictonary of section names to paths.
     """
@@ -38,7 +38,11 @@ def find_fragments(base_directory, sections):
 
     for key, val in sections.items():
 
-        section_dir = os.path.join(base_directory, val, "newsfragments")
+        if fragment_directory is not None:
+            section_dir = os.path.join(base_directory, val, fragment_directory)
+        else:
+            section_dir = os.path.join(base_directory, val)
+
         files = os.listdir(section_dir)
 
         file_content = {}

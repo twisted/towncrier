@@ -7,16 +7,16 @@ import os
 import click
 
 
-def remove_files(directory, package_dir, package, sections, fragments):
-
-    base_dir = os.path.join(directory, package_dir, package)
-
+def remove_files(base_dir, fragment_directory, sections, fragments):
     to_remove = []
 
     for section_name, categories in fragments.items():
 
-        section_dir = os.path.join(base_dir, "newsfragments",
-                                   sections[section_name])
+        if fragment_directory is not None:
+            section_dir = os.path.join(base_dir, fragment_directory,
+                                       sections[section_name])
+        else:
+            section_dir = os.path.join(base_dir, sections[section_name])
 
         for category_name, category_items in categories.items():
 
