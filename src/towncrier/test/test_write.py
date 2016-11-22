@@ -83,7 +83,8 @@ Old text.
 
         append_to_newsfile(tempdir,
                            "NEWS.rst",
-                           "MyProject 1.0",
+                           ".. towncrier release notes start\n",
+                           "MyProject 1.0\n=============\n",
                            render_fragments(template, fragments, definitions))
 
         with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
@@ -176,7 +177,8 @@ Old text.
 
         append_to_newsfile(tempdir,
                            "NEWS.rst",
-                           "MyProject 1.0",
+                           ".. towncrier release notes start\n",
+                           "MyProject 1.0\n=============\n",
                            render_fragments(template, fragments, definitions))
 
         with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
