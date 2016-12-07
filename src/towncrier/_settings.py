@@ -72,9 +72,11 @@ def load_config_ini(from_dir):
 
 
 def load_config_toml(from_dir):
-
-    with open(os.path.join(from_dir, "pyproject.toml"), 'r') as conffile:
-        config = toml.loads(conffile.read())
+    fn = os.path.join(from_dir, "pyproject.toml")
+    if not os.path.exists(fn):
+        return None
+    with open(fn, 'r') as conffile:
+        config = toml.load(conffile)
 
     if 'tool' not in config:
         raise ValueError("No [tool.towncrier] section.")
@@ -115,7 +117,7 @@ def load_config_toml(from_dir):
 
 
 def load_config(from_dir):
-    try:
-        return load_config_toml(from_dir)
-    except:
+    res = load_config_toml(from_dir)
+    if res is None:
         return load_config_ini(from_dir)
+    return res
