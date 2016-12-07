@@ -42,29 +42,33 @@ def __main(draft, directory, project_version, project_date):
     """
     directory = os.path.abspath(directory)
     config = load_config(directory)
+    to_err = draft
 
-    click.echo("Loading template...")
-    template = pkg_resources.resource_string(
-        __name__,
-        "templates/template.rst").decode('utf8')
+    click.echo("Loading template...", err=to_err)
+    if config['template'] is None:
+        template = pkg_resources.resource_string(
+            __name__,
+            "templates/template.rst").decode('utf8')
+    else:
+        with open(config['template'], 'rb') as tmpl:
+            template = tmpl.read()
 
-    click.echo("Finding news fragments...")
+    click.echo("Finding news fragments...", err=to_err)
 
-    # TODO make these customisable
     definitions = config['types']
 
     if config.get("directory"):
         base_directory = os.path.abspath(config["directory"])
         fragment_directory = None
     else:
-        base_directory = os.path.join(
-            directory, config['package_dir'], config['package'])
+        base_directory = os.path.abspath(os.path.join(
+            directory, config['package_dir'], config['package']))
         fragment_directory = "newsfragments"
 
     fragments = find_fragments(
         base_directory, config['sections'], fragment_directory)
 
-    click.echo("Rendering news fragments...")
+    click.echo("Rendering news fragments...", err=to_err)
 
     fragments = split_fragments(fragments, definitions)
     rendered = render_fragments(template, fragments, definitions)
@@ -86,25 +90,33 @@ def __main(draft, directory, project_version, project_date):
     if project_date != "":
         name_and_version += " (" + project_date + ")"
 
+    top_line = config['title_format'].format(
+        name=project_name,
+        version=project_version,
+    )
+
     if draft:
-        click.echo("Draft only -- nothing has been written.")
-        click.echo("What is seen below is what would be written.\n")
-        click.echo(name_and_version)
-        click.echo("=" * len(name_and_version) + "\n")
+        click.echo(
+            "Draft only -- nothing has been written.\n"
+            "What is seen below is what would be written.\n",
+            err=to_err,
+        )
+        click.echo(top_line, err=to_err)
         click.echo(rendered)
     else:
-        click.echo("Writing to newsfile...")
+        click.echo("Writing to newsfile...", err=to_err)
+        start_line = config['start_line']
         append_to_newsfile(directory, config['filename'],
-                           name_and_version, rendered)
+                           start_line, top_line, rendered)
 
-        click.echo("Staging newsfile...")
+        click.echo("Staging newsfile...", err=to_err)
         stage_newsfile(directory, config['filename'])
 
-        click.echo("Removing news fragments...")
+        click.echo("Removing news fragments...", err=to_err)
         remove_files(
             base_directory, fragment_directory, config['sections'], fragments)
 
-        click.echo("Done!")
+        click.echo("Done!", err=to_err)
 
 
 __all__ = ["__version__"]

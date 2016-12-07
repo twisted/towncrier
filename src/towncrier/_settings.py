@@ -12,6 +12,19 @@ except ImportError:
     import ConfigParser as configparser
 
 
+_start_string = '.. towncrier release notes start\n'
+_title_format = '{name} {version}\n==========\n'
+_template_fname = None
+_default_types = OrderedDict([
+    (u"feature", {"name": u"Features", "showcontent": True}),
+    (u"bugfix", {"name": u"Bugfixes", "showcontent": True}),
+    (u"doc", {"name": u"Improved Documentation", "showcontent": True}),
+    (u"removal", {"name": u"Deprecations and Removals",
+                  "showcontent": True}),
+    (u"misc", {"name": u"Misc", "showcontent": False}),
+])
+
+
 def load_config_ini(from_dir):
 
     config = configparser.ConfigParser(
@@ -30,20 +43,31 @@ def load_config_ini(from_dir):
         raise ValueError(
             "The [towncrier] section has no required 'package' key.")
 
+    try:
+        start_string = config.get('towncrier', 'start_string')
+    except configparser.NoOptionError:
+        start_string = _start_string
+
+    try:
+        title_format = config.get('towncrier', 'title_format')
+    except configparser.NoOptionError:
+        title_format = _title_format
+
+    try:
+        template_fname = config.get('towncrier', 'template')
+    except configparser.NoOptionError:
+        template_fname = None
+
     return {
         'package': config.get('towncrier', 'package'),
         'package_dir': config.get('towncrier', 'package_dir'),
         'filename': config.get('towncrier', 'filename'),
         'directory': config.get('towncrier', 'directory'),
         'sections': {'': ''},
-        'types': OrderedDict([
-            ("feature", {"name": "Features", "showcontent": True}),
-            ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-            ("doc", {"name": "Improved Documentation", "showcontent": True}),
-            ("removal", {"name": "Deprecations and Removals",
-                         "showcontent": True}),
-            ("misc", {"name": "Misc", "showcontent": False}),
-        ])
+        'types': _default_types,
+        'template': template_fname,
+        'start_string': start_string,
+        'title_format': title_format,
     }
 
 
@@ -59,25 +83,34 @@ def load_config_toml(from_dir):
 
     if 'package' not in config:
         raise ValueError(
-            "The [towncrier] section has no required 'package' key.")
+            "The [tool.towncrier] section has no required 'package' key.")
 
     sections = OrderedDict()
     types = OrderedDict()
 
-    for x in config["section"]:
-        sections[x.get('name', '')] = x['path']
+    if "section" in config:
+        for x in config["section"]:
+            sections[x.get('name', '')] = x['path']
+    else:
+        sections[''] = ''
 
-    for x in config["type"]:
-        types[x["directory"]] = {"name": x["name"],
-                                 "showcontent": x["showcontent"]}
+    if "type" in config:
+        for x in config["type"]:
+            types[x["directory"]] = {"name": x["name"],
+                                     "showcontent": x["showcontent"]}
+    else:
+        types = _default_types
 
     return {
         'package': config.get('package'),
-        'package_dir': config.get('package_dir'),
-        'filename': config.get('filename'),
+        'package_dir': config.get('package_dir', '.'),
+        'filename': config.get('filename', 'NEWS.rst'),
         'directory': config.get('directory'),
         'sections': sections,
         'types': types,
+        'template': config.get('template', _template_fname),
+        'start_string': config.get('start_string', _start_string),
+        'title_format': config.get('title_format', _title_format),
     }
 
 

@@ -11,10 +11,7 @@ from __future__ import absolute_import, division
 import os
 
 
-TOWNCRIER_START = ".. towncrier release notes start\n"
-
-
-def append_to_newsfile(directory, filename, name_and_version, content):
+def append_to_newsfile(directory, filename, start_line, top_line, content):
 
     news_file = os.path.join(directory, filename)
 
@@ -24,9 +21,7 @@ def append_to_newsfile(directory, filename, name_and_version, content):
         with open(news_file, "r") as f:
             existing_content = f.read()
 
-    existing_content = existing_content.split(TOWNCRIER_START)
-
-    top_line = name_and_version + "\n" + "=" * len(name_and_version) + "\n"
+    existing_content = existing_content.split(start_line, 1)
 
     if top_line in existing_content:
         raise ValueError(
@@ -36,7 +31,7 @@ def append_to_newsfile(directory, filename, name_and_version, content):
 
         if len(existing_content) > 1:
             f.write(existing_content.pop(0).rstrip())
-            f.write("\n\n" + TOWNCRIER_START + "\n")
+            f.write("\n\n" + start_line + "\n")
 
         f.write(top_line)
         f.write(content)

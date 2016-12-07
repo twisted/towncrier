@@ -66,7 +66,7 @@ def split_fragments(fragments, definitions):
         for filename, content in section_fragments.items():
 
             content = normalise(content)
-            parts = filename.split(".")
+            parts = filename.split(u".")
 
             if len(parts) == 1:
                 continue
