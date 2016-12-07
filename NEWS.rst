@@ -2,6 +2,22 @@
 
 .. towncrier release notes start
 
+towncrier 16.12.0
+==========
+
+Bugfixes
+--------
+
+- Towncrier will now import the local version of the package and not the global
+  one. (#38)
+
+Features
+--------
+
+- Allow configration of the template file, title text and "magic comment" (#35)
+- Towncrier now uses pyproject.toml, as defined in PEP-518. (#40)
+
+
 towncrier 16.1.0 (2016-03-25)
 =============================
 
