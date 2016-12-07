@@ -66,7 +66,7 @@ def load_config_ini(from_dir):
         'sections': {'': ''},
         'types': _default_types,
         'template': template_fname,
-        'start_string': start_string,
+        'start_line': start_string,
         'title_format': title_format,
     }
 
@@ -109,7 +109,7 @@ def load_config_toml(from_dir):
         'sections': sections,
         'types': types,
         'template': config.get('template', _template_fname),
-        'start_string': config.get('start_string', _start_string),
+        'start_line': config.get('start_string', _start_string),
         'title_format': config.get('title_format', _title_format),
     }
 

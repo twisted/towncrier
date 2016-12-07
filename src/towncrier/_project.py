@@ -32,11 +32,6 @@ def _get_package(package_dir, package):
     # Don't leave trash in sys.path
     sys.path.pop(0)
 
-    try:
-        del sys.modules[package]
-    except KeyError:
-        pass
-
     # Step 2: uhhhhhhh
     # TBA
 
