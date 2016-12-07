@@ -27,6 +27,7 @@ setup(
         'Click',
         'incremental',
         'jinja2',
+        'toml',
     ],
     package_dir={"": "src"},
     packages=find_packages('src'),

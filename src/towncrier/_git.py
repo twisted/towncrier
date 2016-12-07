@@ -27,12 +27,15 @@ def remove_files(base_dir, fragment_directory, sections, fragments):
                     filename = str(ticket) + "." + category_name
                     to_remove.append(os.path.join(section_dir, filename))
 
+    if not to_remove:
+        return
+
     click.echo("I want to remove the following files:")
 
     for filename in to_remove:
         click.echo(filename)
 
-    if click.confirm('Is it okay if I remove those files?'):
+    if click.confirm('Is it okay if I remove those files?', default=True):
         call(["git", "rm", "--quiet"] + to_remove)
 
 

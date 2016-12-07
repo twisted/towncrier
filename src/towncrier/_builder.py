@@ -49,7 +49,7 @@ def find_fragments(base_directory, sections, fragment_directory):
 
         for fragment in files:
             with open(os.path.join(section_dir, fragment), "rb") as f:
-                file_content[fragment] = f.read().decode('utf8')
+                file_content[fragment] = f.read().decode('utf8', 'replace')
 
         content[key] = file_content
 
@@ -66,7 +66,7 @@ def split_fragments(fragments, definitions):
         for filename, content in section_fragments.items():
 
             content = normalise(content)
-            parts = filename.split(".")
+            parts = filename.split(u".")
 
             if len(parts) == 1:
                 continue

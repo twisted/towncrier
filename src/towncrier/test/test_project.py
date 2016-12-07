@@ -30,10 +30,10 @@ class VersionFetchingTests(TestCase):
         """
         temp = self.mktemp()
         os.makedirs(temp)
-        os.makedirs(os.path.join(temp, "mytestproj"))
+        os.makedirs(os.path.join(temp, "mytestproja"))
 
-        with open(os.path.join(temp, "mytestproj", "__init__.py"), "w") as f:
+        with open(os.path.join(temp, "mytestproja", "__init__.py"), "w") as f:
             f.write("__version__ = (1, 3, 12)")
 
-        version = get_version(temp, "mytestproj")
+        version = get_version(temp, "mytestproja")
         self.assertEqual(version, "1.3.12")

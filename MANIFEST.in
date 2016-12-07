@@ -1,7 +1,7 @@
 include *.rst
 include .coveragerc
 include LICENSE
-include towncrier.ini
+include pyproject.toml
 include tox.ini
 recursive-include src *.rst
 

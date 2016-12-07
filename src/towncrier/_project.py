@@ -18,7 +18,8 @@ def _get_package(package_dir, package):
 
     # Step 1: Try the dumbest and simplest thing that could possibly work.
     # Yes, that means importing it. Call the cops, I don't care.
-    sys.path = [package_dir] + sys.path
+
+    sys.path.insert(1, package_dir)
 
     try:
         module = import_module(package)

@@ -19,3 +19,4 @@ apidocs/
 .DS_Store
 .eggs
 .tox/
+.coverage.*
