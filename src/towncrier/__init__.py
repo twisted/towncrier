@@ -82,17 +82,13 @@ def __main(draft, directory, project_version, project_date):
         os.path.abspath(os.path.join(directory, config['package_dir'])),
         config['package'])
 
-    name_and_version = project_name + " " + project_version
-
     if project_date is None:
         project_date = _get_date()
-
-    if project_date != "":
-        name_and_version += " (" + project_date + ")"
 
     top_line = config['title_format'].format(
         name=project_name,
         version=project_version,
+        project_date=project_date
     )
 
     if draft:
