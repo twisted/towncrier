@@ -2,6 +2,15 @@
 
 .. towncrier release notes start
 
+towncrier 17.1.0
+==========
+
+Bugfixes
+--------
+
+- fix --date being ignored (#43)
+
+
 towncrier 16.12.0
 ==========
 
