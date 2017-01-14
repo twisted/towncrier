@@ -8,6 +8,15 @@ towncrier 16.12.0
 Bugfixes
 --------
 
+- fix --date being ignored (#43)
+
+
+towncrier 16.12.0
+==========
+
+Bugfixes
+--------
+
 - Towncrier will now import the local version of the package and not the global
   one. (#38)
 
