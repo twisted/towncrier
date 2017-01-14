@@ -2,7 +2,7 @@
 
 .. towncrier release notes start
 
-towncrier 16.12.0
+towncrier 17.1.0
 ==========
 
 Bugfixes
