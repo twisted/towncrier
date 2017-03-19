@@ -51,7 +51,7 @@ def __main(draft, directory, project_version, project_date):
             "templates/template.rst").decode('utf8')
     else:
         with open(config['template'], 'rb') as tmpl:
-            template = tmpl.read()
+            template = tmpl.read().decode('utf8')
 
     click.echo("Finding news fragments...", err=to_err)
 
