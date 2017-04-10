@@ -13,7 +13,7 @@ except ImportError:
 
 
 _start_string = '.. towncrier release notes start\n'
-_title_format = '{name} {version}\n==========\n'
+_title_format = '{name} {version} ({project_date})'
 _template_fname = None
 _default_types = OrderedDict([
     (u"feature", {"name": u"Features", "showcontent": True}),

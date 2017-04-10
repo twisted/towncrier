@@ -1,13 +1,11 @@
 {% for section, _ in sections|dictsort(by='key') %}
-{% set underline = "-" %}
-{% if section %}
-{{section}}
+{% set underline = "-" %}{% if section %}{{section}}
 {{ underline * section|length }}{% set underline = "~" %}
 
 {% endif %}
+
 {% if sections[section] %}
 {% for category, val in definitions|dictsort if category in sections[section]%}
-
 {{ definitions[category]['name'] }}
 {{ underline * definitions[category]['name']|length }}
 
@@ -15,21 +13,19 @@
 {% for text, values in sections[section][category]|dictsort(by='value') %}
 - {{ text }} ({{ values|sort|join(', ') }})
 {% endfor %}
+
 {% else %}
 - {{ sections[section][category]['']|sort|join(', ') }}
 
-
 {% endif %}
 {% if sections[section][category]|length == 0 %}
-
 No significant changes.
-
 
 {% else %}
 {% endif %}
+
 {% endfor %}
 {% else %}
-
 No significant changes.
 
 
