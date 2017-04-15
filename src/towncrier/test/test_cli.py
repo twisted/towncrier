@@ -31,10 +31,6 @@ class TestCli(TestCase):
 
             result = runner.invoke(_main, ['--draft', '--date', '01-01-2001'])
 
-        if result.exception:
-            print(result.output)
-            raise result.exception
-
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,
@@ -62,11 +58,6 @@ class TestCli(TestCase):
                 f.write('Adds levitation')
 
             result = runner.invoke(_main, ['--draft', '--date', '01-01-2001'])
-
-        if result.exception:
-            print(result.output)
-            print(result.exception)
-            raise result.exception
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
