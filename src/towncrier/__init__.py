@@ -90,6 +90,7 @@ def __main(draft, directory, project_version, project_date):
         version=project_version,
         project_date=project_date
     )
+    top_line += u"\n" + (u"=" * len(top_line)) + u"\n"
 
     if draft:
         click.echo(

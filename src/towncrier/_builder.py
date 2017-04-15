@@ -127,7 +127,7 @@ def render_fragments(template, fragments, definitions, major=u"-", minor=u"~"):
 
     res = jinja_template.render(sections=data, definitions=definitions)
 
-    for line in res.split("\n"):
+    for line in res.split(u"\n"):
         done.append(textwrap.fill(line, width=79, subsequent_indent=u"  "))
 
-    return "\n".join(done)
+    return u"\n".join(done).rstrip() + u"\n"

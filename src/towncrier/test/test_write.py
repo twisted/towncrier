@@ -45,6 +45,7 @@ Features
 - Foo added. (#2, #72)
 - Stuff! (#4)
 
+
 Misc
 ----
 
@@ -137,6 +138,7 @@ Features
   Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo!
   Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo!
   Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! Foo! (#99)
+
 
 Misc
 ----

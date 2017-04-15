@@ -13,8 +13,8 @@ def remove_files(base_dir, fragment_directory, sections, fragments):
     for section_name, categories in fragments.items():
 
         if fragment_directory is not None:
-            section_dir = os.path.join(base_dir, fragment_directory,
-                                       sections[section_name])
+            section_dir = os.path.join(base_dir, sections[section_name],
+                                       fragment_directory)
         else:
             section_dir = os.path.join(base_dir, sections[section_name])
 
@@ -25,7 +25,8 @@ def remove_files(base_dir, fragment_directory, sections, fragments):
                 for ticket in tickets:
 
                     filename = str(ticket) + "." + category_name
-                    to_remove.append(os.path.join(section_dir, filename))
+                    to_remove.append(os.path.join(
+                        section_dir, filename))
 
     if not to_remove:
         return
