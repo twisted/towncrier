@@ -2,6 +2,15 @@
 
 .. towncrier release notes start
 
+towncrier 17.4.0 (2017-04-15)
+=============================
+
+Misc
+----
+
+- #46
+
+
 towncrier 17.1.0
 ==========
 
