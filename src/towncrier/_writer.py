@@ -36,5 +36,5 @@ def append_to_newsfile(directory, filename, start_line, top_line, content):
         f.write(top_line)
         f.write(content)
         if existing_content[0]:
-            f.write("\n")
+            f.write("\n\n")
         f.write(existing_content[0].lstrip())

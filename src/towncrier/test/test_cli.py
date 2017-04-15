@@ -29,7 +29,7 @@ class TestCli(TestCase):
             with open('foo/newsfragments/123.feature', 'w') as f:
                 f.write('Adds levitation')
 
-            result = runner.invoke(_main, ['--draft'])
+            result = runner.invoke(_main, ['--draft', '--date', '01-01-2001'])
 
         if result.exception:
             print(result.output)
@@ -40,7 +40,8 @@ class TestCli(TestCase):
             result.output,
             u'Loading template...\nFinding news fragments...\nRendering news '
             u'fragments...\nDraft only -- nothing has been written.\nWhat is '
-            u'seen below is what would be written.\n\nFoo 1.2.3\n==========\n'
+            u'seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)'
+            u'\n======================\n'
             u'\n\nFeatures\n--------\n\n- Adds levitation (#123)\n\n'
         )
 
@@ -60,7 +61,7 @@ class TestCli(TestCase):
             with open('foo/newsfragments/123.feature', 'w') as f:
                 f.write('Adds levitation')
 
-            result = runner.invoke(_main, ['--draft'])
+            result = runner.invoke(_main, ['--draft', '--date', '01-01-2001'])
 
         if result.exception:
             print(result.output)
@@ -72,6 +73,7 @@ class TestCli(TestCase):
             result.output,
             u'Loading template...\nFinding news fragments...\nRendering news '
             u'fragments...\nDraft only -- nothing has been written.\nWhat is '
-            u'seen below is what would be written.\n\nFoo 1.2.3\n==========\n'
+            u'seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)'
+            u'\n======================\n'
             u'\n\nFeatures\n--------\n\n- Adds levitation (#123)\n\n'
         )

@@ -130,4 +130,4 @@ def render_fragments(template, fragments, definitions, major=u"-", minor=u"~"):
     for line in res.split("\n"):
         done.append(textwrap.fill(line, width=79, subsequent_indent=u"  "))
 
-    return "\n".join(done)
+    return u"\n".join(done).rstrip() + u"\n"
