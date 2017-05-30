@@ -7,7 +7,8 @@ import os
 import click
 
 
-def remove_files(base_dir, fragment_directory, sections, fragments):
+def remove_files(base_dir, fragment_directory, sections, fragments,
+                 answer_yes):
     to_remove = []
 
     for section_name, categories in fragments.items():
@@ -31,12 +32,16 @@ def remove_files(base_dir, fragment_directory, sections, fragments):
     if not to_remove:
         return
 
-    click.echo("I want to remove the following files:")
+    if answer_yes:
+        click.echo("Removing the following files:")
+    else:
+        click.echo("I want to remove the following files:")
 
     for filename in to_remove:
         click.echo(filename)
 
-    if click.confirm('Is it okay if I remove those files?', default=True):
+    if answer_yes or click.confirm('Is it okay if I remove those files?',
+                                   default=True):
         call(["git", "rm", "--quiet"] + to_remove)
 
 

@@ -32,11 +32,13 @@ def _get_date():
 @click.option('--dir', 'directory', default='.')
 @click.option('--version', 'project_version', default=None)
 @click.option('--date', 'project_date', default=None)
-def _main(draft, directory, project_version, project_date):
-    return __main(draft, directory, project_version, project_date)
+@click.option('--yes', 'answer_yes', default=False, flag_value=True,
+              help="Do not ask for confirmation to remove news fragments.")
+def _main(draft, directory, project_version, project_date, answer_yes):
+    return __main(draft, directory, project_version, project_date, answer_yes)
 
 
-def __main(draft, directory, project_version, project_date):
+def __main(draft, directory, project_version, project_date, answer_yes):
     """
     The main entry point.
     """
@@ -111,7 +113,8 @@ def __main(draft, directory, project_version, project_date):
 
         click.echo("Removing news fragments...", err=to_err)
         remove_files(
-            base_directory, fragment_directory, config['sections'], fragments)
+            base_directory, fragment_directory, config['sections'],
+            fragments, answer_yes)
 
         click.echo("Done!", err=to_err)
 

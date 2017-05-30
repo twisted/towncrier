@@ -1,7 +1,8 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
-
 import os
+from subprocess import call
+
 from twisted.trial.unittest import TestCase
 
 from click.testing import CliRunner
@@ -68,3 +69,33 @@ class TestCli(TestCase):
             u'\n======================\n'
             u'\n\nFeatures\n--------\n\n- Adds levitation (#123)\n\n'
         )
+
+    def test_no_confirmation(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open('pyproject.toml', 'w') as f:
+                f.write(
+                    '[tool.towncrier]\n'
+                    'package = "foo"\n'
+                )
+            os.mkdir('foo')
+            with open('foo/__init__.py', 'w') as f:
+                f.write('__version__ = "1.2.3"\n')
+            os.mkdir('foo/newsfragments')
+            fragment_path = 'foo/newsfragments/123.feature'
+            with open(fragment_path, 'w') as f:
+                f.write('Adds levitation')
+
+            call(["git", "init"])
+            call(["git", "config", "user.name", "user"])
+            call(["git", "config", "user.email", "user@example.com"])
+            call(["git", "add", "."])
+            call(["git", "commit", "-m", "Initial Commit"])
+
+            result = runner.invoke(_main, ['--date', '01-01-2001', '--yes'])
+
+            self.assertEqual(0, result.exit_code)
+            path = 'NEWS.rst'
+            self.assertTrue(os.path.isfile(path))
+            self.assertFalse(os.path.isfile(fragment_path))
