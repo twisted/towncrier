@@ -93,7 +93,36 @@ def split_fragments(fragments, definitions):
     return output
 
 
-def render_fragments(template, fragments, definitions, underlines):
+def issue_key(issue):
+    # We want integer issues to sort as integers, and we also want string
+    # issues to sort as strings. We arbitrarily put string issues before
+    # integer issues (hopefully no-one uses both at once).
+    try:
+        return (int(issue), u"")
+    except Exception:
+        # Maybe we should sniff strings like "gh-10" -> (10, "gh-10")?
+        return (-1, issue)
+
+
+def entry_key(entry):
+    _, issues = entry
+    return [issue_key(issue) for issue in issues]
+
+
+def render_issue(issue_format, issue):
+    if issue_format is None:
+        try:
+            int(issue)
+            return u"#" + issue
+        except Exception:
+            return issue
+    else:
+        return issue_format.format(issue=issue)
+
+
+def render_fragments(
+        template, issue_format, fragments, definitions, underlines,
+):
     """
     Render the fragments into a news file.
     """
@@ -107,19 +136,31 @@ def render_fragments(template, fragments, definitions, underlines):
         data[section_name] = {}
 
         for category_name, category_value in section_value.items():
+            # Suppose we start with an ordering like this:
+            #
+            # - Fix the thing (#7, #123, #2)
+            # - Fix the other thing (#1)
+
+            # First we sort the issues inside each line:
+            #
+            # - Fix the thing (#2, #7, #123)
+            # - Fix the other thing (#1)
+            entries = []
+            for text, issues in category_value.items():
+                entries.append((text, sorted(issues, key=issue_key)))
+
+            # Then we sort the lines:
+            #
+            # - Fix the other thing (#1)
+            # - Fix the thing (#2, #7, #123)
+            entries.sort(key=entry_key)
+
+            # Then we put these nicely sorted entries back in an ordered dict
+            # for the template, after formatting each issue number
             categories = OrderedDict()
-
-            for text, tickets in category_value.items():
-                ticket_numbers = []
-
-                for ticket in tickets:
-                    try:
-                        int(ticket)
-                        ticket_numbers.append(u"#" + ticket)
-                    except:
-                        ticket_numbers.append(ticket)
-
-                categories[text] = ticket_numbers
+            for text, issues in entries:
+                rendered = [render_issue(issue_format, i) for i in issues]
+                categories[text] = rendered
 
             data[section_name][category_name] = categories
 

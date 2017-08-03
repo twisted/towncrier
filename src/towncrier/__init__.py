@@ -73,7 +73,8 @@ def __main(draft, directory, project_version, project_date):
     fragments = split_fragments(fragments, definitions)
     rendered = render_fragments(
         # The 0th underline is used for the top line
-        template, fragments, definitions, config['underlines'][1:])
+        template, config['issue_format'], fragments, definitions,
+        config['underlines'][1:])
 
     if not project_version:
         project_version = get_version(
