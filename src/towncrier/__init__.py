@@ -71,7 +71,8 @@ def __main(draft, directory, project_version, project_date):
     click.echo("Rendering news fragments...", err=to_err)
 
     fragments = split_fragments(fragments, definitions)
-    rendered = render_fragments(template, fragments, definitions)
+    rendered = render_fragments(
+        template, config['issue_format'], fragments, definitions)
 
     if not project_version:
         project_version = get_version(
