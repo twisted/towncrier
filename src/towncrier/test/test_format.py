@@ -83,12 +83,16 @@ class FormatterTests(TestCase):
         """
         fragments = {
             "": {
+                # asciibetical sorting will do 1, 142, 9
+                # we want 1, 9, 142 instead
                 "142.misc": u"",
                 "1.misc": u"",
+                "9.misc": u"",
                 "bar.misc": u"",
                 "4.feature": u"Stuff!",
                 "2.feature": u"Foo added.",
                 "72.feature": u"Foo added.",
+                "9.feature": u"Foo added.",
                 "baz.feature": u"Fun!",
             },
             "Web": {
@@ -107,15 +111,15 @@ class FormatterTests(TestCase):
 Features
 --------
 
-- Foo added. (#2, #72)
-- Stuff! (#4)
 - Fun! (baz)
+- Foo added. (#2, #9, #72)
+- Stuff! (#4)
 
 
 Misc
 ----
 
-- #1, #142, bar
+- bar, #1, #9, #142
 
 
 Names
@@ -138,5 +142,43 @@ Bugfixes
             "templates/template.rst").decode('utf8')
 
         fragments = split_fragments(fragments, definitions)
-        output = render_fragments(template, fragments, definitions)
+        output = render_fragments(template, None, fragments, definitions)
+        self.assertEqual(output, expected_output)
+
+    def test_issue_format(self):
+        """
+        issue_format option can be used to format issue text.
+        And sorting happens before formatting, so numerical issues are still
+        ordered numerically even if that doesn't match asciibetical order on
+        the final text.
+        """
+        fragments = {
+            "": {
+                # asciibetical sorting will do 1, 142, 9
+                # we want 1, 9, 142 instead
+                "142.misc": u"",
+                "1.misc": u"",
+                "9.misc": u"",
+                "bar.misc": u"",
+            }
+        }
+
+        definitions = OrderedDict([
+            ("misc", {"name": "Misc", "showcontent": False}),
+        ])
+
+        expected_output = (u"""
+Misc
+----
+
+- xxbar, xx1, xx9, xx142
+""")
+
+        template = pkg_resources.resource_string(
+            "towncrier",
+            "templates/template.rst").decode('utf8')
+
+        fragments = split_fragments(fragments, definitions)
+        output = render_fragments(
+            template, u"xx{issue}", fragments, definitions)
         self.assertEqual(output, expected_output)

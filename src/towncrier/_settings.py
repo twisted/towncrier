@@ -54,6 +54,11 @@ def load_config_ini(from_dir):
         title_format = _title_format
 
     try:
+        issue_format = config.get('towncrier', 'issue_format')
+    except configparser.NoOptionError:
+        issue_format = None
+
+    try:
         template_fname = config.get('towncrier', 'template')
     except configparser.NoOptionError:
         template_fname = None
@@ -68,6 +73,7 @@ def load_config_ini(from_dir):
         'template': template_fname,
         'start_line': start_string,
         'title_format': title_format,
+        'issue_format': issue_format,
     }
 
 
@@ -113,6 +119,7 @@ def load_config_toml(from_dir):
         'template': config.get('template', _template_fname),
         'start_line': config.get('start_string', _start_string),
         'title_format': config.get('title_format', _title_format),
+        'issue_format': config.get('issue_format'),
     }
 
 
