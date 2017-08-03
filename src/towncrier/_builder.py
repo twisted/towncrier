@@ -93,7 +93,7 @@ def split_fragments(fragments, definitions):
     return output
 
 
-def render_fragments(template, fragments, definitions, major=u"-", minor=u"~"):
+def render_fragments(template, fragments, definitions, underlines):
     """
     Render the fragments into a news file.
     """
@@ -125,7 +125,8 @@ def render_fragments(template, fragments, definitions, major=u"-", minor=u"~"):
 
     done = []
 
-    res = jinja_template.render(sections=data, definitions=definitions)
+    res = jinja_template.render(
+        sections=data, definitions=definitions, underlines=underlines)
 
     for line in res.split(u"\n"):
         done.append(textwrap.fill(line, width=79, subsequent_indent=u"  "))

@@ -23,6 +23,7 @@ _default_types = OrderedDict([
                   "showcontent": True}),
     (u"misc", {"name": u"Misc", "showcontent": False}),
 ])
+_underlines = ["=", "-", "~"]
 
 
 def load_config_ini(from_dir):
@@ -68,6 +69,9 @@ def load_config_ini(from_dir):
         'template': template_fname,
         'start_line': start_string,
         'title_format': title_format,
+        # .ini has no good way to represent a list, and pyproject.toml is the
+        # future anyway, so this feature is pyproject.toml-only.
+        'underlines': _underlines,
     }
 
 
@@ -113,6 +117,7 @@ def load_config_toml(from_dir):
         'template': config.get('template', _template_fname),
         'start_line': config.get('start_string', _start_string),
         'title_format': config.get('title_format', _title_format),
+        'underlines': config.get('underlines', _underlines)
     }
 
 

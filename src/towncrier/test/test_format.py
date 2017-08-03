@@ -138,5 +138,39 @@ Bugfixes
             "templates/template.rst").decode('utf8')
 
         fragments = split_fragments(fragments, definitions)
-        output = render_fragments(template, fragments, definitions)
+        output = render_fragments(template, fragments, definitions, ["-", "~"])
         self.assertEqual(output, expected_output)
+
+        # Check again with non-default underlines
+        expected_output_weird_underlines = (u"""
+Features
+********
+
+- Foo added. (#2, #72)
+- Stuff! (#4)
+- Fun! (baz)
+
+
+Misc
+****
+
+- #1, #142, bar
+
+
+Names
+*****
+
+No significant changes.
+
+
+Web
+***
+
+Bugfixes
+^^^^^^^^
+
+- Web fixed. (#3)
+""")
+
+        output = render_fragments(template, fragments, definitions, ["*", "^"])
+        self.assertEqual(output, expected_output_weird_underlines)
