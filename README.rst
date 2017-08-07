@@ -36,15 +36,12 @@ Install from PyPI::
    It is usable by projects written in other languages, provided you give it the version of the project when invoking it.
    For Python 2/3 compatible projects, the version can be discovered automatically.
 
-In your project root, add a ``towncrier.ini`` file, with the contents::
+In your project root, add a ``pyproject.toml`` file, with the contents::
 
-    [towncrier]
-    ; Your project name
-    package = mypackage
-    ; Where your project is kept -- current dir by default
-    package_dir = src/
-    ; The filename that it will write to, relative to the current dir
-    filename = NEWS.rst
+    [tool.towncrier]
+        package = "mypackage"
+        package_dir = "src"
+        filename = "NEWS.rst"
 
 Then put news fragments (see "News Fragments" below) into a "newsfragments" directory under your package (so, if your project is named "myproject", and it's kept under ``src``, your newsfragments dir would be ``src/myproject/newsfragments/``).
 

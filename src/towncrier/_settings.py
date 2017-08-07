@@ -6,11 +6,6 @@ import toml
 
 from collections import OrderedDict
 
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-
 
 _start_string = u'.. towncrier release notes start\n'
 _title_format = u'{name} {version} ({project_date})'
@@ -26,62 +21,7 @@ _default_types = OrderedDict([
 _underlines = ["=", "-", "~"]
 
 
-def load_config_ini(from_dir):
-
-    config = configparser.ConfigParser(
-        {
-            'package_dir': '.',
-            'filename': 'NEWS.rst',
-            'directory': None,
-        }
-    )
-    config.read(os.path.join(from_dir, "towncrier.ini"))
-
-    if 'towncrier' not in config.sections():
-        raise ValueError("No [towncrier] section.")
-
-    if 'package' not in config.options('towncrier'):
-        raise ValueError(
-            "The [towncrier] section has no required 'package' key.")
-
-    try:
-        start_string = config.get('towncrier', 'start_string')
-    except configparser.NoOptionError:
-        start_string = _start_string
-
-    try:
-        title_format = config.get('towncrier', 'title_format')
-    except configparser.NoOptionError:
-        title_format = _title_format
-
-    try:
-        issue_format = config.get('towncrier', 'issue_format')
-    except configparser.NoOptionError:
-        issue_format = None
-
-    try:
-        template_fname = config.get('towncrier', 'template')
-    except configparser.NoOptionError:
-        template_fname = None
-
-    return {
-        'package': config.get('towncrier', 'package'),
-        'package_dir': config.get('towncrier', 'package_dir'),
-        'filename': config.get('towncrier', 'filename'),
-        'directory': config.get('towncrier', 'directory'),
-        'sections': {'': ''},
-        'types': _default_types,
-        'template': template_fname,
-        'start_line': start_string,
-        'title_format': title_format,
-        'issue_format': issue_format,
-        # .ini has no good way to represent a list, and pyproject.toml is the
-        # future anyway, so this feature is pyproject.toml-only.
-        'underlines': _underlines,
-    }
-
-
-def load_config_toml(from_dir):
+def load_config(from_dir):
     fn = os.path.join(from_dir, "pyproject.toml")
     if not os.path.exists(fn):
         return None
@@ -126,10 +66,3 @@ def load_config_toml(from_dir):
         'issue_format': config.get('issue_format'),
         'underlines': config.get('underlines', _underlines)
     }
-
-
-def load_config(from_dir):
-    res = load_config_toml(from_dir)
-    if res is None:
-        return load_config_ini(from_dir)
-    return res
