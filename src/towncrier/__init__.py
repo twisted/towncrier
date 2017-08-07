@@ -71,7 +71,10 @@ def __main(draft, directory, project_version, project_date):
     click.echo("Rendering news fragments...", err=to_err)
 
     fragments = split_fragments(fragments, definitions)
-    rendered = render_fragments(template, fragments, definitions)
+    rendered = render_fragments(
+        # The 0th underline is used for the top line
+        template, config['issue_format'], fragments, definitions,
+        config['underlines'][1:])
 
     if not project_version:
         project_version = get_version(
@@ -90,7 +93,7 @@ def __main(draft, directory, project_version, project_date):
         version=project_version,
         project_date=project_date
     )
-    top_line += u"\n" + (u"=" * len(top_line)) + u"\n"
+    top_line += u"\n" + (config['underlines'][0] * len(top_line)) + u"\n"
 
     if draft:
         click.echo(
