@@ -81,8 +81,8 @@ class FormatterTests(TestCase):
         Basic functionality -- getting a bunch of news fragments and formatting
         them into a rST file -- works.
         """
-        fragments = {
-            "": {
+        fragments = OrderedDict([
+            ("", {
                 # asciibetical sorting will do 1, 142, 9
                 # we want 1, 9, 142 instead
                 "142.misc": u"",
@@ -94,12 +94,12 @@ class FormatterTests(TestCase):
                 "72.feature": u"Foo added.",
                 "9.feature": u"Foo added.",
                 "baz.feature": u"Fun!",
-            },
-            "Web": {
+            }),
+            ("Names", {}),
+            ("Web", {
                 "3.bugfix": u"Web fixed.",
-            },
-            "Names": {}
-        }
+            }),
+        ])
 
         definitions = OrderedDict([
             ("feature", {"name": "Features", "showcontent": True}),
