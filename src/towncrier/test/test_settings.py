@@ -26,6 +26,7 @@ package = foobar
         self.assertEqual(config['package'], "foobar")
         self.assertEqual(config['package_dir'], ".")
         self.assertEqual(config['filename'], "NEWS.rst")
+        self.assertEqual(config['underlines'], ["=", "-", "~"])
 
 
 class TomlSettingsTests(TestCase):
@@ -46,3 +47,4 @@ package = "foobar"
         self.assertEqual(config['package'], "foobar")
         self.assertEqual(config['package_dir'], ".")
         self.assertEqual(config['filename'], "NEWS.rst")
+        self.assertEqual(config['underlines'], ["=", "-", "~"])

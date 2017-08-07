@@ -1,6 +1,6 @@
 {% for section, _ in sections|dictsort(by='key') %}
-{% set underline = "-" %}{% if section %}{{section}}
-{{ underline * section|length }}{% set underline = "~" %}
+{% set underline = underlines[0] %}{% if section %}{{section}}
+{{ underline * section|length }}{% set underline = underlines[1] %}
 
 {% endif %}
 
@@ -10,12 +10,12 @@
 {{ underline * definitions[category]['name']|length }}
 
 {% if definitions[category]['showcontent'] %}
-{% for text, values in sections[section][category]|dictsort(by='value') %}
-- {{ text }} ({{ values|sort|join(', ') }})
+{% for text, values in sections[section][category].items() %}
+- {{ text }} ({{ values|join(', ') }})
 {% endfor %}
 
 {% else %}
-- {{ sections[section][category]['']|sort|join(', ') }}
+- {{ sections[section][category]['']|join(', ') }}
 
 {% endif %}
 {% if sections[section][category]|length == 0 %}
