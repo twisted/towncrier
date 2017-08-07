@@ -146,8 +146,8 @@ class TestCli(TestCase):
             u'Loading template...\nFinding news fragments...\nRendering news '
             u'fragments...\nDraft only -- nothing has been written.\nWhat is '
             u'seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)'
-            u'\n======================\n'
-            + dedent("""
+            u'\n======================\n' +
+            dedent("""
                   section-a
                   ---------
 
@@ -189,8 +189,8 @@ class TestCli(TestCase):
             u'Loading template...\nFinding news fragments...\nRendering news '
             u'fragments...\nDraft only -- nothing has been written.\nWhat is '
             u'seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)'
-            u'\n======================\n'
-            + dedent("""
+            u'\n======================\n' +
+            dedent("""
                   section-b
                   ---------
 
