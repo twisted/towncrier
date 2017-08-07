@@ -218,3 +218,62 @@ Misc
         output = render_fragments(
             template, u"xx{issue}", fragments, definitions, ["-", "~"])
         self.assertEqual(output, expected_output)
+
+    def test_line_wrapping(self):
+        """
+        Output is nicely wrapped, but doesn't break up words (which can mess
+        up URLs)
+        """
+        self.maxDiff = None
+
+        fragments = {
+            "": {
+                "1.feature": u"""
+                I want a girl with a short skirt and a looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong newsfragment.
+                """,  # NOQA
+                "2.feature": u"https://google.com/q=?" + u"-" * 100,
+                "3.feature": u"a " * 80,
+                "4.feature": u"""
+                w
+
+                h
+
+                o
+
+                o
+
+                p
+
+                s
+                """
+            },
+        }
+
+        definitions = OrderedDict([
+            ("feature", {"name": "Features", "showcontent": True}),
+        ])
+
+        expected_output = (u"""
+Features
+--------
+
+- I want a girl with a short skirt and a
+  looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong
+  newsfragment. (#1)
+-
+  https://google.com/q=?----------------------------------------------------------------------------------------------------
+  (#2)
+- a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
+  a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
+  a a (#3)
+- w h o o p s (#4)
+""")
+
+        template = pkg_resources.resource_string(
+            "towncrier",
+            "templates/template.rst").decode('utf8')
+
+        fragments = split_fragments(fragments, definitions)
+        output = render_fragments(
+            template, None, fragments, definitions, ["-", "~"])
+        self.assertEqual(output, expected_output)
