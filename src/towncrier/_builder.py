@@ -34,7 +34,7 @@ def find_fragments(base_directory, sections, fragment_directory):
     """
     Sections are a dictonary of section names to paths.
     """
-    content = {}
+    content = OrderedDict()
 
     for key, val in sections.items():
 
@@ -58,7 +58,7 @@ def find_fragments(base_directory, sections, fragment_directory):
 
 def split_fragments(fragments, definitions):
 
-    output = {}
+    output = OrderedDict()
 
     for section_name, section_fragments in fragments.items():
         section = {}
@@ -129,11 +129,11 @@ def render_fragments(
 
     jinja_template = Template(template, trim_blocks=True)
 
-    data = {}
+    data = OrderedDict()
 
     for section_name, section_value in fragments.items():
 
-        data[section_name] = {}
+        data[section_name] = OrderedDict()
 
         for category_name, category_value in section_value.items():
             # Suppose we start with an ordering like this:

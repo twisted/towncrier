@@ -16,19 +16,19 @@ class WritingTests(TestCase):
 
     def test_append_at_top(self):
 
-        fragments = {
-            "": {
+        fragments = OrderedDict([
+            ("", {
                 "142.misc": u"",
                 "1.misc": u"",
                 "4.feature": u"Stuff!",
                 "2.feature": u"Foo added.",
                 "72.feature": u"Foo added.",
-            },
-            "Web": {
+            }),
+            ("Names", {}),
+            ("Web", {
                 "3.bugfix": u"Web fixed.",
-            },
-            "Names": {}
-        }
+            }),
+        ])
 
         definitions = OrderedDict([
             ("feature", {"name": "Features", "showcontent": True}),
@@ -100,20 +100,20 @@ Old text.
         If there is a comment with C{.. towncrier release notes start},
         towncrier will add the version notes after it.
         """
-        fragments = {
-            "": {
+        fragments = OrderedDict([
+            ("", {
                 "142.misc": u"",
                 "1.misc": u"",
                 "4.feature": u"Stuff!",
                 "2.feature": u"Foo added.",
                 "72.feature": u"Foo added.",
                 "99.feature": u"Foo! " * 100
-            },
-            "Web": {
+            }),
+            ("Names", {}),
+            ("Web", {
                 "3.bugfix": u"Web fixed.",
-            },
-            "Names": {}
-        }
+            }),
+        ])
 
         definitions = OrderedDict([
             ("feature", {"name": "Features", "showcontent": True}),
