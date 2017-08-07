@@ -1,0 +1,1 @@
+`towncrier.ini` config file support has been removed in preference to `pyproject.toml` configuration.
