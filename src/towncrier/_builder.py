@@ -71,7 +71,7 @@ def split_fragments(fragments, definitions):
             if len(parts) == 1:
                 continue
             else:
-                ticket, category = parts
+                ticket, category = parts[:2]
 
             if category not in definitions:
                 continue

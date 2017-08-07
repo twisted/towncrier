@@ -70,6 +70,9 @@ class TestCli(TestCase):
             os.mkdir('foo/newsfragments')
             with open('foo/newsfragments/123.feature', 'w') as f:
                 f.write('Adds levitation')
+            # Towncrier ignores .rst extension
+            with open('foo/newsfragments/124.feature.rst', 'w') as f:
+                f.write('Extends levitation')
 
             result = runner.invoke(_main, ['--draft', '--date', '01-01-2001'])
 
@@ -80,7 +83,8 @@ class TestCli(TestCase):
             u'fragments...\nDraft only -- nothing has been written.\nWhat is '
             u'seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)'
             u'\n======================\n'
-            u'\n\nFeatures\n--------\n\n- Adds levitation (#123)\n\n'
+            u'\n\nFeatures\n--------\n\n- Adds levitation (#123)\n'
+            u'- Extends levitation (#124)\n\n'
         )
 
     def test_sorting(self):
