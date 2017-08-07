@@ -23,3 +23,5 @@ matrix:
   include:
     - python: 3.5
       env: TOX_ENV=py35-tests
+    - python: 3.6
+      env: TOX_ENV=py36-tests
