@@ -51,7 +51,7 @@ def __main(comparewith, directory):
     fragments_in_branch = fragments & files
 
     if not fragments_in_branch:
-        click.echo("No newsfragments found.")
+        click.echo("No new newsfragments found on this branch.")
         sys.exit(1)
     else:
         click.echo("Found:")
