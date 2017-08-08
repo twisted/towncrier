@@ -48,11 +48,16 @@ def __main(comparewith, directory):
     for section in [x.keys() for x in find_fragments(directory, config).values()]:
         fragments.update(section)
 
+    fragments_in_branch = fragments & files
 
-
-    print(fragments)
-
-    print(fragments & files)
+    if not fragments_in_branch:
+        click.echo("No newsfragments found.")
+        sys.exit(1)
+    else:
+        click.echo("Found:")
+        for n, fragment in enumerate(fragments_in_branch, start=1):
+            click.echo("{}. {}".format(n, fragment))
+        sys.exit(0)
 
 
 
