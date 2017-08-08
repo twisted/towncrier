@@ -64,5 +64,6 @@ def load_config(from_dir):
         'start_line': config.get('start_string', _start_string),
         'title_format': config.get('title_format', _title_format),
         'issue_format': config.get('issue_format'),
-        'underlines': config.get('underlines', _underlines)
+        'underlines': config.get('underlines', _underlines),
+        'fragment_directory': config.get('fragment_directory', 'newsfragments')
     }

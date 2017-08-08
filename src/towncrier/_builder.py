@@ -42,7 +42,7 @@ def find_fragments(base_directory, config):
     else:
         base_directory = os.path.abspath(os.path.join(
             base_directory, config['package_dir'], config['package']))
-        fragment_directory = "newsfragments"
+        fragment_directory = config['fragment_directory']
 
     content = OrderedDict()
 
@@ -77,7 +77,7 @@ def split_fragments(fragments, definitions):
         for filename, content in section_fragments.items():
 
             content = normalise(content)
-            parts = filename.split(u".")
+            parts = os.path.basename(filename).split(u".")
 
             if len(parts) == 1:
                 continue

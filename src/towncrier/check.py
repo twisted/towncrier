@@ -10,6 +10,7 @@ from subprocess import check_output, STDOUT
 from ._settings import load_config
 from ._builder import find_fragments
 
+
 def _run(args, **kwargs):
     kwargs['stderr'] = STDOUT
     return check_output(args, **kwargs)
@@ -27,8 +28,9 @@ def __main(comparewith, directory):
     base_directory = os.path.abspath(directory)
     config = load_config(directory)
 
-    files_changed = _run(["git", "diff", "--name-only", comparewith + "..."],
-                         cwd=base_directory).decode(sys.stdout.encoding).strip()
+    files_changed = _run(
+        ["git", "diff", "--name-only", comparewith + "..."],
+        cwd=base_directory).decode(sys.stdout.encoding).strip()
 
     if not files_changed:
         click.echo("On trunk, or no diffs, so no newsfragment required.")
@@ -45,7 +47,8 @@ def __main(comparewith, directory):
 
     fragments = set()
 
-    for section in [x.keys() for x in find_fragments(directory, config).values()]:
+    for section in [x.keys() for x in find_fragments(
+            directory, config).values()]:
         fragments.update(section)
 
     fragments_in_branch = fragments & files
@@ -58,8 +61,6 @@ def __main(comparewith, directory):
         for n, fragment in enumerate(fragments_in_branch, start=1):
             click.echo("{}. {}".format(n, fragment))
         sys.exit(0)
-
-
 
 
 if __name__ == "__main__":

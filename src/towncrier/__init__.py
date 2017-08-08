@@ -42,7 +42,7 @@ def __main(draft, directory, project_version, project_date, answer_yes):
     """
     The main entry point.
     """
-    directory = os.path.abspath(directory)
+    base_directory = os.path.abspath(directory)
     config = load_config(directory)
     to_err = draft
 
@@ -60,19 +60,19 @@ def __main(draft, directory, project_version, project_date, answer_yes):
 
     click.echo("Rendering news fragments...", err=to_err)
     definitions = config['types']
-    fragments = split_fragments(fragments, definitions)
+    splitted_fragments = split_fragments(fragments, definitions)
     rendered = render_fragments(
         # The 0th underline is used for the top line
-        template, config['issue_format'], fragments, definitions,
+        template, config['issue_format'], splitted_fragments, definitions,
         config['underlines'][1:])
 
     if not project_version:
         project_version = get_version(
-            os.path.abspath(os.path.join(directory, config['package_dir'])),
+            os.path.join(base_directory, config['package_dir']),
             config['package'])
 
     project_name = get_project_name(
-        os.path.abspath(os.path.join(directory, config['package_dir'])),
+        os.path.join(base_directory, config['package_dir']),
         config['package'])
 
     if project_date is None:
@@ -104,7 +104,7 @@ def __main(draft, directory, project_version, project_date, answer_yes):
 
         click.echo("Removing news fragments...", err=to_err)
         remove_files(
-            base_directory, fragment_directory, config['sections'],
+            directory, config['fragment_directory'], config['sections'],
             fragments, answer_yes)
 
         click.echo("Done!", err=to_err)

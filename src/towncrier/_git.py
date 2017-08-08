@@ -9,25 +9,10 @@ import click
 
 def remove_files(base_dir, fragment_directory, sections, fragments,
                  answer_yes):
-    to_remove = []
+    to_remove = set()
 
-    for section_name, categories in fragments.items():
-
-        if fragment_directory is not None:
-            section_dir = os.path.join(base_dir, sections[section_name],
-                                       fragment_directory)
-        else:
-            section_dir = os.path.join(base_dir, sections[section_name])
-
-        for category_name, category_items in categories.items():
-
-            for tickets in category_items.values():
-
-                for ticket in tickets:
-
-                    filename = str(ticket) + "." + category_name
-                    to_remove.append(os.path.join(
-                        section_dir, filename))
+    for section in [x.keys() for x in fragments.values()]:
+        to_remove.update(section)
 
     if not to_remove:
         return
@@ -42,7 +27,7 @@ def remove_files(base_dir, fragment_directory, sections, fragments,
 
     if answer_yes or click.confirm('Is it okay if I remove those files?',
                                    default=True):
-        call(["git", "rm", "--quiet"] + to_remove)
+        call(["git", "rm", "--quiet"] + list(set(to_remove)))
 
 
 def stage_newsfile(directory, filename):
