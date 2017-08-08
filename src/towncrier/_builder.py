@@ -30,10 +30,20 @@ def normalise(text):
     return text
 
 
-def find_fragments(base_directory, sections, fragment_directory):
+def find_fragments(base_directory, config):
     """
     Sections are a dictonary of section names to paths.
     """
+    sections = config["sections"]
+
+    if config.get("directory"):
+        base_directory = os.path.abspath(config["directory"])
+        fragment_directory = None
+    else:
+        base_directory = os.path.abspath(os.path.join(
+            base_directory, config['package_dir'], config['package']))
+        fragment_directory = "newsfragments"
+
     content = OrderedDict()
 
     for key, val in sections.items():
@@ -48,8 +58,9 @@ def find_fragments(base_directory, sections, fragment_directory):
         file_content = {}
 
         for fragment in files:
-            with open(os.path.join(section_dir, fragment), "rb") as f:
-                file_content[fragment] = f.read().decode('utf8', 'replace')
+            path = os.path.abspath(os.path.join(section_dir, fragment))
+            with open(path, "rb") as f:
+                file_content[path] = f.read().decode('utf8', 'replace')
 
         content[key] = file_content
 

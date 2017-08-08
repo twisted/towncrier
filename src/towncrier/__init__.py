@@ -56,22 +56,10 @@ def __main(draft, directory, project_version, project_date, answer_yes):
             template = tmpl.read().decode('utf8')
 
     click.echo("Finding news fragments...", err=to_err)
-
-    definitions = config['types']
-
-    if config.get("directory"):
-        base_directory = os.path.abspath(config["directory"])
-        fragment_directory = None
-    else:
-        base_directory = os.path.abspath(os.path.join(
-            directory, config['package_dir'], config['package']))
-        fragment_directory = "newsfragments"
-
-    fragments = find_fragments(
-        base_directory, config['sections'], fragment_directory)
+    fragments = find_fragments(base_directory, config)
 
     click.echo("Rendering news fragments...", err=to_err)
-
+    definitions = config['types']
     fragments = split_fragments(fragments, definitions)
     rendered = render_fragments(
         # The 0th underline is used for the top line
