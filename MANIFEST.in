@@ -1,6 +1,7 @@
 include *.rst
 include .coveragerc
 include LICENSE
+include CODE_OF_CONDUCT.md
 include pyproject.toml
 include tox.ini
 recursive-include src *.rst
