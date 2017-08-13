@@ -4,6 +4,10 @@ sudo: false
 install:
   - pip install tox codecov
 
+before_script:
+  - git remote set-branches --add origin master
+  - git fetch origin master
+
 script:
   - tox -c tox.ini -e $TOX_ENV
 
