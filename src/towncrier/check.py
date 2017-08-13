@@ -1,3 +1,6 @@
+# Copyright (c) Amber Brown, 2017
+# See LICENSE for details.
+
 from __future__ import absolute_import, division
 
 import os
@@ -63,5 +66,5 @@ def __main(comparewith, directory):
         sys.exit(0)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     _main()

@@ -1,8 +1,8 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
+
 import os
 from subprocess import call
-from contextlib import contextmanager
 from textwrap import dedent
 from twisted.trial.unittest import TestCase
 
@@ -10,21 +10,7 @@ from click.testing import CliRunner
 from .. import _main
 
 
-@contextmanager
-def setup_simple_project():
-    with open('pyproject.toml', 'w') as f:
-        f.write(
-            '[tool.towncrier]\n'
-            'package = "foo"\n'
-        )
-    os.mkdir('foo')
-    with open('foo/__init__.py', 'w') as f:
-        f.write('__version__ = "1.2.3"\n')
-    os.mkdir('foo/newsfragments')
-
-
 class TestCli(TestCase):
-
     maxDiff = None
 
     def test_happy_path(self):
