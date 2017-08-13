@@ -229,7 +229,7 @@ Misc
         fragments = {
             "": {
                 "1.feature": u"""
-                I want a girl with a short skirt and a looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong newsfragment.
+                asdf asdf asdf asdf looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong newsfragment.
                 """,  # NOQA
                 "2.feature": u"https://google.com/q=?" + u"-" * 100,
                 "3.feature": u"a " * 80,
@@ -257,7 +257,7 @@ Misc
 Features
 --------
 
-- I want a girl with a short skirt and a
+- asdf asdf asdf asdf
   looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong
   newsfragment. (#1)
 -
