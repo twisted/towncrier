@@ -4,14 +4,6 @@ sudo: false
 install:
   - pip install tox codecov
 
-env:
-  - TOX_ENV=flake8
-  - TOX_ENV=check-manifest
-  - TOX_ENV=pypy-tests
-  - TOX_ENV=py27-tests
-  - TOX_ENV=py33-tests
-  - TOX_ENV=py34-tests
-
 script:
   - tox -c tox.ini -e $TOX_ENV
 
@@ -21,6 +13,18 @@ after_script:
 matrix:
   fast_finish: true
   include:
+    - python: 3.6
+      env: TOX_ENV=flake8
+    - python: 3.6
+      env: TOX_ENV=check-manifest
+    - python: 3.6
+      env: TOX_ENV=check-newsfragment
+    - python: pypy
+      env: TOX_ENV=pypy-tests
+    - python: 2.7
+      env: TOX_ENV=py27-tests
+    - python: 3.4
+      env: TOX_ENV=py34-tests
     - python: 3.5
       env: TOX_ENV=py35-tests
     - python: 3.6
