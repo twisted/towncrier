@@ -44,7 +44,6 @@ class TestChecker(TestCase):
                 "On trunk, or no diffs, so no newsfragment required.\n",
                 result.output)
 
-
     def test_fragment_exists(self):
         runner = CliRunner()
 

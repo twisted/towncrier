@@ -67,5 +67,5 @@ def __main(comparewith, directory):
         sys.exit(0)
 
 
-if __name__ == "__main__": # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     _main()
