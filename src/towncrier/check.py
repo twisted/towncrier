@@ -33,7 +33,8 @@ def __main(comparewith, directory):
 
     files_changed = _run(
         ["git", "diff", "--name-only", comparewith + "..."],
-        cwd=base_directory).decode(sys.stdout.encoding).strip()
+        cwd=base_directory).decode(
+            getattr(sys.stdout, 'encoding', 'utf8')).strip()
 
     if not files_changed:
         click.echo("On trunk, or no diffs, so no newsfragment required.")
