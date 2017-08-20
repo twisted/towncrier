@@ -2,6 +2,44 @@
 
 .. towncrier release notes start
 
+towncrier 17.8.0 (2017-08-19)
+=============================
+
+Features
+--------
+
+- Added new option ``issue_format``. For example, this can be used to make
+  issue text in the NEWS file be formatted as ReST links to the issue tracker.
+  (`#52 <https://github.com/hawkowl/towncrier/issues/52>`_)
+- Add ``--yes`` option to run non-interactively. (`#56
+  <https://github.com/hawkowl/towncrier/issues/56>`_)
+- You can now name newsfragments like 123.feature.rst, or 123.feature.txt, or
+  123.feature.whatever.you.want, and towncrier will ignore the extension. (`#62
+  <https://github.com/hawkowl/towncrier/issues/62>`_)
+- New option in ``pyproject.toml``: ``underlines = ["=", "-", "~"]`` to specify
+  the ReST underline hierarchy in towncrier's generated text. (`#63
+  <https://github.com/hawkowl/towncrier/issues/63>`_)
+- Instead of sorting sections/types alphabetically (e.g. "bugfix" before
+  "feature" because "b" < "f"), sections/types will now have the same order in
+  the output as they have in your config file. (`#70
+  <https://github.com/hawkowl/towncrier/issues/70>`_)
+
+
+Bugfixes
+--------
+
+- When rewrapping text, don't break words or at hyphens -- they might be inside
+  a URL (`#68 <https://github.com/hawkowl/towncrier/issues/68>`_)
+
+
+Deprecations and Removals
+-------------------------
+
+- `towncrier.ini` config file support has been removed in preference to
+  `pyproject.toml` configuration. (`#71
+  <https://github.com/hawkowl/towncrier/issues/71>`_)
+
+
 towncrier 17.4.0 (2017-04-15)
 =============================
 
