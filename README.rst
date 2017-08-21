@@ -8,7 +8,12 @@ Hear ye, hear ye, says the ``towncrier``
     :target: https://codecov.io/github/hawkowl/towncrier?branch=master
 
 ``towncrier`` is a utility to produce useful, summarised news files for your project.
-Rather than reading the Git history as some newer tools to produce it, or having one single file which developers all write to, ``towncrier`` reads "news fragments" which contain information `useful to end users`.
+Rather than reading the Git history or having one single file which developers all write to, ``towncrier`` reads "news fragments" which contain information `useful to end users`.
+This allows you to put developer-focused content in your Git commits, and user-focused content in your changelogs, without ever having to worry about a ``CHANGELOG`` merge conflict again!
+
+``towncrier`` was originally designed for Python projects, but can be used by projects written in any language, only requiring Python to collate the newsfiles during the release process.
+It is not required to create news fragments.
+
 
 Philosophy
 ----------
@@ -21,71 +26,29 @@ These fragments are also commonly called "topfiles" or "newsfiles" in Twisted pa
 ``towncrier`` works best in a development system where all merges involve closing a ticket.
 
 
-Quick Start
------------
+Installation
+------------
 
 Install from PyPI::
 
-    python3 -m pip install towncrier
+    $ python3 -m pip install towncrier
     # OR:
-    python2 -m pip install towncrier
-
-.. note::
-
-   ``towncrier``, as a command line tool, works on Python 2.7/3.3/3.4/3.5 only.
-   It is usable by projects written in other languages, provided you give it the version of the project when invoking it.
-   For Python 2/3 compatible projects, the version can be discovered automatically.
-
-In your project root, add a ``pyproject.toml`` file, with the contents::
-
-    [tool.towncrier]
-        package = "mypackage"
-        package_dir = "src"
-        filename = "NEWS.rst"
-
-Then put news fragments (see "News Fragments" below) into a "newsfragments" directory under your package (so, if your project is named "myproject", and it's kept under ``src``, your newsfragments dir would be ``src/myproject/newsfragments/``).
-
-To prevent git from removing the newsfragments directory, make a ``.gitignore`` file in it with::
-
-    !.gitignore
-
-This will keep the folder around, but otherwise "empty".
-
-``towncrier`` needs to know what version your project is, and there are two ways you can give it:
-
-- For Python 2/3 compatible projects, a ``__version__`` in the top level package.
-  This can be either a string literal, a tuple, or an `Incremental <https://github.com/hawkowl/incremental>`_ version.
-- Manually passing ``--version=<myversionhere>`` when interacting with ``towncrier``.
-
-To produce a draft of the news file, run::
-
-    towncrier --draft
-
-To produce the news file for real, run::
-
-    towncrier
-
-This command will remove the news files (with ``git rm``) and append the built news to the filename specified in ``towncrier.ini``, and then stage the news file changes (with ``git add``).
-It leaves committing the changes up to the user.
-
-If you wish to have content at the top of the news file (for example, to say where you can find the tickets), put your text above a rST comment that says::
-
-  .. towncrier release notes start
-
-``towncrier`` will then put the version notes after this comment, and leave your existing content that was above it where it is.
+    $ python2 -m pip install towncrier
 
 
-News Fragments
---------------
+Usage
+-----
 
-``towncrier`` has a few standard types of news fragments, signified by the file extension.
-These are:
+Once your project is `set up <https://towncrier.readthedocs.io/en/latest/quickstart.html>`_, the ``towncrier`` command will allow you to generate your newsfiles::
 
-- ``.feature``: Signifying a new feature.
-- ``.bugfix``: Signifying a bug fix.
-- ``.doc``: Signifying a documentation improvement.
-- ``.removal``: Signifying a deprecation or removal of public API.
-- ``.misc``: A ticket has been closed, but it is not of interest to users.
+    # Generates and writes your changelog
+    $ towncrier
 
-The start of the filename is the ticket number, and the content is what will end up in the news file.
-For example, if ticket #850 is about adding a new widget, the filename would be ``myproject/newsfragments/850.feature`` and the content would be ``myproject.widget has been added``.
+    # Gives you a draft of what would be written, without making changes
+    $ towncrier --draft
+
+
+Documentation
+-------------
+
+The `full documentation <https://towncrier.readthedocs.io/>`_ lives on Read The Docs.
