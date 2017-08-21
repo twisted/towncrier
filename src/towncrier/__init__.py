@@ -42,7 +42,8 @@ def _main(draft, directory, project_version, project_date,
                   project_name, answer_yes)
 
 
-def __main(draft, directory, project_version, project_date, project_name, answer_yes):
+def __main(draft, directory, project_version, project_date, project_name,
+           answer_yes):
     """
     The main entry point.
     """
