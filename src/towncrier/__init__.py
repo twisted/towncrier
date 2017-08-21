@@ -36,8 +36,10 @@ def _get_date():
               help="The name of your project, to override autodiscovery.")
 @click.option('--yes', 'answer_yes', default=False, flag_value=True,
               help="Do not ask for confirmation to remove news fragments.")
-def _main(draft, directory, project_version, project_date, project_name, answer_yes):
-    return __main(draft, directory, project_version, project_date, project_name, answer_yes)
+def _main(draft, directory, project_version, project_date,
+          project_name, answer_yes):
+    return __main(draft, directory, project_version, project_date,
+                  project_name, answer_yes)
 
 
 def __main(draft, directory, project_version, project_date, project_name, answer_yes):

@@ -11,3 +11,4 @@ exclude src/towncrier/newsfragments
 
 recursive-exclude bin *
 recursive-exclude src/towncrier/newsfragments *
+recursive-exclude docs *
