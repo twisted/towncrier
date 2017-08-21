@@ -32,13 +32,15 @@ def _get_date():
 @click.option('--dir', 'directory', default='.')
 @click.option('--version', 'project_version', default=None)
 @click.option('--date', 'project_date', default=None)
+@click.option('--name', 'project_name', default=None,
+              help="The name of your project, to override autodiscovery.")
 @click.option('--yes', 'answer_yes', default=False, flag_value=True,
               help="Do not ask for confirmation to remove news fragments.")
-def _main(draft, directory, project_version, project_date, answer_yes):
-    return __main(draft, directory, project_version, project_date, answer_yes)
+def _main(draft, directory, project_version, project_date, project_name, answer_yes):
+    return __main(draft, directory, project_version, project_date, project_name, answer_yes)
 
 
-def __main(draft, directory, project_version, project_date, answer_yes):
+def __main(draft, directory, project_version, project_date, project_name, answer_yes):
     """
     The main entry point.
     """
@@ -83,9 +85,10 @@ def __main(draft, directory, project_version, project_date, answer_yes):
             os.path.abspath(os.path.join(directory, config['package_dir'])),
             config['package'])
 
-    project_name = get_project_name(
-        os.path.abspath(os.path.join(directory, config['package_dir'])),
-        config['package'])
+    if project_name is None:
+        project_name = get_project_name(
+            os.path.abspath(os.path.join(directory, config['package_dir'])),
+            config['package'])
 
     if project_date is None:
         project_date = _get_date()
