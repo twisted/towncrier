@@ -56,8 +56,8 @@ def load_config(from_dir):
     return {
         'package': config.get('package'),
         'package_dir': config.get('package_dir', '.'),
-        'filename': config.get('filename', 'NEWS.rst'),
-        'directory': config.get('directory'),
+        'filename': config.get('newsfile', config.get('filename', 'NEWS.rst')),
+        'directory': config.get('fragment_directory', config.get('directory')),
         'sections': sections,
         'types': types,
         'template': config.get('template', _template_fname),

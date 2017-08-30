@@ -14,6 +14,8 @@ This allows you to put developer-focused content in your Git commits, and user-f
 ``towncrier`` was originally designed for Python projects, but can be used by projects written in any language, only requiring Python to collate the newsfiles during the release process.
 It is not required to create news fragments.
 
+Used by `Twisted <https://github.com/twisted/twisted>`_, `pytest <https://github.com/pytest-dev/pytest/>`_, `pip <https://github.com/pypa/pip/>`_, `BuildBot <https://github.com/buildbot/buildbot>`_, and `attrs <https://github.com/python-attrs/attrs>`_, among others.
+
 
 Philosophy
 ----------
