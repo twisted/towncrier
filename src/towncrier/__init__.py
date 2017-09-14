@@ -31,7 +31,7 @@ def _get_date():
                     "don't check versions."))
 @click.option('--dir', 'directory', default='.')
 @click.option('--version', 'project_version', default=None,
-              help="Force news to be rendered with exactly this version.")
+              help="Render the news fragments using given version.")
 @click.option('--date', 'project_date', default=None)
 @click.option('--yes', 'answer_yes', default=False, flag_value=True,
               help="Do not ask for confirmation to remove news fragments.")
