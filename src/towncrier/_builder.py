@@ -110,8 +110,7 @@ def entry_key(entry):
     return [sorting_hat(issue) for issue in issues]
 
 
-# todo rename
-def render_issue(incoming, id_):
+def render_from_formats(incoming, id_):
     if not incoming:
         try:
             int(id_)
@@ -162,7 +161,7 @@ def render_fragments(template, formats, fragments, definitions, underlines):
             # for the template, after formatting each issue number
             categories = OrderedDict()
             for text, issues in entries:
-                rendered = [render_issue(formats, i) for i in issues]
+                rendered = [render_from_formats(formats, i) for i in issues]
                 categories[text] = rendered
 
             data[section_name][category_name] = categories
