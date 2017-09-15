@@ -215,8 +215,7 @@ Misc
             "templates/template.rst").decode('utf8')
 
         fragments = split_fragments(fragments, definitions)
-        formats = {'old-issue-format':
-                       {'patterns': ['.*'], 'format': u"xx{id}"}}
+        formats = {'issue': {'patterns': ['.*'], 'format': u"xx{id}"}}
         output = render_fragments(
             template, formats, fragments, definitions, ["-", "~"])
         self.assertEqual(output, expected_output)
