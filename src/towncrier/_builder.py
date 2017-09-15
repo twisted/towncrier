@@ -93,7 +93,7 @@ def split_fragments(fragments, definitions):
     return output
 
 
-def issue_key(issue):
+def sorting_hat(issue):
     # We want integer issues to sort as integers, and we also want string
     # issues to sort as strings. We arbitrarily put string issues before
     # integer issues (hopefully no-one uses both at once).
@@ -106,23 +106,25 @@ def issue_key(issue):
 
 def entry_key(entry):
     _, issues = entry
-    return [issue_key(issue) for issue in issues]
+    return [sorting_hat(issue) for issue in issues]
 
 
-def render_issue(issue_format, issue):
-    if issue_format is None:
+# todo rename
+def render_issue(incoming, id_):
+    if not incoming:
         try:
-            int(issue)
-            return u"#" + issue
+            int(id_)
+            return u"#" + id_
         except Exception:
-            return issue
-    else:
-        return issue_format.format(issue=issue)
+            return id_
+    if not isinstance(incoming, list):
+        return incoming.format(id_=id_)
+    if incoming:
+        # TODO
+        return
 
 
-def render_fragments(
-        template, issue_format, fragments, definitions, underlines,
-):
+def render_fragments(template, formats, fragments, definitions, underlines):
     """
     Render the fragments into a news file.
     """
@@ -147,7 +149,7 @@ def render_fragments(
             # - Fix the other thing (#1)
             entries = []
             for text, issues in category_value.items():
-                entries.append((text, sorted(issues, key=issue_key)))
+                entries.append((text, sorted(issues, key=sorting_hat)))
 
             # Then we sort the lines:
             #
@@ -159,7 +161,7 @@ def render_fragments(
             # for the template, after formatting each issue number
             categories = OrderedDict()
             for text, issues in entries:
-                rendered = [render_issue(issue_format, i) for i in issues]
+                rendered = [render_issue(formats, i) for i in issues]
                 categories[text] = rendered
 
             data[section_name][category_name] = categories

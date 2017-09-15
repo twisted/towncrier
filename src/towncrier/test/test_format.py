@@ -181,7 +181,7 @@ Bugfixes
             template, None, fragments, definitions, ["*", "^"])
         self.assertEqual(output, expected_output_weird_underlines)
 
-    def test_issue_format(self):
+    def test_old_issue_format(self):
         """
         issue_format option can be used to format issue text.
         And sorting happens before formatting, so numerical issues are still
@@ -216,7 +216,7 @@ Misc
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
-            template, u"xx{issue}", fragments, definitions, ["-", "~"])
+            template, u"xx{id_}", fragments, definitions, ["-", "~"])
         self.assertEqual(output, expected_output)
 
     def test_line_wrapping(self):
