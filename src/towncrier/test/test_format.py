@@ -215,8 +215,10 @@ Misc
             "templates/template.rst").decode('utf8')
 
         fragments = split_fragments(fragments, definitions)
+        formats = {'old-issue-format':
+                       {'patterns': ['.*'], 'format': u"xx{id}"}}
         output = render_fragments(
-            template, u"xx{id_}", fragments, definitions, ["-", "~"])
+            template, formats, fragments, definitions, ["-", "~"])
         self.assertEqual(output, expected_output)
 
     def test_line_wrapping(self):

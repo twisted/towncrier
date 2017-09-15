@@ -4,6 +4,7 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import re
 import textwrap
 
 from collections import OrderedDict
@@ -117,11 +118,11 @@ def render_issue(incoming, id_):
             return u"#" + id_
         except Exception:
             return id_
-    if not isinstance(incoming, list):
-        return incoming.format(id_=id_)
-    if incoming:
-        # TODO
-        return
+    for kind, payload in incoming.items():
+        for pattern in payload['patterns']:
+            match = re.match(pattern, id_)
+            if match:
+                return payload['format'].format(id=id_)
 
 
 def render_fragments(template, formats, fragments, definitions, underlines):

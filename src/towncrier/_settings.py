@@ -61,7 +61,7 @@ def load_config(from_dir):
         # backwards compatibility
         issue_format = config.get('issue_format')
         if issue_format:
-            issue_format = issue_format.replace('{issue}', '{id_}')
+            issue_format = issue_format.replace('{issue}', '{id}')
             formats["old-issue-format"] = {
                 "patterns": [".*"], "format": issue_format}
 
