@@ -94,15 +94,15 @@ def split_fragments(fragments, definitions):
     return output
 
 
-def sorting_hat(issue):
+def sorting_hat(sortable):
     # We want integer issues to sort as integers, and we also want string
     # issues to sort as strings. We arbitrarily put string issues before
     # integer issues (hopefully no-one uses both at once).
     try:
-        return (int(issue), u"")
+        return (int(sortable), u"")
     except Exception:
         # Maybe we should sniff strings like "gh-10" -> (10, "gh-10")?
-        return (-1, issue)
+        return (-1, sortable)
 
 
 def entry_key(entry):
