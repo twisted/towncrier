@@ -111,17 +111,17 @@ def entry_key(entry):
 
 
 def render_from_formats(incoming, id_):
-    if not incoming:
-        try:
-            int(id_)
-            return u"#" + id_
-        except Exception:
-            return id_
-    for kind, payload in incoming.items():
-        for pattern in payload['patterns']:
-            match = re.match(pattern, id_)
-            if match:
-                return payload['format'].format(id=id_)
+    if incoming:
+        for kind, payload in incoming.items():
+            for pattern in payload['patterns']:
+                match = re.match(pattern, id_)
+                if match:
+                    return payload['format'].format(id=id_)
+    try:
+        int(id_)
+        return u"#" + id_
+    except Exception:
+        return id_
 
 
 def render_fragments(template, formats, fragments, definitions, underlines):
