@@ -10,6 +10,7 @@ from __future__ import absolute_import, division
 import os
 import click
 import pkg_resources
+import sys
 
 from datetime import date
 
@@ -19,6 +20,7 @@ from ._project import get_version, get_project_name
 from ._writer import append_to_newsfile
 from ._git import remove_files, stage_newsfile
 from ._version import __version__
+from ._exceptions import NotConfigured
 
 
 def _get_date():
@@ -42,84 +44,92 @@ def __main(draft, directory, project_version, project_date, answer_yes):
     """
     The main entry point.
     """
-    directory = os.path.abspath(directory)
-    config = load_config(directory)
-    to_err = draft
+    try:
+        click.echo("Loading config...")
+        directory = os.path.abspath(directory)
+        config = load_config(directory)
+        to_err = draft
 
-    click.echo("Loading template...", err=to_err)
-    if config['template'] is None:
-        template = pkg_resources.resource_string(
-            __name__,
-            "templates/template.rst").decode('utf8')
-    else:
-        with open(config['template'], 'rb') as tmpl:
-            template = tmpl.read().decode('utf8')
+        click.echo("Loading template...", err=to_err)
+        if config['template'] is None:
+            template = pkg_resources.resource_string(
+                __name__,
+                "templates/template.rst").decode('utf8')
+        else:
+            with open(config['template'], 'rb') as tmpl:
+                template = tmpl.read().decode('utf8')
 
-    click.echo("Finding news fragments...", err=to_err)
+        click.echo("Finding news fragments...", err=to_err)
 
-    definitions = config['types']
+        definitions = config['types']
 
-    if config.get("directory"):
-        base_directory = os.path.abspath(config["directory"])
-        fragment_directory = None
-    else:
-        base_directory = os.path.abspath(os.path.join(
-            directory, config['package_dir'], config['package']))
-        fragment_directory = "newsfragments"
+        if config.get("directory"):
+            base_directory = os.path.abspath(config["directory"])
+            fragment_directory = None
+        else:
+            base_directory = os.path.abspath(os.path.join(
+                directory, config['package_dir'], config['package']))
+            fragment_directory = "newsfragments"
 
-    fragments = find_fragments(
-        base_directory, config['sections'], fragment_directory)
+        fragments = find_fragments(
+            base_directory, config['sections'], fragment_directory)
 
-    click.echo("Rendering news fragments...", err=to_err)
+        click.echo("Rendering news fragments...", err=to_err)
 
-    fragments = split_fragments(fragments, definitions)
-    rendered = render_fragments(
-        # The 0th underline is used for the top line
-        template, config['issue_format'], fragments, definitions,
-        config['underlines'][1:])
+        fragments = split_fragments(fragments, definitions)
+        rendered = render_fragments(
+            # The 0th underline is used for the top line
+            template, config['issue_format'], fragments, definitions,
+            config['underlines'][1:])
 
-    if not project_version:
-        project_version = get_version(
+        if not project_version:
+            project_version = get_version(
+                os.path.abspath(os.path.join(directory, config['package_dir'])),
+                config['package'])
+
+        project_name = get_project_name(
             os.path.abspath(os.path.join(directory, config['package_dir'])),
             config['package'])
 
-    project_name = get_project_name(
-        os.path.abspath(os.path.join(directory, config['package_dir'])),
-        config['package'])
+        if project_date is None:
+            project_date = _get_date()
 
-    if project_date is None:
-        project_date = _get_date()
-
-    top_line = config['title_format'].format(
-        name=project_name,
-        version=project_version,
-        project_date=project_date
-    )
-    top_line += u"\n" + (config['underlines'][0] * len(top_line)) + u"\n"
-
-    if draft:
-        click.echo(
-            "Draft only -- nothing has been written.\n"
-            "What is seen below is what would be written.\n",
-            err=to_err,
+        top_line = config['title_format'].format(
+            name=project_name,
+            version=project_version,
+            project_date=project_date
         )
-        click.echo(top_line, err=to_err)
-        click.echo(rendered)
-    else:
-        click.echo("Writing to newsfile...", err=to_err)
-        start_line = config['start_line']
-        append_to_newsfile(directory, config['filename'],
-                           start_line, top_line, rendered)
+        top_line += u"\n" + (config['underlines'][0] * len(top_line)) + u"\n"
 
-        click.echo("Staging newsfile...", err=to_err)
-        stage_newsfile(directory, config['filename'])
+        if draft:
+            click.echo(
+                "Draft only -- nothing has been written.\n"
+                "What is seen below is what would be written.\n",
+                err=to_err,
+            )
+            click.echo(top_line, err=to_err)
+            click.echo(rendered)
+        else:
+            click.echo("Writing to newsfile...", err=to_err)
+            start_line = config['start_line']
+            append_to_newsfile(directory, config['filename'],
+                               start_line, top_line, rendered)
 
-        click.echo("Removing news fragments...", err=to_err)
-        remove_files(
-            base_directory, fragment_directory, config['sections'],
-            fragments, answer_yes)
+            click.echo("Staging newsfile...", err=to_err)
+            stage_newsfile(directory, config['filename'])
 
-        click.echo("Done!", err=to_err)
+            click.echo("Removing news fragments...", err=to_err)
+            remove_files(
+                base_directory, fragment_directory, config['sections'],
+                fragments, answer_yes)
+
+            click.echo("Done!", err=to_err)
+    except NotConfigured as e:
+        click.echo(
+            'Missing configuration: towncrier requires an appropriately '
+            'configured pyproject.toml file.'
+        )
+        sys.exit(1)
 
 
 __all__ = ["__version__"]

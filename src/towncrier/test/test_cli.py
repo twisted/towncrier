@@ -27,6 +27,33 @@ class TestCli(TestCase):
 
     maxDiff = None
 
+    def test_missing_configuration_file(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            os.mkdir('foo')
+            with open('foo/__init__.py', 'w') as f:
+                f.write('__version__ = "1.2.3"\n')
+            os.mkdir('foo/newsfragments')
+            with open('foo/newsfragments/123.feature', 'w') as f:
+                f.write('Adds levitation')
+            # Towncrier ignores .rst extension
+            with open('foo/newsfragments/124.feature.rst', 'w') as f:
+                f.write('Extends levitation')
+
+            result = runner.invoke(_main)
+
+        assert 1 == result.exit_code
+        expected_output = '\n'.join([
+            'Loading config...',
+
+            'Missing configuration: towncrier requires an appropriately '
+            'configured pyproject.toml file.',
+
+            '',
+        ])
+        assert expected_output == result.output
+
     def test_happy_path(self):
         runner = CliRunner()
 
@@ -49,14 +76,27 @@ class TestCli(TestCase):
             result = runner.invoke(_main, ['--draft', '--date', '01-01-2001'])
 
         self.assertEqual(0, result.exit_code)
+        expected_output = '\n'.join([
+            u'Loading config...',
+            u'Loading template...',
+            u'Finding news fragments...',
+            u'Rendering news fragments...',
+            u'Draft only -- nothing has been written.',
+            u'What is seen below is what would be written.',
+            u'',
+            u'Foo 1.2.3 (01-01-2001)',
+            u'======================',
+            u'\n',
+            u'Features',
+            u'--------',
+            u'',
+            u'- Adds levitation (#123)',
+            u'- Extends levitation (#124)',
+            u'\n'
+        ])
         self.assertEqual(
-            result.output,
-            u'Loading template...\nFinding news fragments...\nRendering news '
-            u'fragments...\nDraft only -- nothing has been written.\nWhat is '
-            u'seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)'
-            u'\n======================\n'
-            u'\n\nFeatures\n--------\n\n- Adds levitation (#123)\n'
-            u'- Extends levitation (#124)\n\n'
+            expected_output,
+            result.output
         )
 
     def test_section_and_type_sorting(self):
@@ -114,6 +154,7 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,
+            u'Loading config...\n'
             u'Loading template...\nFinding news fragments...\nRendering news '
             u'fragments...\nDraft only -- nothing has been written.\nWhat is '
             u'seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)'
@@ -157,6 +198,7 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,
+            u'Loading config...\n'
             u'Loading template...\nFinding news fragments...\nRendering news '
             u'fragments...\nDraft only -- nothing has been written.\nWhat is '
             u'seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)'

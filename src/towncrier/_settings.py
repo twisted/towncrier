@@ -6,6 +6,7 @@ import toml
 
 from collections import OrderedDict
 
+from ._exceptions import NotConfigured
 
 _start_string = u'.. towncrier release notes start\n'
 _title_format = u'{name} {version} ({project_date})'
@@ -24,7 +25,8 @@ _underlines = ["=", "-", "~"]
 def load_config(from_dir):
     fn = os.path.join(from_dir, "pyproject.toml")
     if not os.path.exists(fn):
-        return None
+        raise NotConfigured
+
     with open(fn, 'r') as conffile:
         config = toml.load(conffile)
 
