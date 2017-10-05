@@ -84,8 +84,11 @@ def __main(draft, directory, project_version, project_date, answer_yes):
 
         if not project_version:
             project_version = get_version(
-                os.path.abspath(os.path.join(directory, config['package_dir'])),
-                config['package'])
+                os.path.abspath(
+                    os.path.join(directory, config['package_dir'])
+                ),
+                config['package']
+            )
 
         project_name = get_project_name(
             os.path.abspath(os.path.join(directory, config['package_dir'])),
@@ -124,7 +127,7 @@ def __main(draft, directory, project_version, project_date, answer_yes):
                 fragments, answer_yes)
 
             click.echo("Done!", err=to_err)
-    except NotConfigured as e:
+    except NotConfigured:
         click.echo(
             'Missing configuration: towncrier requires an appropriately '
             'configured pyproject.toml file.'
