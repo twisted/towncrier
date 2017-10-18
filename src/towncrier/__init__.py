@@ -31,19 +31,27 @@ def _get_date():
                     "don't check versions."))
 @click.option('--dir', 'directory', default='.')
 @click.option('--version', 'project_version', default=None)
+@click.option('--config', 'config_path', default=None,
+              help='Path to a custom config file')
 @click.option('--date', 'project_date', default=None)
 @click.option('--yes', 'answer_yes', default=False, flag_value=True,
               help="Do not ask for confirmation to remove news fragments.")
-def _main(draft, directory, project_version, project_date, answer_yes):
-    return __main(draft, directory, project_version, project_date, answer_yes)
+def _main(draft, directory, project_version, config_path, project_date,
+          answer_yes):
+    return __main(draft, directory, project_version, config_path, project_date,
+                  answer_yes)
 
 
-def __main(draft, directory, project_version, project_date, answer_yes):
+def __main(draft, directory, project_version, config_path, project_date,
+           answer_yes):
     """
     The main entry point.
     """
     directory = os.path.abspath(directory)
-    config = load_config(directory)
+    if config_path:
+        config = load_config(config_path)
+    else:
+        config = load_config(directory)
     to_err = draft
 
     click.echo("Loading template...", err=to_err)
