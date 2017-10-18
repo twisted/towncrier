@@ -3,6 +3,7 @@
 
 from twisted.trial.unittest import TestCase
 
+import tempfile
 import os
 
 from .._settings import load_config
@@ -27,3 +28,13 @@ package = "foobar"
         self.assertEqual(config['package_dir'], ".")
         self.assertEqual(config['filename'], "NEWS.rst")
         self.assertEqual(config['underlines'], ["=", "-", "~"])
+
+    def test_can_load_custom_config(self):
+        conf = """[tool.towncrier]
+package = "custom"
+"""
+        config_file = tempfile.NamedTemporaryFile('w', delete=False)
+        config_file.write(conf)
+        config_file.close()
+        config = load_config(config_file.name)
+        self.assertEqual(config['package'], "custom")

@@ -22,7 +22,13 @@ _underlines = ["=", "-", "~"]
 
 
 def load_config(from_dir):
-    fn = os.path.join(from_dir, "pyproject.toml")
+    if os.path.isfile(from_dir):
+        # maybe from_dir is actually a config_file path
+        fn = from_dir
+    else:
+        # we fallback to default behaviour of finding the config_file
+        # in the given directory
+        fn = os.path.join(from_dir, "pyproject.toml")
     if not os.path.exists(fn):
         return None
     with open(fn, 'r') as conffile:
