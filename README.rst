@@ -32,7 +32,7 @@ Install from PyPI::
 
 .. note::
 
-   ``towncrier``, as a command line tool, works on Python 2.7/3.3/3.4/3.5 only.
+   ``towncrier``, as a command line tool, works on Python 2.7/3.3/3.4/3.5/3.6 only.
    It is usable by projects written in other languages, provided you give it the version of the project when invoking it.
    For Python 2/3 compatible projects, the version can be discovered automatically.
 
@@ -65,7 +65,7 @@ To produce the news file for real, run::
 
     towncrier
 
-This command will remove the news files (with ``git rm``) and append the built news to the filename specified in ``towncrier.ini``, and then stage the news file changes (with ``git add``).
+This command will remove the news files (with ``git rm``) and append the built news to the filename specified in ``pyproject.toml``, and then stage the news file changes (with ``git add``).
 It leaves committing the changes up to the user.
 
 If you wish to have content at the top of the news file (for example, to say where you can find the tickets), put your text above a rST comment that says::
