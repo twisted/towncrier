@@ -189,9 +189,12 @@ class TestCli(TestCase):
 
         with runner.isolated_filesystem():
             setup_simple_project()
-            fragment_path = 'foo/newsfragments/123.feature'
-            with open(fragment_path, 'w') as f:
+            fragment_path1 = 'foo/newsfragments/123.feature'
+            fragment_path2 = 'foo/newsfragments/124.feature.rst'
+            with open(fragment_path1, 'w') as f:
                 f.write('Adds levitation')
+            with open(fragment_path2, 'w') as f:
+                f.write('Extends levitation')
 
             call(["git", "init"])
             call(["git", "config", "user.name", "user"])
@@ -204,4 +207,5 @@ class TestCli(TestCase):
             self.assertEqual(0, result.exit_code)
             path = 'NEWS.rst'
             self.assertTrue(os.path.isfile(path))
-            self.assertFalse(os.path.isfile(fragment_path))
+            self.assertFalse(os.path.isfile(fragment_path1))
+            self.assertFalse(os.path.isfile(fragment_path2))

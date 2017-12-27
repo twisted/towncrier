@@ -30,11 +30,27 @@ def normalise(text):
     return text
 
 
-def find_fragments(base_directory, sections, fragment_directory):
+# Returns a structure like:
+#
+# OrderedDict([
+#   ("",
+#    {
+#      ("142", "misc"): u"",
+#      ("1", "feature"): u"some cool description",
+#    }),
+#   ("Names", {}),
+#   ("Web", {("3", "bugfix"): u"Fixed a thing"}),
+# ])
+#
+# We should really use attrs.
+#
+# Also returns a list of the paths that the fragments were taken from.
+def find_fragments(base_directory, sections, fragment_directory, definitions):
     """
     Sections are a dictonary of section names to paths.
     """
     content = OrderedDict()
+    fragment_filenames = []
 
     for key, val in sections.items():
 
@@ -47,26 +63,8 @@ def find_fragments(base_directory, sections, fragment_directory):
 
         file_content = {}
 
-        for fragment in files:
-            with open(os.path.join(section_dir, fragment), "rb") as f:
-                file_content[fragment] = f.read().decode('utf8', 'replace')
-
-        content[key] = file_content
-
-    return content
-
-
-def split_fragments(fragments, definitions):
-
-    output = OrderedDict()
-
-    for section_name, section_fragments in fragments.items():
-        section = {}
-
-        for filename, content in section_fragments.items():
-
-            content = normalise(content)
-            parts = filename.split(u".")
+        for basename in files:
+            parts = basename.split(u".")
 
             if len(parts) == 1:
                 continue
@@ -75,6 +73,31 @@ def split_fragments(fragments, definitions):
 
             if category not in definitions:
                 continue
+
+            full_filename = os.path.join(section_dir, basename)
+            fragment_filenames.append(full_filename)
+            with open(full_filename, "rb") as f:
+                data = f.read().decode('utf8', 'replace')
+            file_content[ticket, category] = data
+
+        content[key] = file_content
+
+    return content, fragment_filenames
+
+
+# Takes the output from find_fragments above. Probably it would be useful to
+# add an example output here. Next time someone digs deep enough to figure it
+# out, please do so...
+def split_fragments(fragments, definitions):
+
+    output = OrderedDict()
+
+    for section_name, section_fragments in fragments.items():
+        section = {}
+
+        for (ticket, category), content in section_fragments.items():
+
+            content = normalise(content)
 
             if definitions[category]["showcontent"] is False:
                 content = u""

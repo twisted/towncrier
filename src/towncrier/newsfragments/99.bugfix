@@ -1,0 +1,1 @@
+When cleaning up old newsfragments, if a newsfragment is named "123.feature.rst", then remove that file instead of trying to remove the non-existent "123.feature".
