@@ -78,6 +78,11 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
             fragment_filenames.append(full_filename)
             with open(full_filename, "rb") as f:
                 data = f.read().decode('utf8', 'replace')
+            if (ticket, category) in file_content:
+                raise ValueError(
+                    "multiple files for {}.{} in {}"
+                    .format(ticket, category, section_dir)
+                )
             file_content[ticket, category] = data
 
         content[key] = file_content

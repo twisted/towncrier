@@ -49,6 +49,23 @@ class TestCli(TestCase):
             u'- Extends levitation (#124)\n\n'
         )
 
+    def test_collision(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project()
+            # Note that both are 123.feature
+            with open('foo/newsfragments/123.feature', 'w') as f:
+                f.write('Adds levitation')
+            with open('foo/newsfragments/123.feature.rst', 'w') as f:
+                f.write('Extends levitation')
+
+            result = runner.invoke(_main, ['--draft', '--date', '01-01-2001'])
+
+        # This should fail
+        self.assertEqual(type(result.exception), ValueError)
+        self.assertIn("multiple files for 123.feature", str(result.exception))
+
     def test_section_and_type_sorting(self):
         """
         Sections and types should be output in the same order that they're

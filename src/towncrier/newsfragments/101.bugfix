@@ -1,0 +1,1 @@
+If there are two newsfragments with the same name (example: "123.bugfix.rst" and "123.bugfix.rst~"), then raise an error instead of silently picking one at random.
