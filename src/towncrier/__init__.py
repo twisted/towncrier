@@ -133,5 +133,5 @@ def __main(draft, directory, project_version, project_date, answer_yes):
         )
         sys.exit(1)
 
-        
+
 __all__ = ["__version__"]
