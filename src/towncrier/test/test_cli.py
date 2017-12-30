@@ -2,7 +2,6 @@
 # See LICENSE for details.
 import os
 from subprocess import call
-from contextlib import contextmanager
 from textwrap import dedent
 from twisted.trial.unittest import TestCase
 
@@ -10,7 +9,6 @@ from click.testing import CliRunner
 from .. import _main
 
 
-@contextmanager
 def setup_simple_project():
     with open('pyproject.toml', 'w') as f:
         f.write(
@@ -31,15 +29,7 @@ class TestCli(TestCase):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
-            with open('pyproject.toml', 'w') as f:
-                f.write(
-                    '[tool.towncrier]\n'
-                    'package = "foo"\n'
-                )
-            os.mkdir('foo')
-            with open('foo/__init__.py', 'w') as f:
-                f.write('__version__ = "1.2.3"\n')
-            os.mkdir('foo/newsfragments')
+            setup_simple_project()
             with open('foo/newsfragments/123.feature', 'w') as f:
                 f.write('Adds levitation')
             # Towncrier ignores .rst extension
@@ -198,15 +188,7 @@ class TestCli(TestCase):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
-            with open('pyproject.toml', 'w') as f:
-                f.write(
-                    '[tool.towncrier]\n'
-                    'package = "foo"\n'
-                )
-            os.mkdir('foo')
-            with open('foo/__init__.py', 'w') as f:
-                f.write('__version__ = "1.2.3"\n')
-            os.mkdir('foo/newsfragments')
+            setup_simple_project()
             fragment_path = 'foo/newsfragments/123.feature'
             with open(fragment_path, 'w') as f:
                 f.write('Adds levitation')
