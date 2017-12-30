@@ -32,9 +32,15 @@ class TestCli(TestCase):
             setup_simple_project()
             with open('foo/newsfragments/123.feature', 'w') as f:
                 f.write('Adds levitation')
-            # Towncrier ignores .rst extension
+            # Towncrier treats this as 124.feature, ignoring .rst extension
             with open('foo/newsfragments/124.feature.rst', 'w') as f:
                 f.write('Extends levitation')
+            # Towncrier ignores files that don't have a dot
+            with open('foo/newsfragments/README', 'w') as f:
+                f.write('Blah blah')
+            # And files that don't have a valid category
+            with open('foo/newsfragments/README.rst', 'w') as f:
+                f.write('**Blah blah**')
 
             result = runner.invoke(_main, ['--draft', '--date', '01-01-2001'])
 
