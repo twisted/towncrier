@@ -104,8 +104,7 @@ def __main(draft, directory, project_version, project_date, answer_yes):
             "What is seen below is what would be written.\n",
             err=to_err,
         )
-        click.echo(top_line, err=to_err)
-        click.echo(rendered)
+        click.echo("%s\n%s" % (top_line, rendered))
     else:
         click.echo("Writing to newsfile...", err=to_err)
         start_line = config['start_line']
