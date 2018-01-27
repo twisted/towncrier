@@ -4,6 +4,7 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import re
 import textwrap
 
 from collections import OrderedDict
@@ -93,36 +94,37 @@ def split_fragments(fragments, definitions):
     return output
 
 
-def issue_key(issue):
+def sorting_hat(sortable):
     # We want integer issues to sort as integers, and we also want string
     # issues to sort as strings. We arbitrarily put string issues before
     # integer issues (hopefully no-one uses both at once).
     try:
-        return (int(issue), u"")
+        return (int(sortable), u"")
     except Exception:
         # Maybe we should sniff strings like "gh-10" -> (10, "gh-10")?
-        return (-1, issue)
+        return (-1, sortable)
 
 
 def entry_key(entry):
     _, issues = entry
-    return [issue_key(issue) for issue in issues]
+    return [sorting_hat(issue) for issue in issues]
 
 
-def render_issue(issue_format, issue):
-    if issue_format is None:
-        try:
-            int(issue)
-            return u"#" + issue
-        except Exception:
-            return issue
-    else:
-        return issue_format.format(issue=issue)
+def render_from_formats(incoming, id_):
+    if incoming:
+        for kind, payload in incoming.items():
+            for pattern in payload['patterns']:
+                match = re.match(pattern, id_)
+                if match:
+                    return payload['format'].format(id=id_)
+    try:
+        int(id_)
+        return u"#" + id_
+    except Exception:
+        return id_
 
 
-def render_fragments(
-        template, issue_format, fragments, definitions, underlines,
-):
+def render_fragments(template, formats, fragments, definitions, underlines):
     """
     Render the fragments into a news file.
     """
@@ -147,7 +149,7 @@ def render_fragments(
             # - Fix the other thing (#1)
             entries = []
             for text, issues in category_value.items():
-                entries.append((text, sorted(issues, key=issue_key)))
+                entries.append((text, sorted(issues, key=sorting_hat)))
 
             # Then we sort the lines:
             #
@@ -159,7 +161,7 @@ def render_fragments(
             # for the template, after formatting each issue number
             categories = OrderedDict()
             for text, issues in entries:
-                rendered = [render_issue(issue_format, i) for i in issues]
+                rendered = [render_from_formats(formats, i) for i in issues]
                 categories[text] = rendered
 
             data[section_name][category_name] = categories

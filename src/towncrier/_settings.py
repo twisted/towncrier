@@ -38,20 +38,32 @@ def load_config(from_dir):
             "The [tool.towncrier] section has no required 'package' key.")
 
     sections = OrderedDict()
-    types = OrderedDict()
-
     if "section" in config:
         for x in config["section"]:
             sections[x.get('name', '')] = x['path']
     else:
         sections[''] = ''
 
+    types = OrderedDict()
     if "type" in config:
         for x in config["type"]:
-            types[x["directory"]] = {"name": x["name"],
-                                     "showcontent": x["showcontent"]}
+            types[x["directory"]] = {
+                "name": x["name"], "showcontent": x["showcontent"]}
     else:
         types = _default_types
+
+    formats = OrderedDict()
+    if "format" in config:
+        for x in config["format"]:
+            formats[x["kind"]] = {
+                "patterns": x["patterns"], "format": x["format"]}
+    else:
+        # backwards compatibility
+        issue_format = config.get('issue_format')
+        if issue_format:
+            issue_format = issue_format.replace('{issue}', '{id}')
+            formats["old-issue-format"] = {
+                "patterns": [".*"], "format": issue_format}
 
     return {
         'package': config.get('package'),
@@ -63,6 +75,6 @@ def load_config(from_dir):
         'template': config.get('template', _template_fname),
         'start_line': config.get('start_string', _start_string),
         'title_format': config.get('title_format', _title_format),
-        'issue_format': config.get('issue_format'),
+        'formats': formats,
         'underlines': config.get('underlines', _underlines)
     }
