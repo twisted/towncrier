@@ -59,7 +59,7 @@ def find_file_path(section_dir, category_name, ticket):
         if os.path.exists(path):
             return path
 
-    raise FileNotFoundError(
+    raise Exception(
         "can't find the file for fragment %s at %s - "
         "use no extension or one of the accepted (%s)" % (
             namestub, section_dir, accepted_extensions[1:]))
