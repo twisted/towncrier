@@ -35,11 +35,23 @@ def _get_date():
 @click.option('--date', 'project_date', default=None)
 @click.option('--yes', 'answer_yes', default=False, flag_value=True,
               help="Do not ask for confirmation to remove news fragments.")
-def _main(draft, directory, project_name, project_version, project_date, answer_yes):
-    return __main(draft, directory, project_name, project_version, project_date, answer_yes)
+def _main(
+    draft, directory,
+    project_name, project_version, project_date,
+    answer_yes
+):
+    return __main(
+        draft, directory,
+        project_name, project_version, project_date,
+        answer_yes
+    )
 
 
-def __main(draft, directory, project_name, project_version, project_date, answer_yes):
+def __main(
+    draft, directory,
+    project_name, project_version, project_date,
+    answer_yes
+):
     """
     The main entry point.
     """
