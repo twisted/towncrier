@@ -18,15 +18,15 @@ class WritingTests(TestCase):
 
         fragments = OrderedDict([
             ("", {
-                "142.misc": u"",
-                "1.misc": u"",
-                "4.feature": u"Stuff!",
-                "2.feature": u"Foo added.",
-                "72.feature": u"Foo added.",
+                ("142", "misc"): u"",
+                ("1", "misc"): u"",
+                ("4", "feature"): u"Stuff!",
+                ("2", "feature"): u"Foo added.",
+                ("72", "feature"): u"Foo added.",
             }),
             ("Names", {}),
             ("Web", {
-                "3.bugfix": u"Web fixed.",
+                ("3", "bugfix"): u"Web fixed.",
             }),
         ])
 
@@ -102,16 +102,16 @@ Old text.
         """
         fragments = OrderedDict([
             ("", {
-                "142.misc": u"",
-                "1.misc": u"",
-                "4.feature": u"Stuff!",
-                "2.feature": u"Foo added.",
-                "72.feature": u"Foo added.",
-                "99.feature": u"Foo! " * 100
+                ("142", "misc"): u"",
+                ("1", "misc"): u"",
+                ("4", "feature"): u"Stuff!",
+                ("2", "feature"): u"Foo added.",
+                ("72", "feature"): u"Foo added.",
+                ("99", "feature"): u"Foo! " * 100
             }),
             ("Names", {}),
             ("Web", {
-                "3.bugfix": u"Web fixed.",
+                ("3", "bugfix"): u"Web fixed.",
             }),
         ])
 

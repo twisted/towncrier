@@ -29,17 +29,15 @@ class FormatterTests(TestCase):
 
         fragments = {
             "": {
-                "1.misc": u"",
-                "baz.misc": u"",
-                "2.feature": u"Foo added.",
-                "421.feature~": u"Foo added.",
-                "5.feature": u"Foo added.    \n",
-                "6.bugfix": u"Foo added.",
-                "NEWS": u"Some junk.",
+                ("1", "misc"): u"",
+                ("baz", "misc"): u"",
+                ("2", "feature"): u"Foo added.",
+                ("5", "feature"): u"Foo added.    \n",
+                ("6", "bugfix"): u"Foo added.",
             },
             "Web": {
-                "3.bugfix": u"Web fixed.    ",
-                "4.feature": u"Foo added."
+                ("3", "bugfix"): u"Web fixed.    ",
+                ("4", "feature"): u"Foo added."
             }
         }
 
@@ -85,19 +83,19 @@ class FormatterTests(TestCase):
             ("", {
                 # asciibetical sorting will do 1, 142, 9
                 # we want 1, 9, 142 instead
-                "142.misc": u"",
-                "1.misc": u"",
-                "9.misc": u"",
-                "bar.misc": u"",
-                "4.feature": u"Stuff!",
-                "2.feature": u"Foo added.",
-                "72.feature": u"Foo added.",
-                "9.feature": u"Foo added.",
-                "baz.feature": u"Fun!",
+                ("142", "misc"): u"",
+                ("1", "misc"): u"",
+                ("9", "misc"): u"",
+                ("bar", "misc"): u"",
+                ("4", "feature"): u"Stuff!",
+                ("2", "feature"): u"Foo added.",
+                ("72", "feature"): u"Foo added.",
+                ("9", "feature"): u"Foo added.",
+                ("baz", "feature"): u"Fun!",
             }),
             ("Names", {}),
             ("Web", {
-                "3.bugfix": u"Web fixed.",
+                ("3", "bugfix"): u"Web fixed.",
             }),
         ])
 
@@ -192,10 +190,10 @@ Bugfixes
             "": {
                 # asciibetical sorting will do 1, 142, 9
                 # we want 1, 9, 142 instead
-                "142.misc": u"",
-                "1.misc": u"",
-                "9.misc": u"",
-                "bar.misc": u"",
+                ("142", "misc"): u"",
+                ("1", "misc"): u"",
+                ("9", "misc"): u"",
+                ("bar", "misc"): u"",
             }
         }
 
@@ -228,12 +226,12 @@ Misc
 
         fragments = {
             "": {
-                "1.feature": u"""
+                ("1", "feature"): u"""
                 asdf asdf asdf asdf looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong newsfragment.
                 """,  # NOQA
-                "2.feature": u"https://google.com/q=?" + u"-" * 100,
-                "3.feature": u"a " * 80,
-                "4.feature": u"""
+                ("2", "feature"): u"https://google.com/q=?" + u"-" * 100,
+                ("3", "feature"): u"a " * 80,
+                ("4", "feature"): u"""
                 w
 
                 h

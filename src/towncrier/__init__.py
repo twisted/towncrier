@@ -67,8 +67,8 @@ def __main(draft, directory, project_version, project_date, answer_yes):
             directory, config['package_dir'], config['package']))
         fragment_directory = "newsfragments"
 
-    fragments = find_fragments(
-        base_directory, config['sections'], fragment_directory)
+    fragments, fragment_filenames = find_fragments(
+        base_directory, config['sections'], fragment_directory, definitions)
 
     click.echo("Rendering news fragments...", err=to_err)
 
@@ -114,9 +114,7 @@ def __main(draft, directory, project_version, project_date, answer_yes):
         stage_newsfile(directory, config['filename'])
 
         click.echo("Removing news fragments...", err=to_err)
-        remove_files(
-            base_directory, fragment_directory, config['sections'],
-            fragments, answer_yes)
+        remove_files(fragment_filenames, answer_yes)
 
         click.echo("Done!", err=to_err)
 
