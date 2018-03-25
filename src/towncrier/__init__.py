@@ -30,7 +30,8 @@ def _get_date():
               help=("Render the news fragments, don't write to files, "
                     "don't check versions."))
 @click.option('--dir', 'directory', default='.')
-@click.option('--version', 'project_version', default=None)
+@click.option('--version', 'project_version', default=None,
+              help="Render the news fragments using given version.")
 @click.option('--date', 'project_date', default=None)
 @click.option('--yes', 'answer_yes', default=False, flag_value=True,
               help="Do not ask for confirmation to remove news fragments.")
