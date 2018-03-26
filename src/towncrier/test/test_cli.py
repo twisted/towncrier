@@ -223,3 +223,43 @@ class TestCli(TestCase):
             path = 'NEWS.rst'
             self.assertTrue(os.path.isfile(path))
             self.assertFalse(os.path.isfile(fragment_path))
+
+    def test_projectless_changelog(self):
+        """In which a directory containing news files is built into a changelog
+
+        - without a Python project or version number. We override the
+        project title from the commandline.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open('pyproject.toml', 'w') as f:
+                f.write(
+                    '[tool.towncrier]\n'
+                    'package = "foo"\n'
+                )
+            os.mkdir('foo')
+            os.mkdir('foo/newsfragments')
+            with open('foo/newsfragments/123.feature', 'w') as f:
+                f.write('Adds levitation')
+            # Towncrier ignores .rst extension
+            with open('foo/newsfragments/124.feature.rst', 'w') as f:
+                f.write('Extends levitation')
+
+            result = runner.invoke(_main, [
+                '--name', 'FooBarBaz',
+                '--version', '7.8.9',
+                '--date', '01-01-2001',
+                '--draft',
+            ])
+
+        self.assertEqual(0, result.exit_code)
+        self.assertEqual(
+            result.output,
+            u'Loading template...\nFinding news fragments...\nRendering news '
+            u'fragments...\nDraft only -- nothing has been written.\nWhat is '
+            u'seen below is what would be written.\n\nFooBarBaz 7.8.9 (01-01-2001)'
+            u'\n============================\n'
+            u'\n\nFeatures\n--------\n\n- Adds levitation (#123)\n'
+            u'- Extends levitation (#124)\n\n'
+        )
