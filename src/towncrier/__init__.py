@@ -31,7 +31,8 @@ def _get_date():
                     "don't check versions."))
 @click.option('--dir', 'directory', default='.')
 @click.option('--name', 'project_name', default=None)
-@click.option('--version', 'project_version', default=None)
+@click.option('--version', 'project_version', default=None,
+              help="Render the news fragments using given version.")
 @click.option('--date', 'project_date', default=None)
 @click.option('--yes', 'answer_yes', default=False, flag_value=True,
               help="Do not ask for confirmation to remove news fragments.")
@@ -80,8 +81,8 @@ def __main(
             directory, config['package_dir'], config['package']))
         fragment_directory = "newsfragments"
 
-    fragments = find_fragments(
-        base_directory, config['sections'], fragment_directory)
+    fragments, fragment_filenames = find_fragments(
+        base_directory, config['sections'], fragment_directory, definitions)
 
     click.echo("Rendering news fragments...", err=to_err)
 
@@ -128,9 +129,7 @@ def __main(
         stage_newsfile(directory, config['filename'])
 
         click.echo("Removing news fragments...", err=to_err)
-        remove_files(
-            base_directory, fragment_directory, config['sections'],
-            fragments, answer_yes)
+        remove_files(fragment_filenames, answer_yes)
 
         click.echo("Done!", err=to_err)
 
