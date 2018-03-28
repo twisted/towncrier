@@ -265,10 +265,22 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,
-            u'Loading template...\nFinding news fragments...\nRendering news '
-            u'fragments...\nDraft only -- nothing has been written.\nWhat is '
-            u'seen below is what would be written.\n\nFooBarBaz 7.8.9 (01-01-2001)'
-            u'\n============================\n'
-            u'\n\nFeatures\n--------\n\n- Adds levitation (#123)\n'
-            u'- Extends levitation (#124)\n\n'
+            dedent("""
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            FooBarBaz 7.8.9 (01-01-2001)
+            ============================
+
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+            - Extends levitation (#124)
+
+            """).lstrip()
         )
