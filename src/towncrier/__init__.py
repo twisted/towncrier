@@ -30,16 +30,29 @@ def _get_date():
               help=("Render the news fragments, don't write to files, "
                     "don't check versions."))
 @click.option('--dir', 'directory', default='.')
+@click.option('--name', 'project_name', default=None)
 @click.option('--version', 'project_version', default=None,
               help="Render the news fragments using given version.")
 @click.option('--date', 'project_date', default=None)
 @click.option('--yes', 'answer_yes', default=False, flag_value=True,
               help="Do not ask for confirmation to remove news fragments.")
-def _main(draft, directory, project_version, project_date, answer_yes):
-    return __main(draft, directory, project_version, project_date, answer_yes)
+def _main(
+    draft, directory,
+    project_name, project_version, project_date,
+    answer_yes
+):
+    return __main(
+        draft, directory,
+        project_name, project_version, project_date,
+        answer_yes
+    )
 
 
-def __main(draft, directory, project_version, project_date, answer_yes):
+def __main(
+    draft, directory,
+    project_name, project_version, project_date,
+    answer_yes
+):
     """
     The main entry point.
     """
@@ -79,14 +92,15 @@ def __main(draft, directory, project_version, project_date, answer_yes):
         template, config['issue_format'], fragments, definitions,
         config['underlines'][1:])
 
-    if not project_version:
+    if project_version is None:
         project_version = get_version(
             os.path.abspath(os.path.join(directory, config['package_dir'])),
             config['package'])
 
-    project_name = get_project_name(
-        os.path.abspath(os.path.join(directory, config['package_dir'])),
-        config['package'])
+    if project_name is None:
+        project_name = get_project_name(
+            os.path.abspath(os.path.join(directory, config['package_dir'])),
+            config['package'])
 
     if project_date is None:
         project_date = _get_date()
