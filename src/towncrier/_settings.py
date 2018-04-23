@@ -33,10 +33,6 @@ def load_config(from_dir):
 
     config = config['tool']['towncrier']
 
-    if 'package' not in config:
-        raise ValueError(
-            "The [tool.towncrier] section has no required 'package' key.")
-
     sections = OrderedDict()
     types = OrderedDict()
 
@@ -54,7 +50,7 @@ def load_config(from_dir):
         types = _default_types
 
     return {
-        'package': config.get('package'),
+        'package': config.get('package', ''),
         'package_dir': config.get('package_dir', '.'),
         'filename': config.get('filename', 'NEWS.rst'),
         'directory': config.get('directory'),

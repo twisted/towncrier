@@ -284,3 +284,52 @@ class TestCli(TestCase):
 
             """).lstrip()
         )
+
+    def test_no_package_changelog(self):
+        """The calling towncrier with any package argument.
+
+        Specifying a package in the toml file or the command line
+        should not always be needed:
+        - we can set the version number on the command line,
+          so we do not need the package for that.
+        - we don't need to include the package in the changelog header.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open('pyproject.toml', 'w') as f:
+                f.write(
+                    '[tool.towncrier]\n'
+                    'title_format = "{version} ({project_date})"\n'
+                )
+            os.mkdir('newsfragments')
+            with open('newsfragments/123.feature', 'w') as f:
+                f.write('Adds levitation')
+
+            result = runner.invoke(_main, [
+                '--version', '7.8.9',
+                '--date', '01-01-2001',
+                '--draft',
+            ])
+
+        self.assertEqual(0, result.exit_code)
+        self.assertEqual(
+            result.output,
+            dedent("""
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            7.8.9 (01-01-2001)
+            ==================
+
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+
+            """).lstrip()
+        )
