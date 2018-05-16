@@ -98,9 +98,15 @@ def __main(
             config['package'])
 
     if project_name is None:
-        project_name = get_project_name(
-            os.path.abspath(os.path.join(directory, config['package_dir'])),
-            config['package'])
+        package = config.get('package')
+        if package:
+            project_name = get_project_name(
+                os.path.abspath(
+                    os.path.join(directory, config['package_dir'])),
+                package)
+        else:
+            # Can't determine a project_name, but maybe it is not needed.
+            project_name = ''
 
     if project_date is None:
         project_date = _get_date()
