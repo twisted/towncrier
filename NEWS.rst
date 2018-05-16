@@ -2,6 +2,33 @@
 
 .. towncrier release notes start
 
+towncrier 18.5.0 (2018-05-16)
+=============================
+
+Features
+--------
+
+- Python 3.3 is no longer supported. (`#103
+  <https://github.com/hawkowl/towncrier/issues/103>`_)
+- Made ``package`` optional. When the version is passed on the command line,
+  and the ``title_format`` does not use the package name, and it is not used
+  for the path to the news fragments, then no package name is needed, so we
+  should not enforce it. (`#111
+  <https://github.com/hawkowl/towncrier/issues/111>`_)
+
+
+Bugfixes
+--------
+
+- When cleaning up old newsfragments, if a newsfragment is named
+  "123.feature.rst", then remove that file instead of trying to remove the
+  non-existent "123.feature". (`#99
+  <https://github.com/hawkowl/towncrier/issues/99>`_)
+- If there are two newsfragments with the same name (example: "123.bugfix.rst"
+  and "123.bugfix.rst~"), then raise an error instead of silently picking one
+  at random. (`#101 <https://github.com/hawkowl/towncrier/issues/101>`_)
+
+
 towncrier 17.8.0 (2017-08-19)
 =============================
 
