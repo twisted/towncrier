@@ -28,6 +28,10 @@ def load_config(from_dir):
     with open(fn, 'r') as conffile:
         config = toml.load(conffile)
 
+    return parse_toml(config)
+
+
+def parse_toml(config):
     if 'tool' not in config:
         raise ValueError("No [tool.towncrier] section.")
 
