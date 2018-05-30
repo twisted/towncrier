@@ -17,14 +17,14 @@ class WritingTests(TestCase):
     def test_append_at_top(self):
 
         fragments = OrderedDict([
-            ("", {
-                ("142", "misc", 0): u"",
-                ("1", "misc", 0): u"",
-                ("4", "feature", 0): u"Stuff!",
-                ("4", "feature", 1): u"Second Stuff!",
-                ("2", "feature", 0): u"Foo added.",
-                ("72", "feature", 0): u"Foo added.",
-            }),
+            ("", OrderedDict([
+                (("142", "misc", 0), u""),
+                (("1", "misc", 0), u""),
+                (("4", "feature", 0), u"Stuff!"),
+                (("4", "feature", 1), u"Second Stuff!"),
+                (("2", "feature", 0), u"Foo added."),
+                (("72", "feature", 0), u"Foo added."),
+            ])),
             ("Names", {}),
             ("Web", {
                 ("3", "bugfix", 0): u"Web fixed.",

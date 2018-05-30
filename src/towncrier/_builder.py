@@ -119,7 +119,7 @@ def split_fragments(fragments, definitions):
             if definitions[category]["showcontent"] is False:
                 content = u""
 
-            texts = section.get(category, {})
+            texts = section.get(category, OrderedDict())
 
             if texts.get(content):
                 texts[content] = sorted(texts[content] + [ticket])
