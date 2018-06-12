@@ -141,7 +141,7 @@ Bugfixes
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
-            template, None, fragments, definitions, ["-", "~"])
+            template, None, fragments, definitions, ["-", "~"], wrap=True)
         self.assertEqual(output, expected_output)
 
         # Check again with non-default underlines
@@ -214,7 +214,7 @@ Misc
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
-            template, u"xx{issue}", fragments, definitions, ["-", "~"])
+            template, u"xx{issue}", fragments, definitions, ["-", "~"], wrap=True)
         self.assertEqual(output, expected_output)
 
     def test_line_wrapping(self):
