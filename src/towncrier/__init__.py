@@ -85,7 +85,6 @@ def __main(
         base_directory, config['sections'], fragment_directory, definitions)
 
     click.echo("Rendering news fragments...", err=to_err)
-
     fragments = split_fragments(fragments, definitions)
     rendered = render_fragments(
         # The 0th underline is used for the top line
@@ -94,7 +93,7 @@ def __main(
 
     if project_version is None:
         project_version = get_version(
-            os.path.abspath(os.path.join(directory, config['package_dir'])),
+            os.path.join(directory, config['package_dir']),
             config['package'])
 
     if project_name is None:
