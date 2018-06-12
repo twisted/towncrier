@@ -9,21 +9,10 @@ from twisted.trial.unittest import TestCase
 
 from collections import OrderedDict
 
-from .._builder import render_fragments, split_fragments, normalise
+from .._builder import render_fragments, split_fragments
 
 
 class FormatterTests(TestCase):
-
-    def test_normalise(self):
-
-        cases = [
-            ("   hello", "hello"),
-            ("\thello\nthere\n people", "hello there people"),
-            ("hi\nthere        what's up\n\n\n", "hi there what's up"),
-        ]
-
-        for case in cases:
-            self.assertEqual(normalise(case[0]), case[1])
 
     def test_split(self):
 
@@ -176,7 +165,7 @@ Bugfixes
 """)
 
         output = render_fragments(
-            template, None, fragments, definitions, ["*", "^"])
+            template, None, fragments, definitions, ["*", "^"], wrap=True)
         self.assertEqual(output, expected_output_weird_underlines)
 
     def test_issue_format(self):
@@ -231,19 +220,6 @@ Misc
                 """,  # NOQA
                 ("2", "feature"): u"https://google.com/q=?" + u"-" * 100,
                 ("3", "feature"): u"a " * 80,
-                ("4", "feature"): u"""
-                w
-
-                h
-
-                o
-
-                o
-
-                p
-
-                s
-                """
             },
         }
 
@@ -264,7 +240,6 @@ Features
 - a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
   a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
   a a (#3)
-- w h o o p s (#4)
 """)
 
         template = pkg_resources.resource_string(
@@ -274,4 +249,42 @@ Features
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
             template, None, fragments, definitions, ["-", "~"], wrap=True)
+        self.assertEqual(output, expected_output)
+
+    def test_line_wrapping_disabled(self):
+        """
+        Output is not wrapped if it's disabled.
+        """
+        self.maxDiff = None
+
+        fragments = {
+            "": {
+                ("1", "feature"): u"""
+                asdf asdf asdf asdf looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong newsfragment.
+                """,  # NOQA
+                ("2", "feature"): u"https://google.com/q=?" + u"-" * 100,
+                ("3", "feature"): u"a " * 80,
+            },
+        }
+
+        definitions = OrderedDict([
+            ("feature", {"name": "Features", "showcontent": True}),
+        ])
+
+        expected_output = (u"""
+Features
+--------
+
+- asdf asdf asdf asdf looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong newsfragment. (#1)
+- https://google.com/q=?---------------------------------------------------------------------------------------------------- (#2)
+- a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a (#3)
+""")
+
+        template = pkg_resources.resource_string(
+            "towncrier",
+            "templates/template.rst").decode('utf8')
+
+        fragments = split_fragments(fragments, definitions)
+        output = render_fragments(
+            template, None, fragments, definitions, ["-", "~"], wrap=False)
         self.assertEqual(output, expected_output)

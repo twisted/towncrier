@@ -88,7 +88,7 @@ Old text.
                            "MyProject 1.0\n=============\n",
                            render_fragments(
                                template, None, fragments, definitions,
-                               ["-", "~"]))
+                               ["-", "~"], wrap=True))
 
         with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
             output = f.read()
@@ -185,7 +185,7 @@ Old text.
                            "MyProject 1.0\n=============\n",
                            render_fragments(
                                template, None, fragments, definitions,
-                               ["-", "~"]))
+                               ["-", "~"], wrap=True))
 
         with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
             output = f.read()
