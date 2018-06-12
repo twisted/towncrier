@@ -25,8 +25,8 @@ class FormatterTests(TestCase):
             },
             "Web": {
                 ("3", "bugfix", 0): u"Web fixed.    ",
-                ("4", "feature", 0): u"Foo added."
-            }
+                ("4", "feature", 0): u"Foo added.",
+            },
         }
 
         expected_output = {
@@ -58,33 +58,39 @@ class FormatterTests(TestCase):
         Basic functionality -- getting a bunch of news fragments and formatting
         them into a rST file -- works.
         """
-        fragments = OrderedDict([
-            ("", {
-                # asciibetical sorting will do 1, 142, 9
-                # we want 1, 9, 142 instead
-                ("142", "misc", 0): u"",
-                ("1", "misc", 0): u"",
-                ("9", "misc", 0): u"",
-                ("bar", "misc", 0): u"",
-                ("4", "feature", 0): u"Stuff!",
-                ("2", "feature", 0): u"Foo added.",
-                ("72", "feature", 0): u"Foo added.",
-                ("9", "feature", 0): u"Foo added.",
-                ("baz", "feature", 0): u"Fun!",
-            }),
-            ("Names", {}),
-            ("Web", {
-                ("3", "bugfix", 0): u"Web fixed.",
-            }),
-        ])
+        fragments = OrderedDict(
+            [
+                (
+                    "",
+                    {
+                        # asciibetical sorting will do 1, 142, 9
+                        # we want 1, 9, 142 instead
+                        ("142", "misc", 0): u"",
+                        ("1", "misc", 0): u"",
+                        ("9", "misc", 0): u"",
+                        ("bar", "misc", 0): u"",
+                        ("4", "feature", 0): u"Stuff!",
+                        ("2", "feature", 0): u"Foo added.",
+                        ("72", "feature", 0): u"Foo added.",
+                        ("9", "feature", 0): u"Foo added.",
+                        ("baz", "feature", 0): u"Fun!",
+                    },
+                ),
+                ("Names", {}),
+                ("Web", {("3", "bugfix", 0): u"Web fixed."}),
+            ]
+        )
 
-        definitions = OrderedDict([
-            ("feature", {"name": "Features", "showcontent": True}),
-            ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-            ("misc", {"name": "Misc", "showcontent": False}),
-        ])
+        definitions = OrderedDict(
+            [
+                ("feature", {"name": "Features", "showcontent": True}),
+                ("bugfix", {"name": "Bugfixes", "showcontent": True}),
+                ("misc", {"name": "Misc", "showcontent": False}),
+            ]
+        )
 
-        expected_output = (u"""
+        expected_output = (
+            u"""
 Features
 --------
 
@@ -211,12 +217,16 @@ Misc
 
         fragments = {
             "": {
-                ("1", "feature", 0): u"""
+                (
+                    "1",
+                    "feature",
+                    0,
+                ): u"""
                 asdf asdf asdf asdf looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong newsfragment.
                 """,  # NOQA
                 ("2", "feature", 0): u"https://google.com/q=?" + u"-" * 100,
                 ("3", "feature", 0): u"a " * 80,
-            },
+            }
         }
 
         definitions = OrderedDict(

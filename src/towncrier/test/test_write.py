@@ -15,26 +15,33 @@ from .._writer import append_to_newsfile
 class WritingTests(TestCase):
     def test_append_at_top(self):
 
-        fragments = OrderedDict([
-            ("", OrderedDict([
-                (("142", "misc", 0), u""),
-                (("1", "misc", 0), u""),
-                (("4", "feature", 0), u"Stuff!"),
-                (("4", "feature", 1), u"Second Stuff!"),
-                (("2", "feature", 0), u"Foo added."),
-                (("72", "feature", 0), u"Foo added."),
-            ])),
-            ("Names", {}),
-            ("Web", {
-                ("3", "bugfix", 0): u"Web fixed.",
-            }),
-        ])
+        fragments = OrderedDict(
+            [
+                (
+                    "",
+                    OrderedDict(
+                        [
+                            (("142", "misc", 0), u""),
+                            (("1", "misc", 0), u""),
+                            (("4", "feature", 0), u"Stuff!"),
+                            (("4", "feature", 1), u"Second Stuff!"),
+                            (("2", "feature", 0), u"Foo added."),
+                            (("72", "feature", 0), u"Foo added."),
+                        ]
+                    ),
+                ),
+                ("Names", {}),
+                ("Web", {("3", "bugfix", 0): u"Web fixed."}),
+            ]
+        )
 
-        definitions = OrderedDict([
-            ("feature", {"name": "Features", "showcontent": True}),
-            ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-            ("misc", {"name": "Misc", "showcontent": False}),
-        ])
+        definitions = OrderedDict(
+            [
+                ("feature", {"name": "Features", "showcontent": True}),
+                ("bugfix", {"name": "Bugfixes", "showcontent": True}),
+                ("misc", {"name": "Misc", "showcontent": False}),
+            ]
+        )
 
         expected_output = """MyProject 1.0
 =============
@@ -103,26 +110,31 @@ Old text.
         If there is a comment with C{.. towncrier release notes start},
         towncrier will add the version notes after it.
         """
-        fragments = OrderedDict([
-            ("", {
-                ("142", "misc", 0): u"",
-                ("1", "misc", 0): u"",
-                ("4", "feature", 0): u"Stuff!",
-                ("2", "feature", 0): u"Foo added.",
-                ("72", "feature", 0): u"Foo added.",
-                ("99", "feature", 0): u"Foo! " * 100
-            }),
-            ("Names", {}),
-            ("Web", {
-                ("3", "bugfix", 0): u"Web fixed.",
-            }),
-        ])
+        fragments = OrderedDict(
+            [
+                (
+                    "",
+                    {
+                        ("142", "misc", 0): u"",
+                        ("1", "misc", 0): u"",
+                        ("4", "feature", 0): u"Stuff!",
+                        ("2", "feature", 0): u"Foo added.",
+                        ("72", "feature", 0): u"Foo added.",
+                        ("99", "feature", 0): u"Foo! " * 100,
+                    },
+                ),
+                ("Names", {}),
+                ("Web", {("3", "bugfix", 0): u"Web fixed."}),
+            ]
+        )
 
-        definitions = OrderedDict([
-            ("feature", {"name": "Features", "showcontent": True}),
-            ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-            ("misc", {"name": "Misc", "showcontent": False}),
-        ])
+        definitions = OrderedDict(
+            [
+                ("feature", {"name": "Features", "showcontent": True}),
+                ("bugfix", {"name": "Bugfixes", "showcontent": True}),
+                ("misc", {"name": "Misc", "showcontent": False}),
+            ]
+        )
 
         expected_output = """Hello there! Here is some info.
 
