@@ -271,11 +271,12 @@ Features
                 (
                     "1",
                     "feature",
+                    0
                 ): u"""
                 asdf asdf asdf asdf looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong newsfragment.
                 """,  # NOQA
-                ("2", "feature"): u"https://google.com/q=?" + u"-" * 100,
-                ("3", "feature"): u"a " * 80,
+                ("2", "feature", 0): u"https://google.com/q=?" + u"-" * 100,
+                ("3", "feature", 0): u"a " * 80,
             }
         }
 
