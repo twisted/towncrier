@@ -90,7 +90,7 @@ def __main(
     rendered = render_fragments(
         # The 0th underline is used for the top line
         template, config['issue_format'], fragments, definitions,
-        config['underlines'][1:])
+        config['underlines'][1:], config["wrap"])
 
     if project_version is None:
         project_version = get_version(

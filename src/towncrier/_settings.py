@@ -49,6 +49,13 @@ def load_config(from_dir):
     else:
         types = _default_types
 
+    wrap = config.get("wrap", False)
+    if isinstance(wrap, str):
+        if wrap in ["true", "True", "1"]:
+            wrap = True
+        else:
+            wrap = False
+
     return {
         'package': config.get('package', ''),
         'package_dir': config.get('package_dir', '.'),
@@ -60,5 +67,6 @@ def load_config(from_dir):
         'start_line': config.get('start_string', _start_string),
         'title_format': config.get('title_format', _title_format),
         'issue_format': config.get('issue_format'),
-        'underlines': config.get('underlines', _underlines)
+        'underlines': config.get('underlines', _underlines),
+        'wrap': wrap
     }

@@ -273,5 +273,5 @@ Features
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
-            template, None, fragments, definitions, ["-", "~"])
+            template, None, fragments, definitions, ["-", "~"], wrap=True)
         self.assertEqual(output, expected_output)
