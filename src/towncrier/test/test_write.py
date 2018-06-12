@@ -13,28 +13,32 @@ from .._writer import append_to_newsfile
 
 
 class WritingTests(TestCase):
-
     def test_append_at_top(self):
 
-        fragments = OrderedDict([
-            ("", {
-                ("142", "misc"): u"",
-                ("1", "misc"): u"",
-                ("4", "feature"): u"Stuff!",
-                ("2", "feature"): u"Foo added.",
-                ("72", "feature"): u"Foo added.",
-            }),
-            ("Names", {}),
-            ("Web", {
-                ("3", "bugfix"): u"Web fixed.",
-            }),
-        ])
+        fragments = OrderedDict(
+            [
+                (
+                    "",
+                    {
+                        ("142", "misc"): u"",
+                        ("1", "misc"): u"",
+                        ("4", "feature"): u"Stuff!",
+                        ("2", "feature"): u"Foo added.",
+                        ("72", "feature"): u"Foo added.",
+                    },
+                ),
+                ("Names", {}),
+                ("Web", {("3", "bugfix"): u"Web fixed."}),
+            ]
+        )
 
-        definitions = OrderedDict([
-            ("feature", {"name": "Features", "showcontent": True}),
-            ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-            ("misc", {"name": "Misc", "showcontent": False}),
-        ])
+        definitions = OrderedDict(
+            [
+                ("feature", {"name": "Features", "showcontent": True}),
+                ("bugfix", {"name": "Bugfixes", "showcontent": True}),
+                ("misc", {"name": "Misc", "showcontent": False}),
+            ]
+        )
 
         expected_output = """MyProject 1.0
 =============
@@ -79,16 +83,18 @@ Old text.
         fragments = split_fragments(fragments, definitions)
 
         template = pkg_resources.resource_string(
-            "towncrier",
-            "templates/template.rst").decode('utf8')
+            "towncrier", "templates/template.rst"
+        ).decode("utf8")
 
-        append_to_newsfile(tempdir,
-                           "NEWS.rst",
-                           ".. towncrier release notes start\n",
-                           "MyProject 1.0\n=============\n",
-                           render_fragments(
-                               template, None, fragments, definitions,
-                               ["-", "~"], wrap=True))
+        append_to_newsfile(
+            tempdir,
+            "NEWS.rst",
+            ".. towncrier release notes start\n",
+            "MyProject 1.0\n=============\n",
+            render_fragments(
+                template, None, fragments, definitions, ["-", "~"], wrap=True
+            ),
+        )
 
         with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
             output = f.read()
@@ -100,26 +106,31 @@ Old text.
         If there is a comment with C{.. towncrier release notes start},
         towncrier will add the version notes after it.
         """
-        fragments = OrderedDict([
-            ("", {
-                ("142", "misc"): u"",
-                ("1", "misc"): u"",
-                ("4", "feature"): u"Stuff!",
-                ("2", "feature"): u"Foo added.",
-                ("72", "feature"): u"Foo added.",
-                ("99", "feature"): u"Foo! " * 100
-            }),
-            ("Names", {}),
-            ("Web", {
-                ("3", "bugfix"): u"Web fixed.",
-            }),
-        ])
+        fragments = OrderedDict(
+            [
+                (
+                    "",
+                    {
+                        ("142", "misc"): u"",
+                        ("1", "misc"): u"",
+                        ("4", "feature"): u"Stuff!",
+                        ("2", "feature"): u"Foo added.",
+                        ("72", "feature"): u"Foo added.",
+                        ("99", "feature"): u"Foo! " * 100,
+                    },
+                ),
+                ("Names", {}),
+                ("Web", {("3", "bugfix"): u"Web fixed."}),
+            ]
+        )
 
-        definitions = OrderedDict([
-            ("feature", {"name": "Features", "showcontent": True}),
-            ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-            ("misc", {"name": "Misc", "showcontent": False}),
-        ])
+        definitions = OrderedDict(
+            [
+                ("feature", {"name": "Features", "showcontent": True}),
+                ("bugfix", {"name": "Bugfixes", "showcontent": True}),
+                ("misc", {"name": "Misc", "showcontent": False}),
+            ]
+        )
 
         expected_output = """Hello there! Here is some info.
 
@@ -170,22 +181,28 @@ Old text.
         os.mkdir(tempdir)
 
         with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
-            f.write(("Hello there! Here is some info.\n\n"
-                     ".. towncrier release notes start\nOld text.\n"))
+            f.write(
+                (
+                    "Hello there! Here is some info.\n\n"
+                    ".. towncrier release notes start\nOld text.\n"
+                )
+            )
 
         fragments = split_fragments(fragments, definitions)
 
         template = pkg_resources.resource_string(
-            "towncrier",
-            "templates/template.rst").decode('utf8')
+            "towncrier", "templates/template.rst"
+        ).decode("utf8")
 
-        append_to_newsfile(tempdir,
-                           "NEWS.rst",
-                           ".. towncrier release notes start\n",
-                           "MyProject 1.0\n=============\n",
-                           render_fragments(
-                               template, None, fragments, definitions,
-                               ["-", "~"], wrap=True))
+        append_to_newsfile(
+            tempdir,
+            "NEWS.rst",
+            ".. towncrier release notes start\n",
+            "MyProject 1.0\n=============\n",
+            render_fragments(
+                template, None, fragments, definitions, ["-", "~"], wrap=True
+            ),
+        )
 
         with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
             output = f.read()

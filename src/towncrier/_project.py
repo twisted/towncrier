@@ -24,8 +24,7 @@ def _get_package(package_dir, package):
     try:
         module = import_module(package)
     except ImportError as e:
-        print("Tried to import {}, but ran into this error: {}".format(package,
-                                                                       e))
+        print("Tried to import {}, but ran into this error: {}".format(package, e))
         # wups that didn't work
         module = None
 
@@ -59,9 +58,13 @@ def get_version(package_dir, package):
     if isinstance(version, tuple):
         return ".".join(map(str, version))
 
-    raise Exception(("I only know how to look at a __version__ that is a str, "
-                     "an Increment Version, or a tuple. If you can't provide "
-                     "that, use the --version argument and specify one."))
+    raise Exception(
+        (
+            "I only know how to look at a __version__ that is a str, "
+            "an Increment Version, or a tuple. If you can't provide "
+            "that, use the --version argument and specify one."
+        )
+    )
 
 
 def get_project_name(package_dir, package):

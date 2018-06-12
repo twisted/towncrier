@@ -9,7 +9,6 @@ from .._project import get_version
 
 
 class VersionFetchingTests(TestCase):
-
     def test_str(self):
         """
         A str __version__ will be picked up.

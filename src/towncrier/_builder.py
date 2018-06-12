@@ -57,11 +57,12 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
             full_filename = os.path.join(section_dir, basename)
             fragment_filenames.append(full_filename)
             with open(full_filename, "rb") as f:
-                data = f.read().decode('utf8', 'replace')
+                data = f.read().decode("utf8", "replace")
             if (ticket, category) in file_content:
                 raise ValueError(
-                    "multiple files for {}.{} in {}"
-                    .format(ticket, category, section_dir)
+                    "multiple files for {}.{} in {}".format(
+                        ticket, category, section_dir
+                    )
                 )
             file_content[ticket, category] = data
 
@@ -128,9 +129,7 @@ def render_issue(issue_format, issue):
         return issue_format.format(issue=issue)
 
 
-def render_fragments(
-        template, issue_format, fragments, definitions, underlines, wrap
-):
+def render_fragments(template, issue_format, fragments, definitions, underlines, wrap):
     """
     Render the fragments into a news file.
     """
@@ -175,14 +174,20 @@ def render_fragments(
     done = []
 
     res = jinja_template.render(
-        sections=data, definitions=definitions, underlines=underlines)
+        sections=data, definitions=definitions, underlines=underlines
+    )
 
     for line in res.split(u"\n"):
         if wrap:
-            done.append(textwrap.fill(
-                line, width=79, subsequent_indent=u"  ",
-                break_long_words=False, break_on_hyphens=False,
-            ))
+            done.append(
+                textwrap.fill(
+                    line,
+                    width=79,
+                    subsequent_indent=u"  ",
+                    break_long_words=False,
+                    break_on_hyphens=False,
+                )
+            )
         else:
             done.append(line)
 

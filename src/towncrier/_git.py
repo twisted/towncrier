@@ -19,8 +19,7 @@ def remove_files(fragment_filenames, answer_yes):
     for filename in fragment_filenames:
         click.echo(filename)
 
-    if answer_yes or click.confirm('Is it okay if I remove those files?',
-                                   default=True):
+    if answer_yes or click.confirm("Is it okay if I remove those files?", default=True):
         call(["git", "rm", "--quiet"] + fragment_filenames)
 
 
