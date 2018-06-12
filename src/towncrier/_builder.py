@@ -10,6 +10,7 @@ from collections import OrderedDict
 
 from jinja2 import Template
 
+
 # Returns a structure like:
 #
 # OrderedDict([

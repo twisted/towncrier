@@ -290,7 +290,7 @@ Features
 - asdf asdf asdf asdf looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong newsfragment. (#1)
 - https://google.com/q=?---------------------------------------------------------------------------------------------------- (#2)
 - a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a (#3)
-"""
+"""  # NOQA
         )
 
         template = pkg_resources.resource_string(
