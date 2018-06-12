@@ -13,7 +13,6 @@ from .._writer import append_to_newsfile
 
 
 class WritingTests(TestCase):
-
     def test_append_at_top(self):
 
         fragments = OrderedDict([
@@ -81,16 +80,18 @@ Old text.
         fragments = split_fragments(fragments, definitions)
 
         template = pkg_resources.resource_string(
-            "towncrier",
-            "templates/template.rst").decode('utf8')
+            "towncrier", "templates/template.rst"
+        ).decode("utf8")
 
-        append_to_newsfile(tempdir,
-                           "NEWS.rst",
-                           ".. towncrier release notes start\n",
-                           "MyProject 1.0\n=============\n",
-                           render_fragments(
-                               template, None, fragments, definitions,
-                               ["-", "~"]))
+        append_to_newsfile(
+            tempdir,
+            "NEWS.rst",
+            ".. towncrier release notes start\n",
+            "MyProject 1.0\n=============\n",
+            render_fragments(
+                template, None, fragments, definitions, ["-", "~"], wrap=True
+            ),
+        )
 
         with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
             output = f.read()
@@ -172,22 +173,28 @@ Old text.
         os.mkdir(tempdir)
 
         with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
-            f.write(("Hello there! Here is some info.\n\n"
-                     ".. towncrier release notes start\nOld text.\n"))
+            f.write(
+                (
+                    "Hello there! Here is some info.\n\n"
+                    ".. towncrier release notes start\nOld text.\n"
+                )
+            )
 
         fragments = split_fragments(fragments, definitions)
 
         template = pkg_resources.resource_string(
-            "towncrier",
-            "templates/template.rst").decode('utf8')
+            "towncrier", "templates/template.rst"
+        ).decode("utf8")
 
-        append_to_newsfile(tempdir,
-                           "NEWS.rst",
-                           ".. towncrier release notes start\n",
-                           "MyProject 1.0\n=============\n",
-                           render_fragments(
-                               template, None, fragments, definitions,
-                               ["-", "~"]))
+        append_to_newsfile(
+            tempdir,
+            "NEWS.rst",
+            ".. towncrier release notes start\n",
+            "MyProject 1.0\n=============\n",
+            render_fragments(
+                template, None, fragments, definitions, ["-", "~"], wrap=True
+            ),
+        )
 
         with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
             output = f.read()
