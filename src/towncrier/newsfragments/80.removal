@@ -1,0 +1,1 @@
+Towncrier now supports Python 3.5+ as a script runtime. Python 2.7 will not function.

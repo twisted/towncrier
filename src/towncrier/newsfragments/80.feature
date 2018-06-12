@@ -1,0 +1,1 @@
+wrap is now an optional configuration option (which is False by default) which controls line wrapping of news files. Towncrier will now also not attempt to normalise (wiping newlines) from the input, but will strip leading and ending whitespace.
