@@ -10,26 +10,6 @@ from collections import OrderedDict
 
 from jinja2 import Template
 
-
-def normalise(text):
-
-    # Blitz newlines
-    text = text.replace(u"\r\n", u"\n")
-    text = text.replace(u"\n", u" ")
-
-    # No tabs!
-    text = text.replace(u"\t", u" ")
-
-    # Remove double spaces
-    while u"  " in text:
-        text = text.replace(u"  ", u" ")
-
-    # Remove left/right whitespace
-    text = text.strip()
-
-    return text
-
-
 # Returns a structure like:
 #
 # OrderedDict([
@@ -102,7 +82,7 @@ def split_fragments(fragments, definitions):
 
         for (ticket, category), content in section_fragments.items():
 
-            content = normalise(content)
+            content = textwrap.indent(content.strip(), "  ")[2:]
 
             if definitions[category]["showcontent"] is False:
                 content = u""
@@ -149,7 +129,7 @@ def render_issue(issue_format, issue):
 
 
 def render_fragments(
-        template, issue_format, fragments, definitions, underlines,
+        template, issue_format, fragments, definitions, underlines, wrap
 ):
     """
     Render the fragments into a news file.
@@ -198,9 +178,12 @@ def render_fragments(
         sections=data, definitions=definitions, underlines=underlines)
 
     for line in res.split(u"\n"):
-        done.append(textwrap.fill(
-            line, width=79, subsequent_indent=u"  ",
-            break_long_words=False, break_on_hyphens=False,
-        ))
+        if wrap:
+            done.append(textwrap.fill(
+                line, width=79, subsequent_indent=u"  ",
+                break_long_words=False, break_on_hyphens=False,
+            ))
+        else:
+            done.append(line)
 
     return u"\n".join(done).rstrip() + u"\n"

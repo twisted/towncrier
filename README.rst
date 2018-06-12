@@ -27,12 +27,10 @@ Quick Start
 Install from PyPI::
 
     python3 -m pip install towncrier
-    # OR:
-    python2 -m pip install towncrier
 
 .. note::
 
-   ``towncrier``, as a command line tool, works on Python 2.7/3.4+ only.
+   ``towncrier``, as a command line tool, works on Python 3.4+ only.
    It is usable by projects written in other languages, provided you give it the version of the project when invoking it.
    For Python 2/3 compatible projects, the version can be discovered automatically.
 
