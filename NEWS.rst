@@ -2,6 +2,23 @@
 
 .. towncrier release notes start
 
+towncrier 18.6.0 (2018-07-05)
+=============================
+
+Features
+--------
+
+- ``python -m towncrier.check``, which will check a Git branch for the presence of added newsfiles, to be used in a CI system. (`#75 <https://github.com/hawkowl/towncrier/issues/75>`_)
+- wrap is now an optional configuration option (which is False by default) which controls line wrapping of news files. Towncrier will now also not attempt to normalise (wiping newlines) from the input, but will strip leading and ending whitespace. (`#80 <https://github.com/hawkowl/towncrier/issues/80>`_)
+- Towncrier can now be invoked by ``python -m towncrier``. (`#115 <https://github.com/hawkowl/towncrier/issues/115>`_)
+
+
+Deprecations and Removals
+-------------------------
+
+- Towncrier now supports Python 3.5+ as a script runtime. Python 2.7 will not function. (`#80 <https://github.com/hawkowl/towncrier/issues/80>`_)
+
+
 towncrier 18.5.0 (2018-05-16)
 =============================
 
