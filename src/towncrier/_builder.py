@@ -72,6 +72,17 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
     return content, fragment_filenames
 
 
+def indent(text, prefix):
+    """
+    Adds `prefix` to the beginning of non-empty lines in `text`.
+    """
+    # Based on Python 3's textwrap.indent
+    def prefixed_lines():
+        for line in text.splitlines(True):
+            yield (prefix + line if line.strip() else line)
+    return u"".join(prefixed_lines())
+
+
 # Takes the output from find_fragments above. Probably it would be useful to
 # add an example output here. Next time someone digs deep enough to figure it
 # out, please do so...
@@ -84,7 +95,7 @@ def split_fragments(fragments, definitions):
 
         for (ticket, category), content in section_fragments.items():
 
-            content = textwrap.indent(content.strip(), "  ")[2:]
+            content = indent(content.strip(), u"  ")[2:]
 
             if definitions[category]["showcontent"] is False:
                 content = u""
