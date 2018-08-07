@@ -8,7 +8,11 @@ import sys
 
 import click
 
-from subprocess import check_output, STDOUT
+from subprocess import (
+    CalledProcessError,
+    check_output,
+    STDOUT,
+)
 
 from ._settings import load_config, load_config_from_file
 from ._builder import find_fragments
@@ -34,11 +38,16 @@ def __main(comparewith, directory, pyproject):
     else:
         config = load_config_from_file(pyproject)
 
-    files_changed = (
-        _run(["git", "diff", "--name-only", comparewith + "..."], cwd=base_directory)
-        .decode(getattr(sys.stdout, "encoding", "utf8"))
-        .strip()
-    )
+    try:
+        files_changed = (
+            _run(["git", "diff", "--name-only", comparewith + "..."], cwd=base_directory)
+            .decode(getattr(sys.stdout, "encoding", "utf8"))
+            .strip()
+        )
+    except CalledProcessError as e:
+        click.echo("git produced output while failing:")
+        click.echo(e.output)
+        raise
 
     if not files_changed:
         click.echo("On trunk, or no diffs, so no newsfragment required.")
