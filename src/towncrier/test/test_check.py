@@ -14,10 +14,26 @@ class TestChecker(TestCase):
     maxDiff = None
 
     def test_no_changes_made(self):
+        self._test_no_changes_made(
+            "pyproject.toml",
+            lambda runner, main, argv: runner.invoke(main, argv),
+        )
+
+    def test_no_changes_made_pyproject_path(self):
+        pyproject = "not-pyproject.toml"
+        self._test_no_changes_made(
+            pyproject,
+            lambda runner, main, argv: runner.invoke(
+                main,
+                argv + ["--pyproject", pyproject],
+            ),
+        )
+
+    def _test_no_changes_made(self, pyproject_path, invoke):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
-            with open("pyproject.toml", "w") as f:
+            with open(pyproject_path, "w") as f:
                 f.write("[tool.towncrier]\n" 'package = "foo"\n')
             os.mkdir("foo")
             with open("foo/__init__.py", "w") as f:
@@ -34,7 +50,7 @@ class TestChecker(TestCase):
             call(["git", "commit", "-m", "Initial Commit"])
             call(["git", "checkout", "-b", "otherbranch"])
 
-            result = runner.invoke(_main, ["--compare-with", "master"])
+            result = invoke(runner, _main, ["--compare-with", "master"])
 
             self.assertEqual(0, result.exit_code)
             self.assertEqual(
