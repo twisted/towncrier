@@ -81,9 +81,14 @@ class TestChecker(TestCase):
             self.assertTrue(
                 result.output.endswith(
                     "Found:\n1. " + os.path.abspath(fragment_path) + "\n"
-                )
+                ),
+                result,
             )
-            self.assertEqual(0, result.exit_code)
+            self.assertEqual(
+                0,
+                result.exit_code,
+                result,
+            )
 
     def test_fragment_missing(self):
         runner = CliRunner()
