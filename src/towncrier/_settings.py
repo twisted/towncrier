@@ -32,7 +32,11 @@ def load_config_from_file(from_file):
     with open(from_file, "r") as conffile:
         config = toml.load(conffile)
 
-    if "tool" not in config:
+    return parse_toml(config)
+
+
+def parse_toml(config):
+    if 'tool' not in config:
         raise ValueError("No [tool.towncrier] section.")
 
     config = config["tool"]["towncrier"]
