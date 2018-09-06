@@ -84,22 +84,7 @@ class TestChecker(TestCase):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
-            with open("pyproject.toml", "w") as f:
-                f.write("[tool.towncrier]\n" 'package = "foo"\n')
-            os.mkdir("foo")
-            with open("foo/__init__.py", "w") as f:
-                f.write('__version__ = "1.2.3"\n')
-            os.mkdir("foo/newsfragments")
-            fragment_path = "foo/newsfragments/123.feature"
-            with open(fragment_path, "w") as f:
-                f.write("Adds levitation")
-
-            call(["git", "init"])
-            call(["git", "config", "user.name", "user"])
-            call(["git", "config", "user.email", "user@example.com"])
-            call(["git", "add", "."])
-            call(["git", "commit", "-m", "Initial Commit"])
-            call(["git", "checkout", "-b", "otherbranch"])
+            create_project("pyproject.toml")
 
             file_path = "foo/somefile.py"
             with open(file_path, "w") as f:
@@ -133,22 +118,7 @@ class TestChecker(TestCase):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
-            with open("pyproject.toml", "w") as f:
-                f.write("[tool.towncrier]\n" 'package = "foo"\n')
-            os.mkdir("foo")
-            with open("foo/__init__.py", "w") as f:
-                f.write('__version__ = "1.2.3"\n')
-            os.mkdir("foo/newsfragments")
-            fragment_path = "foo/newsfragments/123.feature"
-            with open(fragment_path, "w") as f:
-                f.write("Adds levitation")
-
-            call(["git", "init"])
-            call(["git", "config", "user.name", "user"])
-            call(["git", "config", "user.email", "user@example.com"])
-            call(["git", "add", "."])
-            call(["git", "commit", "-m", "Initial Commit"])
-            call(["git", "checkout", "-b", "otherbranch"])
+            create_project("pyproject.toml")
 
             file_path = "foo/somefile.py"
             with open(file_path, "w") as f:
