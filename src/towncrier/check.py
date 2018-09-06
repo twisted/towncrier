@@ -10,7 +10,7 @@ import click
 
 from subprocess import check_output, STDOUT
 
-from ._settings import load_config
+from ._settings import load_config, load_config_from_file
 from ._builder import find_fragments
 
 
@@ -22,14 +22,17 @@ def _run(args, **kwargs):
 @click.command()
 @click.option("--compare-with", default="origin/master")
 @click.option("--dir", "directory", default=".")
-def _main(compare_with, directory):
-    return __main(compare_with, directory)
+@click.option("--pyproject", "pyproject", default=None)
+def _main(compare_with, directory, pyproject):
+    return __main(compare_with, directory, pyproject)
 
 
-def __main(comparewith, directory):
-
+def __main(comparewith, directory, pyproject):
     base_directory = os.path.abspath(directory)
-    config = load_config(directory)
+    if pyproject is None:
+        config = load_config(directory)
+    else:
+        config = load_config_from_file(pyproject)
 
     files_changed = (
         _run(["git", "diff", "--name-only", comparewith + "..."], cwd=base_directory)

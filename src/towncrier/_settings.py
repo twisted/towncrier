@@ -22,11 +22,14 @@ _default_types = OrderedDict(
 _underlines = ["=", "-", "~"]
 
 
-def load_config(from_dir):
-    fn = os.path.join(from_dir, "pyproject.toml")
-    if not os.path.exists(fn):
+def load_config(directory):
+    return load_config_from_file(os.path.join(directory, "pyproject.toml"))
+
+
+def load_config_from_file(from_file):
+    if not os.path.exists(from_file):
         return None
-    with open(fn, "r") as conffile:
+    with open(from_file, "r") as conffile:
         config = toml.load(conffile)
 
     if "tool" not in config:
