@@ -17,15 +17,15 @@ class FormatterTests(TestCase):
 
         fragments = {
             "": {
-                ("1", "misc"): u"",
-                ("baz", "misc"): u"",
-                ("2", "feature"): u"Foo added.",
-                ("5", "feature"): u"Foo added.    \n",
-                ("6", "bugfix"): u"Foo added.",
+                ("1", "misc", 0): u"",
+                ("baz", "misc", 0): u"",
+                ("2", "feature", 0): u"Foo added.",
+                ("5", "feature", 0): u"Foo added.    \n",
+                ("6", "bugfix", 0): u"Foo added.",
             },
             "Web": {
-                ("3", "bugfix"): u"Web fixed.    ",
-                ("4", "feature"): u"Foo added.",
+                ("3", "bugfix", 0): u"Web fixed.    ",
+                ("4", "feature", 0): u"Foo added.",
             },
         }
 
@@ -65,19 +65,19 @@ class FormatterTests(TestCase):
                     {
                         # asciibetical sorting will do 1, 142, 9
                         # we want 1, 9, 142 instead
-                        ("142", "misc"): u"",
-                        ("1", "misc"): u"",
-                        ("9", "misc"): u"",
-                        ("bar", "misc"): u"",
-                        ("4", "feature"): u"Stuff!",
-                        ("2", "feature"): u"Foo added.",
-                        ("72", "feature"): u"Foo added.",
-                        ("9", "feature"): u"Foo added.",
-                        ("baz", "feature"): u"Fun!",
+                        ("142", "misc", 0): u"",
+                        ("1", "misc", 0): u"",
+                        ("9", "misc", 0): u"",
+                        ("bar", "misc", 0): u"",
+                        ("4", "feature", 0): u"Stuff!",
+                        ("2", "feature", 0): u"Foo added.",
+                        ("72", "feature", 0): u"Foo added.",
+                        ("9", "feature", 0): u"Foo added.",
+                        ("baz", "feature", 0): u"Fun!",
                     },
                 ),
                 ("Names", {}),
-                ("Web", {("3", "bugfix"): u"Web fixed."}),
+                ("Web", {("3", "bugfix", 0): u"Web fixed."}),
             ]
         )
 
@@ -180,10 +180,10 @@ Bugfixes
             "": {
                 # asciibetical sorting will do 1, 142, 9
                 # we want 1, 9, 142 instead
-                ("142", "misc"): u"",
-                ("1", "misc"): u"",
-                ("9", "misc"): u"",
-                ("bar", "misc"): u"",
+                ("142", "misc", 0): u"",
+                ("1", "misc", 0): u"",
+                ("9", "misc", 0): u"",
+                ("bar", "misc", 0): u"",
             }
         }
 
@@ -220,11 +220,12 @@ Misc
                 (
                     "1",
                     "feature",
+                    0,
                 ): u"""
                 asdf asdf asdf asdf looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong newsfragment.
                 """,  # NOQA
-                ("2", "feature"): u"https://google.com/q=?" + u"-" * 100,
-                ("3", "feature"): u"a " * 80,
+                ("2", "feature", 0): u"https://google.com/q=?" + u"-" * 100,
+                ("3", "feature", 0): u"a " * 80,
             }
         }
 
@@ -270,11 +271,12 @@ Features
                 (
                     "1",
                     "feature",
+                    0
                 ): u"""
                 asdf asdf asdf asdf looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong newsfragment.
                 """,  # NOQA
-                ("2", "feature"): u"https://google.com/q=?" + u"-" * 100,
-                ("3", "feature"): u"a " * 80,
+                ("2", "feature", 0): u"https://google.com/q=?" + u"-" * 100,
+                ("3", "feature", 0): u"a " * 80,
             }
         }
 

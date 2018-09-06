@@ -47,10 +47,21 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
         for basename in files:
             parts = basename.split(u".")
 
+            counter = 0
             if len(parts) == 1:
                 continue
             else:
                 ticket, category = parts[:2]
+
+            # If there is a number after the category then use it as a counter,
+            # otherwise ignore it.
+            # This means 1.feature.1 and 1.feature do not conflict but
+            # 1.feature.rst and 1.feature do.
+            if len(parts) > 2:
+                try:
+                    counter = int(parts[2])
+                except ValueError:
+                    pass
 
             if category not in definitions:
                 continue
@@ -59,13 +70,14 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
             fragment_filenames.append(full_filename)
             with open(full_filename, "rb") as f:
                 data = f.read().decode("utf8", "replace")
-            if (ticket, category) in file_content:
+
+            if (ticket, category, counter) in file_content:
                 raise ValueError(
                     "multiple files for {}.{} in {}".format(
                         ticket, category, section_dir
                     )
                 )
-            file_content[ticket, category] = data
+            file_content[ticket, category, counter] = data
 
         content[key] = file_content
 
@@ -93,14 +105,14 @@ def split_fragments(fragments, definitions):
     for section_name, section_fragments in fragments.items():
         section = {}
 
-        for (ticket, category), content in section_fragments.items():
+        for (ticket, category, counter), content in section_fragments.items():
 
             content = indent(content.strip(), u"  ")[2:]
 
             if definitions[category]["showcontent"] is False:
                 content = u""
 
-            texts = section.get(category, {})
+            texts = section.get(category, OrderedDict())
 
             if texts.get(content):
                 texts[content] = sorted(texts[content] + [ticket])
