@@ -8,6 +8,11 @@
         path = ""
 
     [[tool.towncrier.type]]
+        directory = "major"
+        name = "Major changes"
+        showcontent = true
+
+    [[tool.towncrier.type]]
         directory = "feature"
         name = "Features"
         showcontent = true
