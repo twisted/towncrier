@@ -12,6 +12,7 @@ _title_format = u"{name} {version} ({project_date})"
 _template_fname = None
 _default_types = OrderedDict(
     [
+        (u"major", {"name": u"Major changes", "showcontent": True}),
         (u"feature", {"name": u"Features", "showcontent": True}),
         (u"bugfix", {"name": u"Bugfixes", "showcontent": True}),
         (u"doc", {"name": u"Improved Documentation", "showcontent": True}),
