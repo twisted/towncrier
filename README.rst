@@ -79,6 +79,7 @@ News Fragments
 ``towncrier`` has a few standard types of news fragments, signified by the file extension.
 These are:
 
+- ``.major``: Signifying a major change.
 - ``.feature``: Signifying a new feature.
 - ``.bugfix``: Signifying a bug fix.
 - ``.doc``: Signifying a documentation improvement.
