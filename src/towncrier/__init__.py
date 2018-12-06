@@ -77,12 +77,15 @@ def __main(draft, directory, project_name, project_version, project_date, answer
     definitions = config["types"]
 
     if config.get("directory"):
-        base_directory = os.path.abspath(config["directory"])
-        fragment_directory = None
+        base_directory = os.path.abspath(config["directory"])         
     else:
         base_directory = os.path.abspath(
             os.path.join(directory, config["package_dir"], config["package"])
         )
+
+    if config.get("fragment_directory"):
+        fragment_directory = config["fragment_directory"]
+    else:
         fragment_directory = "newsfragments"
 
     fragments, fragment_filenames = find_fragments(
