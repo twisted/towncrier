@@ -2,6 +2,20 @@
 
 .. towncrier release notes start
 
+towncrier 19.2.0 (2019-02-15)
+=============================
+
+Features
+--------
+
+- Add support for multiple fragements per issue/type pair. This extends the
+  naming pattern of the fragments to `issuenumber.type(.counter)` where counter
+  is an optional integer. (`#119 <https://github.com/hawkowl/towncrier/issues/119>`_)
+- Python 2.7 is now supported. (`#121 <https://github.com/hawkowl/towncrier/issues/121>`_)
+- `python -m towncrier.check` now accepts an option to give the configuration file location. (`#123 <https://github.com/hawkowl/towncrier/issues/123>`_)
+- towncrier.check now reports git output when it encounters a git failure. (`#124 <https://github.com/hawkowl/towncrier/issues/124>`_)
+
+
 towncrier 18.6.0 (2018-07-05)
 =============================
 
