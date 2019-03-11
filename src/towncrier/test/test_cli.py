@@ -32,6 +32,9 @@ class TestCli(TestCase):
             # Towncrier treats this as 124.feature, ignoring .rst extension
             with open("foo/newsfragments/124.feature.rst", "w") as f:
                 f.write("Extends levitation")
+            # Towncrier supports non-numeric newsfragment names.
+            with open("foo/newsfragments/baz.feature.rst", "w") as f:
+                f.write("Baz levitation")
             # Towncrier ignores files that don't have a dot
             with open("foo/newsfragments/README", "w") as f:
                 f.write("Blah blah")
@@ -58,6 +61,7 @@ class TestCli(TestCase):
                 Features
                 --------
 
+                - Baz levitation (baz)
                 - Adds levitation (#123)
                 - Extends levitation (#124)
 
