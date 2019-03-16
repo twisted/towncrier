@@ -68,6 +68,11 @@ Using the above example, your news fragments would be ``src/myproject/newsfragme
 
 - Manually passing ``--version=<myversionhere>`` when interacting with ``towncrier``.
 
+To create a new news fragment, use the ``towncrier create`` command.
+For example::
+
+    towncrier create 123.feature
+
 To produce a draft of the news file, run::
 
     towncrier build --draft
