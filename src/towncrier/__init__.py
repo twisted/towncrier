@@ -31,7 +31,7 @@ def _get_date():
     "draft",
     default=False,
     flag_value=True,
-    help=("Render the news fragments, don't write to files, " "don't check versions."),
+    help=("Render the news fragments, don't write to files, don't check versions."),
 )
 @click.option("--dir", "directory", default=".")
 @click.option("--name", "project_name", default=None)

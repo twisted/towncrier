@@ -9,7 +9,7 @@ setup(
     maintainer='Amber Brown',
     maintainer_email='hawkowl@twistedmatrix.com',
     url="https://github.com/hawkowl/towncrier",
-    classifiers = [
+    classifiers=[
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 2",
