@@ -1,0 +1,13 @@
+Add support for subcommands, meaning the functionality of the ``towncrier``
+executable is now replaced by the ``build`` subcommand::
+
+    $ towncrier build --draft
+
+A new ``check`` subcommand is exposed. This is an alternative to calling the
+``towncrier.check`` module manually::
+
+    $ towncrier check
+
+Calling ``towncrier`` without a subcommand will result in a call to the
+``build`` subcommand to ensure backwards compatibility. This may be removed in a
+future release.

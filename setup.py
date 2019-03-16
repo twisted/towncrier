@@ -21,7 +21,8 @@ setup(
     use_incremental=True,
     setup_requires=['incremental'],
     install_requires=[
-        'Click',
+        'click',
+        'click-default-group',
         'incremental',
         'jinja2',
         'toml',
@@ -35,7 +36,7 @@ setup(
     long_description=open('README.rst').read(),
     entry_points={
         'console_scripts': [
-            'towncrier = towncrier.build:_main',
+            'towncrier = towncrier._shell:cli',
         ],
     }
 )

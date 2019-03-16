@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 """
-towncrier, a builder for your news files.
+Build a combined news file from news fragments.
 """
 
 from __future__ import absolute_import, division
@@ -24,7 +24,7 @@ def _get_date():
     return date.today().isoformat()
 
 
-@click.command()
+@click.command(name="build")
 @click.option(
     "--draft",
     "draft",

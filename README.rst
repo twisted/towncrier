@@ -10,6 +10,7 @@ Hear ye, hear ye, says the ``towncrier``
 ``towncrier`` is a utility to produce useful, summarised news files for your project.
 Rather than reading the Git history as some newer tools to produce it, or having one single file which developers all write to, ``towncrier`` reads "news fragments" which contain information `useful to end users`.
 
+
 Philosophy
 ----------
 
@@ -34,34 +35,46 @@ Install from PyPI::
    It is usable by projects written in other languages, provided you give it the version of the project when invoking it.
    For Python 2/3 compatible projects, the version can be discovered automatically.
 
-In your project root, add a ``pyproject.toml`` file, with the contents::
+In your project root, add a ``pyproject.toml`` file.
+You can configure your project in two ways.
+To configure it via an explicit directory, add::
+
+
+    [tool.towncrier]
+        directory = "changes"
+
+Alternatively, to configure it relative to a (Python) package directory, add::
 
     [tool.towncrier]
         package = "mypackage"
         package_dir = "src"
         filename = "NEWS.rst"
 
-Then put news fragments (see "News Fragments" below) into a "newsfragments" directory under your package (so, if your project is named "myproject", and it's kept under ``src``, your newsfragments dir would be ``src/myproject/newsfragments/``).
+For the latter, news fragments (see "News Fragments" below) should be in a ``newsfragments`` directory under your package.
+Using the above example, your news fragments would be ``src/myproject/newsfragments/``).
 
-To prevent git from removing the newsfragments directory, make a ``.gitignore`` file in it with::
+.. tip::
 
-    !.gitignore
+    To prevent git from removing the ``newsfragments`` directory, make a ``.gitignore`` file in it with::
 
-This will keep the folder around, but otherwise "empty".
+        !.gitignore
+
+    This will keep the folder around, but otherwise "empty".
 
 ``towncrier`` needs to know what version your project is, and there are two ways you can give it:
 
 - For Python 2/3 compatible projects, a ``__version__`` in the top level package.
   This can be either a string literal, a tuple, or an `Incremental <https://github.com/hawkowl/incremental>`_ version.
+
 - Manually passing ``--version=<myversionhere>`` when interacting with ``towncrier``.
 
 To produce a draft of the news file, run::
 
-    towncrier --draft
+    towncrier build --draft
 
 To produce the news file for real, run::
 
-    towncrier
+    towncrier build
 
 This command will remove the news files (with ``git rm``) and append the built news to the filename specified in ``towncrier.ini``, and then stage the news file changes (with ``git add``).
 It leaves committing the changes up to the user.
