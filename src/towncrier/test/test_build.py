@@ -7,7 +7,7 @@ from textwrap import dedent
 from twisted.trial.unittest import TestCase
 
 from click.testing import CliRunner
-from .. import _main
+from ..build import _main
 
 
 def setup_simple_project():

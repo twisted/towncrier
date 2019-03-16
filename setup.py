@@ -35,7 +35,7 @@ setup(
     long_description=open('README.rst').read(),
     entry_points={
         'console_scripts': [
-            'towncrier = towncrier:_main',
+            'towncrier = towncrier.build:_main',
         ],
     }
 )
