@@ -36,7 +36,7 @@ def load_config_from_file(from_file):
 
 
 def parse_toml(config):
-    if 'tool' not in config:
+    if "tool" not in config:
         raise ValueError("No [tool.towncrier] section.")
 
     config = config["tool"]["towncrier"]

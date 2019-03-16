@@ -42,19 +42,12 @@ class TestChecker(TestCase):
             create_project("pyproject.toml")
 
             result = runner.invoke(_main, ["--compare-with", "hblaugh"])
-            self.assertIn(
-                "git produced output while failing",
-                result.output,
-            )
-            self.assertIn(
-                "hblaugh",
-                result.output,
-            )
+            self.assertIn("git produced output while failing", result.output)
+            self.assertIn("hblaugh", result.output)
 
     def test_no_changes_made(self):
         self._test_no_changes_made(
-            "pyproject.toml",
-            lambda runner, main, argv: runner.invoke(main, argv),
+            "pyproject.toml", lambda runner, main, argv: runner.invoke(main, argv)
         )
 
     def test_no_changes_made_pyproject_path(self):
@@ -62,8 +55,7 @@ class TestChecker(TestCase):
         self._test_no_changes_made(
             pyproject,
             lambda runner, main, argv: runner.invoke(
-                main,
-                argv + ["--pyproject", pyproject],
+                main, argv + ["--pyproject", pyproject]
             ),
         )
 
@@ -108,11 +100,7 @@ class TestChecker(TestCase):
                 ),
                 result,
             )
-            self.assertEqual(
-                0,
-                result.exit_code,
-                result,
-            )
+            self.assertEqual(0, result.exit_code, result)
 
     def test_fragment_missing(self):
         runner = CliRunner()

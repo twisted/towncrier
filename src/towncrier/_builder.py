@@ -92,6 +92,7 @@ def indent(text, prefix):
     def prefixed_lines():
         for line in text.splitlines(True):
             yield (prefix + line if line.strip() else line)
+
     return u"".join(prefixed_lines())
 
 

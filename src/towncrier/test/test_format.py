@@ -89,8 +89,7 @@ class FormatterTests(TestCase):
             ]
         )
 
-        expected_output = (
-            u"""
+        expected_output = u"""
 Features
 --------
 
@@ -119,7 +118,6 @@ Bugfixes
 
 - Web fixed. (#3)
 """
-        )
 
         template = pkg_resources.resource_string(
             "towncrier", "templates/template.rst"
@@ -132,8 +130,7 @@ Bugfixes
         self.assertEqual(output, expected_output)
 
         # Check again with non-default underlines
-        expected_output_weird_underlines = (
-            u"""
+        expected_output_weird_underlines = u"""
 Features
 ********
 
@@ -162,7 +159,6 @@ Bugfixes
 
 - Web fixed. (#3)
 """
-        )
 
         output = render_fragments(
             template, None, fragments, definitions, ["*", "^"], wrap=True
@@ -189,14 +185,12 @@ Bugfixes
 
         definitions = OrderedDict([("misc", {"name": "Misc", "showcontent": False})])
 
-        expected_output = (
-            u"""
+        expected_output = u"""
 Misc
 ----
 
 - xxbar, xx1, xx9, xx142
 """
-        )
 
         template = pkg_resources.resource_string(
             "towncrier", "templates/template.rst"
@@ -233,8 +227,7 @@ Misc
             [("feature", {"name": "Features", "showcontent": True})]
         )
 
-        expected_output = (
-            u"""
+        expected_output = u"""
 Features
 --------
 
@@ -248,7 +241,6 @@ Features
   a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
   a a (#3)
 """
-        )
 
         template = pkg_resources.resource_string(
             "towncrier", "templates/template.rst"
@@ -271,7 +263,7 @@ Features
                 (
                     "1",
                     "feature",
-                    0
+                    0,
                 ): u"""
                 asdf asdf asdf asdf looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong newsfragment.
                 """,  # NOQA
@@ -284,8 +276,7 @@ Features
             [("feature", {"name": "Features", "showcontent": True})]
         )
 
-        expected_output = (
-            u"""
+        expected_output = u"""
 Features
 --------
 
@@ -293,7 +284,6 @@ Features
 - https://google.com/q=?---------------------------------------------------------------------------------------------------- (#2)
 - a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a (#3)
 """  # NOQA
-        )
 
         template = pkg_resources.resource_string(
             "towncrier", "templates/template.rst"
