@@ -321,7 +321,6 @@ class TestCli(TestCase):
                 _main, ["--version", "7.8.9", "--date", "01-01-2001", "--draft"]
             )
 
-        print(result.stderr)
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,

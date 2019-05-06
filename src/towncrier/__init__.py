@@ -64,7 +64,7 @@ def __main(draft, directory, project_name, project_version, project_date, answer
     to_err = draft
 
     click.echo("Loading template...", err=to_err)
-    if config["template"] is None:
+    if config.get("template") is None:
         template = pkg_resources.resource_string(
             __name__, "templates/template.rst"
         ).decode("utf8")
