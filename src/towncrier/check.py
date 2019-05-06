@@ -8,11 +8,7 @@ import sys
 
 import click
 
-from subprocess import (
-    CalledProcessError,
-    check_output,
-    STDOUT,
-)
+from subprocess import CalledProcessError, check_output, STDOUT
 
 from ._settings import load_config, load_config_from_file
 from ._builder import find_fragments
@@ -40,7 +36,9 @@ def __main(comparewith, directory, pyproject):
 
     try:
         files_changed = (
-            _run(["git", "diff", "--name-only", comparewith + "..."], cwd=base_directory)
+            _run(
+                ["git", "diff", "--name-only", comparewith + "..."], cwd=base_directory
+            )
             .decode(getattr(sys.stdout, "encoding", "utf8"))
             .strip()
         )

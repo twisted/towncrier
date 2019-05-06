@@ -47,8 +47,8 @@ class TestCli(TestCase):
             u"Loading template...\nFinding news fragments...\nRendering news "
             u"fragments...\nDraft only -- nothing has been written.\nWhat is "
             u"seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
-            u"\n======================\n"
-            u"\n\nFeatures\n--------\n\n- Adds levitation (#123)\n"
+            u"\n======================\n\n"
+            u"Features\n--------\n\n- Adds levitation (#123)\n"
             u"- Extends levitation (#124)\n\n",
         )
 
@@ -140,7 +140,7 @@ class TestCli(TestCase):
             u"Loading template...\nFinding news fragments...\nRendering news "
             u"fragments...\nDraft only -- nothing has been written.\nWhat is "
             u"seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
-            u"\n======================\n"
+            u"\n======================"
             + dedent(
                 """
                   section-a
@@ -183,7 +183,7 @@ class TestCli(TestCase):
             u"Loading template...\nFinding news fragments...\nRendering news "
             u"fragments...\nDraft only -- nothing has been written.\nWhat is "
             u"seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
-            u"\n======================\n"
+            u"\n======================"
             + dedent(
                 """
                   section-b
@@ -291,7 +291,6 @@ class TestCli(TestCase):
             FooBarBaz 7.8.9 (01-01-2001)
             ============================
 
-
             Features
             --------
 
@@ -314,10 +313,6 @@ class TestCli(TestCase):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
-            with open("pyproject.toml", "w") as f:
-                f.write(
-                    "[tool.towncrier]\n" 'title_format = "{version} ({project_date})"\n'
-                )
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
@@ -326,6 +321,7 @@ class TestCli(TestCase):
                 _main, ["--version", "7.8.9", "--date", "01-01-2001", "--draft"]
             )
 
+        print(result.stderr)
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,
@@ -339,7 +335,6 @@ class TestCli(TestCase):
 
             7.8.9 (01-01-2001)
             ==================
-
 
             Features
             --------

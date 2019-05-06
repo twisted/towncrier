@@ -30,7 +30,8 @@ def append_to_newsfile(directory, filename, start_line, top_line, content):
 
         if len(existing_content) > 1:
             f.write(existing_content.pop(0).rstrip().encode("utf8"))
-            f.write((u"\n\n" + start_line + u"\n").encode("utf8"))
+            if start_line:
+                f.write((u"\n\n" + start_line + u"\n").encode("utf8"))
 
         f.write(top_line.encode("utf8"))
         f.write(content.encode("utf8"))

@@ -8,7 +8,7 @@ from collections import OrderedDict
 
 
 _start_string = u".. towncrier release notes start\n"
-_title_format = u"{name} {version} ({project_date})"
+_title_format = None
 _template_fname = None
 _default_types = OrderedDict(
     [

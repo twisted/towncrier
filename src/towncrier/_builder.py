@@ -92,6 +92,7 @@ def indent(text, prefix):
     def prefixed_lines():
         for line in text.splitlines(True):
             yield (prefix + line if line.strip() else line)
+
     return u"".join(prefixed_lines())
 
 
@@ -153,7 +154,16 @@ def render_issue(issue_format, issue):
         return issue_format.format(issue=issue)
 
 
-def render_fragments(template, issue_format, fragments, definitions, underlines, wrap):
+def render_fragments(
+    template,
+    issue_format,
+    fragments,
+    definitions,
+    underlines,
+    wrap,
+    versiondata,
+    top_underline="=",
+):
     """
     Render the fragments into a news file.
     """
@@ -198,7 +208,11 @@ def render_fragments(template, issue_format, fragments, definitions, underlines,
     done = []
 
     res = jinja_template.render(
-        sections=data, definitions=definitions, underlines=underlines
+        sections=data,
+        definitions=definitions,
+        underlines=underlines,
+        versiondata=versiondata,
+        top_underline=top_underline,
     )
 
     for line in res.split(u"\n"):

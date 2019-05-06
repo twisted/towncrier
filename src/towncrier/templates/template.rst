@@ -1,3 +1,5 @@
+{{ versiondata.name }} {{ versiondata.version }} ({{ versiondata.date }})
+{{ top_underline * ((versiondata.name + versiondata.version + versiondata.date)|length + 4)}}
 {% for section, _ in sections.items() %}
 {% set underline = underlines[0] %}{% if section %}{{section}}
 {{ underline * section|length }}{% set underline = underlines[1] %}
