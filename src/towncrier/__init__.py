@@ -13,7 +13,7 @@ import pkg_resources
 
 from datetime import date
 
-from ._settings import load_config
+from ._settings import load_config, load_config_from_file
 from ._builder import find_fragments, split_fragments, render_fragments
 from ._project import get_version, get_project_name
 from ._writer import append_to_newsfile
@@ -49,18 +49,24 @@ def _get_date():
     flag_value=True,
     help="Do not ask for confirmation to remove news fragments.",
 )
-def _main(draft, directory, project_name, project_version, project_date, answer_yes):
+@click.option(
+    "--pyproject", "pyproject", default=None,
+    help="Alternative pyproject.toml configuration file.")
+def _main(draft, directory, project_name, project_version, project_date, answer_yes, pyproject):
     return __main(
-        draft, directory, project_name, project_version, project_date, answer_yes
+        draft, directory, project_name, project_version, project_date, answer_yes, pyproject
     )
 
 
-def __main(draft, directory, project_name, project_version, project_date, answer_yes):
+def __main(draft, directory, project_name, project_version, project_date, answer_yes, pyproject):
     """
     The main entry point.
     """
     directory = os.path.abspath(directory)
-    config = load_config(directory)
+    if pyproject is None:
+        config = load_config(directory)
+    else:
+        config = load_config_from_file(pyproject)
     to_err = draft
 
     click.echo("Loading template...", err=to_err)
