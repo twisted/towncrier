@@ -7,7 +7,9 @@ from textwrap import dedent
 from twisted.trial.unittest import TestCase
 
 from click.testing import CliRunner
-from .. import _main
+
+from ..build import _main
+from .._shell import cli
 
 
 def setup_simple_project():
@@ -22,7 +24,7 @@ def setup_simple_project():
 class TestCli(TestCase):
     maxDiff = None
 
-    def test_happy_path(self):
+    def _test_command(self, command):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
@@ -46,12 +48,13 @@ class TestCli(TestCase):
             with open("foo/newsfragments/README.rst", "w") as f:
                 f.write("**Blah blah**")
 
-            result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
+            result = runner.invoke(command, ["--draft", "--date", "01-01-2001"])
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,
-            dedent("""\
+            dedent(
+                """\
                 Loading template...
                 Finding news fragments...
                 Rendering news fragments...
@@ -69,8 +72,15 @@ class TestCli(TestCase):
                 - Adds levitation (#123)
                 - Extends levitation (#124)
 
-                """)
+                """
+            ),
         )
+
+    def test_command(self):
+        self._test_command(cli)
+
+    def test_subcommand(self):
+        self._test_command(_main)
 
     def test_collision(self):
         runner = CliRunner()

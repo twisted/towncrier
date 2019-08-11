@@ -78,8 +78,9 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
 
         for basename in files:
 
-            ticket, category, counter = parse_newfragment_basename(basename,
-                                                                   definitions)
+            ticket, category, counter = parse_newfragment_basename(
+                basename, definitions
+            )
             if category is None or category not in definitions:
                 continue
 

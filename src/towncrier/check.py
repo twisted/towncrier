@@ -19,7 +19,7 @@ def _run(args, **kwargs):
     return check_output(args, **kwargs)
 
 
-@click.command()
+@click.command(name="check")
 @click.option("--compare-with", default="origin/master")
 @click.option("--dir", "directory", default=".")
 @click.option("--pyproject", "pyproject", default=None)

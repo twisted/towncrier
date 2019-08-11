@@ -9,7 +9,7 @@ setup(
     maintainer='Amber Brown',
     maintainer_email='hawkowl@twistedmatrix.com',
     url="https://github.com/hawkowl/towncrier",
-    classifiers = [
+    classifiers=[
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 2",
@@ -21,7 +21,8 @@ setup(
     use_incremental=True,
     setup_requires=['incremental'],
     install_requires=[
-        'Click',
+        'click',
+        'click-default-group',
         'incremental',
         'jinja2',
         'toml',
@@ -35,7 +36,7 @@ setup(
     long_description=open('README.rst').read(),
     entry_points={
         'console_scripts': [
-            'towncrier = towncrier:_main',
+            'towncrier = towncrier._shell:cli',
         ],
     }
 )

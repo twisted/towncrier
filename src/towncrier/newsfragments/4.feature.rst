@@ -1,0 +1,2 @@
+Add ``create`` subcommand, which can be used to quickly create a news
+fragment command in the location defined by config.
