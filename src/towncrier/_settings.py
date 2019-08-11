@@ -79,6 +79,13 @@ def parse_toml(config):
             failing_option="single_file",
         )
 
+    all_bullets = config.get("all_bullets", True)
+    if not isinstance(all_bullets, bool):
+        raise ConfigError(
+            "`all_bullets` option must be boolean: false or true.",
+            failing_option="all_bullets",
+        )
+
     return {
         "package": config.get("package", ""),
         "package_dir": config.get("package_dir", "."),
@@ -93,4 +100,5 @@ def parse_toml(config):
         "issue_format": config.get("issue_format"),
         "underlines": config.get("underlines", _underlines),
         "wrap": wrap,
+        "all_bullets": all_bullets,
     }

@@ -120,7 +120,7 @@ def __main(
     )
 
     click.echo("Rendering news fragments...", err=to_err)
-    fragments = split_fragments(fragments, definitions)
+    fragments = split_fragments(fragments, definitions, all_bullets=config["all_bullets"])
 
     if project_version is None:
         project_version = get_version(
@@ -158,6 +158,7 @@ def __main(
         config["wrap"],
         {"name": project_name, "version": project_version, "date": project_date},
         top_underline=config["underlines"][0],
+        all_bullets=config["all_bullets"],
     )
 
     if draft:

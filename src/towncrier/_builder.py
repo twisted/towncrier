@@ -117,7 +117,7 @@ def indent(text, prefix):
 # Takes the output from find_fragments above. Probably it would be useful to
 # add an example output here. Next time someone digs deep enough to figure it
 # out, please do so...
-def split_fragments(fragments, definitions):
+def split_fragments(fragments, definitions, all_bullets=True):
 
     output = OrderedDict()
 
@@ -126,7 +126,14 @@ def split_fragments(fragments, definitions):
 
         for (ticket, category, counter), content in section_fragments.items():
 
-            content = indent(content.strip(), u"  ")[2:]
+            if all_bullets:
+                # By default all fragmetns are append by "-" automatically,
+                # and need to be indented because of that.
+                # (otherwise, assume they are formatted correctly)
+                content = indent(content.strip(), u"  ")[2:]
+            else:
+                # Assume the text is formatted correctly
+                content = content.rstrip()
 
             if definitions[category]["showcontent"] is False:
                 content = u""
@@ -161,6 +168,19 @@ def entry_key(entry):
     return [issue_key(issue) for issue in issues]
 
 
+def bullet_key(entry):
+    text, _ = entry
+    if not text:
+        return -1
+    if text[:2] == u"- ":
+        return 0
+    elif text[:2] == "* ":
+        return 1
+    elif text[:3] == u"#. ":
+        return 2
+    return 3
+
+
 def render_issue(issue_format, issue):
     if issue_format is None:
         try:
@@ -181,6 +201,7 @@ def render_fragments(
     wrap,
     versiondata,
     top_underline="=",
+    all_bullets=False,
 ):
     """
     Render the fragments into a news file.
@@ -213,6 +234,8 @@ def render_fragments(
             # - Fix the other thing (#1)
             # - Fix the thing (#2, #7, #123)
             entries.sort(key=entry_key)
+            if not all_bullets:
+                entries.sort(key=bullet_key)
 
             # Then we put these nicely sorted entries back in an ordered dict
             # for the template, after formatting each issue number
@@ -225,12 +248,23 @@ def render_fragments(
 
     done = []
 
+    def get_indent(text):
+        # If bullets are not assumed and we wrap, the subsequent
+        # indentation depends on whether or not this is a bullet point.
+        # (it is probably usually best to disable wrapping in that case)
+        if all_bullets or text[:2] == u"- " or text[:2] == u"* ":
+            return u"  "
+        elif text[:3] == "#. ":
+            return u"   "
+        return u""
+
     res = jinja_template.render(
         sections=data,
         definitions=definitions,
         underlines=underlines,
         versiondata=versiondata,
         top_underline=top_underline,
+        get_indent=get_indent,  # simplify indentation in the jinja template.
     )
 
     for line in res.split(u"\n"):
@@ -239,7 +273,7 @@ def render_fragments(
                 textwrap.fill(
                     line,
                     width=79,
-                    subsequent_indent=u"  ",
+                    subsequent_indent=get_indent(line),
                     break_long_words=False,
                     break_on_hyphens=False,
                 )
