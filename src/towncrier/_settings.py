@@ -8,7 +8,7 @@ from collections import OrderedDict
 
 
 _start_string = u".. towncrier release notes start\n"
-_title_format = u"{name} {version} ({project_date})"
+_title_format = None
 _template_fname = None
 _default_types = OrderedDict(
     [
@@ -28,9 +28,10 @@ def load_config(directory):
 
 def load_config_from_file(from_file):
     if not os.path.exists(from_file):
-        return None
-    with open(from_file, "r") as conffile:
-        config = toml.load(conffile)
+        config = {"tool": {"towncrier": {}}}
+    else:
+        with open(from_file, "r") as conffile:
+            config = toml.load(conffile)
 
     return parse_toml(config)
 

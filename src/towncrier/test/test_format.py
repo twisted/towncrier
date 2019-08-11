@@ -89,8 +89,9 @@ class FormatterTests(TestCase):
             ]
         )
 
-        expected_output = (
-            u"""
+        expected_output = u"""MyProject 1.0 (never)
+=====================
+
 Features
 --------
 
@@ -119,7 +120,6 @@ Bugfixes
 
 - Web fixed. (#3)
 """
-        )
 
         template = pkg_resources.resource_string(
             "towncrier", "templates/template.rst"
@@ -127,13 +127,20 @@ Bugfixes
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
-            template, None, fragments, definitions, ["-", "~"], wrap=True
+            template,
+            None,
+            fragments,
+            definitions,
+            ["-", "~"],
+            wrap=True,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
         )
         self.assertEqual(output, expected_output)
 
         # Check again with non-default underlines
-        expected_output_weird_underlines = (
-            u"""
+        expected_output_weird_underlines = u"""MyProject 1.0 (never)
+=====================
+
 Features
 ********
 
@@ -162,10 +169,15 @@ Bugfixes
 
 - Web fixed. (#3)
 """
-        )
 
         output = render_fragments(
-            template, None, fragments, definitions, ["*", "^"], wrap=True
+            template,
+            None,
+            fragments,
+            definitions,
+            ["*", "^"],
+            wrap=True,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
         )
         self.assertEqual(output, expected_output_weird_underlines)
 
@@ -189,14 +201,14 @@ Bugfixes
 
         definitions = OrderedDict([("misc", {"name": "Misc", "showcontent": False})])
 
-        expected_output = (
-            u"""
+        expected_output = u"""MyProject 1.0 (never)
+=====================
+
 Misc
 ----
 
 - xxbar, xx1, xx9, xx142
 """
-        )
 
         template = pkg_resources.resource_string(
             "towncrier", "templates/template.rst"
@@ -204,7 +216,13 @@ Misc
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
-            template, u"xx{issue}", fragments, definitions, ["-", "~"], wrap=True
+            template,
+            u"xx{issue}",
+            fragments,
+            definitions,
+            ["-", "~"],
+            wrap=True,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
         )
         self.assertEqual(output, expected_output)
 
@@ -233,8 +251,9 @@ Misc
             [("feature", {"name": "Features", "showcontent": True})]
         )
 
-        expected_output = (
-            u"""
+        expected_output = u"""MyProject 1.0 (never)
+=====================
+
 Features
 --------
 
@@ -248,7 +267,6 @@ Features
   a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
   a a (#3)
 """
-        )
 
         template = pkg_resources.resource_string(
             "towncrier", "templates/template.rst"
@@ -256,7 +274,13 @@ Features
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
-            template, None, fragments, definitions, ["-", "~"], wrap=True
+            template,
+            None,
+            fragments,
+            definitions,
+            ["-", "~"],
+            wrap=True,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
         )
         self.assertEqual(output, expected_output)
 
@@ -271,7 +295,7 @@ Features
                 (
                     "1",
                     "feature",
-                    0
+                    0,
                 ): u"""
                 asdf asdf asdf asdf looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong newsfragment.
                 """,  # NOQA
@@ -284,8 +308,9 @@ Features
             [("feature", {"name": "Features", "showcontent": True})]
         )
 
-        expected_output = (
-            u"""
+        expected_output = u"""MyProject 1.0 (never)
+=====================
+
 Features
 --------
 
@@ -293,7 +318,6 @@ Features
 - https://google.com/q=?---------------------------------------------------------------------------------------------------- (#2)
 - a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a (#3)
 """  # NOQA
-        )
 
         template = pkg_resources.resource_string(
             "towncrier", "templates/template.rst"
@@ -301,6 +325,12 @@ Features
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
-            template, None, fragments, definitions, ["-", "~"], wrap=False
+            template,
+            None,
+            fragments,
+            definitions,
+            ["-", "~"],
+            wrap=False,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
         )
         self.assertEqual(output, expected_output)
