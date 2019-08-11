@@ -61,7 +61,6 @@ class TestCli(TestCase):
                 Foo 1.2.3 (01-01-2001)
                 ======================
 
-
                 Features
                 --------
 
