@@ -11,6 +11,38 @@ from collections import OrderedDict
 from jinja2 import Template
 
 
+# Returns ticket, category and counter or (None, None, None) if the basename
+# could not be parsed
+def parse_newfragment_basename(basename, definitions):
+    parts = basename.split(u".")
+
+    if len(parts) == 1:
+        return (None, None, None)
+    if len(parts) == 2:
+        ticket, category = parts
+        return ticket, category, 0
+
+    # fix-1.2.3.feature and fix.1.feature.2 are valid formats. The former is
+    # used in projects which don't put ticket numbers to newfragment names.
+    if parts[-1] in definitions:
+        category = parts[-1]
+        ticket = parts[-2]
+        return ticket, category, 0
+
+    # If there is a number after the category then use it as a counter,
+    # otherwise ignore it.
+    # This means 1.feature.1 and 1.feature do not conflict but
+    # 1.feature.rst and 1.feature do.
+    counter = 0
+    try:
+        counter = int(parts[-1])
+    except ValueError:
+        pass
+    category = parts[-2]
+    ticket = parts[-3]
+    return ticket, category, counter
+
+
 # Returns a structure like:
 #
 # OrderedDict([
@@ -45,25 +77,10 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
         file_content = {}
 
         for basename in files:
-            parts = basename.split(u".")
 
-            counter = 0
-            if len(parts) == 1:
-                continue
-            else:
-                ticket, category = parts[:2]
-
-            # If there is a number after the category then use it as a counter,
-            # otherwise ignore it.
-            # This means 1.feature.1 and 1.feature do not conflict but
-            # 1.feature.rst and 1.feature do.
-            if len(parts) > 2:
-                try:
-                    counter = int(parts[2])
-                except ValueError:
-                    pass
-
-            if category not in definitions:
+            ticket, category, counter = parse_newfragment_basename(basename,
+                                                                   definitions)
+            if category is None or category not in definitions:
                 continue
 
             full_filename = os.path.join(section_dir, basename)
@@ -92,6 +109,7 @@ def indent(text, prefix):
     def prefixed_lines():
         for line in text.splitlines(True):
             yield (prefix + line if line.strip() else line)
+
     return u"".join(prefixed_lines())
 
 
@@ -153,7 +171,16 @@ def render_issue(issue_format, issue):
         return issue_format.format(issue=issue)
 
 
-def render_fragments(template, issue_format, fragments, definitions, underlines, wrap):
+def render_fragments(
+    template,
+    issue_format,
+    fragments,
+    definitions,
+    underlines,
+    wrap,
+    versiondata,
+    top_underline="=",
+):
     """
     Render the fragments into a news file.
     """
@@ -198,7 +225,11 @@ def render_fragments(template, issue_format, fragments, definitions, underlines,
     done = []
 
     res = jinja_template.render(
-        sections=data, definitions=definitions, underlines=underlines
+        sections=data,
+        definitions=definitions,
+        underlines=underlines,
+        versiondata=versiondata,
+        top_underline=top_underline,
     )
 
     for line in res.split(u"\n"):

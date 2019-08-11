@@ -13,7 +13,7 @@ import pkg_resources
 
 from datetime import date
 
-from ._settings import load_config
+from ._settings import load_config_from_file
 from ._builder import find_fragments, split_fragments, render_fragments
 from ._project import get_version, get_project_name
 from ._writer import append_to_newsfile
@@ -33,6 +33,11 @@ def _get_date():
     flag_value=True,
     help=("Render the news fragments, don't write to files, " "don't check versions."),
 )
+@click.option(
+    "--config",
+    "config_file",
+    default='pyproject.toml',
+    help='Configuration file name.')
 @click.option("--dir", "directory", default=".")
 @click.option("--name", "project_name", default=None)
 @click.option(
@@ -49,22 +54,22 @@ def _get_date():
     flag_value=True,
     help="Do not ask for confirmation to remove news fragments.",
 )
-def _main(draft, directory, project_name, project_version, project_date, answer_yes):
+def _main(draft, directory, config_file, project_name, project_version, project_date, answer_yes):
     return __main(
-        draft, directory, project_name, project_version, project_date, answer_yes
+        draft, directory, config_file, project_name, project_version, project_date, answer_yes
     )
 
 
-def __main(draft, directory, project_name, project_version, project_date, answer_yes):
+def __main(draft, directory, config_file, project_name, project_version, project_date, answer_yes):
     """
     The main entry point.
     """
     directory = os.path.abspath(directory)
-    config = load_config(directory)
+    config = load_config_from_file(os.path.join(directory, config_file))
     to_err = draft
 
     click.echo("Loading template...", err=to_err)
-    if config["template"] is None:
+    if config.get("template") is None:
         template = pkg_resources.resource_string(
             __name__, "templates/template.rst"
         ).decode("utf8")
@@ -94,20 +99,11 @@ def __main(draft, directory, project_name, project_version, project_date, answer
 
     click.echo("Rendering news fragments...", err=to_err)
     fragments = split_fragments(fragments, definitions)
-    rendered = render_fragments(
-        # The 0th underline is used for the top line
-        template,
-        config["issue_format"],
-        fragments,
-        definitions,
-        config["underlines"][1:],
-        config["wrap"],
-    )
 
     if project_version is None:
         project_version = get_version(
             os.path.join(directory, config["package_dir"]), config["package"]
-        )
+        ).strip()
 
     if project_name is None:
         package = config.get("package")
@@ -120,12 +116,27 @@ def __main(draft, directory, project_name, project_version, project_date, answer
             project_name = ""
 
     if project_date is None:
-        project_date = _get_date()
+        project_date = _get_date().strip()
 
-    top_line = config["title_format"].format(
-        name=project_name, version=project_version, project_date=project_date
+    if config["title_format"]:
+        top_line = config["title_format"].format(
+            name=project_name, version=project_version, project_date=project_date
+        )
+        top_line += u"\n" + (config["underlines"][0] * len(top_line)) + u"\n"
+    else:
+        top_line = ""
+
+    rendered = render_fragments(
+        # The 0th underline is used for the top line
+        template,
+        config["issue_format"],
+        fragments,
+        definitions,
+        config["underlines"][1:],
+        config["wrap"],
+        {"name": project_name, "version": project_version, "date": project_date},
+        top_underline=config["underlines"][0],
     )
-    top_line += u"\n" + (config["underlines"][0] * len(top_line)) + u"\n"
 
     if draft:
         click.echo(
@@ -133,7 +144,10 @@ def __main(draft, directory, project_name, project_version, project_date, answer
             "What is seen below is what would be written.\n",
             err=to_err,
         )
-        click.echo("%s\n%s" % (top_line, rendered))
+        if top_line:
+            click.echo("\n%s\n%s" % (top_line, rendered))
+        else:
+            click.echo(rendered)
     else:
         click.echo("Writing to newsfile...", err=to_err)
         start_line = config["start_line"]

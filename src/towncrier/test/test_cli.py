@@ -32,6 +32,13 @@ class TestCli(TestCase):
             # Towncrier treats this as 124.feature, ignoring .rst extension
             with open("foo/newsfragments/124.feature.rst", "w") as f:
                 f.write("Extends levitation")
+            # Towncrier supports non-numeric newsfragment names.
+            with open("foo/newsfragments/baz.feature.rst", "w") as f:
+                f.write("Baz levitation")
+            # Towncrier supports files that have a dot in the name of the
+            # newsfragment
+            with open("foo/newsfragments/fix-1.2.feature", "w") as f:
+                f.write("Baz fix levitation")
             # Towncrier ignores files that don't have a dot
             with open("foo/newsfragments/README", "w") as f:
                 f.write("Blah blah")
@@ -44,12 +51,25 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,
-            u"Loading template...\nFinding news fragments...\nRendering news "
-            u"fragments...\nDraft only -- nothing has been written.\nWhat is "
-            u"seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
-            u"\n======================\n"
-            u"\n\nFeatures\n--------\n\n- Adds levitation (#123)\n"
-            u"- Extends levitation (#124)\n\n",
+            dedent("""\
+                Loading template...
+                Finding news fragments...
+                Rendering news fragments...
+                Draft only -- nothing has been written.
+                What is seen below is what would be written.
+
+                Foo 1.2.3 (01-01-2001)
+                ======================
+
+                Features
+                --------
+
+                - Baz levitation (baz)
+                - Baz fix levitation (#2)
+                - Adds levitation (#123)
+                - Extends levitation (#124)
+
+                """)
         )
 
     def test_collision(self):
@@ -140,7 +160,7 @@ class TestCli(TestCase):
             u"Loading template...\nFinding news fragments...\nRendering news "
             u"fragments...\nDraft only -- nothing has been written.\nWhat is "
             u"seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
-            u"\n======================\n"
+            u"\n======================"
             + dedent(
                 """
                   section-a
@@ -183,7 +203,7 @@ class TestCli(TestCase):
             u"Loading template...\nFinding news fragments...\nRendering news "
             u"fragments...\nDraft only -- nothing has been written.\nWhat is "
             u"seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
-            u"\n======================\n"
+            u"\n======================"
             + dedent(
                 """
                   section-b
@@ -291,7 +311,6 @@ class TestCli(TestCase):
             FooBarBaz 7.8.9 (01-01-2001)
             ============================
 
-
             Features
             --------
 
@@ -314,10 +333,6 @@ class TestCli(TestCase):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
-            with open("pyproject.toml", "w") as f:
-                f.write(
-                    "[tool.towncrier]\n" 'title_format = "{version} ({project_date})"\n'
-                )
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
@@ -339,7 +354,6 @@ class TestCli(TestCase):
 
             7.8.9 (01-01-2001)
             ==================
-
 
             Features
             --------
