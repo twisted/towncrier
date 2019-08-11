@@ -47,9 +47,16 @@ def _get_date():
 @click.option(
     "--yes",
     "answer_yes",
-    default=False,
+    default=None,
     flag_value=True,
     help="Do not ask for confirmation to remove news fragments.",
+)
+@click.option(
+    "--no",
+    "answer_yes",
+    default=None,
+    flag_value=False,
+    help="Do not remove news fragments and do not ask whether or not to remove.",
 )
 def _main(
     draft,
