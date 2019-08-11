@@ -23,14 +23,15 @@ def append_to_newsfile(directory, filename, start_line, top_line, content):
 
     existing_content = existing_content.split(start_line, 1)
 
-    if top_line in existing_content:
+    if top_line and top_line in existing_content:
         raise ValueError("It seems you've already produced newsfiles for this version?")
 
     with open(os.path.join(directory, filename), "wb") as f:
 
         if len(existing_content) > 1:
             f.write(existing_content.pop(0).rstrip().encode("utf8"))
-            f.write((u"\n\n" + start_line + u"\n").encode("utf8"))
+            if start_line:
+                f.write((u"\n\n" + start_line + u"\n").encode("utf8"))
 
         f.write(top_line.encode("utf8"))
         f.write(content.encode("utf8"))

@@ -43,8 +43,8 @@ class WritingTests(TestCase):
             ]
         )
 
-        expected_output = """MyProject 1.0
-=============
+        expected_output = """MyProject 1.0 (never)
+=====================
 
 Features
 --------
@@ -94,9 +94,15 @@ Old text.
             tempdir,
             "NEWS.rst",
             ".. towncrier release notes start\n",
-            "MyProject 1.0\n=============\n",
+            "",
             render_fragments(
-                template, None, fragments, definitions, ["-", "~"], wrap=True
+                template,
+                None,
+                fragments,
+                definitions,
+                ["-", "~"],
+                wrap=True,
+                versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
             ),
         )
 
@@ -140,8 +146,8 @@ Old text.
 
 .. towncrier release notes start
 
-MyProject 1.0
-=============
+MyProject 1.0 (never)
+=====================
 
 Features
 --------
@@ -202,9 +208,15 @@ Old text.
             tempdir,
             "NEWS.rst",
             ".. towncrier release notes start\n",
-            "MyProject 1.0\n=============\n",
+            "",
             render_fragments(
-                template, None, fragments, definitions, ["-", "~"], wrap=True
+                template,
+                None,
+                fragments,
+                definitions,
+                ["-", "~"],
+                wrap=True,
+                versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
             ),
         )
 

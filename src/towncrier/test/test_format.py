@@ -89,7 +89,9 @@ class FormatterTests(TestCase):
             ]
         )
 
-        expected_output = u"""
+        expected_output = u"""MyProject 1.0 (never)
+=====================
+
 Features
 --------
 
@@ -125,12 +127,20 @@ Bugfixes
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
-            template, None, fragments, definitions, ["-", "~"], wrap=True
+            template,
+            None,
+            fragments,
+            definitions,
+            ["-", "~"],
+            wrap=True,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
         )
         self.assertEqual(output, expected_output)
 
         # Check again with non-default underlines
-        expected_output_weird_underlines = u"""
+        expected_output_weird_underlines = u"""MyProject 1.0 (never)
+=====================
+
 Features
 ********
 
@@ -161,7 +171,13 @@ Bugfixes
 """
 
         output = render_fragments(
-            template, None, fragments, definitions, ["*", "^"], wrap=True
+            template,
+            None,
+            fragments,
+            definitions,
+            ["*", "^"],
+            wrap=True,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
         )
         self.assertEqual(output, expected_output_weird_underlines)
 
@@ -185,7 +201,9 @@ Bugfixes
 
         definitions = OrderedDict([("misc", {"name": "Misc", "showcontent": False})])
 
-        expected_output = u"""
+        expected_output = u"""MyProject 1.0 (never)
+=====================
+
 Misc
 ----
 
@@ -198,7 +216,13 @@ Misc
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
-            template, u"xx{issue}", fragments, definitions, ["-", "~"], wrap=True
+            template,
+            u"xx{issue}",
+            fragments,
+            definitions,
+            ["-", "~"],
+            wrap=True,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
         )
         self.assertEqual(output, expected_output)
 
@@ -227,7 +251,9 @@ Misc
             [("feature", {"name": "Features", "showcontent": True})]
         )
 
-        expected_output = u"""
+        expected_output = u"""MyProject 1.0 (never)
+=====================
+
 Features
 --------
 
@@ -248,7 +274,13 @@ Features
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
-            template, None, fragments, definitions, ["-", "~"], wrap=True
+            template,
+            None,
+            fragments,
+            definitions,
+            ["-", "~"],
+            wrap=True,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
         )
         self.assertEqual(output, expected_output)
 
@@ -276,7 +308,9 @@ Features
             [("feature", {"name": "Features", "showcontent": True})]
         )
 
-        expected_output = u"""
+        expected_output = u"""MyProject 1.0 (never)
+=====================
+
 Features
 --------
 
@@ -291,6 +325,12 @@ Features
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
-            template, None, fragments, definitions, ["-", "~"], wrap=False
+            template,
+            None,
+            fragments,
+            definitions,
+            ["-", "~"],
+            wrap=False,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
         )
         self.assertEqual(output, expected_output)

@@ -50,13 +50,13 @@ def get_version(package_dir, package):
         raise Exception("No __version__, I don't know how else to look")
 
     if isinstance(version, str):
-        return version
+        return version.strip()
 
     if isinstance(version, Version):
-        return version.base()
+        return version.base().strip()
 
     if isinstance(version, tuple):
-        return ".".join(map(str, version))
+        return ".".join(map(str, version)).strip()
 
     raise Exception(
         (

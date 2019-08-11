@@ -53,7 +53,8 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,
-            dedent("""\
+            dedent(
+                """\
                 Loading template...
                 Finding news fragments...
                 Rendering news fragments...
@@ -63,7 +64,6 @@ class TestCli(TestCase):
                 Foo 1.2.3 (01-01-2001)
                 ======================
 
-
                 Features
                 --------
 
@@ -72,7 +72,8 @@ class TestCli(TestCase):
                 - Adds levitation (#123)
                 - Extends levitation (#124)
 
-                """)
+                """
+            ),
         )
 
     def test_command(self):
@@ -169,7 +170,7 @@ class TestCli(TestCase):
             u"Loading template...\nFinding news fragments...\nRendering news "
             u"fragments...\nDraft only -- nothing has been written.\nWhat is "
             u"seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
-            u"\n======================\n"
+            u"\n======================"
             + dedent(
                 """
                   section-a
@@ -212,7 +213,7 @@ class TestCli(TestCase):
             u"Loading template...\nFinding news fragments...\nRendering news "
             u"fragments...\nDraft only -- nothing has been written.\nWhat is "
             u"seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
-            u"\n======================\n"
+            u"\n======================"
             + dedent(
                 """
                   section-b
@@ -320,7 +321,6 @@ class TestCli(TestCase):
             FooBarBaz 7.8.9 (01-01-2001)
             ============================
 
-
             Features
             --------
 
@@ -343,10 +343,6 @@ class TestCli(TestCase):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
-            with open("pyproject.toml", "w") as f:
-                f.write(
-                    "[tool.towncrier]\n" 'title_format = "{version} ({project_date})"\n'
-                )
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
@@ -368,7 +364,6 @@ class TestCli(TestCase):
 
             7.8.9 (01-01-2001)
             ==================
-
 
             Features
             --------

@@ -78,8 +78,9 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
 
         for basename in files:
 
-            ticket, category, counter = parse_newfragment_basename(basename,
-                                                                   definitions)
+            ticket, category, counter = parse_newfragment_basename(
+                basename, definitions
+            )
             if category is None or category not in definitions:
                 continue
 
@@ -171,7 +172,16 @@ def render_issue(issue_format, issue):
         return issue_format.format(issue=issue)
 
 
-def render_fragments(template, issue_format, fragments, definitions, underlines, wrap):
+def render_fragments(
+    template,
+    issue_format,
+    fragments,
+    definitions,
+    underlines,
+    wrap,
+    versiondata,
+    top_underline="=",
+):
     """
     Render the fragments into a news file.
     """
@@ -216,7 +226,11 @@ def render_fragments(template, issue_format, fragments, definitions, underlines,
     done = []
 
     res = jinja_template.render(
-        sections=data, definitions=definitions, underlines=underlines
+        sections=data,
+        definitions=definitions,
+        underlines=underlines,
+        versiondata=versiondata,
+        top_underline=top_underline,
     )
 
     for line in res.split(u"\n"):
