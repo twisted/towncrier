@@ -13,7 +13,7 @@ import pkg_resources
 
 from datetime import date
 
-from ._settings import load_config
+from ._settings import load_config_from_file
 from ._builder import find_fragments, split_fragments, render_fragments
 from ._project import get_version, get_project_name
 from ._writer import append_to_newsfile
@@ -33,6 +33,11 @@ def _get_date():
     flag_value=True,
     help=("Render the news fragments, don't write to files, " "don't check versions."),
 )
+@click.option(
+    "--config",
+    "config_file",
+    default='pyproject.toml',
+    help='Configuration file name.')
 @click.option("--dir", "directory", default=".")
 @click.option("--name", "project_name", default=None)
 @click.option(
@@ -49,18 +54,18 @@ def _get_date():
     flag_value=True,
     help="Do not ask for confirmation to remove news fragments.",
 )
-def _main(draft, directory, project_name, project_version, project_date, answer_yes):
+def _main(draft, directory, config_file, project_name, project_version, project_date, answer_yes):
     return __main(
-        draft, directory, project_name, project_version, project_date, answer_yes
+        draft, directory, config_file, project_name, project_version, project_date, answer_yes
     )
 
 
-def __main(draft, directory, project_name, project_version, project_date, answer_yes):
+def __main(draft, directory, config_file, project_name, project_version, project_date, answer_yes):
     """
     The main entry point.
     """
     directory = os.path.abspath(directory)
-    config = load_config(directory)
+    config = load_config_from_file(os.path.join(directory, config_file))
     to_err = draft
 
     click.echo("Loading template...", err=to_err)
