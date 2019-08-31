@@ -64,9 +64,14 @@ def parse_toml(config):
         else:
             wrap = False
 
+    single_file = config.get("single_file", True)
+    if not isinstance(single_file, bool):
+        raise ValueError("`single_file` option must be a boolean: false or true.")
+
     return {
         "package": config.get("package", ""),
         "package_dir": config.get("package_dir", "."),
+        "single_file": single_file,
         "filename": config.get("filename", "NEWS.rst"),
         "directory": config.get("directory"),
         "sections": sections,

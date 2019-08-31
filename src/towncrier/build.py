@@ -167,12 +167,20 @@ def __main(
     else:
         click.echo("Writing to newsfile...", err=to_err)
         start_line = config["start_line"]
+        news_file = config["filename"]
+        if not config["single_file"]:
+            news_file = news_file.format(
+                name=project_name,
+                version=project_version,
+                project_date=project_date,
+            )
         append_to_newsfile(
-            directory, config["filename"], start_line, top_line, rendered
+            directory, news_file, start_line, top_line, rendered,
+            single_file=config["single_file"]
         )
 
         click.echo("Staging newsfile...", err=to_err)
-        stage_newsfile(directory, config["filename"])
+        stage_newsfile(directory, news_file)
 
         click.echo("Removing news fragments...", err=to_err)
         remove_files(fragment_filenames, answer_yes)

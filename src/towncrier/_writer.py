@@ -11,17 +11,19 @@ from __future__ import absolute_import, division
 import os
 
 
-def append_to_newsfile(directory, filename, start_line, top_line, content):
+def append_to_newsfile(directory, filename, start_line, top_line, content, single_file=True):
 
     news_file = os.path.join(directory, filename)
 
-    if not os.path.exists(news_file):
-        existing_content = u""
+    if single_file:
+        if not os.path.exists(news_file):
+            existing_content = u""
+        else:
+            with open(news_file, "rb") as f:
+                existing_content = f.read().decode("utf8")
+        existing_content = existing_content.split(start_line, 1)
     else:
-        with open(news_file, "rb") as f:
-            existing_content = f.read().decode("utf8")
-
-    existing_content = existing_content.split(start_line, 1)
+        existing_content = [u""]
 
     if top_line and top_line in existing_content:
         raise ValueError("It seems you've already produced newsfiles for this version?")
