@@ -376,7 +376,8 @@ class TestCli(TestCase):
 
     def test_single_file(self):
         """
-        Enabling the single file mode will
+        Enabling the single file mode will write the changelog to a filename
+        that is formatted from the filename args.
         """
         runner = CliRunner()
 
@@ -405,6 +406,57 @@ class TestCli(TestCase):
             self.assertEqual(0, result.exit_code, result.output)
             self.assertTrue(os.path.exists("7.8.9-notes.rst"), os.listdir("."))
             with open("7.8.9-notes.rst", "r") as f:
+                output = f.read()
+
+        self.assertEqual(
+            output,
+            dedent(
+                """
+            foo 7.8.9 (01-01-2001)
+            ======================
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+            """
+            ).lstrip(),
+        )
+
+
+    def test_single_file_false(self):
+        """
+        If formatting arguments are given in the filename arg and single_file is
+        false, the filename will not be formatted.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(
+                    '[tool.towncrier]\n single_file=false\n filename="{version}-notes.rst"'
+                )
+            os.mkdir("newsfragments")
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--version",
+                    "7.8.9",
+                    "--name",
+                    "foo",
+                    "--date",
+                    "01-01-2001",
+                    "--yes",
+                ],
+            )
+
+            self.assertEqual(0, result.exit_code, result.output)
+            self.assertTrue(os.path.exists("{version}-notes.rst"), os.listdir("."))
+            self.assertFalse(os.path.exists("7.8.9-notes.rst"), os.listdir("."))
+            with open("{version}-notes.rst", "r") as f:
                 output = f.read()
 
         self.assertEqual(
