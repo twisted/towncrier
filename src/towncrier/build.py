@@ -10,6 +10,8 @@ from __future__ import absolute_import, division
 import os
 import click
 import pkg_resources
+import traceback
+import sys
 
 from datetime import date
 
@@ -60,15 +62,19 @@ def _main(
     project_date,
     answer_yes,
 ):
-    return __main(
-        draft,
-        directory,
-        config_file,
-        project_name,
-        project_version,
-        project_date,
-        answer_yes,
-    )
+    try:
+        return __main(
+            draft,
+            directory,
+            config_file,
+            project_name,
+            project_version,
+            project_date,
+            answer_yes,
+        )
+    except Exception:
+        traceback.print_exc(file=sys.stderr)
+        raise
 
 
 def __main(
@@ -167,12 +173,23 @@ def __main(
     else:
         click.echo("Writing to newsfile...", err=to_err)
         start_line = config["start_line"]
+        news_file = config["filename"]
+
+        if config["single_file"]:
+            # When single_file is enabled, the news file name changes based on the version.
+            news_file = news_file.format(
+                name=project_name,
+                version=project_version,
+                project_date=project_date,
+            )
+
         append_to_newsfile(
-            directory, config["filename"], start_line, top_line, rendered
+            directory, news_file, start_line, top_line, rendered,
+            single_file=config["single_file"]
         )
 
         click.echo("Staging newsfile...", err=to_err)
-        stage_newsfile(directory, config["filename"])
+        stage_newsfile(directory, news_file)
 
         click.echo("Removing news fragments...", err=to_err)
         remove_files(fragment_filenames, answer_yes)

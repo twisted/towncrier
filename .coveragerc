@@ -3,9 +3,13 @@ source =
        towncrier
 branch = True
 
-
 [paths]
 source =
    src/
    .tox/*/lib/python*/site-packages/
    .tox/pypy*/site-packages/
+
+[report]
+omit =
+   src/towncrier/__main__.py
+   src/towncrier/test/*

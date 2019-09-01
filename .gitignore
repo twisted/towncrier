@@ -20,3 +20,4 @@ apidocs/
 .eggs
 .tox/
 .coverage.*
+.vscode

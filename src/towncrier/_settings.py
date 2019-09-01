@@ -7,6 +7,12 @@ import toml
 from collections import OrderedDict
 
 
+class ConfigError(Exception):
+    def __init__(self, *args, **kwargs):
+        self.failing_option = kwargs.get("failing_option")
+        super(ConfigError, self).__init__(*args)
+
+
 _start_string = u".. towncrier release notes start\n"
 _title_format = None
 _template_fname = None
@@ -38,7 +44,7 @@ def load_config_from_file(from_file):
 
 def parse_toml(config):
     if "tool" not in config:
-        raise ValueError("No [tool.towncrier] section.")
+        raise ConfigError("No [tool.towncrier] section.", failing_option="all")
 
     config = config["tool"]["towncrier"]
 
@@ -58,15 +64,25 @@ def parse_toml(config):
         types = _default_types
 
     wrap = config.get("wrap", False)
-    if isinstance(wrap, str):
-        if wrap in ["true", "True", "1"]:
-            wrap = True
-        else:
-            wrap = False
+
+    single_file_wrong = config.get("singlefile")
+    if single_file_wrong:
+        raise ConfigError(
+            "`singlefile` is not a valid option. Did you mean `single_file`?",
+            failing_option="singlefile",
+        )
+
+    single_file = config.get("single_file", True)
+    if not isinstance(single_file, bool):
+        raise ConfigError(
+            "`single_file` option must be a boolean: false or true.",
+            failing_option="single_file",
+        )
 
     return {
         "package": config.get("package", ""),
         "package_dir": config.get("package_dir", "."),
+        "single_file": single_file,
         "filename": config.get("filename", "NEWS.rst"),
         "directory": config.get("directory"),
         "sections": sections,
