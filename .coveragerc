@@ -10,4 +10,6 @@ source =
    .tox/pypy*/site-packages/
 
 [report]
-omit = src/towncrier/__main__.py
+omit =
+   src/towncrier/__main__.py
+   src/towncrier/test/*
