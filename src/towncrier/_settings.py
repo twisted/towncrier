@@ -6,6 +6,7 @@ import toml
 
 from collections import OrderedDict
 
+
 class ConfigError(Exception):
     def __init__(self, *args, failing_option=None):
         self.failing_option = failing_option
@@ -66,11 +67,17 @@ def parse_toml(config):
 
     single_file_wrong = config.get("singlefile")
     if single_file_wrong:
-        raise ConfigError("`singlefile` is not a valid option. Did you mean `single_file`?", failing_option="singlefile")
+        raise ConfigError(
+            "`singlefile` is not a valid option. Did you mean `single_file`?",
+            failing_option="singlefile",
+        )
 
     single_file = config.get("single_file", True)
     if not isinstance(single_file, bool):
-        raise ConfigError("`single_file` option must be a boolean: false or true.", failing_option="single_file")
+        raise ConfigError(
+            "`single_file` option must be a boolean: false or true.",
+            failing_option="single_file",
+        )
 
     return {
         "package": config.get("package", ""),

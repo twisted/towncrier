@@ -48,7 +48,7 @@ package = "foobar"
             )
 
         with self.assertRaises(ConfigError) as e:
-            config = load_config(temp)
+            load_config(temp)
 
         self.assertEqual(e.exception.failing_option, "all")
 
@@ -70,7 +70,7 @@ package = "foobar"
             )
 
         with self.assertRaises(ConfigError) as e:
-            config = load_config(temp)
+            load_config(temp)
 
         self.assertEqual(e.exception.failing_option, "single_file")
 
@@ -92,6 +92,6 @@ package = "foobar"
             )
 
         with self.assertRaises(ConfigError) as e:
-            config = load_config(temp)
+            load_config(temp)
 
         self.assertEqual(e.exception.failing_option, "singlefile")
