@@ -8,8 +8,8 @@ from collections import OrderedDict
 
 
 class ConfigError(Exception):
-    def __init__(self, failing_option=None, *args, **kwargs):
-        self.failing_option = failing_option
+    def __init__(self, *args, **kwargs):
+        self.failing_option = kwargs.get("failing_option")
         super().__init__(*args, **kwargs)
 
 
