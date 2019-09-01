@@ -8,9 +8,9 @@ from collections import OrderedDict
 
 
 class ConfigError(Exception):
-    def __init__(self, *args, failing_option=None):
+    def __init__(self, failing_option=None, *args, **kwargs):
         self.failing_option = failing_option
-        super().__init__(*args)
+        super().__init__(*args, **kwargs)
 
 
 _start_string = u".. towncrier release notes start\n"
