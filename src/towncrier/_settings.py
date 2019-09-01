@@ -10,7 +10,7 @@ from collections import OrderedDict
 class ConfigError(Exception):
     def __init__(self, *args, **kwargs):
         self.failing_option = kwargs.get("failing_option")
-        super().__init__(*args, **kwargs)
+        super(ConfigError, self).__init__(*args)
 
 
 _start_string = u".. towncrier release notes start\n"
