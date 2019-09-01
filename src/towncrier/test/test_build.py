@@ -423,7 +423,6 @@ class TestCli(TestCase):
             ).lstrip(),
         )
 
-
     def test_single_file_false(self):
         """
         If formatting arguments are given in the filename arg and single_file is
