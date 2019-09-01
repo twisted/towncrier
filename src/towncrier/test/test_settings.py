@@ -42,7 +42,7 @@ package = "foobar"
                 dedent(
                     """
                 [something.else]
-                blah=baz
+                blah='baz'
                 """
                 )
             )
