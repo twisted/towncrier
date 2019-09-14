@@ -496,7 +496,9 @@ class TestCli(TestCase):
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
                 f.write(
-                    '[tool.towncrier]\ntemplate="towncrier:single-file-no-bullets"\nall_bullets=false'
+                    '[tool.towncrier]\n'
+                    'template="towncrier:single-file-no-bullets"\n'
+                    'all_bullets=false'
                 )
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:

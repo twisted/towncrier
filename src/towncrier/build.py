@@ -9,7 +9,6 @@ from __future__ import absolute_import, division
 
 import os
 import click
-import pkg_resources
 import traceback
 import sys
 
