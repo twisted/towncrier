@@ -10,22 +10,22 @@ from __future__ import absolute_import
 import os
 import click
 
-from ._settings import load_config
+from ._settings import load_config_from_options
 
 
 @click.command(name="create")
-@click.option("--dir", "directory", default=".")
+@click.option("--dir", "directory", default=None)
+@click.option("--config", "config", default=None)
 @click.argument("filename")
-def _main(directory, filename):
-    return __main(directory, filename)
+def _main(directory, config, filename):
+    return __main(directory, config, filename)
 
 
-def __main(directory, filename):
+def __main(directory, config, filename):
     """
     The main entry point.
     """
-    directory = os.path.abspath(directory)
-    config = load_config(directory)
+    base_directory, config = load_config_from_options(directory, config)
 
     definitions = config["types"] or []
     if len(filename.split(".")) < 2 or (
@@ -39,11 +39,11 @@ def __main(directory, filename):
         )
 
     if config.get("directory"):
-        fragments_directory = os.path.abspath(config["directory"])
+        fragments_directory = os.path.abspath(os.path.join(base_directory, config["directory"]))
     else:
         fragments_directory = os.path.abspath(
             os.path.join(
-                directory, config["package_dir"], config["package"], "newsfragments"
+                base_directory, config["package_dir"], config["package"], "newsfragments"
             )
         )
 

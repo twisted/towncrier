@@ -21,3 +21,4 @@ apidocs/
 .tox/
 .coverage.*
 .vscode
+.python-version

@@ -87,7 +87,7 @@ Old text.
         fragments = split_fragments(fragments, definitions)
 
         template = pkg_resources.resource_string(
-            "towncrier", "templates/template.rst"
+            "towncrier", "templates/default.rst"
         ).decode("utf8")
 
         append_to_newsfile(
@@ -201,7 +201,7 @@ Old text.
         fragments = split_fragments(fragments, definitions)
 
         template = pkg_resources.resource_string(
-            "towncrier", "templates/template.rst"
+            "towncrier", "templates/default.rst"
         ).decode("utf8")
 
         append_to_newsfile(

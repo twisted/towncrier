@@ -74,6 +74,29 @@ package = "foobar"
 
         self.assertEqual(e.exception.failing_option, "single_file")
 
+
+    def test_incorrect_all_bullets(self):
+        """
+        all_bullets must be a bool.
+        """
+        temp = self.mktemp()
+        os.makedirs(temp)
+
+        with open(os.path.join(temp, "pyproject.toml"), "w") as f:
+            f.write(
+                dedent(
+                    """
+                [tool.towncrier]
+                all_bullets = "a"
+                """
+                )
+            )
+
+        with self.assertRaises(ConfigError) as e:
+            load_config(temp)
+
+        self.assertEqual(e.exception.failing_option, "all_bullets")
+
     def test_mistype_singlefile(self):
         """
         singlefile is not accepted, single_file is.
@@ -95,3 +118,34 @@ package = "foobar"
             load_config(temp)
 
         self.assertEqual(e.exception.failing_option, "singlefile")
+
+
+    def test_towncrier_toml_preferred(self):
+        """
+        Towncrier prefers the towncrier.toml for autodetect over pyproject.toml.
+        """
+        temp = self.mktemp()
+        os.makedirs(temp)
+
+        with open(os.path.join(temp, "towncrier.toml"), "w") as f:
+            f.write(
+                dedent(
+                    """
+                [tool.towncrier]
+                package = "a"
+                """
+                )
+            )
+
+        with open(os.path.join(temp, "pyproject.toml"), "w") as f:
+            f.write(
+                dedent(
+                    """
+                [tool.towncrier]
+                package = "b"
+                """
+                )
+            )
+
+        config = load_config(temp)
+        self.assertEqual(config["package"], "a")

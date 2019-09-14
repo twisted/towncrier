@@ -275,6 +275,20 @@ class TestCli(TestCase):
             self.assertFalse(os.path.isfile(fragment_path1))
             self.assertFalse(os.path.isfile(fragment_path2))
 
+    def test_needs_config(self):
+        """
+        Towncrier needs a configuration file.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                _main,
+                ["--draft"])
+
+        self.assertEqual(1, result.exit_code, result.output)
+        self.assertTrue(result.output.startswith("No configuration file found."))
+
     def test_projectless_changelog(self):
         """In which a directory containing news files is built into a changelog
 
@@ -343,6 +357,10 @@ class TestCli(TestCase):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(
+                    '[tool.towncrier]'
+                )
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
@@ -351,7 +369,7 @@ class TestCli(TestCase):
                 _main, ["--version", "7.8.9", "--date", "01-01-2001", "--draft"]
             )
 
-        self.assertEqual(0, result.exit_code)
+        self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(
             result.output,
             dedent(
@@ -469,6 +487,57 @@ class TestCli(TestCase):
             --------
 
             - Adds levitation (#123)
+            """
+            ).lstrip(),
+        )
+
+    def test_bullet_points_false(self):
+        """
+        When all_bullets is false, the
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(
+                    '[tool.towncrier]\ntemplate="towncrier:single-file-no-bullets"\nall_bullets=false'
+                )
+            os.mkdir("newsfragments")
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("wow!\n~~~~\n\nAdds levitation.")
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--version",
+                    "7.8.9",
+                    "--name",
+                    "foo",
+                    "--date",
+                    "01-01-2001",
+                    "--yes",
+                ],
+            )
+
+            self.assertEqual(0, result.exit_code, result.output)
+            with open("NEWS.rst", "r") as f:
+                output = f.read()
+
+        self.assertEqual(
+            output,
+            dedent(
+                """
+            foo 7.8.9 (01-01-2001)
+            ======================
+
+            Features
+            --------
+
+            wow!
+            ~~~~
+
+            Adds levitation.
+            (#123)
             """
             ).lstrip(),
         )

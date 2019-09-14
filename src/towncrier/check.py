@@ -10,7 +10,7 @@ import click
 
 from subprocess import CalledProcessError, check_output, STDOUT
 
-from ._settings import load_config, load_config_from_file
+from ._settings import load_config_from_options
 from ._builder import find_fragments
 
 
@@ -21,18 +21,15 @@ def _run(args, **kwargs):
 
 @click.command(name="check")
 @click.option("--compare-with", default="origin/master")
-@click.option("--dir", "directory", default=".")
-@click.option("--pyproject", "pyproject", default=None)
-def _main(compare_with, directory, pyproject):
-    return __main(compare_with, directory, pyproject)
+@click.option("--dir", "directory", default=None)
+@click.option("--config", "config", default=None)
+def _main(compare_with, directory, config):
+    return __main(compare_with, directory, config)
 
 
-def __main(comparewith, directory, pyproject):
-    base_directory = os.path.abspath(directory)
-    if pyproject is None:
-        config = load_config(directory)
-    else:
-        config = load_config_from_file(pyproject)
+def __main(comparewith, directory, config):
+
+    base_directory, config = load_config_from_options(directory, config)
 
     try:
         files_changed = (
@@ -67,17 +64,17 @@ def __main(comparewith, directory, pyproject):
     fragments = set()
 
     if config.get("directory"):
-        base_directory = os.path.abspath(config["directory"])
+        fragment_base_directory = os.path.abspath(config["directory"])
         fragment_directory = None
     else:
-        base_directory = os.path.abspath(
-            os.path.join(directory, config["package_dir"], config["package"])
+        fragment_base_directory = os.path.abspath(
+            os.path.join(base_directory, config["package_dir"], config["package"])
         )
         fragment_directory = "newsfragments"
 
     fragments = set(
         find_fragments(
-            base_directory, config["sections"], fragment_directory, config["types"]
+            fragment_base_directory, config["sections"], fragment_directory, config["types"]
         )[1]
     )
     fragments_in_branch = fragments & files

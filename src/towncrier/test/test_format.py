@@ -122,7 +122,7 @@ Bugfixes
 """
 
         template = pkg_resources.resource_string(
-            "towncrier", "templates/template.rst"
+            "towncrier", "templates/default.rst"
         ).decode("utf8")
 
         fragments = split_fragments(fragments, definitions)
@@ -211,7 +211,7 @@ Misc
 """
 
         template = pkg_resources.resource_string(
-            "towncrier", "templates/template.rst"
+            "towncrier", "templates/default.rst"
         ).decode("utf8")
 
         fragments = split_fragments(fragments, definitions)
@@ -269,7 +269,7 @@ Features
 """
 
         template = pkg_resources.resource_string(
-            "towncrier", "templates/template.rst"
+            "towncrier", "templates/default.rst"
         ).decode("utf8")
 
         fragments = split_fragments(fragments, definitions)
@@ -320,7 +320,7 @@ Features
 """  # NOQA
 
         template = pkg_resources.resource_string(
-            "towncrier", "templates/template.rst"
+            "towncrier", "templates/default.rst"
         ).decode("utf8")
 
         fragments = split_fragments(fragments, definitions)
