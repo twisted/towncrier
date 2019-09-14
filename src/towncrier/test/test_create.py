@@ -89,7 +89,7 @@ class TestCli(TestCase):
 
             self.assertEqual([], os.listdir("foo/newsfragments"))
 
-        self.assertEqual(type(result.exception), SystemExit)
+        self.assertEqual(type(result.exception), SystemExit, result.exception)
         self.assertIn(
             "Expected filename '123.foobar.rst' to be of format", result.output
         )

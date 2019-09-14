@@ -50,12 +50,12 @@ class TestChecker(TestCase):
             "pyproject.toml", lambda runner, main, argv: runner.invoke(main, argv)
         )
 
-    def test_no_changes_made_pyproject_path(self):
+    def test_no_changes_made_config_path(self):
         pyproject = "not-pyproject.toml"
         self._test_no_changes_made(
             pyproject,
             lambda runner, main, argv: runner.invoke(
-                main, argv + ["--pyproject", pyproject]
+                main, argv + ["--config", pyproject]
             ),
         )
 
@@ -67,7 +67,7 @@ class TestChecker(TestCase):
 
             result = invoke(runner, _main, ["--compare-with", "master"])
 
-            self.assertEqual(0, result.exit_code)
+            self.assertEqual(0, result.exit_code, result.output)
             self.assertEqual(
                 "On trunk, or no diffs, so no newsfragment required.\n", result.output
             )

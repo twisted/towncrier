@@ -125,6 +125,7 @@ Towncrier has the following global options, which can be specified in the toml f
     issue_format = "format string for {issue} (issue is the first part of fragment name)"
     underlines: "=-~"
     wrap = false  # Wrap text to 79 characters
+    all_bullets = true  # make all fragments bullet points
 ```
 If a single file is used, the content of this file are overwritten each time.
 

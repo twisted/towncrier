@@ -11,7 +11,9 @@ from __future__ import absolute_import, division
 import os
 
 
-def append_to_newsfile(directory, filename, start_line, top_line, content, single_file=True):
+def append_to_newsfile(
+    directory, filename, start_line, top_line, content, single_file=True
+):
 
     news_file = os.path.join(directory, filename)
 

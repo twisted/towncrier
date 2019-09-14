@@ -9,13 +9,12 @@ from __future__ import absolute_import, division
 
 import os
 import click
-import pkg_resources
 import traceback
 import sys
 
 from datetime import date
 
-from ._settings import load_config_from_file
+from ._settings import load_config_from_options, ConfigError
 from ._builder import find_fragments, split_fragments, render_fragments
 from ._project import get_version, get_project_name
 from ._writer import append_to_newsfile
@@ -32,12 +31,10 @@ def _get_date():
     "draft",
     default=False,
     flag_value=True,
-    help=("Render the news fragments, don't write to files, don't check versions."),
+    help="Render the news fragments, don't write to files, don't check versions.",
 )
-@click.option(
-    "--config", "config_file", default="pyproject.toml", help="Configuration file name."
-)
-@click.option("--dir", "directory", default=".")
+@click.option("--config", "config_file", default=None, help="Configuration file name.")
+@click.option("--dir", "directory", default=None)
 @click.option("--name", "project_name", default=None)
 @click.option(
     "--version",
@@ -72,8 +69,11 @@ def _main(
             project_date,
             answer_yes,
         )
-    except Exception:
-        traceback.print_exc(file=sys.stderr)
+    except Exception as e:
+        if isinstance(e, ConfigError):
+            print(e)
+        else:
+            traceback.print_exc(file=sys.stderr)
         raise
 
 
@@ -89,49 +89,46 @@ def __main(
     """
     The main entry point.
     """
-    directory = os.path.abspath(directory)
-    config = load_config_from_file(os.path.join(directory, config_file))
+    base_directory, config = load_config_from_options(directory, config_file)
     to_err = draft
 
     click.echo("Loading template...", err=to_err)
-    if config.get("template") is None:
-        template = pkg_resources.resource_string(
-            __name__, "templates/template.rst"
-        ).decode("utf8")
-    else:
-        with open(config["template"], "rb") as tmpl:
-            template = tmpl.read().decode("utf8")
+    with open(config["template"], "rb") as tmpl:
+        template = tmpl.read().decode("utf8")
 
     click.echo("Finding news fragments...", err=to_err)
 
     definitions = config["types"]
 
     if config.get("directory"):
-        base_directory = os.path.abspath(config["directory"])
+        fragment_base_directory = os.path.abspath(config["directory"])
         fragment_directory = None
     else:
-        base_directory = os.path.abspath(
-            os.path.join(directory, config["package_dir"], config["package"])
+        fragment_base_directory = os.path.abspath(
+            os.path.join(base_directory, config["package_dir"], config["package"])
         )
         fragment_directory = "newsfragments"
 
     fragments, fragment_filenames = find_fragments(
-        base_directory, config["sections"], fragment_directory, definitions
+        fragment_base_directory, config["sections"], fragment_directory, definitions
     )
 
     click.echo("Rendering news fragments...", err=to_err)
-    fragments = split_fragments(fragments, definitions)
+    fragments = split_fragments(
+        fragments, definitions, all_bullets=config["all_bullets"]
+    )
 
     if project_version is None:
         project_version = get_version(
-            os.path.join(directory, config["package_dir"]), config["package"]
+            os.path.join(base_directory, config["package_dir"]), config["package"]
         ).strip()
 
     if project_name is None:
         package = config.get("package")
         if package:
             project_name = get_project_name(
-                os.path.abspath(os.path.join(directory, config["package_dir"])), package
+                os.path.abspath(os.path.join(base_directory, config["package_dir"])),
+                package,
             )
         else:
             # Can't determine a project_name, but maybe it is not needed.
@@ -158,6 +155,7 @@ def __main(
         config["wrap"],
         {"name": project_name, "version": project_version, "date": project_date},
         top_underline=config["underlines"][0],
+        all_bullets=config["all_bullets"],
     )
 
     if draft:
@@ -178,18 +176,20 @@ def __main(
         if config["single_file"]:
             # When single_file is enabled, the news file name changes based on the version.
             news_file = news_file.format(
-                name=project_name,
-                version=project_version,
-                project_date=project_date,
+                name=project_name, version=project_version, project_date=project_date
             )
 
         append_to_newsfile(
-            directory, news_file, start_line, top_line, rendered,
-            single_file=config["single_file"]
+            base_directory,
+            news_file,
+            start_line,
+            top_line,
+            rendered,
+            single_file=config["single_file"],
         )
 
         click.echo("Staging newsfile...", err=to_err)
-        stage_newsfile(directory, news_file)
+        stage_newsfile(base_directory, news_file)
 
         click.echo("Removing news fragments...", err=to_err)
         remove_files(fragment_filenames, answer_yes)
