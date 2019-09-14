@@ -45,9 +45,12 @@ def load_config_from_options(directory, config):
         config = load_config_from_file(os.path.dirname(config), config)
 
     if config is None:
-        raise ConfigError("No configuration file found.\nLooked in: %s" % (base_directory,))
+        raise ConfigError(
+            "No configuration file found.\nLooked in: %s" % (base_directory,)
+        )
 
     return base_directory, config
+
 
 def load_config(directory):
 
@@ -62,6 +65,7 @@ def load_config(directory):
         return None
 
     return load_config_from_file(directory, config_file)
+
 
 def load_config_from_file(directory, config_file):
 
@@ -124,7 +128,10 @@ def parse_toml(base_path, config):
         template = os.path.join(base_path, template)
 
     if not os.path.exists(template):
-        raise ConfigError("The template file '%s' does not exist." % (template,), failing_option="template")
+        raise ConfigError(
+            "The template file '%s' does not exist." % (template,),
+            failing_option="template",
+        )
 
     return {
         "package": config.get("package", ""),

@@ -32,11 +32,9 @@ def _get_date():
     "draft",
     default=False,
     flag_value=True,
-    help=("Render the news fragments, don't write to files, don't check versions."),
+    help="Render the news fragments, don't write to files, don't check versions.",
 )
-@click.option(
-    "--config", "config_file", default=None, help="Configuration file name."
-)
+@click.option("--config", "config_file", default=None, help="Configuration file name.")
 @click.option("--dir", "directory", default=None)
 @click.option("--name", "project_name", default=None)
 @click.option(
@@ -117,7 +115,9 @@ def __main(
     )
 
     click.echo("Rendering news fragments...", err=to_err)
-    fragments = split_fragments(fragments, definitions, all_bullets=config["all_bullets"])
+    fragments = split_fragments(
+        fragments, definitions, all_bullets=config["all_bullets"]
+    )
 
     if project_version is None:
         project_version = get_version(
@@ -128,7 +128,8 @@ def __main(
         package = config.get("package")
         if package:
             project_name = get_project_name(
-                os.path.abspath(os.path.join(base_directory, config["package_dir"])), package
+                os.path.abspath(os.path.join(base_directory, config["package_dir"])),
+                package,
             )
         else:
             # Can't determine a project_name, but maybe it is not needed.
@@ -176,14 +177,16 @@ def __main(
         if config["single_file"]:
             # When single_file is enabled, the news file name changes based on the version.
             news_file = news_file.format(
-                name=project_name,
-                version=project_version,
-                project_date=project_date,
+                name=project_name, version=project_version, project_date=project_date
             )
 
         append_to_newsfile(
-            base_directory, news_file, start_line, top_line, rendered,
-            single_file=config["single_file"]
+            base_directory,
+            news_file,
+            start_line,
+            top_line,
+            rendered,
+            single_file=config["single_file"],
         )
 
         click.echo("Staging newsfile...", err=to_err)

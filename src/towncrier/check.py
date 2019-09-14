@@ -74,7 +74,10 @@ def __main(comparewith, directory, config):
 
     fragments = set(
         find_fragments(
-            fragment_base_directory, config["sections"], fragment_directory, config["types"]
+            fragment_base_directory,
+            config["sections"],
+            fragment_directory,
+            config["types"],
         )[1]
     )
     fragments_in_branch = fragments & files

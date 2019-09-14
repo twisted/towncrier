@@ -5,9 +5,9 @@ from __future__ import absolute_import, division, print_function
 from setuptools import setup, find_packages
 
 setup(
-    name='towncrier',
-    maintainer='Amber Brown',
-    maintainer_email='hawkowl@twistedmatrix.com',
+    name="towncrier",
+    maintainer="Amber Brown",
+    maintainer_email="hawkowl@twistedmatrix.com",
     url="https://github.com/hawkowl/towncrier",
     classifiers=[
         "Intended Audience :: Developers",
@@ -19,24 +19,14 @@ setup(
         "Programming Language :: Python :: 3.6",
     ],
     use_incremental=True,
-    setup_requires=['incremental'],
-    install_requires=[
-        'click',
-        'click-default-group',
-        'incremental',
-        'jinja2',
-        'toml',
-    ],
+    setup_requires=["incremental"],
+    install_requires=["click", "click-default-group", "incremental", "jinja2", "toml"],
     package_dir={"": "src"},
-    packages=find_packages('src'),
+    packages=find_packages("src"),
     license="MIT",
     zip_safe=False,
     include_package_data=True,
-    description='Building newsfiles for your project.',
-    long_description=open('README.rst').read(),
-    entry_points={
-        'console_scripts': [
-            'towncrier = towncrier._shell:cli',
-        ],
-    }
+    description="Building newsfiles for your project.",
+    long_description=open("README.rst").read(),
+    entry_points={"console_scripts": ["towncrier = towncrier._shell:cli"]},
 )

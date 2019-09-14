@@ -74,7 +74,6 @@ package = "foobar"
 
         self.assertEqual(e.exception.failing_option, "single_file")
 
-
     def test_incorrect_all_bullets(self):
         """
         all_bullets must be a bool.
@@ -118,7 +117,6 @@ package = "foobar"
             load_config(temp)
 
         self.assertEqual(e.exception.failing_option, "singlefile")
-
 
     def test_towncrier_toml_preferred(self):
         """

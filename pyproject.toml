@@ -31,3 +31,25 @@
         directory = "misc"
         name = "Misc"
         showcontent = false
+
+
+[tool.black]
+target-version = ['py27']
+exclude = '''
+
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.tox
+    | \.venv
+    | \.env
+    | env
+    | _build
+    | _trial_temp.*
+    | build
+    | dist
+    | debian
+  )/
+)
+'''

@@ -39,11 +39,16 @@ def __main(directory, config, filename):
         )
 
     if config.get("directory"):
-        fragments_directory = os.path.abspath(os.path.join(base_directory, config["directory"]))
+        fragments_directory = os.path.abspath(
+            os.path.join(base_directory, config["directory"])
+        )
     else:
         fragments_directory = os.path.abspath(
             os.path.join(
-                base_directory, config["package_dir"], config["package"], "newsfragments"
+                base_directory,
+                config["package_dir"],
+                config["package"],
+                "newsfragments",
             )
         )
 

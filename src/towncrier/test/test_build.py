@@ -282,9 +282,7 @@ class TestCli(TestCase):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
-            result = runner.invoke(
-                _main,
-                ["--draft"])
+            result = runner.invoke(_main, ["--draft"])
 
         self.assertEqual(1, result.exit_code, result.output)
         self.assertTrue(result.output.startswith("No configuration file found."))
@@ -358,9 +356,7 @@ class TestCli(TestCase):
 
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(
-                    '[tool.towncrier]'
-                )
+                f.write("[tool.towncrier]")
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
