@@ -147,3 +147,52 @@ package = "foobar"
 
         config = load_config(temp)
         self.assertEqual(config["package"], "a")
+
+    def test_missing_template(self):
+        """
+        Towncrier will raise an exception saying when it can't find a template.
+        """
+        temp = self.mktemp()
+        os.makedirs(temp)
+
+        with open(os.path.join(temp, "towncrier.toml"), "w") as f:
+            f.write(
+                dedent(
+                    """
+                [tool.towncrier]
+                template = "foo.rst"
+                """
+                )
+            )
+
+        with self.assertRaises(ConfigError) as e:
+            load_config(temp)
+
+        self.assertEqual(
+            str(e.exception), "The template file '%s/foo.rst' does not exist." % (temp,)
+        )
+
+    def test_missing_template_in_towncrier(self):
+        """
+        Towncrier will raise an exception saying when it can't find a template
+        from the Towncrier templates.
+        """
+        temp = self.mktemp()
+        os.makedirs(temp)
+
+        with open(os.path.join(temp, "towncrier.toml"), "w") as f:
+            f.write(
+                dedent(
+                    """
+                [tool.towncrier]
+                template = "towncrier:foo"
+                """
+                )
+            )
+
+        with self.assertRaises(ConfigError) as e:
+            load_config(temp)
+
+        self.assertEqual(
+            str(e.exception), "Towncrier does not have a template named 'foo'."
+        )

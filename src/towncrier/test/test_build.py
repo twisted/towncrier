@@ -489,7 +489,7 @@ class TestCli(TestCase):
 
     def test_bullet_points_false(self):
         """
-        When all_bullets is false, the
+        When all_bullets is false, subsequent lines are not indented.
         """
         runner = CliRunner()
 

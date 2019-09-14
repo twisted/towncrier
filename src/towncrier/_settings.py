@@ -121,9 +121,14 @@ def parse_toml(base_path, config):
 
     template = config.get("template", _template_fname)
     if template.startswith("towncrier:"):
-        template = pkg_resources.resource_filename(
-            "towncrier", "templates/" + template.split("towncrier:", 1)[1] + ".rst"
-        )
+        resource_name = "templates/" + template.split("towncrier:", 1)[1] + ".rst"
+        if not pkg_resources.resource_exists("towncrier", resource_name):
+            raise ConfigError(
+                "Towncrier does not have a template named '%s'."
+                % (template.split("towncrier:", 1)[1],)
+            )
+
+        template = pkg_resources.resource_filename("towncrier", resource_name)
     else:
         template = os.path.join(base_path, template)
 
