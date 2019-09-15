@@ -2,6 +2,53 @@
 
 .. towncrier release notes start
 
+towncrier 19.9.0rc1 (2019-09-16)
+================================
+
+Features
+--------
+
+- Add ``create`` subcommand, which can be used to quickly create a news
+  fragment command in the location defined by config. (`#4 <https://github.com/hawkowl/towncrier/issues/4>`_)
+- Add support for subcommands, meaning the functionality of the ``towncrier``
+  executable is now replaced by the ``build`` subcommand::
+
+      $ towncrier build --draft
+
+  A new ``check`` subcommand is exposed. This is an alternative to calling the
+  ``towncrier.check`` module manually::
+
+      $ towncrier check
+
+  Calling ``towncrier`` without a subcommand will result in a call to the
+  ``build`` subcommand to ensure backwards compatibility. This may be removed in a
+  future release. (`#144 <https://github.com/hawkowl/towncrier/issues/144>`_)
+- Towncrier's templating now allows configuration of the version header. *CUSTOM TEMPLATE USERS PLEASE NOTE: You will need to add the version header information to your template!* (`#147 <https://github.com/hawkowl/towncrier/issues/147>`_)
+- towncrier now accepts the --config argument to specify a custom configuration file (`#157 <https://github.com/hawkowl/towncrier/issues/157>`_)
+- There is now the option for ``all_bullets = false`` in the configuration.
+  Setting ``all_bullets`` to false means that news fragments have to include
+  the bullet point if they should be rendered as enumerations, otherwise
+  they are rendered directly (this means fragments can include a header.).
+  It is necessary to set this option to avoid (incorrect) automatic indentation
+  of multiline fragments that do not include bullet points.
+  The ``single-file-no-bullets.rst`` template gives an example of
+  using these options. (`#158 <https://github.com/hawkowl/towncrier/issues/158>`_)
+- The ``single_file`` option can now be added to the configuration file. When set to ``true``, the filename key can now be formattable with the ``name``, ``version``, and ``project_date`` format variables. This allows subsequent versions to be written out to new files instead of appended to an existing one. (`#161 <https://github.com/hawkowl/towncrier/issues/161>`_)
+- You can now specify Towncrier-bundled templates in your configuration file. Available templates are `default`, `hr-between-versions` (as used in attrs), and `single-file-no-bullets`. (`#162 <https://github.com/hawkowl/towncrier/issues/162>`_)
+
+
+Bugfixes
+--------
+
+- Accept newsfragment filenames with multiple dots, like `fix-1.2.3.bugfix`. (`#142 <https://github.com/hawkowl/towncrier/issues/142>`_)
+
+
+Deprecations and Removals
+-------------------------
+
+- The `--pyproject` option for `towncrier check` is now replaced with `--config`, for consistency with other commands. (`#162 <https://github.com/hawkowl/towncrier/issues/162>`_)
+
+
 towncrier 19.2.0 (2019-02-15)
 =============================
 
