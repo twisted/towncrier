@@ -35,20 +35,25 @@ Install from PyPI::
    It is usable by projects written in other languages, provided you give it the version of the project when invoking it.
    For Python 2/3 compatible projects, the version can be discovered automatically.
 
-In your project root, add a ``pyproject.toml`` file.
+In your project root, add a ``towncrier.toml`` file.
 You can configure your project in two ways.
 To configure it via an explicit directory, add::
-
 
     [tool.towncrier]
         directory = "changes"
 
-Alternatively, to configure it relative to a (Python) package directory, add::
+Alternatively, to configure it relative to a (Python) package directory, add:
+
+.. code-block:: toml
 
     [tool.towncrier]
         package = "mypackage"
         package_dir = "src"
         filename = "NEWS.rst"
+
+.. note::
+
+    ``towncrier`` will also look in ``pyproject.toml`` for configuration if ``towncrier.toml`` is not found.
 
 For the latter, news fragments (see "News Fragments" below) should be in a ``newsfragments`` directory under your package.
 Using the above example, your news fragments would be ``src/myproject/newsfragments/``).
@@ -81,7 +86,7 @@ To produce the news file for real, run::
 
     towncrier build
 
-This command will remove the news files (with ``git rm``) and append the built news to the filename specified in ``towncrier.ini``, and then stage the news file changes (with ``git add``).
+This command will remove the news files (with ``git rm``) and append the built news to the filename specified in ``towncrier.toml``, and then stage the news file changes (with ``git add``).
 It leaves committing the changes up to the user.
 
 If you wish to have content at the top of the news file (for example, to say where you can find the tickets), put your text above a rST comment that says::
@@ -112,28 +117,30 @@ Further Options
 
 Towncrier has the following global options, which can be specified in the toml file:
 
-```
-[tool.towncrier]
-    package = ""
-    package_dir = "."
-    single_file = true  # if false, filename is formatted like `title_format`.
-    filename = "NEWS.rst"
-    directory = "directory/of/news/fragments"
-    template = "path/to/template.rst"
-    start_line = "start of generated content"
-    title_format = "{name} {version} ({project_date})"  # or false if template includes title
-    issue_format = "format string for {issue} (issue is the first part of fragment name)"
-    underlines: "=-~"
-    wrap = false  # Wrap text to 79 characters
-    all_bullets = true  # make all fragments bullet points
-```
+.. code-block:: toml
+
+    [tool.towncrier]
+        package = ""
+        package_dir = "."
+        single_file = true  # if false, filename is formatted like `title_format`.
+        filename = "NEWS.rst"
+        directory = "directory/of/news/fragments"
+        template = "path/to/template.rst"
+        start_line = "start of generated content"
+        title_format = "{name} {version} ({project_date})"  # or false if template includes title
+        issue_format = "format string for {issue} (issue is the first part of fragment name)"
+        underlines: "=-~"
+        wrap = false  # Wrap text to 79 characters
+        all_bullets = true  # make all fragments bullet points
+
 If a single file is used, the content of this file are overwritten each time.
 
-Furthermore, you can add your own fragment types using:
-```
-[tool.towncrier]
-    [[tool.towncrier.type]]
-        directory = "deprecation"
-        name = "Deprecations"
-        showcontent = true
-```
+Furthermore, you can add your own fragment types using::
+
+.. code-block:: toml
+
+    [tool.towncrier]
+        [[tool.towncrier.type]]
+            directory = "deprecation"
+            name = "Deprecations"
+            showcontent = true
