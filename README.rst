@@ -135,7 +135,7 @@ Towncrier has the following global options, which can be specified in the toml f
 
 If a single file is used, the content of this file are overwritten each time.
 
-Furthermore, you can add your own fragment types using::
+Furthermore, you can add your own fragment types using:
 
 .. code-block:: toml
 
