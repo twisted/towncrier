@@ -119,20 +119,24 @@ def __main(
     )
 
     if project_version is None:
-        project_version = get_version(
-            os.path.join(base_directory, config["package_dir"]), config["package"]
-        ).strip()
+        project_version = config.get('project_version')
+        if project_version is None:
+            project_version = get_version(
+                os.path.join(base_directory, config["package_dir"]), config["package"]
+            ).strip()
 
     if project_name is None:
-        package = config.get("package")
-        if package:
-            project_name = get_project_name(
-                os.path.abspath(os.path.join(base_directory, config["package_dir"])),
-                package,
-            )
-        else:
-            # Can't determine a project_name, but maybe it is not needed.
-            project_name = ""
+        project_name = config.get('project_name')
+        if not project_name:
+            package = config.get("package")
+            if package:
+                project_name = get_project_name(
+                    os.path.abspath(os.path.join(base_directory, config["package_dir"])),
+                    package,
+                )
+            else:
+                # Can't determine a project_name, but maybe it is not needed.
+                project_name = ""
 
     if project_date is None:
         project_date = _get_date().strip()

@@ -123,6 +123,8 @@ Towncrier has the following global options, which can be specified in the toml f
     single_file = true  # if false, filename is formatted like `title_format`.
     filename = "NEWS.rst"
     directory = "directory/of/news/fragments"
+    project_version = "project version if maintained separately"
+    project_name = "arbitrary project name"
     template = "path/to/template.rst"
     start_line = "start of generated content"
     title_format = "{name} {version} ({project_date})"  # or false if template includes title

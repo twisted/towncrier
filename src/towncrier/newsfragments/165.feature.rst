@@ -1,0 +1,2 @@
+Allow to define ``project_version`` and ``project_name`` in configuration.
+This allows to use towncrier seamlessly in the non-pythyon projects.
