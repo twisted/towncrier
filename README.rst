@@ -37,18 +37,21 @@ Install from PyPI::
 
 In your project root, add a ``pyproject.toml`` file.
 You can configure your project in two ways.
-To configure it via an explicit directory, add::
+To configure it via an explicit directory, add:
 
-
-    [tool.towncrier]
-        directory = "changes"
-
-Alternatively, to configure it relative to a (Python) package directory, add::
+.. code-block:: ini
 
     [tool.towncrier]
-        package = "mypackage"
-        package_dir = "src"
-        filename = "NEWS.rst"
+    directory = "changes"
+
+Alternatively, to configure it relative to a (Python) package directory, add:
+
+.. code-block:: ini
+
+    [tool.towncrier]
+    package = "mypackage"
+    package_dir = "src"
+    filename = "NEWS.rst"
 
 For the latter, news fragments (see "News Fragments" below) should be in a ``newsfragments`` directory under your package.
 Using the above example, your news fragments would be ``src/myproject/newsfragments/``).
@@ -136,6 +139,6 @@ Furthermore, you can add your own fragment types using:
 
     [tool.towncrier]
     [[tool.towncrier.type]]
-        directory = "deprecation"
-        name = "Deprecations"
-        showcontent = true
+    directory = "deprecation"
+    name = "Deprecations"
+    showcontent = true
