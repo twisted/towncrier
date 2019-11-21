@@ -112,8 +112,9 @@ Further Options
 
 Towncrier has the following global options, which can be specified in the toml file:
 
-```
-[tool.towncrier]
+.. code-block:: ini
+
+    [tool.towncrier]
     package = ""
     package_dir = "."
     single_file = true  # if false, filename is formatted like `title_format`.
@@ -126,14 +127,15 @@ Towncrier has the following global options, which can be specified in the toml f
     underlines: "=-~"
     wrap = false  # Wrap text to 79 characters
     all_bullets = true  # make all fragments bullet points
-```
-If a single file is used, the content of this file are overwritten each time.
+
+If a single file is used, the content of that file gets overwritten each time.
 
 Furthermore, you can add your own fragment types using:
-```
-[tool.towncrier]
+
+.. code-block:: ini
+
+    [tool.towncrier]
     [[tool.towncrier.type]]
         directory = "deprecation"
         name = "Deprecations"
         showcontent = true
-```
