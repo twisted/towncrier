@@ -110,30 +110,29 @@ For example, if ticket #850 is about adding a new widget, the filename would be 
 Further Options
 ---------------
 
-Towncrier has the following global options, which can be specified in the toml file:
+Towncrier has the following global options, which can be specified in the toml file::
 
-```
-[tool.towncrier]
-    package = ""
-    package_dir = "."
-    single_file = true  # if false, filename is formatted like `title_format`.
-    filename = "NEWS.rst"
-    directory = "directory/of/news/fragments"
-    template = "path/to/template.rst"
-    start_line = "start of generated content"
-    title_format = "{name} {version} ({project_date})"  # or false if template includes title
-    issue_format = "format string for {issue} (issue is the first part of fragment name)"
-    underlines: "=-~"
-    wrap = false  # Wrap text to 79 characters
-    all_bullets = true  # make all fragments bullet points
-```
+
+    [tool.towncrier]
+        package = ""
+        package_dir = "."
+        single_file = true  # if false, filename is formatted like `title_format`.
+        filename = "NEWS.rst"
+        directory = "directory/of/news/fragments"
+        template = "path/to/template.rst"
+        start_line = "start of generated content"
+        title_format = "{name} {version} ({project_date})"  # or false if template includes title
+        issue_format = "format string for {issue} (issue is the first part of fragment name)"
+        underlines: "=-~"
+        wrap = false  # Wrap text to 79 characters
+        all_bullets = true  # make all fragments bullet points
+
 If a single file is used, the content of this file are overwritten each time.
 
 Furthermore, you can add your own fragment types using:
-```
-[tool.towncrier]
-    [[tool.towncrier.type]]
-        directory = "deprecation"
-        name = "Deprecations"
-        showcontent = true
-```
+
+    [tool.towncrier]
+        [[tool.towncrier.type]]
+            directory = "deprecation"
+            name = "Deprecations"
+            showcontent = true
