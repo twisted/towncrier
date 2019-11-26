@@ -37,18 +37,21 @@ Install from PyPI::
 
 In your project root, add a ``pyproject.toml`` file.
 You can configure your project in two ways.
-To configure it via an explicit directory, add::
+To configure it via an explicit directory, add:
 
-
-    [tool.towncrier]
-        directory = "changes"
-
-Alternatively, to configure it relative to a (Python) package directory, add::
+.. code-block:: ini
 
     [tool.towncrier]
-        package = "mypackage"
-        package_dir = "src"
-        filename = "NEWS.rst"
+    directory = "changes"
+
+Alternatively, to configure it relative to a (Python) package directory, add:
+
+.. code-block:: ini
+
+    [tool.towncrier]
+    package = "mypackage"
+    package_dir = "src"
+    filename = "NEWS.rst"
 
 For the latter, news fragments (see "News Fragments" below) should be in a ``newsfragments`` directory under your package.
 Using the above example, your news fragments would be ``src/myproject/newsfragments/``).
@@ -112,8 +115,9 @@ Further Options
 
 Towncrier has the following global options, which can be specified in the toml file:
 
-```
-[tool.towncrier]
+.. code-block:: ini
+
+    [tool.towncrier]
     package = ""
     package_dir = "."
     single_file = true  # if false, filename is formatted like `title_format`.
@@ -126,14 +130,15 @@ Towncrier has the following global options, which can be specified in the toml f
     underlines: "=-~"
     wrap = false  # Wrap text to 79 characters
     all_bullets = true  # make all fragments bullet points
-```
-If a single file is used, the content of this file are overwritten each time.
+
+If a single file is used, the content of that file gets overwritten each time.
 
 Furthermore, you can add your own fragment types using:
-```
-[tool.towncrier]
+
+.. code-block:: ini
+
+    [tool.towncrier]
     [[tool.towncrier.type]]
-        directory = "deprecation"
-        name = "Deprecations"
-        showcontent = true
-```
+    directory = "deprecation"
+    name = "Deprecations"
+    showcontent = true
