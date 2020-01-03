@@ -343,6 +343,90 @@ class TestCli(TestCase):
             ).lstrip(),
         )
 
+    def test_version_in_config(self):
+        """The calling towncrier with version defined in configfile.
+
+        Specifying a version in toml file will be helpful if version
+        is maintained by bumpversion and it's not a python project.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write("[tool.towncrier]\n" 'project_version = "7.8.9"\n')
+            os.mkdir("newsfragments")
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+
+            result = runner.invoke(
+                _main, ["--date", "01-01-2001", "--draft"]
+            )
+
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertEqual(
+            result.output,
+            dedent(
+                """
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            7.8.9 (01-01-2001)
+            ==================
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+
+            """
+            ).lstrip(),
+        )
+
+    def test_project_name_in_config(self):
+        """The calling towncrier with project name defined in configfile.
+
+        Specifying a project name in toml file will be helpful to keep the
+        project name consistent as part of the towncrier configuration, not call.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write("[tool.towncrier]\n" 'project_name = "ImGoProject"\n')
+            os.mkdir("newsfragments")
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+
+            result = runner.invoke(
+                _main, ["--version", "7.8.9", "--date", "01-01-2001", "--draft"]
+            )
+
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertEqual(
+            result.output,
+            dedent(
+                """
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            ImGoProject 7.8.9 (01-01-2001)
+            ==============================
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+
+            """
+            ).lstrip(),
+        )
+
     def test_no_package_changelog(self):
         """The calling towncrier with any package argument.
 
