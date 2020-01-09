@@ -1,0 +1,6 @@
+Make the ``check`` subcommand detect if only the configured news file has
+changed.
+
+This should enable the ``check`` subcommand to be used as a CI lint step and
+not fail when a pull request only modifies the configured news file (i.e. when
+the news file is being assembled for the next release).

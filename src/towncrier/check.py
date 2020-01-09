@@ -34,7 +34,15 @@ def __main(comparewith, directory, config):
     try:
         files_changed = (
             _run(
-                ["git", "diff", "--name-only", comparewith + "..."], cwd=base_directory
+                ["git",
+                 "diff",
+                 "--name-only",
+                 # Only show files that were Added (A), Copied (C), Modified (M)
+                 # or Renamed (R).
+                 "--diff-filter=ACMR",
+                 comparewith + "..."
+                ],
+                cwd=base_directory
             )
             .decode(getattr(sys.stdout, "encoding", "utf8"))
             .strip()
@@ -48,10 +56,14 @@ def __main(comparewith, directory, config):
         click.echo("On trunk, or no diffs, so no newsfragment required.")
         sys.exit(0)
 
+    if files_changed == config["filename"]:
+        click.echo("Only the configured news file has changed.")
+        sys.exit(0)
+
     files = set(
         map(
             lambda x: os.path.join(base_directory, x),
-            files_changed.strip().split(os.linesep),
+            files_changed.split(os.linesep),
         )
     )
 
