@@ -16,26 +16,22 @@ from incremental import Version
 
 def _get_package(package_dir, package):
 
-    # Step 1: Try the dumbest and simplest thing that could possibly work.
-    # Yes, that means importing it. Call the cops, I don't care.
-
-    sys.path.insert(1, package_dir)
-
     try:
         module = import_module(package)
-    except ImportError as e:
-        print("Tried to import {}, but ran into this error: {}".format(package, e))
-        # wups that didn't work
-        module = None
+    except ImportError:
+        # Try the dumbest and simplest thing that could possibly work.
+        # Yes, that means importing it. Call the cops, I don't care.
+        sys.path.insert(0, package_dir)
 
-    # Don't leave trash in sys.path
-    sys.path.pop(0)
-
-    # Step 2: uhhhhhhh
-    # TBA
-
-    if not module:
-        raise Exception("Can't find your project :(")
+        try:
+            module = import_module(package)
+        except ImportError as e:
+            err = "tried to import {}, but ran into this error: {}".format(package, e)
+            # NOTE: this might be redirected via "towncrier --draft > …".
+            print("ERROR: {}".format(err))
+            raise
+        finally:
+            sys.path.pop(0)
 
     return module
 
