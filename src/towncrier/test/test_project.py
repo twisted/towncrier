@@ -43,7 +43,7 @@ class VersionFetchingTests(TestCase):
 class InvocationTests(TestCase):
     def test_dash_m(self):
         """
-        `python -m towncrier` works.
+        `python -m towncrier` invokes the main entrypoint.
         """
         temp = self.mktemp()
         new_dir = os.path.join(temp, "dashm")
