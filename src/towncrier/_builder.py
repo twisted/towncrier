@@ -12,35 +12,39 @@ from jinja2 import Template
 
 
 # Returns ticket, category and counter or (None, None, None) if the basename
-# could not be parsed
+# could not be parsed or doesn't contain a valid category.
 def parse_newfragment_basename(basename, definitions):
-    parts = basename.split(u".")
+    invalid = (None, None, None)
+    parts = basename.split(".")
 
     if len(parts) == 1:
-        return (None, None, None)
+        return invalid
     if len(parts) == 2:
         ticket, category = parts
-        return ticket, category, 0
+        return (ticket, category, 0) if category in definitions else invalid
 
-    # fix-1.2.3.feature and fix.1.feature.2 are valid formats. The former is
-    # used in projects which don't put ticket numbers to newfragment names.
-    if parts[-1] in definitions:
-        category = parts[-1]
-        ticket = parts[-2]
-        return ticket, category, 0
-
-    # If there is a number after the category then use it as a counter,
-    # otherwise ignore it.
-    # This means 1.feature.1 and 1.feature do not conflict but
-    # 1.feature.rst and 1.feature do.
-    counter = 0
-    try:
-        counter = int(parts[-1])
-    except ValueError:
-        pass
-    category = parts[-2]
-    ticket = parts[-3]
-    return ticket, category, counter
+    # There are at least 3 parts. Search for a valid category from the second
+    # part onwards.
+    # The category is used as the reference point in the parts list to later
+    # infer the issue number and counter value.
+    for i in range(1, len(parts)):
+        if parts[i] in definitions:
+            # Current part is a valid category according to given definitions.
+            category = parts[i]
+            # Use the previous part as the ticket number.
+            # NOTE: This allows news fragment names like fix-1.2.3.feature or
+            # something-cool.feature.ext for projects that don't use ticket
+            # numbers in news fragment names.
+            ticket = parts[i-1]
+            counter = 0
+            # Use the following part as the counter if it exists and is a valid
+            # digit.
+            if len(parts) > (i + 1) and parts[i+1].isdigit():
+                counter = int(parts[i+1])
+            return ticket, category, counter
+    else:
+        # No valid category found.
+        return invalid
 
 
 # Returns a structure like:
@@ -81,7 +85,7 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
             ticket, category, counter = parse_newfragment_basename(
                 basename, definitions
             )
-            if category is None or category not in definitions:
+            if category is None:
                 continue
 
             full_filename = os.path.join(section_dir, basename)
