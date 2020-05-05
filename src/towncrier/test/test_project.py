@@ -2,6 +2,7 @@
 # See LICENSE for details.
 
 import os
+import sys
 from subprocess import check_output
 
 from twisted.trial.unittest import TestCase
@@ -53,7 +54,7 @@ class InvocationTests(TestCase):
             with open("pyproject.toml", "w") as f:
                 f.write('[tool.towncrier]\n' 'directory = "news"\n')
             os.makedirs("news")
-            out = check_output(["python", "-m", "towncrier", "--help"])
+            out = check_output([sys.executable, "-m", "towncrier", "--help"])
             self.assertIn(b"[OPTIONS] COMMAND [ARGS]...", out)
             self.assertIn(b"--help  Show this message and exit.", out)
         finally:
