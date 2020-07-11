@@ -139,6 +139,7 @@ def parse_toml(base_path, config):
         )
 
     return {
+        "name": config.get("name", ""),
         "package": config.get("package", ""),
         "package_dir": config.get("package_dir", "."),
         "single_file": single_file,

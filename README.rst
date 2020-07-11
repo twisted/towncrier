@@ -49,6 +49,7 @@ Alternatively, to configure it relative to a (Python) package directory, add:
 .. code-block:: ini
 
     [tool.towncrier]
+    name = "MyPackage"
     package = "mypackage"
     package_dir = "src"
     filename = "NEWS.rst"

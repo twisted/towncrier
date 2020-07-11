@@ -539,3 +539,52 @@ class TestCli(TestCase):
             """
             ).lstrip(),
         )
+
+    def test_name_in_config(self):
+        """
+        When a name is specified in the config it is used.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(
+                    '[tool.towncrier]\n'
+                    'name="SoMEThiNg"'
+                )
+            os.mkdir("newsfragments")
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("wow!\n~~~~\n\nAdds levitation.")
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--version",
+                    "7.8.9",
+                    "--date",
+                    "01-01-2001",
+                    "--yes",
+                ],
+            )
+
+            self.assertEqual(0, result.exit_code, result.output)
+            with open("NEWS.rst", "r") as f:
+                output = f.read()
+
+        self.assertEqual(
+            output,
+            dedent(
+                """
+            SoMEThiNg 7.8.9 (01-01-2001)
+            ============================
+
+            Features
+            --------
+
+            - wow!
+              ~~~~
+
+              Adds levitation. (#123)
+            """
+            ).lstrip(),
+        )
