@@ -33,18 +33,25 @@ def setup_simple_project(config=None, mkdir=True):
 class TestCli(TestCase):
     maxDiff = None
 
-    def _test_success(self, config=None, mkdir=True):
+    def _test_success(self, config=None, mkdir=True, interactive=False):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
             setup_simple_project(config, mkdir)
 
-            result = runner.invoke(_main, ["123.feature.rst"])
+            input_content = None
+            args = ["123.feature.rst"]
+            content = ["Add your info here"]
+            if interactive:
+                args.append("-i")
+                input_content = "This is line 1\nThis is line 2\n"
+                content = ['This is line 1\n', 'This is line 2']
+            result = runner.invoke(_main, args, input=input_content)
 
             self.assertEqual(["123.feature.rst"], os.listdir("foo/newsfragments"))
 
             with open("foo/newsfragments/123.feature.rst") as fh:
-                self.assertEqual("Add your info here", fh.readlines()[0])
+                self.assertEqual(content, fh.readlines())
 
         self.assertEqual(0, result.exit_code)
 
@@ -55,6 +62,10 @@ class TestCli(TestCase):
     def test_directory_created(self):
         """Ensure both file and output directory created if necessary."""
         self._test_success(mkdir=False)
+
+    def test_interactive(self):
+        """Create file with dynamic content."""
+        self._test_success(interactive=True)
 
     def test_different_directory(self):
         """Ensure non-standard directories are used."""
