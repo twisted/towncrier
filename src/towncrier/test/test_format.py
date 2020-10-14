@@ -129,6 +129,7 @@ Bugfixes
         output = render_fragments(
             template,
             None,
+            "",
             fragments,
             definitions,
             ["-", "~"],
@@ -173,6 +174,7 @@ Bugfixes
         output = render_fragments(
             template,
             None,
+            "",
             fragments,
             definitions,
             ["*", "^"],
@@ -218,6 +220,7 @@ Misc
         output = render_fragments(
             template,
             u"xx{issue}",
+            "",
             fragments,
             definitions,
             ["-", "~"],
@@ -276,6 +279,7 @@ Features
         output = render_fragments(
             template,
             None,
+            "",
             fragments,
             definitions,
             ["-", "~"],
@@ -327,6 +331,38 @@ Features
         output = render_fragments(
             template,
             None,
+            "",
+            fragments,
+            definitions,
+            ["-", "~"],
+            wrap=False,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
+        )
+        self.assertEqual(output, expected_output)
+
+    def test_title_format_specified(self):
+        """
+        Title format replaces default top line rendering.
+        """
+        self.maxDiff = None
+
+        fragments = {}
+
+        definitions = OrderedDict()
+
+        expected_output = u"""A custom top line
+=================
+"""  # NOQA
+
+        template = pkg_resources.resource_string(
+            "towncrier", "templates/default.rst"
+        ).decode("utf8")
+
+        fragments = split_fragments(fragments, definitions)
+        output = render_fragments(
+            template,
+            None,
+            "A custom top line",
             fragments,
             definitions,
             ["-", "~"],

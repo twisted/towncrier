@@ -141,7 +141,6 @@ def __main(
         top_line = config["title_format"].format(
             name=project_name, version=project_version, project_date=project_date
         )
-        top_line += u"\n" + (config["underlines"][0] * len(top_line)) + u"\n"
     else:
         top_line = ""
 
@@ -149,6 +148,7 @@ def __main(
         # The 0th underline is used for the top line
         template,
         config["issue_format"],
+        top_line,
         fragments,
         definitions,
         config["underlines"][1:],
@@ -164,10 +164,7 @@ def __main(
             "What is seen below is what would be written.\n",
             err=to_err,
         )
-        if top_line:
-            click.echo("\n%s\n%s" % (top_line, rendered))
-        else:
-            click.echo(rendered)
+        click.echo(rendered)
     else:
         click.echo("Writing to newsfile...", err=to_err)
         start_line = config["start_line"]
