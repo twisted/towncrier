@@ -1,0 +1,1 @@
+Ticket number from file names will be stripped down to avoid ticket links such as ``#007``.
