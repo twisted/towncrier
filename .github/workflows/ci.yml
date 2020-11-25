@@ -71,18 +71,28 @@ jobs:
         python-version: ${{ matrix.python.action }}
 
     - name: Display Python information
+      shell: python
       run: |
-        python --version
-        python -c "import sys; print(sys.prefix)"
-        python -c "import sys; print(sys.exec_prefix)"
-        python -c "import sys; print(sys.executable)"
-        python -c "import struct; print(struct.calcsize('P') * 8)"
-        python -c "print('\nENVIRONMENT VARIABLES\n=====================\n\n')"
-        python -c "import os; [ print(e,v) for (e,v) in os.environ.items() ]"
+        from __future__ import print_function
+
+        import os
+        import struct
+        import sys
+
+        print(sys.version)
+        print(sys.prefix)
+        print(sys.exec_prefix)
+        print(sys.executable)
+        print(struct.calcsize('P') * 8)
+        print('\nENVIRONMENT VARIABLES\n=====================\n\n')
+        for name, value in sorted(os.environ.items()):
+             print(repr(name), repr(value)
+
     - name: Get pip cache dir
       id: pip-cache
       run: |
         echo "::set-output name=dir::$(pip cache dir)"
+
     - name: pip cache
       uses: actions/cache@v2
       with:
@@ -92,22 +102,27 @@ jobs:
           'setup.cfg', 'tox.ini') }}
         restore-keys: |
             ${{ runner.os }}-pip-
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip tox codecov
         tox --notest
+
     - name: Fetch master
       run: |
         git remote set-branches --add origin master
         git fetch origin master
+
     - name: Check
       if: ${{ matrix.task.type }} == "check"
       run: |
         tox -c tox.ini -e ${{ matrix.task.tox }}
+
     - name: Test
       if: ${{ matrix.task.type }} == "test"
       run: |
         tox -c tox.ini -e ${{ matrix.python.tox }}-tests
+
     - name: Codecov
       if: ${{ matrix.task.type }} == "test"
       run: |
