@@ -106,8 +106,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip tox codecov
-        tox --notest
+        python -m pip install --upgrade pip tox
 
     - name: Fetch master
       run: |
