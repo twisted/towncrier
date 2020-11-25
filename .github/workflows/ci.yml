@@ -38,25 +38,25 @@ jobs:
               tox: py36
               action: 3.6
             task:
-              - name: Flake8
-                tox: flake8
-                type: check
+              name: Flake8
+              tox: flake8
+              type: check
           - python:
               name: CPython 3.6
               tox: py36
               action: 3.6
             task:
-              - name: Check Manifest
-                tox: check-manifest
-                type: check
+              name: Check Manifest
+              tox: check-manifest
+              type: check
           - python:
               name: CPython 3.6
               tox: py36
               action: 3.6
             task:
-              - name: Check Newsfragment
-                tox: check-newsfragment
-                type: check
+              name: Check Newsfragment
+              tox: check-newsfragment
+              type: check
 
     env:
       CI_PLATFORM_NAME: "GitHub Actions"
