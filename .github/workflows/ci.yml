@@ -86,7 +86,7 @@ jobs:
         print(struct.calcsize('P') * 8)
         print('\nENVIRONMENT VARIABLES\n=====================\n\n')
         for name, value in sorted(os.environ.items()):
-             print(repr(name), repr(value)
+             print(repr(name), repr(value))
 
     - name: Get pip cache dir
       id: pip-cache
