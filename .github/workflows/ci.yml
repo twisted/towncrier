@@ -11,7 +11,7 @@ on:
 jobs:
   ci:
 #    name: ${{ env.JOB_NAME }}
-    name: ${{ matrix.task.group}} - ${{ matrix.python.name }}
+    name: ${{ matrix.task.name}} - ${{ matrix.python.name }}
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -60,7 +60,7 @@ jobs:
 
     env:
       CI_PLATFORM_NAME: "GitHub Actions"
-      JOB_NAME: "${{ matrix.task.group}} - ${{ matrix.python.name }}"
+      JOB_NAME: "${{ matrix.task.name}} - ${{ matrix.python.name }}"
 
     steps:
     - uses: actions/checkout@v2
