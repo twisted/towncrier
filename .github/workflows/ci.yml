@@ -10,7 +10,8 @@ on:
 
 jobs:
   ci:
-    name: ${{ env.JOB_NAME }}
+#    name: ${{ env.JOB_NAME }}
+    name: ${{ matrix.task.group}} - ${{ matrix.python.name }}
     runs-on: ubuntu-20.04
     strategy:
       matrix:
