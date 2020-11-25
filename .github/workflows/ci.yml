@@ -31,7 +31,7 @@ jobs:
             action: 3.7
         task:
           - name: Test
-            tox: test
+            tox: tests
             type: test
         include:
           - python:
