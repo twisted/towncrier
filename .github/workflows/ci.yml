@@ -113,7 +113,6 @@ jobs:
         curl -o codecov.sh https://codecov.io/bash
         bash codecov.sh -n "${CI_PLATFORM_NAME} - ${JOB_NAME}"
 
-  checks:
   all:
     name: All
     runs-on: ubuntu-latest
