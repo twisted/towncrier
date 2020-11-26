@@ -64,12 +64,20 @@ Using the above example, your news fragments would be ``src/myproject/newsfragme
 
     This will keep the folder around, but otherwise "empty".
 
-``towncrier`` needs to know what version your project is, and there are two ways you can give it:
+``towncrier`` needs to know what version your project is, and there are three ways you can give it:
 
 - For Python 2/3 compatible projects, a ``__version__`` in the top level package.
   This can be either a string literal, a tuple, or an `Incremental <https://github.com/hawkowl/incremental>`_ version.
 
 - Manually passing ``--version=<myversionhere>`` when interacting with ``towncrier``.
+
+- Definining a ``version`` option in a configuration file:
+
+.. code-block:: ini
+
+    [tool.towncrier]
+    # ...
+    version = "1.2.3"  # project version if maintained separately
 
 To create a new news fragment, use the ``towncrier create`` command.
 For example::
