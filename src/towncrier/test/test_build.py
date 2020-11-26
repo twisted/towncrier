@@ -347,13 +347,13 @@ class TestCli(TestCase):
         """The calling towncrier with version defined in configfile.
 
         Specifying a version in toml file will be helpful if version
-        is maintained by bumpversion and it's not a python project.
+        is maintained by i.e. bumpversion and it's not a python project.
         """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write("[tool.towncrier]\n" 'project_version = "7.8.9"\n')
+                f.write("[tool.towncrier]\n" 'version = "7.8.9"\n')
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
@@ -395,7 +395,7 @@ class TestCli(TestCase):
 
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write("[tool.towncrier]\n" 'project_name = "ImGoProject"\n')
+                f.write("[tool.towncrier]\n" 'name = "ImGoProject"\n')
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")

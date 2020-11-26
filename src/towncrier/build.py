@@ -119,14 +119,14 @@ def __main(
     )
 
     if project_version is None:
-        project_version = config.get('project_version')
+        project_version = config.get('version')
         if project_version is None:
             project_version = get_version(
                 os.path.join(base_directory, config["package_dir"]), config["package"]
             ).strip()
 
     if project_name is None:
-        project_name = config.get('project_name')
+        project_name = config.get('name')
         if not project_name:
             package = config.get("package")
             if package:
