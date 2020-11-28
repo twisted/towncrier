@@ -9,6 +9,7 @@ on:
     branches: [ master ]
 
 jobs:
+
   test:
     name: ${{ matrix.task.name}} - ${{ matrix.python.name }}
     runs-on: ubuntu-20.04
@@ -43,12 +44,10 @@ jobs:
     - uses: twisted/python-info-action@67244e50f280a82eee09e6393a61c4fcbbe4d5ce
 
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip tox
+      run: python -m pip install --upgrade pip tox
 
     - name: Test
-      run: |
-        tox -c tox.ini -e ${{ matrix.python.tox }}-tests
+      run: tox -c tox.ini -e ${{ matrix.python.tox }}-tests
 
     - name: Codecov
       run: |
@@ -86,12 +85,10 @@ jobs:
     - uses: twisted/python-info-action@67244e50f280a82eee09e6393a61c4fcbbe4d5ce
 
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip tox
+      run: python -m pip install --upgrade pip tox
 
     - name: Check
-      run: |
-        tox -c tox.ini -e ${{ matrix.python.tox }}-${{ matrix.task.tox }}
+      run: tox -c tox.ini -e ${{ matrix.python.tox }}-${{ matrix.task.tox }}
 
   all:
     name: All
@@ -102,5 +99,4 @@ jobs:
     steps:
       - name: This
         shell: python
-        run: |
-          import this
+        run: import this
