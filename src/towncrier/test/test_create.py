@@ -5,7 +5,7 @@ import os
 from textwrap import dedent
 
 from twisted.trial.unittest import TestCase
-from unittest import mock
+import mock
 
 from click.testing import CliRunner
 
