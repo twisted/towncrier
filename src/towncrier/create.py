@@ -14,15 +14,16 @@ from ._settings import load_config_from_options
 
 
 @click.command(name="create")
+@click.pass_context
 @click.option("--dir", "directory", default=None)
 @click.option("--config", "config", default=None)
 @click.option("-i", "--interactive", is_flag=True, default=False)
 @click.argument("filename")
-def _main(directory, config, filename, interactive):
-    return __main(directory, config, filename, interactive)
+def _main(ctx, directory, config, filename, interactive):
+    return __main(ctx, directory, config, filename, interactive)
 
 
-def __main(directory, config, filename, interactive):
+def __main(ctx, directory, config, filename, interactive):
     """
     The main entry point.
     """
@@ -64,7 +65,8 @@ def __main(directory, config, filename, interactive):
 
     if content is None:
         click.echo("Abort creating news fragment.")
-        return
+        ctx.exit(1)
+
     with open(segment_file, "w") as f:
         f.write(content)
 
