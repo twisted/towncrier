@@ -65,23 +65,23 @@ class TestCli(TestCase):
         """Ensure both file and output directory created if necessary."""
         self._test_success(mkdir=False)
 
-    def test_interactive_without_comments(self):
+    def test_edit_without_comments(self):
         """Create file with dynamic content."""
         content = ["This is line 1\n", "This is line 2"]
         with mock.patch("click.edit") as mock_edit:
             mock_edit.return_value = "".join(content)
-            self._test_success(content=content, additional_args=["-i"])
+            self._test_success(content=content, additional_args=["--edit"])
 
-    def test_interactive_with_comment(self):
-        """Create file interactively with ignored line."""
+    def test_edit_with_comment(self):
+        """Create file editly with ignored line."""
         content = ["This is line 1\n", "This is line 2"]
         comment = "# I am ignored\n"
         with mock.patch("click.edit") as mock_edit:
             mock_edit.return_value = "".join(content[:1] + [comment] + content[1:])
-            self._test_success(content=content, additional_args=["-i"])
+            self._test_success(content=content, additional_args=["--edit"])
 
-    def test_interactive_abort(self):
-        """Create file interactively and abort."""
+    def test_edit_abort(self):
+        """Create file editly and abort."""
         with mock.patch("click.edit") as mock_edit:
             mock_edit.return_value = None
 
@@ -89,7 +89,7 @@ class TestCli(TestCase):
 
             with runner.isolated_filesystem():
                 setup_simple_project(config=None, mkdir=True)
-                result = runner.invoke(_main, ["123.feature.rst", "-i"])
+                result = runner.invoke(_main, ["123.feature.rst", "--edit"])
                 self.assertEqual([], os.listdir("foo/newsfragments"))
                 self.assertEqual(1, result.exit_code)
 

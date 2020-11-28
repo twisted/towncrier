@@ -17,13 +17,13 @@ from ._settings import load_config_from_options
 @click.pass_context
 @click.option("--dir", "directory", default=None)
 @click.option("--config", "config", default=None)
-@click.option("-i", "--interactive", is_flag=True, default=False)
+@click.option("--edit/--no-edit", default=False)  # TODO: default should be true
 @click.argument("filename")
-def _main(ctx, directory, config, filename, interactive):
-    return __main(ctx, directory, config, filename, interactive)
+def _main(ctx, directory, config, filename, edit):
+    return __main(ctx, directory, config, filename, edit)
 
 
-def __main(ctx, directory, config, filename, interactive):
+def __main(ctx, directory, config, filename, edit):
     """
     The main entry point.
     """
@@ -61,7 +61,7 @@ def __main(ctx, directory, config, filename, interactive):
     if os.path.exists(segment_file):
         raise click.ClickException("{} already exists".format(segment_file))
 
-    content = _get_news_content(interactive)
+    content = _get_news_content(edit)
 
     if content is None:
         click.echo("Abort creating news fragment.")
@@ -73,19 +73,19 @@ def __main(ctx, directory, config, filename, interactive):
     click.echo("Created news fragment at {}".format(segment_file))
 
 
-def _get_news_content(interactive):
-    if not interactive:
-        return "Add your info here"
+def _get_news_content(edit, default_content="Add your info here"):
+    if not edit:
+        return default_content
     content = click.edit(
         "# Please write your news content. When finished, save the file.\n"
         "# In order to abort, exit without saving.\n"
-        "# Lines started with \"#\" are ignored."
+        "# Lines starting with \"#\" are ignored.\n"
     )
     if content is None:
         return None
-    content = content.split("\n")
-    content = [line for line in content if not line.startswith("#")]
-    return "\n".join(content)
+    all_lines = content.split("\n")
+    lines = [line.rstrip() for line in all_lines if not line.lstrip().startswith("#")]
+    return "\n".join(lines)
 
 
 if __name__ == "__main__":  # pragma: no cover
