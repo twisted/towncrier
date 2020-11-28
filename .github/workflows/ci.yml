@@ -73,7 +73,7 @@ jobs:
       with:
         python-version: ${{ matrix.python.action }}
 
-    - uses: twisted/python-info-action@73596ce77062b5dc809146c43d8635488dc7e78f
+    - uses: twisted/python-info-action@67244e50f280a82eee09e6393a61c4fcbbe4d5ce
 
     - name: Get pip cache dir
       id: pip-cache
