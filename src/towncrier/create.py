@@ -62,6 +62,9 @@ def __main(directory, config, filename, interactive):
 
     content = _get_news_content(interactive)
 
+    if content is None:
+        click.echo("Abort creating news fragment.")
+        return
     with open(segment_file, "w") as f:
         f.write(content)
 
@@ -71,17 +74,15 @@ def __main(directory, config, filename, interactive):
 def _get_news_content(interactive):
     if not interactive:
         return "Add your info here"
-    content = []
-    click.echo(
-        "Please write your news content. Press enter without content to finish"
+    content = click.edit(
+        "# Please write your news content. When finished, save the file.\n"
+        "# In order to abort, exit without saving.\n"
+        "# Lines started with \"#\" are ignored."
     )
-    count = 1
-    while True:
-        content_line = click.prompt("{}".format(count), default="", show_default=False)
-        if content_line == "":
-            break
-        content.append(content_line)
-        count += 1
+    if content is None:
+        return None
+    content = content.split("\n")
+    content = [line for line in content if not line.startswith("#")]
     return "\n".join(content)
 
 
