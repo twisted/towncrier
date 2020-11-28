@@ -73,23 +73,7 @@ jobs:
       with:
         python-version: ${{ matrix.python.action }}
 
-    - name: Display Python information
-      shell: python
-      run: |
-        from __future__ import print_function
-
-        import os
-        import struct
-        import sys
-
-        print(sys.version)
-        print(sys.prefix)
-        print(sys.exec_prefix)
-        print(sys.executable)
-        print(struct.calcsize('P') * 8)
-        print('\nENVIRONMENT VARIABLES\n=====================\n\n')
-        for name, value in sorted(os.environ.items()):
-             print(repr(name), repr(value))
+    - uses: twisted/python-info-action@73596ce77062b5dc809146c43d8635488dc7e78f
 
     - name: Get pip cache dir
       id: pip-cache
