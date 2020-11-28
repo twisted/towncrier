@@ -75,21 +75,6 @@ jobs:
 
     - uses: twisted/python-info-action@67244e50f280a82eee09e6393a61c4fcbbe4d5ce
 
-    - name: Get pip cache dir
-      id: pip-cache
-      run: |
-        echo "::set-output name=dir::$(pip cache dir)"
-
-    - name: pip cache
-      uses: actions/cache@v2
-      with:
-        path: ${{ steps.pip-cache.outputs.dir }}
-        key:
-          ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml', 'setup.py',
-          'setup.cfg', 'tox.ini') }}
-        restore-keys: |
-            ${{ runner.os }}-pip-
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip tox
