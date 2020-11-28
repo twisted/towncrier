@@ -3,7 +3,9 @@
 
 import os
 from textwrap import dedent
+
 from twisted.trial.unittest import TestCase
+from unittest import mock
 
 from click.testing import CliRunner
 
@@ -33,20 +35,20 @@ def setup_simple_project(config=None, mkdir=True):
 class TestCli(TestCase):
     maxDiff = None
 
-    def _test_success(self, config=None, mkdir=True, interactive=False):
+    def _test_success(
+            self, content=None, config=None, mkdir=True, additional_args=None
+    ):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
             setup_simple_project(config, mkdir)
 
-            input_content = None
             args = ["123.feature.rst"]
-            content = ["Add your info here"]
-            if interactive:
-                args.append("-i")
-                input_content = "This is line 1\nThis is line 2\n"
-                content = ['This is line 1\n', 'This is line 2']
-            result = runner.invoke(_main, args, input=input_content)
+            if content is None:
+                content = ["Add your info here"]
+            if additional_args is not None:
+                args.extend(additional_args)
+            result = runner.invoke(_main, args)
 
             self.assertEqual(["123.feature.rst"], os.listdir("foo/newsfragments"))
 
@@ -63,9 +65,33 @@ class TestCli(TestCase):
         """Ensure both file and output directory created if necessary."""
         self._test_success(mkdir=False)
 
-    def test_interactive(self):
+    def test_interactive_without_comments(self):
         """Create file with dynamic content."""
-        self._test_success(interactive=True)
+        content = ["This is line 1\n", "This is line 2"]
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = "".join(content)
+            self._test_success(content=content, additional_args=["-i"])
+
+    def test_interactive_with_comment(self):
+        """Create file interactively with ignored line."""
+        content = ["This is line 1\n", "This is line 2"]
+        comment = "# I am ignored\n"
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = "".join(content[:1] + [comment] + content[1:])
+            self._test_success(content=content, additional_args=["-i"])
+
+    def test_interactive_abort(self):
+        """Create file interactively and abort."""
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = None
+
+            runner = CliRunner()
+
+            with runner.isolated_filesystem():
+                setup_simple_project(config=None, mkdir=True)
+                result = runner.invoke(_main, ["123.feature.rst", "-i"])
+                self.assertEqual([], os.listdir("foo/newsfragments"))
+                self.assertEqual(1, result.exit_code)
 
     def test_different_directory(self):
         """Ensure non-standard directories are used."""
