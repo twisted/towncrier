@@ -48,8 +48,6 @@ jobs:
 
     - name: Codecov
       run: |
-        # curl -o codecov.sh https://codecov.io/bash
-        # bash codecov.sh -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.python.name }}"
         codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.python.name }}"
 
   check:
