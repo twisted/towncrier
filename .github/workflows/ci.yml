@@ -41,15 +41,14 @@ jobs:
     - uses: twisted/python-info-action@v1.0.1
 
     - name: Install dependencies
-      run: python -m pip install --upgrade pip tox
+      run: python -m pip install --upgrade pip tox codecov
 
     - name: Test
       run: tox -c tox.ini -e ${{ matrix.python.tox }}-tests
 
     - name: Codecov
       run: |
-        curl -o codecov.sh https://codecov.io/bash
-        bash codecov.sh -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.python.name }}"
+        codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.python.name }}"
 
   check:
     name: ${{ matrix.task.name}} - ${{ matrix.python.name }}
