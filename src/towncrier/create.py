@@ -17,7 +17,7 @@ from ._settings import load_config_from_options
 @click.pass_context
 @click.option("--dir", "directory", default=None)
 @click.option("--config", "config", default=None)
-@click.option("--edit/--no-edit", default=False)  # TODO: default should be true
+@click.option("--edit/--no-edit", default=False, help="Open an editor for writing the newsfragment content.")  # TODO: default should be true
 @click.argument("filename")
 def _main(ctx, directory, config, filename, edit):
     return __main(ctx, directory, config, filename, edit)
