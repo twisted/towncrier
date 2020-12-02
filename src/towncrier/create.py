@@ -61,7 +61,10 @@ def __main(ctx, directory, config, filename, edit):
     if os.path.exists(segment_file):
         raise click.ClickException("{} already exists".format(segment_file))
 
-    content = _get_news_content(edit)
+    if edit:
+        content = _get_news_content_from_user()
+    else:
+        content = "Add your info here"
 
     if content is None:
         click.echo("Abort creating news fragment.")
@@ -73,9 +76,7 @@ def __main(ctx, directory, config, filename, edit):
     click.echo("Created news fragment at {}".format(segment_file))
 
 
-def _get_news_content(edit, default_content="Add your info here"):
-    if not edit:
-        return default_content
+def _get_news_content_from_user():
     content = click.edit(
         "# Please write your news content. When finished, save the file.\n"
         "# In order to abort, exit without saving.\n"
