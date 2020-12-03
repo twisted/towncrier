@@ -8,11 +8,18 @@ on:
 
 jobs:
   test:
-    name: ${{ matrix.task.name}} - ${{ matrix.python.name }}
-    runs-on: ubuntu-latest
+    name: ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}
+    runs-on: ${{ matrix.os.runs-on }}
     strategy:
       fail-fast: false
       matrix:
+        os:
+          - name: Linux
+            runs-on: ubuntu-latest
+          - name: macOS
+            runs-on: macos-latest
+          - name: Windows
+            runs-on: windows-latest
         python:
           - name: CPython 2.7
             tox: py27
@@ -48,7 +55,7 @@ jobs:
 
     - name: Codecov
       run: |
-        codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.python.name }}"
+        codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}"
 
   check:
     name: ${{ matrix.task.name}} - ${{ matrix.python.name }}
