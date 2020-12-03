@@ -26,6 +26,12 @@ jobs:
           - name: CPython 3.7
             tox: py37
             action: 3.7
+          - name: PyPy 2
+            tox: pypy2
+            action: pypy2
+          - name: PyPy 3
+            tox: pypy3
+            action: pypy3
         task:
           - name: Test
             tox: tests
