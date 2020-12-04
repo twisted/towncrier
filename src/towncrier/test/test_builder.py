@@ -68,6 +68,9 @@ class TestParseNewsfragmentBasename(TestCase):
         )
 
     def test_strip(self):
+        """Leading spaces and subsequent leading zeros are stripped
+        when parsing newsfragment names into ticket numbers etc.
+        """
         self.assertEqual(
             parse_newfragment_basename("  007.feature", ["feature"]),
             ("7", "feature", 0)
