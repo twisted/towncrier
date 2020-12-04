@@ -16,8 +16,6 @@ jobs:
         os:
           - name: Linux
             runs-on: ubuntu-latest
-          - name: macOS
-            runs-on: macos-latest
           - name: Windows
             runs-on: windows-latest
         python:
