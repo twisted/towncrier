@@ -21,8 +21,8 @@ def append_to_newsfile(
         if not os.path.exists(news_file):
             existing_content = u""
         else:
-            with open(news_file, "rb") as f:
-                existing_content = f.read().decode("utf8")
+            with open(news_file, "r", encoding="utf8") as f:
+                existing_content = f.read()
         existing_content = existing_content.split(start_line, 1)
     else:
         existing_content = [u""]

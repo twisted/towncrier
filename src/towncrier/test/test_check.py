@@ -22,6 +22,7 @@ def create_project(pyproject_path):
         f.write("Adds levitation")
 
     call(["git", "init"])
+    call(["git", "checkout", "-b", "master"])
     call(["git", "config", "user.name", "user"])
     call(["git", "config", "user.email", "user@example.com"])
     call(["git", "add", "."])

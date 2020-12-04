@@ -169,7 +169,7 @@ package = "foobar"
             load_config(temp)
 
         self.assertEqual(
-            str(e.exception), "The template file '%s/foo.rst' does not exist." % (temp,)
+            str(e.exception), "The template file '%s%sfoo.rst' does not exist." % (temp, os.path.sep)
         )
 
     def test_missing_template_in_towncrier(self):
