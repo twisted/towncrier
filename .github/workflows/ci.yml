@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: ${{ matrix.task.name}} - ${{ matrix.python.name }}
+    name: Test - ${{ matrix.python.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -26,9 +26,6 @@ jobs:
           - name: CPython 3.7
             tox: py37
             action: 3.7
-        task:
-          - name: Test
-            tox: tests
 
     steps:
     - uses: actions/checkout@v2
@@ -48,10 +45,10 @@ jobs:
 
     - name: Codecov
       run: |
-        codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.python.name }}"
+        codecov -n "GitHub Actions - Test - ${{ matrix.python.name }}"
 
   check:
-    name: ${{ matrix.task.name}} - ${{ matrix.python.name }}
+    name: Check - ${{ matrix.python.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -60,13 +57,6 @@ jobs:
           - name: CPython 3.6
             tox: py36
             action: 3.6
-        task:
-          - name: Flake8
-            tox: flake8
-          - name: Check Manifest
-            tox: check-manifest
-          - name: Check Newsfragment
-            tox: check-newsfragment
 
     steps:
     - uses: actions/checkout@v2
@@ -83,8 +73,14 @@ jobs:
     - name: Install dependencies
       run: python -m pip install --upgrade pip tox
 
-    - name: Check
-      run: tox -c tox.ini -e ${{ matrix.task.tox }}
+    - name: Lint
+      run: tox -c tox.ini -e flake8
+
+    - name: Manifest
+      run: tox -c tox.ini -e check-manifest
+
+    - name: Newsfragment
+      run: tox -c tox.ini -e check-newsfragment
 
   all:
     name: All
