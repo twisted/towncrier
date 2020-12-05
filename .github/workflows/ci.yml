@@ -31,6 +31,12 @@ jobs:
           - name: CPython 3.7
             tox: py37
             action: 3.7
+          - name: CPython 3.8
+            tox: py38
+            action: 3.8
+          - name: CPython 3.9
+            tox: py39
+            action: 3.9
           - name: PyPy 2
             tox: pypy2
             action: pypy2
