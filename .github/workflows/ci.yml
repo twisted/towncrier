@@ -50,23 +50,16 @@ jobs:
   check:
     name: Check - ${{ matrix.python.name }}
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python:
-          - name: CPython 3.6
-            tox: py36
-            action: 3.6
 
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
 
-    - name: Set up ${{ matrix.python.name }}
+    - name: Set up CPython 3.6
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python.action }}
+        python-version: 3.6
 
     - uses: twisted/python-info-action@v1.0.1
 
