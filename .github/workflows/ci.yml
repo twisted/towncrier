@@ -84,7 +84,7 @@ jobs:
       run: python -m pip install --upgrade pip tox
 
     - name: Check
-      run: tox -c tox.ini -e ${{ matrix.python.tox }}-${{ matrix.task.tox }}
+      run: tox -c tox.ini -e ${{ matrix.task.tox }}
 
   all:
     name: All
