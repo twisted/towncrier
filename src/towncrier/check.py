@@ -49,11 +49,8 @@ def __main(comparewith, directory, config):
         sys.exit(0)
 
     files = {
-        os.path.normpath(path)
-        for path in map(
-            lambda x: os.path.join(base_directory, x),
-            files_changed.strip().splitlines(),
-        )
+        os.path.normpath(os.path.join(base_directory, path))
+        for path in files_changed.strip().splitlines()
     }
 
     click.echo("Looking at these files:")
