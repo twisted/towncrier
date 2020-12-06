@@ -48,6 +48,11 @@ jobs:
         task:
           - name: Test
             tox: tests
+        exclude:
+          - python:
+              tox: py39
+            os:
+              name: Windows
 
     steps:
     - uses: actions/checkout@v2
