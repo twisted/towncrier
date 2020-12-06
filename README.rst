@@ -1,7 +1,7 @@
 Hear ye, hear ye, says the ``towncrier``
 ========================================
 
-.. image:: https://github.com/twisted/towncrier/workflows/CI/badge.svg
+.. image:: https://github.com/twisted/towncrier/workflows/CI/badge.svg?branch=master
     :target: https://github.com/twisted/towncrier/actions?query=branch%3Amaster
 
 .. image:: https://codecov.io/github/twisted/towncrier/coverage.svg?branch=master
