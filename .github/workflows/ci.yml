@@ -8,11 +8,16 @@ on:
 
 jobs:
   test:
-    name: Test - ${{ matrix.python.name }}
-    runs-on: ubuntu-latest
+    name: Test - ${{ matrix.os.name }} ${{ matrix.python.name }}
+    runs-on: ${{ matrix.os.runs-on }}
     strategy:
       fail-fast: false
       matrix:
+        os:
+          - name: Linux
+            runs-on: ubuntu-latest
+          - name: macOS
+            runs-on: macos-latest
         python:
           - name: CPython 2.7
             tox: py27
@@ -26,6 +31,21 @@ jobs:
           - name: CPython 3.7
             tox: py37
             action: 3.7
+          - name: CPython 3.8
+            tox: py38
+            action: 3.8
+          - name: CPython 3.9
+            tox: py39
+            action: 3.9
+          - name: PyPy 2
+            tox: pypy2
+            action: pypy2
+          - name: PyPy 3
+            tox: pypy3
+            action: pypy3
+        task:
+          - name: Test
+            tox: tests
 
     steps:
     - uses: actions/checkout@v2
@@ -45,7 +65,7 @@ jobs:
 
     - name: Codecov
       run: |
-        codecov -n "GitHub Actions - Test - ${{ matrix.python.name }}"
+        codecov -n "GitHub Actions - Test - ${{ matrix.os.name }} ${{ matrix.python.name }}"
 
   check:
     name: Check - ${{ matrix.python.name }}
@@ -58,7 +78,9 @@ jobs:
 
     - uses: actions/setup-python@v2
       with:
-        python-version: 3.6
+        # Using second most recent minor release for whatever little
+        # increase in stability over using the latest minor.
+        python-version: 3.8
 
     - uses: twisted/python-info-action@v1.0.1
 
