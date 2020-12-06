@@ -22,6 +22,8 @@ def create_project(pyproject_path):
         f.write("Adds levitation")
 
     call(["git", "init"])
+    # The default git branch name may not be master, let's make sure it is
+    # consistent.
     call(["git", "checkout", "-b", "master"])
     call(["git", "config", "user.name", "user"])
     call(["git", "config", "user.email", "user@example.com"])
