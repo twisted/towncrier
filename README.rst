@@ -1,11 +1,11 @@
 Hear ye, hear ye, says the ``towncrier``
 ========================================
 
-.. image:: https://travis-ci.org/hawkowl/towncrier.svg?branch=master
-    :target: https://travis-ci.org/hawkowl/towncrier
+.. image:: https://github.com/twisted/towncrier/workflows/CI/badge.svg
+    :target: https://github.com/twisted/towncrier/actions?query=branch%3Amaster
 
-.. image:: https://codecov.io/github/hawkowl/towncrier/coverage.svg?branch=master
-    :target: https://codecov.io/github/hawkowl/towncrier?branch=master
+.. image:: https://codecov.io/github/twisted/towncrier/coverage.svg?branch=master
+    :target: https://codecov.io/github/twisted/towncrier?branch=master
 
 ``towncrier`` is a utility to produce useful, summarised news files for your project.
 Rather than reading the Git history as some newer tools to produce it, or having one single file which developers all write to, ``towncrier`` reads "news fragments" which contain information `useful to end users`.
