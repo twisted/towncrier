@@ -74,6 +74,8 @@ jobs:
       fail-fast: false
       matrix:
         python:
+          # Using second most recent minor release for whatever little
+          # increase in stability over using the latest minor.
           - name: CPython 3.8
             tox: py38
             action: 3.8
