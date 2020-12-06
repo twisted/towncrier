@@ -74,9 +74,9 @@ jobs:
       fail-fast: false
       matrix:
         python:
-          - name: CPython 3.6
-            tox: py36
-            action: 3.6
+          - name: CPython 3.8
+            tox: py38
+            action: 3.8
         task:
           - name: Flake8
             tox: flake8
