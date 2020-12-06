@@ -43,9 +43,6 @@ jobs:
           - name: PyPy 3
             tox: pypy3
             action: pypy3
-        task:
-          - name: Test
-            tox: tests
 
     steps:
     - uses: actions/checkout@v2
@@ -68,7 +65,7 @@ jobs:
         codecov -n "GitHub Actions - Test - ${{ matrix.os.name }} ${{ matrix.python.name }}"
 
   check:
-    name: Check - ${{ matrix.python.name }}
+    name: Check
     runs-on: ubuntu-latest
 
     steps:
