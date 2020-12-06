@@ -49,6 +49,7 @@ jobs:
           - name: Test
             tox: tests
         exclude:
+          # Twisted and thus trial don't work on Windows with CPython 3.9
           - python:
               tox: py39
             os:
