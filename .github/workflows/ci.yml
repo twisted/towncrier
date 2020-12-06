@@ -86,15 +86,15 @@ jobs:
       run: python -m pip install --upgrade pip tox
 
     - name: Lint
-      if: ${{ steps.last_step_before_checks.conclusion }} == "success"
+      if: ${{ steps.last_step_before_checks.outcome }} == "success"
       run: tox -c tox.ini -e flake8
 
     - name: Manifest
-      if: ${{ steps.last_step_before_checks.conclusion }} == "success"
+      if: ${{ steps.last_step_before_checks.outcome }} == "success"
       run: tox -c tox.ini -e check-manifest
 
     - name: Newsfragment
-      if: ${{ steps.last_step_before_checks.conclusion }} == "success"
+      if: ${{ steps.last_step_before_checks.outcome }} == "success"
       run: tox -c tox.ini -e check-newsfragment
 
   all:
