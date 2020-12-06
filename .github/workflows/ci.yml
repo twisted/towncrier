@@ -82,18 +82,19 @@ jobs:
     - uses: twisted/python-info-action@v1.0.1
 
     - name: Install dependencies
+      id: last_step_before_checks
       run: python -m pip install --upgrade pip tox
 
     - name: Lint
-      if: always()
+      if: ${{ steps.last_step_before_checks.conclusion }} == "success"
       run: tox -c tox.ini -e flake8
 
     - name: Manifest
-      if: always()
+      if: ${{ steps.last_step_before_checks.conclusion }} == "success"
       run: tox -c tox.ini -e check-manifest
 
     - name: Newsfragment
-      if: always()
+      if: ${{ steps.last_step_before_checks.conclusion }} == "success"
       run: tox -c tox.ini -e check-newsfragment
 
   all:
