@@ -48,12 +48,10 @@ def __main(comparewith, directory, config):
         click.echo("On trunk, or no diffs, so no newsfragment required.")
         sys.exit(0)
 
-    files = set(
-        map(
-            lambda x: os.path.join(base_directory, x),
-            files_changed.strip().split(os.linesep),
-        )
-    )
+    files = {
+        os.path.normpath(os.path.join(base_directory, path))
+        for path in files_changed.strip().splitlines()
+    }
 
     click.echo("Looking at these files:")
     click.echo("----")
@@ -72,14 +70,15 @@ def __main(comparewith, directory, config):
         )
         fragment_directory = "newsfragments"
 
-    fragments = set(
-        find_fragments(
+    fragments = {
+        os.path.normpath(path)
+        for path in find_fragments(
             fragment_base_directory,
             config["sections"],
             fragment_directory,
             config["types"],
         )[1]
-    )
+    }
     fragments_in_branch = fragments & files
 
     if not fragments_in_branch:
