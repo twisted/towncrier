@@ -1,11 +1,11 @@
 Hear ye, hear ye, says the ``towncrier``
 ========================================
 
-.. image:: https://github.com/twisted/towncrier/workflows/CI/badge.svg?branch=master
-    :target: https://github.com/twisted/towncrier/actions?query=branch%3Amaster
+|chat badge| |maillist badge| |issues badge|
 
-.. image:: https://codecov.io/github/twisted/towncrier/coverage.svg?branch=master
-    :target: https://codecov.io/github/twisted/towncrier?branch=master
+|repository badge| |tests badge| |coverage badge|
+
+|version badge| |python versions badge| |python interpreters badge|
 
 ``towncrier`` is a utility to produce useful, summarised news files for your project.
 Rather than reading the Git history as some newer tools to produce it, or having one single file which developers all write to, ``towncrier`` reads "news fragments" which contain information `useful to end users`.
@@ -142,3 +142,47 @@ Furthermore, you can add your own fragment types using:
     directory = "deprecation"
     name = "Deprecations"
     showcontent = true
+
+
+.. _chat: https://webchat.freenode.net/?channels=%23twisted
+.. |chat badge| image:: https://img.shields.io/badge/%23twisted-_.svg?label=chat&color=royalblue
+   :target: `chat`_
+   :alt: Support chatroom
+
+.. _maillist: https://twistedmatrix.com/cgi-bin/mailman/listinfo/twisted-python
+.. |maillist badge| image:: https://img.shields.io/badge/Twisted--Python-_.svg?label=maillist&color=royalblue
+   :target: `maillist`_
+   :alt: Support maillist
+
+.. _distribution: https://pypi.org/project/towncrier
+.. |version badge| image:: https://img.shields.io/pypi/v/towncrier.svg?color=indianred&logo=PyPI&logoColor=whitesmoke
+   :target: `distribution`_
+   :alt: Latest distribution version
+
+.. |python versions badge| image:: https://img.shields.io/pypi/pyversions/towncrier.svg?color=indianred&logo=PyPI&logoColor=whitesmoke
+   :alt: Supported Python versions
+   :target: `distribution`_
+
+.. |python interpreters badge| image:: https://img.shields.io/pypi/implementation/towncrier.svg?color=indianred&logo=PyPI&logoColor=whitesmoke
+   :alt: Supported Python interpreters
+   :target: `distribution`_
+
+.. _issues: https://github.com/twisted/towncrier/issues
+.. |issues badge| image:: https://img.shields.io/github/issues/twisted/towncrier?color=royalblue&logo=GitHub&logoColor=whitesmoke
+   :target: `issues`_
+   :alt: Issues
+
+.. _repository: https://github.com/twisted/towncrier
+.. |repository badge| image:: https://img.shields.io/github/last-commit/twisted/towncrier.svg?color=seagreen&logo=GitHub&logoColor=whitesmoke
+   :target: `repository`_
+   :alt: Repository
+
+.. _tests: https://github.com/twisted/towncrier/actions?query=branch%3Amaster
+.. |tests badge| image:: https://img.shields.io/github/workflow/status/twisted/towncrier/CI/master?color=seagreen&logo=GitHub-Actions&logoColor=whitesmoke
+   :target: `tests`_
+   :alt: Tests
+
+.. _coverage: https://codecov.io/gh/twisted/towncrier
+.. |coverage badge| image:: https://img.shields.io/codecov/c/github/twisted/towncrier/master?color=seagreen&logo=Codecov&logoColor=whitesmoke
+   :target: `coverage`_
+   :alt: Test coverage
