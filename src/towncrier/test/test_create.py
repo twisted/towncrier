@@ -3,7 +3,9 @@
 
 import os
 from textwrap import dedent
+
 from twisted.trial.unittest import TestCase
+import mock
 
 from click.testing import CliRunner
 
@@ -33,18 +35,25 @@ def setup_simple_project(config=None, mkdir=True):
 class TestCli(TestCase):
     maxDiff = None
 
-    def _test_success(self, config=None, mkdir=True):
+    def _test_success(
+            self, content=None, config=None, mkdir=True, additional_args=None
+    ):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
             setup_simple_project(config, mkdir)
 
-            result = runner.invoke(_main, ["123.feature.rst"])
+            args = ["123.feature.rst"]
+            if content is None:
+                content = ["Add your info here"]
+            if additional_args is not None:
+                args.extend(additional_args)
+            result = runner.invoke(_main, args)
 
             self.assertEqual(["123.feature.rst"], os.listdir("foo/newsfragments"))
 
             with open("foo/newsfragments/123.feature.rst") as fh:
-                self.assertEqual("Add your info here", fh.readlines()[0])
+                self.assertEqual(content, fh.readlines())
 
         self.assertEqual(0, result.exit_code)
 
@@ -55,6 +64,34 @@ class TestCli(TestCase):
     def test_directory_created(self):
         """Ensure both file and output directory created if necessary."""
         self._test_success(mkdir=False)
+
+    def test_edit_without_comments(self):
+        """Create file with dynamic content."""
+        content = ["This is line 1\n", "This is line 2"]
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = "".join(content)
+            self._test_success(content=content, additional_args=["--edit"])
+
+    def test_edit_with_comment(self):
+        """Create file editly with ignored line."""
+        content = ["This is line 1\n", "This is line 2"]
+        comment = "# I am ignored\n"
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = "".join(content[:1] + [comment] + content[1:])
+            self._test_success(content=content, additional_args=["--edit"])
+
+    def test_edit_abort(self):
+        """Create file editly and abort."""
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = None
+
+            runner = CliRunner()
+
+            with runner.isolated_filesystem():
+                setup_simple_project(config=None, mkdir=True)
+                result = runner.invoke(_main, ["123.feature.rst", "--edit"])
+                self.assertEqual([], os.listdir("foo/newsfragments"))
+                self.assertEqual(1, result.exit_code)
 
     def test_different_directory(self):
         """Ensure non-standard directories are used."""

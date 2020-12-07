@@ -13,9 +13,21 @@ class TestParseNewsfragmentBasename(TestCase):
             ("123", "feature", 0),
         )
 
+    def test_invalid_category(self):
+        self.assertEqual(
+            parse_newfragment_basename("README.ext", ["feature"]),
+            (None, None, None),
+        )
+
     def test_counter(self):
         self.assertEqual(
             parse_newfragment_basename("123.feature.1", ["feature"]),
+            ("123", "feature", 1),
+        )
+
+    def test_counter_with_extension(self):
+        self.assertEqual(
+            parse_newfragment_basename("123.feature.1.ext", ["feature"]),
             ("123", "feature", 1),
         )
 
@@ -31,15 +43,22 @@ class TestParseNewsfragmentBasename(TestCase):
             ("baz", "feature", 0),
         )
 
+    def test_non_numeric_ticket_with_extension(self):
+        self.assertEqual(
+            parse_newfragment_basename("baz.feature.ext", ["feature"]),
+            ("baz", "feature", 0),
+        )
+
     def test_dots_in_ticket_name(self):
         self.assertEqual(
             parse_newfragment_basename("baz.1.2.feature", ["feature"]),
             ("2", "feature", 0),
         )
 
-    def test_dots_in_ticket_name_unknown_category(self):
+    def test_dots_in_ticket_name_invalid_category(self):
         self.assertEqual(
-            parse_newfragment_basename("baz.1.2.notfeature", ["feature"]), ("1", "2", 0)
+            parse_newfragment_basename("baz.1.2.notfeature", ["feature"]),
+            (None, None, None),
         )
 
     def test_dots_in_ticket_name_and_counter(self):

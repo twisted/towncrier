@@ -2,6 +2,8 @@
 # See LICENSE for details.
 
 import os
+import sys
+from subprocess import check_output
 
 from twisted.trial.unittest import TestCase
 
@@ -36,3 +38,24 @@ class VersionFetchingTests(TestCase):
 
         version = get_version(temp, "mytestproja")
         self.assertEqual(version, "1.3.12")
+
+
+class InvocationTests(TestCase):
+    def test_dash_m(self):
+        """
+        `python -m towncrier` invokes the main entrypoint.
+        """
+        temp = self.mktemp()
+        new_dir = os.path.join(temp, "dashm")
+        os.makedirs(new_dir)
+        orig_dir = os.getcwd()
+        try:
+            os.chdir(new_dir)
+            with open("pyproject.toml", "w") as f:
+                f.write('[tool.towncrier]\n' 'directory = "news"\n')
+            os.makedirs("news")
+            out = check_output([sys.executable, "-m", "towncrier", "--help"])
+            self.assertIn(b"[OPTIONS] COMMAND [ARGS]...", out)
+            self.assertIn(b"--help  Show this message and exit.", out)
+        finally:
+            os.chdir(orig_dir)
