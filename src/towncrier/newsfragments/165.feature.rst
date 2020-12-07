@@ -1,0 +1,2 @@
+Allow definition of the project ``version`` and ``name`` in the configuration file.
+This allows use of towncrier seamlessly with non-Python projects.

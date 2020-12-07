@@ -32,7 +32,7 @@ Install from PyPI::
 .. note::
 
    ``towncrier``, as a command line tool, works on Python 3.5+ only.
-   It is usable by projects written in other languages, provided you give it the version of the project when invoking it.
+   It is usable by projects written in other languages, provided you specify the project version either in the configuration file or on the command line.
    For Python 2/3 compatible projects, the version can be discovered automatically.
 
 In your project root, add a ``pyproject.toml`` file.
@@ -64,12 +64,20 @@ Using the above example, your news fragments would be ``src/myproject/newsfragme
 
     This will keep the folder around, but otherwise "empty".
 
-``towncrier`` needs to know what version your project is, and there are two ways you can give it:
+``towncrier`` needs to know what version your project is, and there are three ways you can give it:
 
 - For Python 2/3 compatible projects, a ``__version__`` in the top level package.
   This can be either a string literal, a tuple, or an `Incremental <https://github.com/hawkowl/incremental>`_ version.
 
 - Manually passing ``--version=<myversionhere>`` when interacting with ``towncrier``.
+
+- Definining a ``version`` option in a configuration file:
+
+.. code-block:: ini
+
+    [tool.towncrier]
+    # ...
+    version = "1.2.3"  # project version if maintained separately
 
 To create a new news fragment, use the ``towncrier create`` command.
 For example::
@@ -123,6 +131,8 @@ Towncrier has the following global options, which can be specified in the toml f
     single_file = true  # if false, filename is formatted like `title_format`.
     filename = "NEWS.rst"
     directory = "directory/of/news/fragments"
+    version = "1.2.3"  # project version if maintained separately
+    name = "arbitrary project name"
     template = "path/to/template.rst"
     start_line = "start of generated content"
     title_format = "{name} {version} ({project_date})"  # or false if template includes title
