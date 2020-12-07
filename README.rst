@@ -92,7 +92,7 @@ To produce the news file for real, run::
 
     towncrier build
 
-This command will remove the news files (with ``git rm``) and append the built news to the filename specified by ``filename`` configuration option, and then stage the news file changes (with ``git add``).
+This command will remove the news files (with ``git rm``) and append the built news to the filename specified by the ``filename`` configuration option, and then stage the news file changes (with ``git add``).
 It leaves committing the changes up to the user.
 
 If you wish to have content at the top of the news file (for example, to say where you can find the tickets), put your text above a rST comment that says::
