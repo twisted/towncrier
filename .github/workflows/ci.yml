@@ -18,6 +18,8 @@ jobs:
             runs-on: ubuntu-latest
           - name: macOS
             runs-on: macos-latest
+          - name: Windows
+            runs-on: windows-latest
         python:
           - name: CPython 2.7
             tox: py27
@@ -43,6 +45,14 @@ jobs:
           - name: PyPy 3
             tox: pypy3
             action: pypy3
+        exclude:
+          # Twisted and thus trial do not work on Windows with CPython 3.9.
+          # This will be fixed with the next release.
+          # https://twistedmatrix.com/trac/ticket/10027
+          - python:
+              tox: py39
+            os:
+              name: Windows
 
     steps:
     - uses: actions/checkout@v2
