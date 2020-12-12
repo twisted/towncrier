@@ -30,7 +30,7 @@ Create this folder::
 
     $ mkdir src/myproject/newsfragments/
     # This makes sure that Git will never delete the empty folder
-    $ echo "!.gitignore" > src/myproject/newsfragments/.gitignore
+    $ echo '!.gitignore' > src/myproject/newsfragments/.gitignore
 
 The ``.gitignore`` will remain and keep Git from not tracking the directory.
 
