@@ -144,6 +144,8 @@ def parse_toml(base_path, config):
         "single_file": single_file,
         "filename": config.get("filename", "NEWS.rst"),
         "directory": config.get("directory"),
+        "version": config.get("version"),
+        "name": config.get("name"),
         "sections": sections,
         "types": types,
         "template": template,

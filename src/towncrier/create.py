@@ -14,14 +14,20 @@ from ._settings import load_config_from_options
 
 
 @click.command(name="create")
+@click.pass_context
 @click.option("--dir", "directory", default=None)
 @click.option("--config", "config", default=None)
+@click.option(
+    "--edit/--no-edit",
+    default=False,
+    help="Open an editor for writing the newsfragment content.",
+)  # TODO: default should be true
 @click.argument("filename")
-def _main(directory, config, filename):
-    return __main(directory, config, filename)
+def _main(ctx, directory, config, filename, edit):
+    return __main(ctx, directory, config, filename, edit)
 
 
-def __main(directory, config, filename):
+def __main(ctx, directory, config, filename, edit):
     """
     The main entry point.
     """
@@ -59,10 +65,32 @@ def __main(directory, config, filename):
     if os.path.exists(segment_file):
         raise click.ClickException("{} already exists".format(segment_file))
 
+    if edit:
+        content = _get_news_content_from_user()
+    else:
+        content = "Add your info here"
+
+    if content is None:
+        click.echo("Abort creating news fragment.")
+        ctx.exit(1)
+
     with open(segment_file, "w") as f:
-        f.writelines(["Add your info here"])
+        f.write(content)
 
     click.echo("Created news fragment at {}".format(segment_file))
+
+
+def _get_news_content_from_user():
+    content = click.edit(
+        "# Please write your news content. When finished, save the file.\n"
+        "# In order to abort, exit without saving.\n"
+        "# Lines starting with \"#\" are ignored.\n"
+    )
+    if content is None:
+        return None
+    all_lines = content.split("\n")
+    lines = [line.rstrip() for line in all_lines if not line.lstrip().startswith("#")]
+    return "\n".join(lines)
 
 
 if __name__ == "__main__":  # pragma: no cover
