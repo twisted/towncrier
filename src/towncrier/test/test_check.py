@@ -10,9 +10,16 @@ from subprocess import call
 from towncrier.check import _main
 
 
+default_project_config = """
+[tool.towncrier]
+package = "foo"
+filename = "NEWS.rst"
+"""
+
+
 def create_project(pyproject_path):
     with open(pyproject_path, "w") as f:
-        f.write("[tool.towncrier]\n" 'package = "foo"\n')
+        f.write(default_project_config)
     os.mkdir("foo")
     with open("foo/__init__.py", "w") as f:
         f.write('__version__ = "1.2.3"\n')
@@ -20,6 +27,9 @@ def create_project(pyproject_path):
     fragment_path = "foo/newsfragments/123.feature"
     with open(fragment_path, "w") as f:
         f.write("Adds levitation")
+
+    with open("NEWS.rst", "w") as f:
+        f.write("added on default branch")
 
     call(["git", "init"])
     call(["git", "config", "user.name", "user"])
@@ -121,3 +131,21 @@ class TestChecker(TestCase):
             self.assertTrue(
                 result.output.endswith("No new newsfragments found on this branch.\n")
             )
+
+    def test_newsfile_modified(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            create_project("pyproject.toml")
+
+            newsfile_path = "NEWS.rst"
+
+            with open(newsfile_path, "w") as f:
+                f.write("on other branch")
+            call(["git", "add", newsfile_path])
+            call(["git", "commit", "-m", "modify NEWS.rst"])
+
+            result = runner.invoke(_main, ["--compare-with", "master"])
+
+            self.assertEqual(result.output, 'Only the configured news file has changed.\n')
+            self.assertEqual(0, result.exit_code)
