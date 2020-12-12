@@ -34,13 +34,14 @@ def __main(comparewith, directory, config):
     try:
         files_changed = (
             _run(
-                ["git",
-                 "diff",
-                 "--name-only",
-                 # Only show files that were Added (A), Copied (C), Modified (M)
-                 # or Renamed (R).
-                 "--diff-filter=ACMR",
-                 comparewith + "..."
+                [
+                    "git",
+                    "diff",
+                    "--name-only",
+                    # Only show files that were Added (A), Copied (C), Modified (M)
+                    # or Renamed (R).
+                    "--diff-filter=ACMR",
+                    comparewith + "..."
                 ],
                 cwd=base_directory
             )
