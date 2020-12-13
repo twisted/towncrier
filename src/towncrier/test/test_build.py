@@ -12,13 +12,14 @@ from ..build import _main
 from .._shell import cli
 
 
-def setup_simple_project():
+def setup_simple_project(create_newsfragments_directory=True):
     with open("pyproject.toml", "w") as f:
         f.write("[tool.towncrier]\n" 'package = "foo"\n')
     os.mkdir("foo")
     with open("foo/__init__.py", "w") as f:
         f.write('__version__ = "1.2.3"\n')
-    os.mkdir("foo/newsfragments")
+    if create_newsfragments_directory:
+        os.mkdir("foo/newsfragments")
 
 
 class TestCli(TestCase):
@@ -81,6 +82,30 @@ class TestCli(TestCase):
 
     def test_subcommand(self):
         self._test_command(_main)
+
+    def test_no_newsfragment_directory(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project(create_newsfragments_directory=False)
+
+            result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
+
+        # This should fail
+        self.assertEqual(result.exit_code, 0)
+        self.assertIn("No significant changes.\n", result.output)
+
+    def test_no_newsfragments(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project(create_newsfragments_directory=True)
+
+            result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
+
+        # This should fail
+        self.assertEqual(result.exit_code, 0)
+        self.assertIn("No significant changes.\n", result.output)
 
     def test_collision(self):
         runner = CliRunner()

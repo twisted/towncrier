@@ -86,7 +86,10 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
         else:
             section_dir = os.path.join(base_directory, val)
 
-        files = os.listdir(section_dir)
+        try:
+            files = os.listdir(section_dir)
+        except FileNotFoundError:
+            files = []
 
         file_content = {}
 
