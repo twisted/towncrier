@@ -43,7 +43,12 @@ class VersionFetchingTests(TestCase):
         """
         The project cannot be found.
         """
-        with self.assertRaises(ModuleNotFoundError):
+        if sys.version_info >= (3, 6):
+            expected_exception = ModuleNotFoundError
+        else:
+            expected_exception = ImportError
+
+        with self.assertRaises(expected_exception):
             get_version(".", "mytestproj_import_fails")
 
     def test_already_installed_import(self):
@@ -69,10 +74,10 @@ class VersionFetchingTests(TestCase):
         sys.path.insert(0, sys_path_temp)
         try:
             version = get_version(temp, project_name)
-            self.assertEqual(version, "1.3.13")
         finally:
             sys.path.pop(0)
-            pass
+
+        self.assertEqual(version, "1.3.13")
 
 
 class InvocationTests(TestCase):
