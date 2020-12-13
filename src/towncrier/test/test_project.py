@@ -39,6 +39,34 @@ class VersionFetchingTests(TestCase):
         version = get_version(temp, "mytestproja")
         self.assertEqual(version, "1.3.12")
 
+    def test_already_installed_import(self):
+        """
+        An already installed package will be checked before cwd-found packages.
+        """
+        project_name = "mytestprojalready_installed_import"
+
+        temp = self.mktemp()
+        os.makedirs(temp)
+        os.makedirs(os.path.join(temp, project_name))
+
+        with open(os.path.join(temp, project_name, "__init__.py"), "w") as f:
+            f.write("__version__ = (1, 3, 12)")
+
+        sys_path_temp = self.mktemp()
+        os.makedirs(sys_path_temp)
+        os.makedirs(os.path.join(sys_path_temp, project_name))
+
+        with open(os.path.join(sys_path_temp, project_name, "__init__.py"), "w") as f:
+            f.write("__version__ = (1, 3, 13)")
+
+        sys.path.insert(0, sys_path_temp)
+        try:
+            version = get_version(temp, project_name)
+            self.assertEqual(version, "1.3.13")
+        finally:
+            sys.path.pop(0)
+            pass
+
 
 class InvocationTests(TestCase):
     def test_dash_m(self):
