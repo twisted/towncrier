@@ -39,11 +39,18 @@ class VersionFetchingTests(TestCase):
         version = get_version(temp, "mytestproja")
         self.assertEqual(version, "1.3.12")
 
+    def test_import_fails(self):
+        """
+        The project cannot be found.
+        """
+        with self.assertRaises(ModuleNotFoundError):
+            get_version(".", "mytestproj_import_fails")
+
     def test_already_installed_import(self):
         """
         An already installed package will be checked before cwd-found packages.
         """
-        project_name = "mytestprojalready_installed_import"
+        project_name = "mytestproj_already_installed_import"
 
         temp = self.mktemp()
         os.makedirs(temp)
