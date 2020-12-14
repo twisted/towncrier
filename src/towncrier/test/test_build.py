@@ -623,3 +623,55 @@ class TestCli(TestCase):
             """
             ).lstrip(),
         )
+
+    def test_start_string(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write('[tool.towncrier]\nstart_string="a different start line"\n')
+            os.mkdir("newsfragments")
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+            with open("NEWS.rst", "w") as f:
+                f.write("a line\n\nanother\n\na different start line\n")
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--version",
+                    "7.8.9",
+                    "--name",
+                    "foo",
+                    "--date",
+                    "01-01-2001",
+                    "--yes",
+                ],
+            )
+
+            self.assertEqual(0, result.exit_code, result.output)
+            self.assertTrue(os.path.exists("NEWS.rst"), os.listdir("."))
+            with open("NEWS.rst", "r") as f:
+                output = f.read()
+
+        self.assertEqual(
+            output,
+            dedent(
+                """
+            a line
+
+            another
+
+            a different start line
+            foo 7.8.9 (01-01-2001)
+            ======================
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+
+
+            """
+            ).lstrip(),
+        )
