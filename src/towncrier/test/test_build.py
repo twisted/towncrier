@@ -531,7 +531,10 @@ class TestCli(TestCase):
             result = runner.invoke(_main)
 
         self.assertEqual(1, result.exit_code)
-        self.assertEqual('`singlefile` is not a valid option. Did you mean `single_file`?\n', result.output)
+        self.assertEqual(
+            '`singlefile` is not a valid option. Did you mean `single_file`?\n',
+            result.output,
+        )
 
     def test_single_file_false(self):
         """
