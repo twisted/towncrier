@@ -629,7 +629,11 @@ class TestCli(TestCase):
 
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write("[tool.towncrier]\n" 'package = "foo"\n' 'title_format = "abc {name} {version} ({project_date})"\n')
+                f.write(
+                    "[tool.towncrier]\n"
+                    'package = "foo"\n'
+                    'title_format = "abc {name} {version} ({project_date})"\n'
+                )
             os.mkdir("foo")
             os.mkdir("foo/newsfragments")
             with open("foo/newsfragments/123.feature", "w") as f:
