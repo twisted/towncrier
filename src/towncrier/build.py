@@ -169,7 +169,7 @@ def __main(
             err=to_err,
         )
         if top_line:
-            click.echo("\n%s\n%s" % (top_line, rendered))
+            click.echo("%s\n%s" % (top_line, rendered))
         else:
             click.echo(rendered)
     else:

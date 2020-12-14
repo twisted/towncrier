@@ -623,3 +623,108 @@ class TestCli(TestCase):
             """
             ).lstrip(),
         )
+
+    def test_title_format_non_empty(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write("[tool.towncrier]\n" 'package = "foo"\n' 'title_format = "abc {name} {version} ({project_date})"\n')
+            os.mkdir("foo")
+            os.mkdir("foo/newsfragments")
+            with open("foo/newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+            # Towncrier ignores .rst extension
+            with open("foo/newsfragments/124.feature.rst", "w") as f:
+                f.write("Extends levitation")
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--name",
+                    "FooBarBaz",
+                    "--version",
+                    "7.8.9",
+                    "--date",
+                    "01-01-2001",
+                    "--draft",
+                ],
+            )
+
+        self.assertEqual(0, result.exit_code)
+        self.assertEqual(
+            result.output,
+            dedent(
+                """
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            abc FooBarBaz 7.8.9 (01-01-2001)
+            ================================
+
+            FooBarBaz 7.8.9 (01-01-2001)
+            ============================
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+            - Extends levitation (#124)
+
+            """
+            ).lstrip(),
+        )
+
+    def test_title_format_false(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write("[tool.towncrier]\n" 'package = "foo"\n' 'title_format = false\n')
+            os.mkdir("foo")
+            os.mkdir("foo/newsfragments")
+            with open("foo/newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+            # Towncrier ignores .rst extension
+            with open("foo/newsfragments/124.feature.rst", "w") as f:
+                f.write("Extends levitation")
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--name",
+                    "FooBarBaz",
+                    "--version",
+                    "7.8.9",
+                    "--date",
+                    "01-01-2001",
+                    "--draft",
+                ],
+            )
+
+        self.assertEqual(0, result.exit_code)
+        self.assertEqual(
+            result.output,
+            dedent(
+                """
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            FooBarBaz 7.8.9 (01-01-2001)
+            ============================
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+            - Extends levitation (#124)
+
+            """
+            ).lstrip(),
+        )
