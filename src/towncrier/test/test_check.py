@@ -2,10 +2,11 @@
 # See LICENSE for details.
 
 import os
+import sys
 
 from twisted.trial.unittest import TestCase
 from click.testing import CliRunner
-from subprocess import call
+from subprocess import call, check_call, PIPE
 
 from towncrier.check import _main
 
@@ -120,4 +121,22 @@ class TestChecker(TestCase):
             self.assertEqual(1, result.exit_code)
             self.assertTrue(
                 result.output.endswith("No new newsfragments found on this branch.\n")
+            )
+
+    def test_none_stdout_encoding_works(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            create_project("pyproject.toml")
+
+            fragment_path = "foo/newsfragments/1234.feature"
+            with open(fragment_path, "w") as f:
+                f.write("Adds gravity back")
+
+            call(["git", "add", fragment_path])
+            call(["git", "commit", "-m", "add a newsfragment"])
+
+            check_call(
+                [sys.executable, '-m', 'towncrier.check', "--compare-with", "master"],
+                stdout=PIPE,
             )

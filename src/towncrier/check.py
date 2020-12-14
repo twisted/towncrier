@@ -31,12 +31,17 @@ def __main(comparewith, directory, config):
 
     base_directory, config = load_config_from_options(directory, config)
 
+    # handled like this in case the attribute is present but None
+    encoding = getattr(sys.stdout, "encoding", None)
+    if encoding is None:
+        encoding = "utf8"
+
     try:
         files_changed = (
             _run(
                 ["git", "diff", "--name-only", comparewith + "..."], cwd=base_directory
             )
-            .decode(getattr(sys.stdout, "encoding", "utf8"))
+            .decode(encoding)
             .strip()
         )
     except CalledProcessError as e:
