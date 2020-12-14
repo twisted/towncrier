@@ -72,9 +72,9 @@ def _main(
     except Exception as e:
         if isinstance(e, ConfigError):
             print(e)
+            sys.exit(1)
         else:
-            traceback.print_exc(file=sys.stderr)
-        raise
+            raise
 
 
 def __main(
