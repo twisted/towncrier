@@ -86,9 +86,14 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
         else:
             section_dir = os.path.join(base_directory, val)
 
+        if sys.version_info >= (3,):
+            expected_exception = FileNotFoundError
+        else:
+            expected_exception = OSError
+
         try:
             files = os.listdir(section_dir)
-        except FileNotFoundError:
+        except expected_exception:
             files = []
 
         file_content = {}
