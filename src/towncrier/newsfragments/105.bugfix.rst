@@ -1,0 +1,1 @@
+Avoid extra newline between top line and rendered content introduced when calling with ``--draft``.
