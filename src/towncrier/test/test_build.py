@@ -623,3 +623,72 @@ class TestCli(TestCase):
             """
             ).lstrip(),
         )
+
+    def test_with_topline(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(dedent(
+                    """\
+                    [tool.towncrier]
+                    title_format = "{version} - {project_date}"
+                    template = "template.rst"
+                    
+                      [[tool.towncrier.type]]
+                      directory = "feature"
+                      name = ""
+                      showcontent = true
+                    """
+                ))
+            os.mkdir("newsfragments")
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+            with open("template.rst", "w") as f:
+                f.write(dedent(
+                    """\
+                    {% for section in sections %}
+                    {% set underline = "-" %}
+                    {% for category, val in definitions.items() if category in sections[section] %}
+
+                    {% for text, values in sections[section][category]|dictsort(by='value') %}
+                    - {{ text }}
+
+                    {% endfor %}
+                    {% endfor %}
+                    {% endfor %}
+                    """
+               ))
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--version",
+                    "7.8.9",
+                    "--name",
+                    "foo",
+                    "--date",
+                    "01-01-2001",
+                    "--draft",
+                ],
+            )
+
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertEqual(
+            result.output,
+            dedent(
+                """\
+                Loading template...
+                Finding news fragments...
+                Rendering news fragments...
+                Draft only -- nothing has been written.
+                What is seen below is what would be written.
+                
+                7.8.9 - 01-01-2001
+                ==================
+                
+                - Adds levitation
+                
+                """
+            ),
+        )

@@ -162,16 +162,19 @@ def __main(
         all_bullets=config["all_bullets"],
     )
 
+    content = ""
+    if top_line:
+        content += top_line
+
+    content += rendered
+
     if draft:
         click.echo(
             "Draft only -- nothing has been written.\n"
             "What is seen below is what would be written.\n",
             err=to_err,
         )
-        if top_line:
-            click.echo("\n%s\n%s" % (top_line, rendered))
-        else:
-            click.echo(rendered)
+        click.echo(content)
     else:
         click.echo("Writing to newsfile...", err=to_err)
         start_line = config["start_line"]
@@ -188,7 +191,7 @@ def __main(
             news_file,
             start_line,
             top_line,
-            rendered,
+            content,
             single_file=config["single_file"],
         )
 
