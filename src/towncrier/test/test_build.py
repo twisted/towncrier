@@ -634,7 +634,7 @@ class TestCli(TestCase):
                     [tool.towncrier]
                     title_format = "{version} - {project_date}"
                     template = "template.rst"
-                    
+
                       [[tool.towncrier.type]]
                       directory = "feature"
                       name = ""
@@ -658,7 +658,7 @@ class TestCli(TestCase):
                     {% endfor %}
                     {% endfor %}
                     """
-               ))
+                ))
 
             result = runner.invoke(
                 _main,
@@ -683,12 +683,12 @@ class TestCli(TestCase):
                 Rendering news fragments...
                 Draft only -- nothing has been written.
                 What is seen below is what would be written.
-                
+
                 7.8.9 - 01-01-2001
                 ==================
-                
+
                 - Adds levitation
-                
+
                 """
             ),
         )
