@@ -625,6 +625,9 @@ class TestCli(TestCase):
         )
 
     def test_start_string(self):
+        """
+        Rendered content added after specified start string.
+        """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
