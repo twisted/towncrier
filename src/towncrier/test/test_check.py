@@ -124,6 +124,9 @@ class TestChecker(TestCase):
             )
 
     def test_none_stdout_encoding_works(self):
+        """
+        No failure when output is piped causing None encoding for stdout.
+        """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
