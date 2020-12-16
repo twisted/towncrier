@@ -625,6 +625,9 @@ class TestCli(TestCase):
         )
 
     def test_title_format_non_empty(self):
+        """
+        A non-empty title format adds the specified title.
+        """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
@@ -683,6 +686,9 @@ class TestCli(TestCase):
         )
 
     def test_title_format_false(self):
+        """
+        Setting the title format to false disables the explicit title.
+        """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
