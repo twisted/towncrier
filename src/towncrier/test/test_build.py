@@ -522,6 +522,10 @@ class TestCli(TestCase):
         )
 
     def test_singlefile_errors_and_explains_cleanly(self):
+        """
+        Failure to find the configuration file results in a clean explanation
+        without a traceback.
+        """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
