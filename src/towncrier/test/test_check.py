@@ -133,6 +133,9 @@ class TestChecker(TestCase):
             )
 
     def test_newsfile_modified(self):
+        """
+        A modified newsfile satisfies the check.
+        """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
