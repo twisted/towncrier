@@ -624,7 +624,10 @@ class TestCli(TestCase):
             ).lstrip(),
         )
 
-    def test_with_topline(self):
+    def test_with_topline_and_template_and_draft(self):
+        """
+        Spacing is proper when drafting with a topline and a template.
+        """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
