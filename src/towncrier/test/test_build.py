@@ -84,6 +84,9 @@ class TestCli(TestCase):
         self._test_command(_main)
 
     def test_no_newsfragment_directory(self):
+        """
+        A missing newsfragment directory acts as if there are no changes.
+        """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
@@ -96,6 +99,9 @@ class TestCli(TestCase):
         self.assertIn("No significant changes.\n", result.output)
 
     def test_no_newsfragments(self):
+        """
+        An empty newsfragment directory acts as if there are no changes.
+        """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
