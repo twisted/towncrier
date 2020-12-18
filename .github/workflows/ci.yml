@@ -39,12 +39,15 @@ jobs:
           - name: CPython 3.9
             tox: py39
             action: 3.9
-          - name: PyPy 2
-            tox: pypy2
-            action: pypy2
-          - name: PyPy 3
-            tox: pypy3
-            action: pypy3
+          - name: PyPy 2.7
+            tox: pypy27
+            action: pypy-2.7
+          - name: PyPy 3.6
+            tox: pypy36
+            action: pypy-3.6
+          - name: PyPy 3.7
+            tox: pypy37
+            action: pypy-3.7
         task:
           - name: Test
             tox: tests
