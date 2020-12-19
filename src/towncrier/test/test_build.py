@@ -108,7 +108,7 @@ class TestCli(TestCase):
 
             result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
 
-        self.assertEqual(result.exit_code, 0)
+        self.assertEqual(0, result.exit_code)
         self.assertIn("No significant changes.\n", result.output)
 
     def test_collision(self):
