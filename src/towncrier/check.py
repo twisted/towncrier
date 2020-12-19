@@ -31,6 +31,13 @@ def __main(comparewith, directory, config):
 
     base_directory, config = load_config_from_options(directory, config)
 
+    # Use UTF-8 both when sys.stdout does not have .encoding (Python 2.7) and
+    # when the attribute is present but set to None (explicitly piped output
+    # and also some CI such as GitHub Actions).
+    encoding = getattr(sys.stdout, "encoding", None)
+    if encoding is None:
+        encoding = "utf8"
+
     try:
         files_changed = (
             _run(
@@ -45,7 +52,7 @@ def __main(comparewith, directory, config):
                 ],
                 cwd=base_directory
             )
-            .decode(getattr(sys.stdout, "encoding", "utf8"))
+            .decode(encoding)
             .strip()
         )
     except CalledProcessError as e:

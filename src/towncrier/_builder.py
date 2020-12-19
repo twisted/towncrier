@@ -4,11 +4,15 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import sys
 import textwrap
+import traceback
 
 from collections import OrderedDict
 
 from jinja2 import Template
+
+from ._settings import ConfigError
 
 
 def strip_if_integer_string(s):
@@ -86,7 +90,18 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
         else:
             section_dir = os.path.join(base_directory, val)
 
-        files = os.listdir(section_dir)
+        if sys.version_info >= (3,):
+            expected_exception = FileNotFoundError
+        else:
+            expected_exception = OSError
+
+        try:
+            files = os.listdir(section_dir)
+        except expected_exception as e:
+            message = "Failed to list the news fragment files.\n{}".format(
+                ''.join(traceback.format_exception_only(type(e), e)),
+            )
+            raise ConfigError(message)
 
         file_content = {}
 
@@ -209,6 +224,7 @@ def render_issue(issue_format, issue):
 def render_fragments(
     template,
     issue_format,
+    top_line,
     fragments,
     definitions,
     underlines,
@@ -273,6 +289,7 @@ def render_fragments(
         return u""
 
     res = jinja_template.render(
+        top_line=top_line,
         sections=data,
         definitions=definitions,
         underlines=underlines,

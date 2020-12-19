@@ -1,0 +1,1 @@
+A configuration error is triggered when the newsfragment files couldn't be discovered. 
