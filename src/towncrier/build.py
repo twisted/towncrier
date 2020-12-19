@@ -160,7 +160,11 @@ def __main(
 
     content = ""
     if top_line:
-        content += top_line
+        content += "\n".join([
+            top_line,
+            config["underlines"][0] * len(top_line),
+            "",
+        ])
 
     content += rendered
 
