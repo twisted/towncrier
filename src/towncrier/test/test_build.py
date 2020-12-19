@@ -108,7 +108,6 @@ class TestCli(TestCase):
 
             result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
 
-        # This should fail
         self.assertEqual(result.exit_code, 0)
         self.assertIn("No significant changes.\n", result.output)
 
