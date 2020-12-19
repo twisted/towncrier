@@ -12,14 +12,13 @@ from ..build import _main
 from .._shell import cli
 
 
-def setup_simple_project(create_newsfragments_directory=True):
+def setup_simple_project():
     with open("pyproject.toml", "w") as f:
         f.write("[tool.towncrier]\n" 'package = "foo"\n')
     os.mkdir("foo")
     with open("foo/__init__.py", "w") as f:
         f.write('__version__ = "1.2.3"\n')
-    if create_newsfragments_directory:
-        os.mkdir("foo/newsfragments")
+    os.mkdir("foo/newsfragments")
 
 
 class TestCli(TestCase):
@@ -90,7 +89,8 @@ class TestCli(TestCase):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
-            setup_simple_project(create_newsfragments_directory=False)
+            setup_simple_project()
+            os.rmdir("foo/newsfragments")
 
             result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
 
@@ -104,7 +104,7 @@ class TestCli(TestCase):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
-            setup_simple_project(create_newsfragments_directory=True)
+            setup_simple_project()
 
             result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
 
