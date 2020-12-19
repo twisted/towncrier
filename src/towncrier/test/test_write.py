@@ -98,6 +98,7 @@ Old text.
             render_fragments(
                 template,
                 None,
+                "",
                 fragments,
                 definitions,
                 ["-", "~"],
@@ -212,6 +213,7 @@ Old text.
             render_fragments(
                 template,
                 None,
+                "",
                 fragments,
                 definitions,
                 ["-", "~"],
