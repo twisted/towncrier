@@ -6,7 +6,7 @@ import sys
 
 from twisted.trial.unittest import TestCase
 from click.testing import CliRunner
-from subprocess import call, check_call, PIPE
+from subprocess import call, Popen, TimeoutExpired, PIPE
 
 from towncrier.check import _main
 
@@ -139,7 +139,16 @@ class TestChecker(TestCase):
             call(["git", "add", fragment_path])
             call(["git", "commit", "-m", "add a newsfragment"])
 
-            check_call(
+            proc = Popen(
                 [sys.executable, '-m', 'towncrier.check', "--compare-with", "master"],
                 stdout=PIPE,
+                stderr=PIPE,
             )
+            try:
+                outs, errs = proc.communicate(timeout=15)
+            except TimeoutExpired:
+                proc.kill()
+                outs, errs = proc.communicate()
+
+            self.assertEqual(0, proc.returncode)
+            self.assertEqual(b"", errs)
