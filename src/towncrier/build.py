@@ -10,7 +10,6 @@ from __future__ import absolute_import, division
 import os
 import click
 import sys
-import traceback
 
 from datetime import date
 
@@ -69,12 +68,8 @@ def _main(
             project_date,
             answer_yes,
         )
-    except Exception as e:
-        if isinstance(e, ConfigError):
-            print(e, file=sys.stderr)
-        else:
-            traceback.print_exc(file=sys.stderr)
-
+    except ConfigError as e:
+        print(e, file=sys.stderr)
         sys.exit(1)
 
 
