@@ -31,7 +31,9 @@ def __main(comparewith, directory, config):
 
     base_directory, config = load_config_from_options(directory, config)
 
-    # handled like this in case the attribute is present but None
+    # Use UTF-8 both when sys.stdout does not have .encoding (Python 2.7) and
+    # when the attribute is present but set to None (explicitly piped output
+    # and also some CI such as GitHub Actions).
     encoding = getattr(sys.stdout, "encoding", None)
     if encoding is None:
         encoding = "utf8"
