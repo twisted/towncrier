@@ -10,6 +10,7 @@ from __future__ import absolute_import, division
 import os
 import click
 import sys
+import traceback
 
 from datetime import date
 
@@ -70,10 +71,11 @@ def _main(
         )
     except Exception as e:
         if isinstance(e, ConfigError):
-            print(e)
-            sys.exit(1)
+            print(e, file=sys.stderr)
         else:
-            raise
+            traceback.print_exc(file=sys.stderr)
+
+        sys.exit(1)
 
 
 def __main(
