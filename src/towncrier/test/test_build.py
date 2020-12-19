@@ -551,6 +551,25 @@ class TestCli(TestCase):
             ).lstrip(),
         )
 
+    def test_singlefile_errors_and_explains_cleanly(self):
+        """
+        Failure to find the configuration file results in a clean explanation
+        without a traceback.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write('[tool.towncrier]\n singlefile="fail!"\n')
+
+            result = runner.invoke(_main)
+
+        self.assertEqual(1, result.exit_code)
+        self.assertEqual(
+            '`singlefile` is not a valid option. Did you mean `single_file`?\n',
+            result.output,
+        )
+
     def test_single_file_false(self):
         """
         If formatting arguments are given in the filename arg and single_file is
