@@ -1,0 +1,6 @@
+codecov:
+  notify:
+    # The reference documentation suggests that this is the default setting:
+    # https://docs.codecov.io/docs/codecovyml-reference#codecovnotifywait_for_ci
+    # However observation suggests maybe otherwise.
+    wait_for_ci: true
