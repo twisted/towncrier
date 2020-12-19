@@ -6,7 +6,7 @@ import sys
 
 from twisted.trial.unittest import TestCase
 from click.testing import CliRunner
-from subprocess import call, Popen, TimeoutExpired, PIPE
+from subprocess import call, Popen, PIPE
 
 from towncrier.check import _main
 
@@ -144,11 +144,7 @@ class TestChecker(TestCase):
                 stdout=PIPE,
                 stderr=PIPE,
             )
-            try:
-                outs, errs = proc.communicate(timeout=15)
-            except TimeoutExpired:
-                proc.kill()
-                outs, errs = proc.communicate()
+            stdout, stderr = proc.communicate()
 
-            self.assertEqual(0, proc.returncode)
-            self.assertEqual(b"", errs)
+        self.assertEqual(0, proc.returncode)
+        self.assertEqual(b"", stderr)
