@@ -5,6 +5,7 @@ from twisted.trial.unittest import TestCase
 
 import pkg_resources
 import os
+from textwrap import dedent
 
 from collections import OrderedDict
 
@@ -224,5 +225,45 @@ Old text.
 
         with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
             output = f.read()
+
+        self.assertEqual(expected_output, output)
+
+    def test_multiple_file_no_start_string(self):
+        tempdir = self.mktemp()
+        os.mkdir(tempdir)
+
+        definitions = {}
+        fragments = split_fragments(fragments={}, definitions=definitions)
+
+        template = pkg_resources.resource_string(
+            "towncrier", "templates/default.rst"
+        ).decode("utf8")
+
+        content = render_fragments(
+            template=template,
+            issue_format=None,
+            top_line="",
+            fragments=fragments,
+            definitions=definitions,
+            underlines=["-", "~"],
+            wrap=True,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
+        )
+
+        append_to_newsfile(
+            directory=tempdir,
+            filename="NEWS.rst",
+            start_string=None,
+            top_line="",
+            content=content,
+        )
+
+        with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
+            output = f.read()
+
+        expected_output = dedent("""\
+            MyProject 1.0 (never)
+            =====================
+        """)
 
         self.assertEqual(expected_output, output)

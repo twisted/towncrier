@@ -40,6 +40,7 @@ def append_to_newsfile(
 
         f.write(top_line.encode("utf8"))
         f.write(content.encode("utf8"))
-        if existing_content[0]:
-            f.write(b"\n\n")
-        f.write(existing_content[0].lstrip().encode("utf8"))
+        if existing_content:
+            if existing_content[0]:
+                f.write(b"\n\n")
+            f.write(existing_content[0].lstrip().encode("utf8"))
