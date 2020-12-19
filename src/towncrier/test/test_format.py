@@ -3,6 +3,8 @@
 
 from __future__ import absolute_import, division
 
+from textwrap import dedent
+
 import pkg_resources
 
 from twisted.trial.unittest import TestCase
@@ -344,29 +346,25 @@ Features
         """
         Title format replaces default top line rendering.
         """
-        self.maxDiff = None
-
-        fragments = {}
-
-        definitions = OrderedDict()
-
-        expected_output = u"""A custom top line
-=================
-"""  # NOQA
-
         template = pkg_resources.resource_string(
             "towncrier", "templates/default.rst"
         ).decode("utf8")
 
-        fragments = split_fragments(fragments, definitions)
+        fragments = split_fragments(fragments={}, definitions=OrderedDict())
         output = render_fragments(
-            template,
-            None,
-            "A custom top line",
-            fragments,
-            definitions,
-            ["-", "~"],
+            template=template,
+            issue_format=None,
+            top_line="A custom top line",
+            fragments=fragments,
+            definitions=OrderedDict(),
+            underlines=["-", "~"],
             wrap=False,
             versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
         )
-        self.assertEqual(output, expected_output)
+
+        expected_output = dedent(u"""\
+        A custom top line
+        =================
+        """)
+
+        self.assertEqual(expected_output, output)
