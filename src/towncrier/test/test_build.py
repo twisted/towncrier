@@ -94,9 +94,8 @@ class TestCli(TestCase):
 
             result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
 
-        # This should fail
-        self.assertEqual(result.exit_code, 0)
-        self.assertIn("No significant changes.\n", result.output)
+        self.assertEqual(1, result.exit_code, result.output)
+        self.assertIn("Failed to list the news fragment files.\n", result.output)
 
     def test_no_newsfragments(self):
         """
