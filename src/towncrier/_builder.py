@@ -224,6 +224,7 @@ def render_issue(issue_format, issue):
 def render_fragments(
     template,
     issue_format,
+    top_line,
     fragments,
     definitions,
     underlines,
@@ -288,6 +289,7 @@ def render_fragments(
         return u""
 
     res = jinja_template.render(
+        top_line=top_line,
         sections=data,
         definitions=definitions,
         underlines=underlines,
