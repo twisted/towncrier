@@ -6,6 +6,7 @@ include pyproject.toml
 include tox.ini
 recursive-include src *.rst
 
+exclude codecov.yml
 exclude bin
 exclude src/towncrier/newsfragments
 
