@@ -5,11 +5,10 @@
 Build a combined news file from news fragments.
 """
 
-from __future__ import absolute_import, division
+from __future__ import absolute_import, division, print_function
 
 import os
 import click
-import traceback
 import sys
 
 from datetime import date
@@ -69,12 +68,9 @@ def _main(
             project_date,
             answer_yes,
         )
-    except Exception as e:
-        if isinstance(e, ConfigError):
-            print(e)
-        else:
-            traceback.print_exc(file=sys.stderr)
-        raise
+    except ConfigError as e:
+        print(e, file=sys.stderr)
+        sys.exit(1)
 
 
 def __main(
@@ -145,7 +141,6 @@ def __main(
         top_line = config["title_format"].format(
             name=project_name, version=project_version, project_date=project_date
         )
-        top_line += u"\n" + (config["underlines"][0] * len(top_line)) + u"\n"
     else:
         top_line = ""
 
@@ -153,6 +148,7 @@ def __main(
         # The 0th underline is used for the top line
         template,
         config["issue_format"],
+        top_line,
         fragments,
         definitions,
         config["underlines"][1:],
