@@ -82,6 +82,35 @@ class TestCli(TestCase):
     def test_subcommand(self):
         self._test_command(_main)
 
+    def test_no_newsfragment_directory(self):
+        """
+        A missing newsfragment directory acts as if there are no changes.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project()
+            os.rmdir("foo/newsfragments")
+
+            result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
+
+        self.assertEqual(1, result.exit_code, result.output)
+        self.assertIn("Failed to list the news fragment files.\n", result.output)
+
+    def test_no_newsfragments(self):
+        """
+        An empty newsfragment directory acts as if there are no changes.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project()
+
+            result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
+
+        self.assertEqual(0, result.exit_code)
+        self.assertIn("No significant changes.\n", result.output)
+
     def test_collision(self):
         runner = CliRunner()
 
