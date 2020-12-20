@@ -137,7 +137,7 @@ Towncrier has the following global options, which can be specified in the toml f
     version = "1.2.3"  # project version if maintained separately
     name = "arbitrary project name"
     template = "path/to/template.rst"
-    start_line = "start of generated content"
+    start_string = "Text used to detect where to add the generated content in the middle of a file. Generated content added after this text. Newline auto added."
     title_format = "{name} {version} ({project_date})"  # or false if template includes title
     issue_format = "format string for {issue} (issue is the first part of fragment name)"
     underlines: "=-~"
@@ -145,6 +145,10 @@ Towncrier has the following global options, which can be specified in the toml f
     all_bullets = true  # make all fragments bullet points
 
 If a single file is used, the content of that file gets overwritten each time.
+
+If ``title_format`` is unspecified or an empty string, the default format will be used.
+If set to ``false``, no title will be created.
+This can be useful if the specified template creates the title itself.
 
 Furthermore, you can add your own fragment types using:
 

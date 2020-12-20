@@ -149,7 +149,7 @@ def parse_toml(base_path, config):
         "sections": sections,
         "types": types,
         "template": template,
-        "start_line": config.get("start_string", _start_string),
+        "start_string": config.get("start_string", _start_string),
         "title_format": config.get("title_format", _title_format),
         "issue_format": config.get("issue_format"),
         "underlines": config.get("underlines", _underlines),
