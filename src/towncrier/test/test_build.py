@@ -713,8 +713,8 @@ class TestCli(TestCase):
             Draft only -- nothing has been written.
             What is seen below is what would be written.
 
-            [{20-01-2001}] CUSTOM RELEASE for FooBarBaz version 7.8.9
-            ================================
+            [20-01-2001] CUSTOM RELEASE for FooBarBaz version 7.8.9
+            =======================================================
 
             Features
             --------
