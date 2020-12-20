@@ -729,7 +729,8 @@ class TestCli(TestCase):
 
     def test_title_format_false(self):
         """
-        Setting the title format to false disables the explicit title.
+        Setting the title format to false disables the explicit title.  This
+        would be used, for example, when the template creates the title itself.
         """
         runner = CliRunner()
 
