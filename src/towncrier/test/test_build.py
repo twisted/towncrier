@@ -760,7 +760,7 @@ class TestCli(TestCase):
                     "--draft",
                 ],
             )
-        
+
         expected_output = dedent("""\
             Loading template...
             Finding news fragments...
