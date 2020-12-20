@@ -680,11 +680,11 @@ class TestCli(TestCase):
 
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(
-                    "[tool.towncrier]\n"
-                    'package = "foo"\n'
-                    'title_format = "abc {name} {version} ({project_date})"\n'
-                )
+                f.write(dedent("""\
+                    [tool.towncrier]
+                    package = "foo"
+                    title_format = "abc {name} {version} ({project_date})"
+                """))
             os.mkdir("foo")
             os.mkdir("foo/newsfragments")
             with open("foo/newsfragments/123.feature", "w") as f:
@@ -706,11 +706,7 @@ class TestCli(TestCase):
                 ],
             )
 
-        self.assertEqual(0, result.exit_code)
-        self.assertEqual(
-            result.output,
-            dedent(
-                """
+        expected_output = dedent("""\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -726,9 +722,10 @@ class TestCli(TestCase):
             - Adds levitation (#123)
             - Extends levitation (#124)
 
-            """
-            ).lstrip(),
-        )
+        """)
+
+        self.assertEqual(0, result.exit_code)
+        self.assertEqual(expected_output, result.output)
 
     def test_title_format_false(self):
         """
