@@ -680,7 +680,10 @@ class TestCli(TestCase):
 
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write('[tool.towncrier]\nstart_string="a different start line"\n')
+                f.write(dedent("""\
+                    [tool.towncrier]
+                    start_string="a different start line"
+                """))
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
@@ -705,10 +708,7 @@ class TestCli(TestCase):
             with open("NEWS.rst", "r") as f:
                 output = f.read()
 
-        self.assertEqual(
-            output,
-            dedent(
-                """
+        expected_output = dedent("""\
             a line
 
             another
@@ -723,6 +723,7 @@ class TestCli(TestCase):
             - Adds levitation (#123)
 
 
-            """
-            ).lstrip(),
-        )
+        """)
+
+                
+        self.assertEqual(expoected_output, output)
