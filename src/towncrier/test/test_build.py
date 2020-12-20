@@ -725,5 +725,4 @@ class TestCli(TestCase):
 
         """)
 
-                
-        self.assertEqual(expoected_output, output)
+        self.assertEqual(expected_output, output)
