@@ -137,7 +137,7 @@ Towncrier has the following global options, which can be specified in the toml f
     version = "1.2.3"  # project version if maintained separately
     name = "arbitrary project name"
     template = "path/to/template.rst"
-    start_string = "start of generated content"
+    start_string = "Text used to detect where to add the generated content in the middle of a file. Generated content added after this text. Newline auto added."
     title_format = "{name} {version} ({project_date})"  # or false if template includes title
     issue_format = "format string for {issue} (issue is the first part of fragment name)"
     underlines: "=-~"

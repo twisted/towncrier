@@ -674,7 +674,9 @@ class TestCli(TestCase):
 
     def test_start_string(self):
         """
-        Rendered content added after specified start string.
+        The `start_string` configuration is used to detect the starting point
+        for inserting the generated release notes. A newline is automatically
+        added to the configured value.
         """
         runner = CliRunner()
 
@@ -682,13 +684,13 @@ class TestCli(TestCase):
             with open("pyproject.toml", "w") as f:
                 f.write(dedent("""\
                     [tool.towncrier]
-                    start_string="a different start line"
+                    start_string="Release notes start marker"
                 """))
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
             with open("NEWS.rst", "w") as f:
-                f.write("a line\n\nanother\n\na different start line\n")
+                f.write("a line\n\nanother\n\nRelease notes start marker\n")
 
             result = runner.invoke(
                 _main,
@@ -713,7 +715,7 @@ class TestCli(TestCase):
 
             another
 
-            a different start line
+            Release notes start marker
             foo 7.8.9 (01-01-2001)
             ======================
 

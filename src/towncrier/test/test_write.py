@@ -230,7 +230,8 @@ Old text.
 
     def test_multiple_file_no_start_string(self):
         """
-        Multiple file output with no start string works.
+        When no `start_string` is defined, the generated content is added at
+        the start of the file.
         """
         tempdir = self.mktemp()
         os.mkdir(tempdir)
