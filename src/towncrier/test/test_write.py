@@ -229,6 +229,9 @@ Old text.
         self.assertEqual(expected_output, output)
 
     def test_multiple_file_no_start_string(self):
+        """
+        Multiple file output with no start string works.
+        """
         tempdir = self.mktemp()
         os.mkdir(tempdir)
 
