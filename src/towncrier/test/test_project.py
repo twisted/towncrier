@@ -69,14 +69,35 @@ class VersionFetchingTests(TestCase):
         os.makedirs(os.path.join(sys_path_temp, project_name))
 
         with open(os.path.join(sys_path_temp, project_name, "__init__.py"), "w") as f:
-            f.write("__version__ = (1, 3, 13)")
+            f.write("__version__ = (2, 1, 5)")
 
         sys.path.insert(0, sys_path_temp)
         self.addCleanup(sys.path.pop, 0)
 
         version = get_version(temp, project_name)
 
-        self.assertEqual(version, "1.3.13")
+        self.assertEqual(version, "2.1.5")
+
+    def test_installed_package_found_when_no_source_present(self):
+        """
+        The version from the installed package is returned when there is no
+        package present at the provided source directory.
+        """
+        project_name = "mytestproj_only_installed"
+
+        sys_path_temp = self.mktemp()
+        os.makedirs(sys_path_temp)
+        os.makedirs(os.path.join(sys_path_temp, project_name))
+
+        with open(os.path.join(sys_path_temp, project_name, "__init__.py"), "w") as f:
+            f.write("__version__ = (3, 14)")
+
+        sys.path.insert(0, sys_path_temp)
+        self.addCleanup(sys.path.pop, 0)
+
+        version = get_version("some non-existent directory", project_name)
+
+        self.assertEqual(version, "3.14")
 
 
 class InvocationTests(TestCase):
