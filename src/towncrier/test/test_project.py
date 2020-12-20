@@ -41,7 +41,7 @@ class VersionFetchingTests(TestCase):
 
     def test_import_fails(self):
         """
-        The project cannot be found.
+        An exception is raised when getting the version failed due to missing Python package files.
         """
         if sys.version_info >= (3, 6):
             expected_exception = ModuleNotFoundError
@@ -49,7 +49,7 @@ class VersionFetchingTests(TestCase):
             expected_exception = ImportError
 
         with self.assertRaises(expected_exception):
-            get_version(".", "mytestproj_import_fails")
+            get_version(".", "projectname_without_any_files")
 
     def test_already_installed_import(self):
         """
@@ -72,10 +72,9 @@ class VersionFetchingTests(TestCase):
             f.write("__version__ = (1, 3, 13)")
 
         sys.path.insert(0, sys_path_temp)
-        try:
-            version = get_version(temp, project_name)
-        finally:
-            sys.path.pop(0)
+        self.addCleanup(sys.path.pop, 0)
+
+        version = get_version(temp, project_name)
 
         self.assertEqual(version, "1.3.13")
 

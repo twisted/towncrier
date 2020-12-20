@@ -19,8 +19,8 @@ def _get_package(package_dir, package):
     try:
         module = import_module(package)
     except ImportError:
-        # Try the dumbest and simplest thing that could possibly work.
-        # Yes, that means importing it. Call the cops, I don't care.
+        # Package is not already available / installed.
+        # Force importing it based on the source files.
         sys.path.insert(0, package_dir)
 
         try:
