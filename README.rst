@@ -146,6 +146,10 @@ Towncrier has the following global options, which can be specified in the toml f
 
 If a single file is used, the content of that file gets overwritten each time.
 
+If ``title_format`` is unspecified or an empty string, the default format will be used.
+If set to ``false``, no title will be created.
+This can be useful if the specified template creates the title itself.
+
 Furthermore, you can add your own fragment types using:
 
 .. code-block:: ini
