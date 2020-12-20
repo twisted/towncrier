@@ -1,1 +1,1 @@
-``start_line`` corrected to ``start_string`` to match the long standing implementation.
+``start_line`` corrected to ``start_string`` in the readme to match the long standing implementation.
