@@ -671,3 +671,168 @@ class TestCli(TestCase):
             """
             ).lstrip(),
         )
+
+    def test_title_format_custom(self):
+        """
+        A non-empty title format adds the specified title.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(dedent("""\
+                    [tool.towncrier]
+                    package = "foo"
+                    title_format = "[{project_date}] CUSTOM RELEASE for {name} version {version}"
+                """))
+            os.mkdir("foo")
+            os.mkdir("foo/newsfragments")
+            with open("foo/newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+            # Towncrier ignores .rst extension
+            with open("foo/newsfragments/124.feature.rst", "w") as f:
+                f.write("Extends levitation")
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--name",
+                    "FooBarBaz",
+                    "--version",
+                    "7.8.9",
+                    "--date",
+                    "20-01-2001",
+                    "--draft",
+                ],
+            )
+
+        expected_output = dedent("""\
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            [20-01-2001] CUSTOM RELEASE for FooBarBaz version 7.8.9
+            =======================================================
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+            - Extends levitation (#124)
+
+        """)
+
+        self.assertEqual(0, result.exit_code)
+        self.assertEqual(expected_output, result.output)
+
+    def test_title_format_false(self):
+        """
+        Setting the title format to false disables the explicit title.  This
+        would be used, for example, when the template creates the title itself.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(dedent("""\
+                    [tool.towncrier]
+                    package = "foo"
+                    title_format = false
+                """))
+            os.mkdir("foo")
+            os.mkdir("foo/newsfragments")
+            # Towncrier ignores .rst extension
+            with open("foo/newsfragments/124.feature.rst", "w") as f:
+                f.write("Extends levitation")
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--name",
+                    "FooBarBaz",
+                    "--version",
+                    "7.8.9",
+                    "--date",
+                    "20-01-2001",
+                    "--draft",
+                ],
+            )
+
+        expected_output = dedent("""\
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            FooBarBaz 7.8.9 (20-01-2001)
+            ============================
+
+            Features
+            --------
+
+            - Extends levitation (#124)
+
+        """)
+
+        self.assertEqual(0, result.exit_code)
+        self.assertEqual(expected_output, result.output)
+
+    def test_start_string(self):
+        """
+        The `start_string` configuration is used to detect the starting point
+        for inserting the generated release notes. A newline is automatically
+        added to the configured value.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(dedent("""\
+                    [tool.towncrier]
+                    start_string="Release notes start marker"
+                """))
+            os.mkdir("newsfragments")
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+            with open("NEWS.rst", "w") as f:
+                f.write("a line\n\nanother\n\nRelease notes start marker\n")
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--version",
+                    "7.8.9",
+                    "--name",
+                    "foo",
+                    "--date",
+                    "01-01-2001",
+                    "--yes",
+                ],
+            )
+
+            self.assertEqual(0, result.exit_code, result.output)
+            self.assertTrue(os.path.exists("NEWS.rst"), os.listdir("."))
+            with open("NEWS.rst", "r") as f:
+                output = f.read()
+
+        expected_output = dedent("""\
+            a line
+
+            another
+
+            Release notes start marker
+            foo 7.8.9 (01-01-2001)
+            ======================
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+
+
+        """)
+
+        self.assertEqual(expected_output, output)

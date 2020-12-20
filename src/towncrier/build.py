@@ -167,7 +167,7 @@ def __main(
         click.echo(rendered)
     else:
         click.echo("Writing to newsfile...", err=to_err)
-        start_line = config["start_line"]
+        start_string = config["start_string"]
         news_file = config["filename"]
 
         if config["single_file"]:
@@ -179,7 +179,7 @@ def __main(
         append_to_newsfile(
             base_directory,
             news_file,
-            start_line,
+            start_string,
             top_line,
             rendered,
             single_file=config["single_file"],
