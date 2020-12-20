@@ -732,7 +732,7 @@ class TestCli(TestCase):
 
             - Adds levitation
 
-        """),
+        """)
 
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected_output, result.output)
