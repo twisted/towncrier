@@ -779,3 +779,60 @@ class TestCli(TestCase):
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(expected_output, result.output)
+
+    def test_start_string(self):
+        """
+        The `start_string` configuration is used to detect the starting point
+        for inserting the generated release notes. A newline is automatically
+        added to the configured value.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(dedent("""\
+                    [tool.towncrier]
+                    start_string="Release notes start marker"
+                """))
+            os.mkdir("newsfragments")
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+            with open("NEWS.rst", "w") as f:
+                f.write("a line\n\nanother\n\nRelease notes start marker\n")
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--version",
+                    "7.8.9",
+                    "--name",
+                    "foo",
+                    "--date",
+                    "01-01-2001",
+                    "--yes",
+                ],
+            )
+
+            self.assertEqual(0, result.exit_code, result.output)
+            self.assertTrue(os.path.exists("NEWS.rst"), os.listdir("."))
+            with open("NEWS.rst", "r") as f:
+                output = f.read()
+
+        expected_output = dedent("""\
+            a line
+
+            another
+
+            Release notes start marker
+            foo 7.8.9 (01-01-2001)
+            ======================
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+
+
+        """)
+
+        self.assertEqual(expected_output, output)
