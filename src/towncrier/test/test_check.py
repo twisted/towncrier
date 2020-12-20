@@ -3,6 +3,7 @@
 
 import os
 import sys
+from textwrap import dedent
 
 from twisted.trial.unittest import TestCase
 from click.testing import CliRunner
@@ -11,16 +12,13 @@ from subprocess import call, Popen, PIPE
 from towncrier.check import _main
 
 
-default_project_config = """
-[tool.towncrier]
-package = "foo"
-filename = "NEWS.rst"
-"""
-
-
 def create_project(pyproject_path):
     with open(pyproject_path, "w") as f:
-        f.write(default_project_config)
+        f.write(dedent("""\
+            [tool.towncrier]
+            package = "foo"
+            filename = "NEWS.rst"
+        """))
     os.mkdir("foo")
     with open("foo/__init__.py", "w") as f:
         f.write('__version__ = "1.2.3"\n')
