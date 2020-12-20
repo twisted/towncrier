@@ -672,7 +672,7 @@ class TestCli(TestCase):
             ).lstrip(),
         )
 
-    def test_title_format_non_empty(self):
+    def test_title_format_custom(self):
         """
         A non-empty title format adds the specified title.
         """
@@ -683,7 +683,7 @@ class TestCli(TestCase):
                 f.write(dedent("""\
                     [tool.towncrier]
                     package = "foo"
-                    title_format = "abc {name} {version} ({project_date})"
+                    title_format = "[{project_date}] CUSTOM RELEASE for {name} version {version}"
                 """))
             os.mkdir("foo")
             os.mkdir("foo/newsfragments")
@@ -701,7 +701,7 @@ class TestCli(TestCase):
                     "--version",
                     "7.8.9",
                     "--date",
-                    "01-01-2001",
+                    "20-01-2001",
                     "--draft",
                 ],
             )
@@ -713,7 +713,7 @@ class TestCli(TestCase):
             Draft only -- nothing has been written.
             What is seen below is what would be written.
 
-            abc FooBarBaz 7.8.9 (01-01-2001)
+            [{20-01-2001}] CUSTOM RELEASE for FooBarBaz version 7.8.9
             ================================
 
             Features
@@ -742,8 +742,6 @@ class TestCli(TestCase):
                 """))
             os.mkdir("foo")
             os.mkdir("foo/newsfragments")
-            with open("foo/newsfragments/123.feature", "w") as f:
-                f.write("Adds levitation")
             # Towncrier ignores .rst extension
             with open("foo/newsfragments/124.feature.rst", "w") as f:
                 f.write("Extends levitation")
@@ -756,7 +754,7 @@ class TestCli(TestCase):
                     "--version",
                     "7.8.9",
                     "--date",
-                    "01-01-2001",
+                    "20-01-2001",
                     "--draft",
                 ],
             )
@@ -768,13 +766,12 @@ class TestCli(TestCase):
             Draft only -- nothing has been written.
             What is seen below is what would be written.
 
-            FooBarBaz 7.8.9 (01-01-2001)
+            FooBarBaz 7.8.9 (20-01-2001)
             ============================
 
             Features
             --------
 
-            - Adds levitation (#123)
             - Extends levitation (#124)
 
         """)
