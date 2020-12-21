@@ -224,7 +224,6 @@ def render_issue(issue_format, issue):
 def render_fragments(
     template,
     issue_format,
-    top_line,
     fragments,
     definitions,
     underlines,
@@ -232,6 +231,7 @@ def render_fragments(
     versiondata,
     top_underline="=",
     all_bullets=False,
+    render_title=True,
 ):
     """
     Render the fragments into a news file.
@@ -289,7 +289,7 @@ def render_fragments(
         return u""
 
     res = jinja_template.render(
-        top_line=top_line,
+        render_title=render_title,
         sections=data,
         definitions=definitions,
         underlines=underlines,

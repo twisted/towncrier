@@ -141,14 +141,23 @@ def __main(
         top_line = config["title_format"].format(
             name=project_name, version=project_version, project_date=project_date
         )
+        render_title_with_fragments = False
+        render_title_separately = True
+    elif config["title_format"] == False:  # noqa: E712
+        # This is an odd check but since we support both "" and False with
+        # different effects we have to do something a bit abnormal here.
+        top_line = ""
+        render_title_separately = False
+        render_title_with_fragments = False
     else:
         top_line = ""
+        render_title_separately = False
+        render_title_with_fragments = True
 
     rendered = render_fragments(
         # The 0th underline is used for the top line
         template,
         config["issue_format"],
-        top_line,
         fragments,
         definitions,
         config["underlines"][1:],
@@ -156,17 +165,17 @@ def __main(
         {"name": project_name, "version": project_version, "date": project_date},
         top_underline=config["underlines"][0],
         all_bullets=config["all_bullets"],
+        render_title=render_title_with_fragments,
     )
 
-    content = ""
-    if top_line:
-        content += "\n".join([
+    if render_title_separately:
+        content = "\n".join([
             top_line,
             config["underlines"][0] * len(top_line),
-            "",
+            rendered,
         ])
-
-    content += rendered
+    else:
+        content = rendered
 
     if draft:
         click.echo(

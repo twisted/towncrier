@@ -99,7 +99,6 @@ Old text.
             render_fragments(
                 template,
                 None,
-                "",
                 fragments,
                 definitions,
                 ["-", "~"],
@@ -214,7 +213,6 @@ Old text.
             render_fragments(
                 template,
                 None,
-                "",
                 fragments,
                 definitions,
                 ["-", "~"],
@@ -246,7 +244,6 @@ Old text.
         content = render_fragments(
             template=template,
             issue_format=None,
-            top_line="",
             fragments=fragments,
             definitions=definitions,
             underlines=["-", "~"],

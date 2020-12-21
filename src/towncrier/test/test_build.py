@@ -740,12 +740,25 @@ class TestCli(TestCase):
                     [tool.towncrier]
                     package = "foo"
                     title_format = false
+                    template = "template.rst"
                 """))
             os.mkdir("foo")
             os.mkdir("foo/newsfragments")
-            # Towncrier ignores .rst extension
-            with open("foo/newsfragments/124.feature.rst", "w") as f:
-                f.write("Extends levitation")
+            with open("template.rst", "w") as f:
+                f.write(dedent("""\
+                    Here's a hardcoded title added by the template
+                    ==============================================
+                    {% for section in sections %}
+                    {% set underline = "-" %}
+                    {% for category, val in definitions.items() if category in sections[section] %}
+
+                    {% for text, values in sections[section][category]|dictsort(by='value') %}
+                    - {{ text }}
+
+                    {% endfor %}
+                    {% endfor %}
+                    {% endfor %}
+                """))
 
             result = runner.invoke(
                 _main,
@@ -767,13 +780,8 @@ class TestCli(TestCase):
             Draft only -- nothing has been written.
             What is seen below is what would be written.
 
-            FooBarBaz 7.8.9 (20-01-2001)
-            ============================
-
-            Features
-            --------
-
-            - Extends levitation (#124)
+            Here's a hardcoded title added by the template
+            ==============================================
 
         """)
 
@@ -875,12 +883,9 @@ class TestCli(TestCase):
             result = runner.invoke(
                 _main,
                 [
-                    "--version",
-                    "7.8.9",
-                    "--name",
-                    "foo",
-                    "--date",
-                    "01-01-2001",
+                    "--version=7.8.9",
+                    "--name=foo",
+                    "--date=20-01-2001",
                     "--draft",
                 ],
             )
@@ -892,7 +897,7 @@ class TestCli(TestCase):
             Draft only -- nothing has been written.
             What is seen below is what would be written.
 
-            7.8.9 - 01-01-2001
+            7.8.9 - 20-01-2001
             ==================
 
             - Adds levitation
