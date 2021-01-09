@@ -1,1 +1,0 @@
-The ``single_file`` option can now be added to the configuration file. When set to ``true``, the filename key can now be formattable with the ``name``, ``version``, and ``project_date`` format variables. This allows subsequent versions to be written out to new files instead of appended to an existing one. 
