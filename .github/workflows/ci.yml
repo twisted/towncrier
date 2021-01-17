@@ -159,7 +159,7 @@ jobs:
     needs:
       - test
       - check
-      - publish
+      - pypi-publish
     steps:
       - name: This
         shell: python
