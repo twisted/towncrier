@@ -56,7 +56,7 @@ exclude = '''
 
 [build-system]
 requires = [
-    "setuptools ~= 51.2",
+    "setuptools ~= 44.1.1",
     "wheel ~= 0.36.2",
     "incremental == 17.5.0",
 ]
