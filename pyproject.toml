@@ -53,3 +53,11 @@ exclude = '''
   )/
 )
 '''
+
+[build-system]
+requires = [
+    "setuptools ~= 51.2",
+    "wheel ~= 0.36.2",
+    "incremental == 17.5.0",
+]
+build-backend = "setuptools.build_meta"
