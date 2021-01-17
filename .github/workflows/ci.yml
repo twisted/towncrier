@@ -151,7 +151,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       uses: pypa/gh-action-pypi-publish@v1.3.1
       with:
-        password: ${{ secrets.PYPI_UPLOAD_TOKEN }}
+        password: ${{ secrets.PYPI_TOKEN }}
 
   all:
     name: All
