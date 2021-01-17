@@ -7,7 +7,9 @@ include tox.ini
 recursive-include src *.rst
 
 exclude bin
+exclude admin
 exclude src/towncrier/newsfragments
 
 recursive-exclude bin *
+recursive-exclude admin *
 recursive-exclude src/towncrier/newsfragments *
