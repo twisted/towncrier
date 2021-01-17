@@ -1,0 +1,1 @@
+CPython 3.8 and 3.9 are now part of our automated test matrix and are officially supported.
