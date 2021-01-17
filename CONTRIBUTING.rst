@@ -25,9 +25,9 @@ Step-by-step
   - towncrier uses `CalVer <https://calver.org/>`_ of the form ``YY.MM.micro`` with the micro version just incrementing.
   - Normalize the version according to `PEP 440 <https://www.python.org/dev/peps/pep-0440/#normalization>`_.
 
-    - ``venv/bin/python -c 'import sys; import packaging.utils; print(packaging.utils.canonicalize_version(sys.argv[1]))' 19.09.00-rc1``
-    - Outputs ``19.9rc1``
-    - # TODO: add a helper script...
+    - This requires that ``towncrier[dev]`` extra is installed.
+    - ``venv/bin/python admin/canonicalize_version.py 19.09.00-rc1``
+    - Outputs ``19.9rc1`` which is the form to be used.
 
 - Create a release branch with a name of the form ``release-19.9`` starting from the ``master`` branch.
 
