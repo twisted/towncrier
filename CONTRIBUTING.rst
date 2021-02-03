@@ -48,7 +48,7 @@ Step-by-step
 
 - Commit and push to the primary repository, not a fork.
 
-  - It is important to not use a fork so that pushed tags end up in the primary repository.
+  - It is important to not use a fork so that pushed tags end up in the primary repository, server provided secrets for publishing to PyPI are available, and maybe more.
 
 - If working on the first release candidate from this branch, create a PR named in the form ``Release 19.9``.
 
