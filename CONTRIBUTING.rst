@@ -83,6 +83,4 @@ Step-by-step
 
   - In ``src/towncrier/_version.py`` the version is set using ``incremental`` such as ``__version__ = Version('towncrier', 19, 9, 1, dev=0)``
 
-- Request a review and address raised concerns until receiving an approval.
-
-- With an approving review, merge.
+- Merge without waiting for an approving review.
