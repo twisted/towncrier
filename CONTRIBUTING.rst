@@ -59,9 +59,9 @@ Step-by-step
   - This will result in another build which will publish to PyPI.
   - Confirm the presence of the release on PyPI.
 
-- If not processing the final release, `dismiss the approving review <https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/dismissing-a-pull-request-review>`_.
+- `Dismiss the approving review <https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/dismissing-a-pull-request-review>`_.
 
-  - The review process will be reused for any subsequent release candidates as well as the final release so it must be cleared at each stage.
+  - The review process will be reused for any subsequent release candidates, the final release, and the post-release tweaks so it must be cleared at each stage.
 
 - Notify the `Twisted-Python maillist <https://twistedmatrix.com/cgi-bin/mailman/listinfo/twisted-python>`_ of the release to allow for feedback if a pre-release and just for notification if a final release.
 
@@ -77,6 +77,12 @@ Step-by-step
 
   - Return to the towncrier build step and continue.
 
-- Once the final release has been made, leave the approving review intact and merge the PR.
+- If the final release has been completed, continue below.
 
-# TODO: should we have an indicator on the version for interrim development or just leave the last release version intact?
+- Increment the patch version by one and set to a development version.
+
+  - In ``src/towncrier/_version.py`` the version is set using ``incremental`` such as ``__version__ = Version('towncrier', 19, 9, 1, dev=0)``
+
+- Request a review and address raised concerns until receiving an approval.
+
+- With an approving review, merge.
