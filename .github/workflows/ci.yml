@@ -48,7 +48,7 @@ jobs:
           - name: PyPy 2.7
             tox: pypy27
             action: pypy-2.7
-            tox_major: 4
+            tox_major: 3
           - name: PyPy 3.6
             tox: pypy36
             action: pypy-3.6
