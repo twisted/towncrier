@@ -103,6 +103,7 @@ jobs:
           - name: CPython 3.8
             tox: py38
             action: 3.8
+            tox_command: tox4
         task:
           - name: Flake8
             tox: flake8
