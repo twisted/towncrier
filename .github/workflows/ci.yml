@@ -80,9 +80,7 @@ jobs:
     - uses: twisted/python-info-action@v1.0.1
 
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip codecov
-        python -m pip install --upgrade --pre tox
+      run: python -m pip install --upgrade pip tox codecov
 
     - name: Test
       run: ${{ matrix.python.tox_command }} -c tox.ini -e ${{ matrix.python.tox }}-tests
@@ -125,9 +123,7 @@ jobs:
     - uses: twisted/python-info-action@v1.0.1
 
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip codecov
-        python -m pip install --upgrade --pre tox
+      run: python -m pip install --upgrade pip tox
 
     - name: Check
       run: ${{ matrix.python.tox_command }} -c tox.ini -e ${{ matrix.task.tox }}
