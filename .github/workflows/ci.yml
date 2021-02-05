@@ -24,30 +24,39 @@ jobs:
           - name: CPython 2.7
             tox: py27
             action: 2.7
+            tox_command: tox
           - name: CPython 3.5
             tox: py35
             action: 3.5
+            tox_command: tox
           - name: CPython 3.6
             tox: py36
             action: 3.6
+            tox_command: tox4
           - name: CPython 3.7
             tox: py37
             action: 3.7
+            tox_command: tox4
           - name: CPython 3.8
             tox: py38
             action: 3.8
+            tox_command: tox4
           - name: CPython 3.9
             tox: py39
             action: 3.9
+            tox_command: tox4
           - name: PyPy 2.7
             tox: pypy27
             action: pypy-2.7
+            tox_command: tox
           - name: PyPy 3.6
             tox: pypy36
             action: pypy-3.6
+            tox_command: tox4
           - name: PyPy 3.7
             tox: pypy37
             action: pypy-3.7
+            tox_command: tox4
         task:
           - name: Test
             tox: tests
@@ -76,7 +85,7 @@ jobs:
         python -m pip install --upgrade --pre tox
 
     - name: Test
-      run: tox4 -c tox.ini -e ${{ matrix.python.tox }}-tests
+      run: ${{ matrix.python.tox_command }} -c tox.ini -e ${{ matrix.python.tox }}-tests
 
     - name: Codecov
       run: |
@@ -120,7 +129,7 @@ jobs:
         python -m pip install --upgrade --pre tox
 
     - name: Check
-      run: tox4 -c tox.ini -e ${{ matrix.task.tox }}
+      run: ${{ matrix.python.tox_command }} -c tox.ini -e ${{ matrix.task.tox }}
 
   all:
     name: All
