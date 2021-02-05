@@ -38,6 +38,7 @@ setup(
     use_incremental=True,
     setup_requires=["incremental"],
     install_requires=["click", "click-default-group", "incremental", "jinja2", "toml"],
+    extras_require={"dev": ["packaging"]},
     package_dir={"": "src"},
     packages=find_packages("src"),
     license="MIT",
