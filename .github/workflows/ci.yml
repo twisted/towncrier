@@ -83,7 +83,7 @@ jobs:
       if: matrix.python.major == 3
       run: |
         python -m venv a_unique_env_directory
-        tree a_unique_env_directory
+        tree /f a_unique_env_directory
 
     - name: Install dependencies
       run: python -m pip install --upgrade pip tox codecov
