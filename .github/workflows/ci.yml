@@ -24,30 +24,39 @@ jobs:
           - name: CPython 2.7
             tox: py27
             action: 2.7
+            major: 2
           - name: CPython 3.5
             tox: py35
             action: 3.5
+            major: 3
           - name: CPython 3.6
             tox: py36
             action: 3.6
+            major: 3
           - name: CPython 3.7
             tox: py37
             action: 3.7
+            major: 3
           - name: CPython 3.8
             tox: py38
             action: 3.8
+            major: 3
           - name: CPython 3.9
             tox: py39
             action: 3.9
+            major: 3
           - name: PyPy 2.7
             tox: pypy27
             action: pypy-2.7
+            major: 2
           - name: PyPy 3.6
             tox: pypy36
             action: pypy-3.6
+            major: 3
           - name: PyPy 3.7
             tox: pypy37
             action: pypy-3.7
+            major: 3
         task:
           - name: Test
             tox: tests
@@ -71,7 +80,10 @@ jobs:
     - uses: twisted/python-info-action@v1.0.1
 
     - name: Try creating an env
-      run: python -m venv a_unique_env_directory
+      if: matrix.python.major == 3
+      run: |
+        python -m venv a_unique_env_directory
+        tree a_unique_env_directory
 
     - name: Install dependencies
       run: python -m pip install --upgrade pip tox codecov
