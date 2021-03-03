@@ -111,7 +111,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: dist
-        path: dist
+        path: dist/
 
     - name: Set up ${{ matrix.python.name }}
       uses: actions/setup-python@v2
