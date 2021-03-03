@@ -95,14 +95,6 @@ jobs:
         task:
           - name: Test
             tox: tests
-        exclude:
-          # Twisted and thus trial do not work on Windows with CPython 3.9.
-          # This will be fixed with the next release.
-          # https://twistedmatrix.com/trac/ticket/10027
-          - python:
-              tox: py39
-            os:
-              name: Windows
 
     steps:
     - uses: actions/checkout@v2
