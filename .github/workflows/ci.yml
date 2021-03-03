@@ -36,10 +36,10 @@ jobs:
       with:
         python-version: ${{ matrix.python.action }}
 
-    - uses: twisted/python-info-action@v1.0.1
-
     - name: Install dependencies
       run: python -m pip install --upgrade pip tox
+
+    - uses: twisted/python-info-action@v1
 
     - name: Tox
       run: tox -c tox.ini -e ${{ matrix.task.tox }}
@@ -118,10 +118,10 @@ jobs:
       with:
         python-version: ${{ matrix.python.action }}
 
-    - uses: twisted/python-info-action@v1.0.1
-
     - name: Install dependencies
       run: python -m pip install --upgrade pip tox codecov
+
+    - uses: twisted/python-info-action@v1
 
     - name: Tox
       run: tox -c tox.ini --installpkg dist/*.whl -e ${{ matrix.python.tox }}-tests
@@ -160,10 +160,10 @@ jobs:
       with:
         python-version: ${{ matrix.python.action }}
 
-    - uses: twisted/python-info-action@v1.0.1
-
     - name: Install dependencies
       run: python -m pip install --upgrade pip tox
+
+    - uses: twisted/python-info-action@v1
 
     - name: Tox
       run: tox -c tox.ini -e ${{ matrix.task.tox }}
