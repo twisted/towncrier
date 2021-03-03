@@ -76,6 +76,11 @@ jobs:
     - name: Test
       run: tox -c tox.ini -e ${{ matrix.python.tox }}-tests
 
+    - name: Tree
+      if: always()
+      shell: bash
+      run: tree .tox
+
     - name: Codecov
       run: |
         codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}"
