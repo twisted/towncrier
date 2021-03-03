@@ -4,6 +4,7 @@ include LICENSE
 include CODE_OF_CONDUCT.md
 include pyproject.toml
 include tox.ini
+include tox_build.sh
 recursive-include src *.rst
 
 exclude bin
