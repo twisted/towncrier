@@ -43,7 +43,7 @@ jobs:
         mkdir empty
         cd empty
         # build the sdist
-        python -m build --sdist --outdir ../dist/ .
+        python -m build --sdist --outdir ../dist/ ..
         tar -xvf ../dist/*
         cd *
         # build the wheel from the sdist
