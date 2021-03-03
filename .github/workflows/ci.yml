@@ -26,6 +26,7 @@ jobs:
             action: 3.8
         task:
           - name: Build
+            tox: build
 
     steps:
     - uses: actions/checkout@v2
@@ -42,16 +43,8 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install --upgrade build
 
-    - name: Build
-      run: |
-        mkdir empty
-        cd empty
-        # build the sdist
-        python -m build --sdist --outdir ../dist/ ..
-        tar -xvf ../dist/*
-        cd *
-        # build the wheel from the sdist
-        python -m build --wheel --outdir ../../dist/ .
+    - name: Tox
+      run: tox -c tox.ini -e ${{ matrix.task.tox }}
 
     - name: Publish
       uses: actions/upload-artifact@v2
@@ -132,7 +125,7 @@ jobs:
     - name: Install dependencies
       run: python -m pip install --upgrade pip tox codecov
 
-    - name: Test
+    - name: Tox
       run: tox -c tox.ini --installpkg dist/*.whl -e ${{ matrix.python.tox }}-tests
 
     - name: Codecov
@@ -174,7 +167,7 @@ jobs:
     - name: Install dependencies
       run: python -m pip install --upgrade pip tox
 
-    - name: Check
+    - name: Tox
       run: tox -c tox.ini -e ${{ matrix.task.tox }}
 
   all:
