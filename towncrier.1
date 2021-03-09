@@ -1,0 +1,250 @@
+.ds command towncrier
+.ds COMMAND TOWNCRIER
+
+.TH "\*[COMMAND]" 1 "2021-03-10" "Debian"
+
+.SH NAME
+.B \*[command]
+\- Compiler for project news file
+
+.SH SYNOPSIS
+
+.SS USAGE
+
+.SY \*[command]
+.OP OPTIONS
+COMMAND
+.OP ARGS
+\& ...
+.YS
+
+.SS OPTIONS
+
+.SY \*[command]
+.OP \-\-help
+.YS
+
+.SS COMMANDS
+
+.SY towncrier
+.B build
+.OP \-\-config TEXT
+.OP \-\-date TEXT
+.OP \-\-draft TEXT
+.OP \-\-help
+.OP \-\-name TEXT
+.OP \-\-version TEXT
+.OP \-\-yes
+.YS
+
+.SY towncrier
+.B check
+.OP \-\-compare-with TEXT
+.OP \-\-config TEXT
+.OP \-\-dir TEXT
+.OP \-\-help
+.YS
+
+.SY towncrier
+.B create
+.OP \-\-config TEXT
+.OP \-\-dir TEXT
+.OP \-\-edit TEXT
+.OP \-\-help
+.OP \-\-no-edit TEXT
+.YS
+
+.SH DESCRIPTION
+
+.P
+Towncrier is a utility to produce useful, summarised news files for your project.
+Rather than reading the Git history as some newer tools to produce it, or having
+one single file which developers all write to, towncrier reads "news fragments"
+which contain information useful to end users.
+
+.P
+Towncrier delivers the news which is convenient to those that hear it, not those
+that write it.
+
+.P
+That is, a “news fragment” (a small file containing just enough information to
+be useful to end users) can be written that summarises what has changed from the
+“developer log” (which may contain complex information about the original issue,
+how it was fixed, who authored the fix, and who reviewed the fix). By compiling
+a collection of these fragments, towncrier can produce a digest of the changes
+which is valuable to those who may wish to use the software.
+
+.SH COMMAND LINE OPTIONS
+
+.TP
+.B \-\-help
+Show a message with usage, options and commands.
+
+.\" START BUILD COMMAND "
+.TP
+.B build
+.RS
+Build a combined news file from news fragment.
+
+.TQ
+.B \-\-draft
+.RS
+Render the news fragments, don't write to files, don't check versions.
+.RE
+
+.TQ
+.BI \-\-dir " TEXT"
+.RS
+Build fragment in directory \f[I]TEXT\f[] (Default: \f[I]$PWD\f[]).
+.RE
+
+.TQ
+.BI \-\-name " TEXT"
+.RS
+Pass a custom project name \f[I]TEXT\f[].
+.RE
+
+.TQ
+.BI \-\-version " TEXT"
+.RS
+Render the news fragments using given version.
+.RE
+
+.TQ
+.BI \-\-yes
+.RS
+Do not ask for confirmation to remove news fragments.
+.RE
+
+.TQ
+.BI \-\-help
+.RS
+Show a message with available options for build.
+.RE
+
+.RE
+.\" END BUILD COMMAND "
+
+.\" START CHECK COMMAND "
+.TP
+.B check
+.RS
+Check for new fragments on a branch.
+
+.TQ
+.BI \-\-compare-with " TEXT"
+.RS
+Checks which files changed running \f[B]git diff --name-ony\f[] \f[I]TEXT\f[]
+\f[B]...\f[] where \f[I]TEXT\f[] is the branch to be compared with. (Default:
+origin/master)
+.RE
+
+.TQ
+.BI \-\-dir " TEXT"
+.RS
+Check fragment in directory \f[I]TEXT\f[] (Default: \f[I]$PWD\f[]).
+.RE
+
+.TQ
+.BI \-\-config " TEXT"
+.RS
+Pass a custom config file called \f[I]TEXT\f[]. (Default: towncrier will look for
+towncrier.toml or pyproject.toml file, if both files exist, the first will take
+precedence as \f[I]TEXT\f[]).
+.RE
+
+.TQ
+.BI \-\-help
+.RS
+Show a message with available options for check.
+.RE
+
+.RE
+.\" END CHECK COMMAND "
+
+.\" START CREATE COMMAND "
+.TP
+.BI create " FRAGMENTNAME"
+
+.RS
+.P
+Create a new news fragment called \f[I]FRAGMENTNAME\f[] or pass the full path
+for a file. Towncrier has a few standard types of news fragments, signified by
+the file extension. These are:
+
+.RS
+.TP
+".feature": a new feature,
+.TP
+".bugfix": a bug fix,
+.TP
+".doc": a documentation improvement,
+.TP
+".removal": a deprecation or removal of public API,
+.TP
+".misc": a ticket has been closed, but it is not of interest to users.
+.RE
+
+.\" START CREATE OPTIONS "
+.TQ
+.BI \-\-help
+.RS
+Show a message with available options for create.
+.RE
+
+.TQ
+.BI \-\-dir " TEXT"
+.RS
+Create fragment in directory \f[I]TEXT\f[] (Default: \f[I]$PWD\f[]).
+.RE
+
+.TQ
+.BI \-\-config " TEXT"
+.RS
+Pass a custom config file called \f[I]TEXT\f[]. (Default: towncrier will look for
+towncrier.toml or pyproject.toml file, if both files exist, the first will take
+precedence as \f[I]TEXT\f[]).
+.RE
+
+.TQ
+.BI \-\-edit | \-\-no\-edit
+.RS
+Open an editor for writing the newsfragment content.
+.RE
+.\" END CREATE OPTIONS "
+
+.RE
+.\" END CREATE COMMAND "
+
+.SH REPORTING BUGS
+
+.P
+Please report any bugs using
+.UR https://github.com/twisted/towncrier/issues/new
+the GitHub issue tracker
+.UE .
+
+.SH SEE ALSO
+
+.P
+For more information, you may visit the
+.UR https://github.com/twisted/towncrier
+source code
+.UE .
+
+.SH AUTHOR
+\fBTowncrier\fR is copyright (c) 2015-2016, Amber Brown, meejah.
+
+.P
+This manual page was written by
+.UR sergiosacj@hotmail.com.br
+Sérgio de Almeida Cipriano Junior
+.UE .
+It was written for the Debian GNU/Linux system but may be used by others.
+
+.P
+Both towncrier and this documentation are released under the terms of the
+MIT License. You may view the license on the
+.UR https://github.com/twisted/towncrier/blob/master/LICENSE
+upstream repository
+.UE .
