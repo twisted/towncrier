@@ -1,6 +1,6 @@
 # build the sdist
 
-set -e
+set -evx
 
 check-manifest --ignore "admin/**"
 python -m build --sdist --outdir ${toxinidir}/dist/ ${toxinidir}

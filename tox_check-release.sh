@@ -1,5 +1,5 @@
 #!/usr/bin/bash
 
-set -e
+set -evx
 
 twine check {toxinidir}/dist/*
