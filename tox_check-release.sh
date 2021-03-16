@@ -2,4 +2,4 @@
 
 set -evx
 
-twine check {toxinidir}/dist/*
+twine check ${toxinidir}/dist/*
