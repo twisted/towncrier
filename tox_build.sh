@@ -2,6 +2,8 @@
 
 set -evx
 
+ls -la
+
 check-manifest --ignore "admin/**"
 python -m build --sdist --outdir ${toxinidir}/dist/ ${toxinidir}
 tar -xvf ${toxinidir}/dist/*
