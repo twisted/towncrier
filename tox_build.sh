@@ -1,4 +1,8 @@
 # build the sdist
+
+set -e
+
+check-manifest --ignore "admin/**"
 python -m build --sdist --outdir ${toxinidir}/dist/ ${toxinidir}
 tar -xvf ${toxinidir}/dist/*
 cd *
