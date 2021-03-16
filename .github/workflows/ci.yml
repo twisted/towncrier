@@ -149,6 +149,12 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Download package files
+      uses: actions/download-artifact@v2
+      with:
+        name: dist
+        path: dist/
+
     - name: Set up ${{ matrix.python.name }}
       uses: actions/setup-python@v2
       with:
