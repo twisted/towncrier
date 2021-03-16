@@ -53,7 +53,8 @@ jobs:
   test:
     name: ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}
     runs-on: ${{ matrix.os.runs-on }}
-    needs: build
+    needs:
+      - build
     strategy:
       fail-fast: false
       matrix:
@@ -125,6 +126,8 @@ jobs:
   check:
     name: ${{ matrix.task.name}} - ${{ matrix.python.name }}
     runs-on: ubuntu-latest
+    needs:
+      - build
     strategy:
       fail-fast: false
       matrix:
