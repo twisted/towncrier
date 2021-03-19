@@ -30,19 +30,19 @@ Step-by-step
 - Define the final release version you are preparing.
 
   - towncrier uses `CalVer <https://calver.org/>`_ of the form ``YY.MM.micro`` with the micro version just incrementing.
-  - Normalize the version according to `PEP 440 <https://www.python.org/dev/peps/pep-0440/#normalization>`_.
+  - Normalize the version according to `incremental <https://github.com/twisted/incremental/>`_.
 
     - This requires that ``towncrier[dev]`` extra is installed.
     - ``venv/bin/python admin/canonicalize_version.py 19.09.00-rc1``
-    - Outputs ``19.9rc1`` which is the form to be used.
+    - Outputs ``19.9.0.rc1`` which is the form to be used.
 
-- Create a release branch with a name of the form ``release-19.9`` starting from the ``master`` branch.
+- Create a release branch with a name of the form ``release-19.9.0`` starting from the ``master`` branch.
 
   - On the new release branch you will commit all tagged release candidate commits as well as the final tagged release commit.
 
 - Update the version to the release candidate with the first being ``rc1`` (as opposed to 0).
 
-  - In ``src/towncrier/_version.py`` the version is set using ``incremental`` such as ``__version__ = Version('towncrier', 19, 9, release_candidate=1)``
+  - In ``src/towncrier/_version.py`` the version is set using ``incremental`` such as ``__version__ = Version('towncrier', 19, 9, 0, release_candidate=1)``
 
 - Run ``venv/bin/towncrier build --yes`` to build the the newsfragments into the release notes document and to automatically remove the newsfragment files.
 
@@ -54,7 +54,7 @@ Step-by-step
 
 - Request a review and address raised concerns until receiving an approval.
 
-- Tag that commit such as ``19.9rc1`` and push the tag to the primary repository.
+- Tag that commit such as ``19.9.0.rc1`` and push the tag to the primary repository.
 
   - This will result in another build which will publish to PyPI.
   - Confirm the presence of the release on PyPI.
@@ -73,7 +73,7 @@ Step-by-step
 
 - If ready for a final release, remove the release candidate indicator from the version.
 
-  - Edit ``src/towncrier/_version.py`` such as ``__version__ = Version('towncrier', 19, 9)`` to remove the release candidate indication.
+  - Edit ``src/towncrier/_version.py`` such as ``__version__ = Version('towncrier', 19, 9, 0)`` to remove the release candidate indication.
 
   - Return to the towncrier build step and continue.
 
