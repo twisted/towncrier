@@ -2,6 +2,12 @@
 
 .. towncrier release notes start
 
+towncrier 19.9.0 (2021-03-20)
+=============================
+
+No significant changes.
+
+
 towncrier 19.9.0rc1 (2019-09-16)
 ================================
 
