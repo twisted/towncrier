@@ -5,11 +5,10 @@
 Build a combined news file from news fragments.
 """
 
-from __future__ import absolute_import, division
+from __future__ import absolute_import, division, print_function
 
 import os
 import click
-import traceback
 import sys
 
 from datetime import date
@@ -69,12 +68,9 @@ def _main(
             project_date,
             answer_yes,
         )
-    except Exception as e:
-        if isinstance(e, ConfigError):
-            print(e)
-        else:
-            traceback.print_exc(file=sys.stderr)
-        raise
+    except ConfigError as e:
+        print(e, file=sys.stderr)
+        sys.exit(1)
 
 
 def __main(
@@ -119,20 +115,24 @@ def __main(
     )
 
     if project_version is None:
-        project_version = get_version(
-            os.path.join(base_directory, config["package_dir"]), config["package"]
-        ).strip()
+        project_version = config.get('version')
+        if project_version is None:
+            project_version = get_version(
+                os.path.join(base_directory, config["package_dir"]), config["package"]
+            ).strip()
 
     if project_name is None:
-        package = config.get("package")
-        if package:
-            project_name = get_project_name(
-                os.path.abspath(os.path.join(base_directory, config["package_dir"])),
-                package,
-            )
-        else:
-            # Can't determine a project_name, but maybe it is not needed.
-            project_name = ""
+        project_name = config.get('name')
+        if not project_name:
+            package = config.get("package")
+            if package:
+                project_name = get_project_name(
+                    os.path.abspath(os.path.join(base_directory, config["package_dir"])),
+                    package,
+                )
+            else:
+                # Can't determine a project_name, but maybe it is not needed.
+                project_name = ""
 
     if project_date is None:
         project_date = _get_date().strip()
@@ -141,7 +141,6 @@ def __main(
         top_line = config["title_format"].format(
             name=project_name, version=project_version, project_date=project_date
         )
-        top_line += u"\n" + (config["underlines"][0] * len(top_line)) + u"\n"
     else:
         top_line = ""
 
@@ -149,6 +148,7 @@ def __main(
         # The 0th underline is used for the top line
         template,
         config["issue_format"],
+        top_line,
         fragments,
         definitions,
         config["underlines"][1:],
@@ -164,13 +164,10 @@ def __main(
             "What is seen below is what would be written.\n",
             err=to_err,
         )
-        if top_line:
-            click.echo("\n%s\n%s" % (top_line, rendered))
-        else:
-            click.echo(rendered)
+        click.echo(rendered)
     else:
         click.echo("Writing to newsfile...", err=to_err)
-        start_line = config["start_line"]
+        start_string = config["start_string"]
         news_file = config["filename"]
 
         if config["single_file"]:
@@ -182,7 +179,7 @@ def __main(
         append_to_newsfile(
             base_directory,
             news_file,
-            start_line,
+            start_string,
             top_line,
             rendered,
             single_file=config["single_file"],

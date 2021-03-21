@@ -8,11 +8,12 @@ affecting existing content.
 
 from __future__ import absolute_import, division
 
+import io
 import os
 
 
 def append_to_newsfile(
-    directory, filename, start_line, top_line, content, single_file=True
+    directory, filename, start_string, top_line, content, single_file=True
 ):
 
     news_file = os.path.join(directory, filename)
@@ -21,9 +22,9 @@ def append_to_newsfile(
         if not os.path.exists(news_file):
             existing_content = u""
         else:
-            with open(news_file, "rb") as f:
-                existing_content = f.read().decode("utf8")
-        existing_content = existing_content.split(start_line, 1)
+            with io.open(news_file, "r", encoding="utf8") as f:
+                existing_content = f.read()
+        existing_content = existing_content.split(start_string, 1)
     else:
         existing_content = [u""]
 
@@ -34,11 +35,12 @@ def append_to_newsfile(
 
         if len(existing_content) > 1:
             f.write(existing_content.pop(0).rstrip().encode("utf8"))
-            if start_line:
-                f.write((u"\n\n" + start_line + u"\n").encode("utf8"))
+            if start_string:
+                f.write((u"\n\n" + start_string + u"\n").encode("utf8"))
 
         f.write(top_line.encode("utf8"))
         f.write(content.encode("utf8"))
-        if existing_content[0]:
-            f.write(b"\n\n")
-        f.write(existing_content[0].lstrip().encode("utf8"))
+        if existing_content:
+            if existing_content[0]:
+                f.write(b"\n\n")
+            f.write(existing_content[0].lstrip().encode("utf8"))

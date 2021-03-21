@@ -4,43 +4,61 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import sys
 import textwrap
+import traceback
 
 from collections import OrderedDict
 
 from jinja2 import Template
 
+from ._settings import ConfigError
+
+
+def strip_if_integer_string(s):
+    try:
+        i = int(s)
+    except ValueError:
+        return s
+
+    return str(i)
+
 
 # Returns ticket, category and counter or (None, None, None) if the basename
-# could not be parsed
+# could not be parsed or doesn't contain a valid category.
 def parse_newfragment_basename(basename, definitions):
-    parts = basename.split(u".")
+    invalid = (None, None, None)
+    parts = basename.split(".")
 
     if len(parts) == 1:
-        return (None, None, None)
+        return invalid
     if len(parts) == 2:
         ticket, category = parts
-        return ticket, category, 0
+        ticket = strip_if_integer_string(ticket)
+        return (ticket, category, 0) if category in definitions else invalid
 
-    # fix-1.2.3.feature and fix.1.feature.2 are valid formats. The former is
-    # used in projects which don't put ticket numbers to newfragment names.
-    if parts[-1] in definitions:
-        category = parts[-1]
-        ticket = parts[-2]
-        return ticket, category, 0
-
-    # If there is a number after the category then use it as a counter,
-    # otherwise ignore it.
-    # This means 1.feature.1 and 1.feature do not conflict but
-    # 1.feature.rst and 1.feature do.
-    counter = 0
-    try:
-        counter = int(parts[-1])
-    except ValueError:
-        pass
-    category = parts[-2]
-    ticket = parts[-3]
-    return ticket, category, counter
+    # There are at least 3 parts. Search for a valid category from the second
+    # part onwards.
+    # The category is used as the reference point in the parts list to later
+    # infer the issue number and counter value.
+    for i in range(1, len(parts)):
+        if parts[i] in definitions:
+            # Current part is a valid category according to given definitions.
+            category = parts[i]
+            # Use the previous part as the ticket number.
+            # NOTE: This allows news fragment names like fix-1.2.3.feature or
+            # something-cool.feature.ext for projects that don't use ticket
+            # numbers in news fragment names.
+            ticket = strip_if_integer_string(parts[i-1])
+            counter = 0
+            # Use the following part as the counter if it exists and is a valid
+            # digit.
+            if len(parts) > (i + 1) and parts[i+1].isdigit():
+                counter = int(parts[i+1])
+            return ticket, category, counter
+    else:
+        # No valid category found.
+        return invalid
 
 
 # Returns a structure like:
@@ -72,7 +90,18 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
         else:
             section_dir = os.path.join(base_directory, val)
 
-        files = os.listdir(section_dir)
+        if sys.version_info >= (3,):
+            expected_exception = FileNotFoundError
+        else:
+            expected_exception = OSError
+
+        try:
+            files = os.listdir(section_dir)
+        except expected_exception as e:
+            message = "Failed to list the news fragment files.\n{}".format(
+                ''.join(traceback.format_exception_only(type(e), e)),
+            )
+            raise ConfigError(message)
 
         file_content = {}
 
@@ -81,7 +110,7 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
             ticket, category, counter = parse_newfragment_basename(
                 basename, definitions
             )
-            if category is None or category not in definitions:
+            if category is None:
                 continue
 
             full_filename = os.path.join(section_dir, basename)
@@ -195,6 +224,7 @@ def render_issue(issue_format, issue):
 def render_fragments(
     template,
     issue_format,
+    top_line,
     fragments,
     definitions,
     underlines,
@@ -259,6 +289,7 @@ def render_fragments(
         return u""
 
     res = jinja_template.render(
+        top_line=top_line,
         sections=data,
         definitions=definitions,
         underlines=underlines,

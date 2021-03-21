@@ -1,11 +1,14 @@
 Hear ye, hear ye, says the ``towncrier``
 ========================================
 
-.. image:: https://travis-ci.org/hawkowl/towncrier.svg?branch=master
-    :target: https://travis-ci.org/hawkowl/towncrier
+.. image:: https://img.shields.io/github/workflow/status/twisted/towncrier/CI/master
+    :alt: GitHub Actions
+    :target: https://github.com/twisted/towncrier/actions?query=branch%3Amaster
 
-.. image:: https://codecov.io/github/hawkowl/towncrier/coverage.svg?branch=master
-    :target: https://codecov.io/github/hawkowl/towncrier?branch=master
+.. image:: https://img.shields.io/codecov/c/github/twisted/towncrier/master
+    :alt: Codecov
+    :target: https://app.codecov.io/gh/twisted/towncrier/branch/master
+
 
 ``towncrier`` is a utility to produce useful, summarised news files for your project.
 Rather than reading the Git history as some newer tools to produce it, or having one single file which developers all write to, ``towncrier`` reads "news fragments" which contain information `useful to end users`.
@@ -32,24 +35,26 @@ Install from PyPI::
 .. note::
 
    ``towncrier``, as a command line tool, works on Python 3.5+ only.
-   It is usable by projects written in other languages, provided you give it the version of the project when invoking it.
+   It is usable by projects written in other languages, provided you specify the project version either in the configuration file or on the command line.
    For Python 2/3 compatible projects, the version can be discovered automatically.
 
-In your project root, add a ``towncrier.toml`` file.
+In your project root, add a ``towncrier.toml`` or a ``pyproject.toml`` file (if both files exist, the first will take precedence).
 You can configure your project in two ways.
-To configure it via an explicit directory, add::
+To configure it via an explicit directory, add:
+
+.. code-block:: toml
 
     [tool.towncrier]
-        directory = "changes"
+    directory = "changes"
 
 Alternatively, to configure it relative to a (Python) package directory, add:
 
 .. code-block:: toml
 
     [tool.towncrier]
-        package = "mypackage"
-        package_dir = "src"
-        filename = "NEWS.rst"
+    package = "mypackage"
+    package_dir = "src"
+    filename = "NEWS.rst"
 
 .. note::
 
@@ -66,12 +71,20 @@ Using the above example, your news fragments would be ``src/myproject/newsfragme
 
     This will keep the folder around, but otherwise "empty".
 
-``towncrier`` needs to know what version your project is, and there are two ways you can give it:
+``towncrier`` needs to know what version your project is, and there are three ways you can give it:
 
 - For Python 2/3 compatible projects, a ``__version__`` in the top level package.
   This can be either a string literal, a tuple, or an `Incremental <https://github.com/hawkowl/incremental>`_ version.
 
 - Manually passing ``--version=<myversionhere>`` when interacting with ``towncrier``.
+
+- Definining a ``version`` option in a configuration file:
+
+.. code-block:: ini
+
+    [tool.towncrier]
+    # ...
+    version = "1.2.3"  # project version if maintained separately
 
 To create a new news fragment, use the ``towncrier create`` command.
 For example::
@@ -86,7 +99,7 @@ To produce the news file for real, run::
 
     towncrier build
 
-This command will remove the news files (with ``git rm``) and append the built news to the filename specified in ``towncrier.toml``, and then stage the news file changes (with ``git add``).
+This command will remove the news files (with ``git rm``) and append the built news to the filename specified by the ``filename`` configuration option, and then stage the news file changes (with ``git add``).
 It leaves committing the changes up to the user.
 
 If you wish to have content at the top of the news file (for example, to say where you can find the tickets), put your text above a rST comment that says::
@@ -120,27 +133,33 @@ Towncrier has the following global options, which can be specified in the toml f
 .. code-block:: toml
 
     [tool.towncrier]
-        package = ""
-        package_dir = "."
-        single_file = true  # if false, filename is formatted like `title_format`.
-        filename = "NEWS.rst"
-        directory = "directory/of/news/fragments"
-        template = "path/to/template.rst"
-        start_line = "start of generated content"
-        title_format = "{name} {version} ({project_date})"  # or false if template includes title
-        issue_format = "format string for {issue} (issue is the first part of fragment name)"
-        underlines: "=-~"
-        wrap = false  # Wrap text to 79 characters
-        all_bullets = true  # make all fragments bullet points
+    package = ""
+    package_dir = "."
+    single_file = true  # if false, filename is formatted like `title_format`.
+    filename = "NEWS.rst"
+    directory = "directory/of/news/fragments"
+    version = "1.2.3"  # project version if maintained separately
+    name = "arbitrary project name"
+    template = "path/to/template.rst"
+    start_string = "Text used to detect where to add the generated content in the middle of a file. Generated content added after this text. Newline auto added."
+    title_format = "{name} {version} ({project_date})"  # or false if template includes title
+    issue_format = "format string for {issue} (issue is the first part of fragment name)"
+    underlines: "=-~"
+    wrap = false  # Wrap text to 79 characters
+    all_bullets = true  # make all fragments bullet points
 
-If a single file is used, the content of this file are overwritten each time.
+If a single file is used, the content of that file gets overwritten each time.
+
+If ``title_format`` is unspecified or an empty string, the default format will be used.
+If set to ``false``, no title will be created.
+This can be useful if the specified template creates the title itself.
 
 Furthermore, you can add your own fragment types using:
 
 .. code-block:: toml
 
     [tool.towncrier]
-        [[tool.towncrier.type]]
-            directory = "deprecation"
-            name = "Deprecations"
-            showcontent = true
+    [[tool.towncrier.type]]
+    directory = "deprecation"
+    name = "Deprecations"
+    showcontent = true

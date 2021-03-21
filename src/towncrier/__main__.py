@@ -1,4 +1,3 @@
-from towncrier import build
+from towncrier._shell import cli
 
-
-__name__ == "__main__" and build._main()
+cli()
