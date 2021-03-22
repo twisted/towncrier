@@ -2,6 +2,50 @@
 
 .. towncrier release notes start
 
+towncrier 21.3.0.rc1 (2021-03-21)
+=================================
+
+Features
+--------
+
+- Ticket number from file names will be stripped down to avoid ticket links such as ``#007``. (`#126 <https://github.com/hawkowl/towncrier/issues/126>`_)
+- Allow definition of the project ``version`` and ``name`` in the configuration file.
+  This allows use of towncrier seamlessly with non-Python projects. (`#165 <https://github.com/hawkowl/towncrier/issues/165>`_)
+- Improve news fragment file name parsing to allow using file names like
+  ``123.feature.1.ext`` which are convenient when one wants to use an appropriate
+  extension (e.g. ``rst``, ``md``) to enable syntax highlighting. (`#173 <https://github.com/hawkowl/towncrier/issues/173>`_)
+- The new ``--edit`` option of the ``create`` subcommand launches an editor for entering the contents of the newsfragment. (`#275 <https://github.com/hawkowl/towncrier/issues/275>`_)
+- CPython 3.8 and 3.9 are now part of our automated test matrix and are officially supported. (`#291 <https://github.com/hawkowl/towncrier/issues/291>`_)
+- When searching for the project, first check for an existing importable instance.
+  This helps if the version is only available in the installed version and not the source. (`#297 <https://github.com/hawkowl/towncrier/issues/297>`_)
+- Support building with PEP 517. (`#314 <https://github.com/hawkowl/towncrier/issues/314>`_)
+
+
+Bugfixes
+--------
+
+- Configuration errors found during command line execution now trigger a message to stderr and no longer show a traceback. (`#84 <https://github.com/hawkowl/towncrier/issues/84>`_)
+- A configuration error is triggered when the newsfragment files couldn't be discovered. (`#85 <https://github.com/hawkowl/towncrier/issues/85>`_)
+- Invoking towncrier as `python -m towncrier` works. (`#163 <https://github.com/hawkowl/towncrier/issues/163>`_)
+- ``check`` subcommand defaults to UTF-8 encoding when ``sys.stdout.encoding`` is ``None``.
+  This happens, for example, with Python 2 on GitHub Actions or when the output is piped. (`#175 <https://github.com/hawkowl/towncrier/issues/175>`_)
+- Specifying ``title_format`` disables default top line creation to avoid duplication. (`#180 <https://github.com/hawkowl/towncrier/issues/180>`_)
+
+
+Improved Documentation
+----------------------
+
+- The README now mentions the possibility to name the configuration file
+  ``towncrier.toml`` (in addition to ``pyproject.toml``). (`#172 <https://github.com/hawkowl/towncrier/issues/172>`_)
+- ``start_line`` corrected to ``start_string`` in the readme to match the long standing implementation. (`#277 <https://github.com/hawkowl/towncrier/issues/277>`_)
+
+
+Misc
+----
+
+- `#167 <https://github.com/hawkowl/towncrier/issues/167>`_, `#279 <https://github.com/hawkowl/towncrier/issues/279>`_, `#286 <https://github.com/hawkowl/towncrier/issues/286>`_, `#287 <https://github.com/hawkowl/towncrier/issues/287>`_, `#291 <https://github.com/hawkowl/towncrier/issues/291>`_, `#293 <https://github.com/hawkowl/towncrier/issues/293>`_, `#295 <https://github.com/hawkowl/towncrier/issues/295>`_, `#299 <https://github.com/hawkowl/towncrier/issues/299>`_, `#305 <https://github.com/hawkowl/towncrier/issues/305>`_, `#315 <https://github.com/hawkowl/towncrier/issues/315>`_, `#316 <https://github.com/hawkowl/towncrier/issues/316>`_, `#317 <https://github.com/hawkowl/towncrier/issues/317>`_, `#324 <https://github.com/hawkowl/towncrier/issues/324>`_, `#327 <https://github.com/hawkowl/towncrier/issues/327>`_, `#329 <https://github.com/hawkowl/towncrier/issues/329>`_, `#331 <https://github.com/hawkowl/towncrier/issues/331>`_
+
+
 towncrier 19.9.0 (2021-03-20)
 =============================
 
