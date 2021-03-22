@@ -1,1 +1,0 @@
-The `--pyproject` option for `towncrier check` is now replaced with `--config`, for consistency with other commands.
