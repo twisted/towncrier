@@ -42,19 +42,23 @@ In your project root, add a ``towncrier.toml`` or a ``pyproject.toml`` file (if 
 You can configure your project in two ways.
 To configure it via an explicit directory, add:
 
-.. code-block:: ini
+.. code-block:: toml
 
     [tool.towncrier]
     directory = "changes"
 
 Alternatively, to configure it relative to a (Python) package directory, add:
 
-.. code-block:: ini
+.. code-block:: toml
 
     [tool.towncrier]
     package = "mypackage"
     package_dir = "src"
     filename = "NEWS.rst"
+
+.. note::
+
+    ``towncrier`` will also look in ``pyproject.toml`` for configuration if ``towncrier.toml`` is not found.
 
 For the latter, news fragments (see "News Fragments" below) should be in a ``newsfragments`` directory under your package.
 Using the above example, your news fragments would be ``src/myproject/newsfragments/``).
@@ -126,7 +130,7 @@ Further Options
 
 Towncrier has the following global options, which can be specified in the toml file:
 
-.. code-block:: ini
+.. code-block:: toml
 
     [tool.towncrier]
     package = ""
@@ -152,7 +156,7 @@ This can be useful if the specified template creates the title itself.
 
 Furthermore, you can add your own fragment types using:
 
-.. code-block:: ini
+.. code-block:: toml
 
     [tool.towncrier]
     [[tool.towncrier.type]]
