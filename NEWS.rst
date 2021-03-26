@@ -40,12 +40,6 @@ Improved Documentation
 - ``start_line`` corrected to ``start_string`` in the readme to match the long standing implementation. (`#277 <https://github.com/hawkowl/towncrier/issues/277>`_)
 
 
-Misc
-----
-
-- `#167 <https://github.com/hawkowl/towncrier/issues/167>`_, `#279 <https://github.com/hawkowl/towncrier/issues/279>`_, `#286 <https://github.com/hawkowl/towncrier/issues/286>`_, `#287 <https://github.com/hawkowl/towncrier/issues/287>`_, `#291 <https://github.com/hawkowl/towncrier/issues/291>`_, `#293 <https://github.com/hawkowl/towncrier/issues/293>`_, `#295 <https://github.com/hawkowl/towncrier/issues/295>`_, `#299 <https://github.com/hawkowl/towncrier/issues/299>`_, `#305 <https://github.com/hawkowl/towncrier/issues/305>`_, `#315 <https://github.com/hawkowl/towncrier/issues/315>`_, `#316 <https://github.com/hawkowl/towncrier/issues/316>`_, `#317 <https://github.com/hawkowl/towncrier/issues/317>`_, `#324 <https://github.com/hawkowl/towncrier/issues/324>`_, `#327 <https://github.com/hawkowl/towncrier/issues/327>`_, `#329 <https://github.com/hawkowl/towncrier/issues/329>`_, `#331 <https://github.com/hawkowl/towncrier/issues/331>`_
-
-
 towncrier 19.9.0 (2021-03-20)
 =============================
 
