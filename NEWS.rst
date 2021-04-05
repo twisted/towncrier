@@ -5,7 +5,7 @@
 towncrier 21.3.0 (2021-04-02)
 =============================
 
-No significant changes.
+No significant changes since the previous release candidate.
 
 
 towncrier 21.3.0.rc1 (2021-03-21)
