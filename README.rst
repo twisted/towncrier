@@ -144,7 +144,7 @@ Towncrier has the following global options, which can be specified in the toml f
     start_string = "Text used to detect where to add the generated content in the middle of a file. Generated content added after this text. Newline auto added."
     title_format = "{name} {version} ({project_date})"  # or false if template includes title
     issue_format = "format string for {issue} (issue is the first part of fragment name)"
-    underlines: "=-~"
+    underlines = "=-~"
     wrap = false  # Wrap text to 79 characters
     all_bullets = true  # make all fragments bullet points
 

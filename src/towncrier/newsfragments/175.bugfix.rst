@@ -1,2 +1,0 @@
-``check`` subcommand defaults to UTF-8 encoding when ``sys.stdout.encoding`` is ``None``.
-This happens, for example, with Python 2 on GitHub Actions or when the output is piped.
