@@ -7,6 +7,7 @@ import sys
 from twisted.trial.unittest import TestCase
 from click.testing import CliRunner
 from subprocess import call, Popen, PIPE
+from pathlib import Path
 
 from towncrier.check import _main
 
@@ -148,3 +149,68 @@ class TestChecker(TestCase):
 
         self.assertEqual(0, proc.returncode)
         self.assertEqual(b"", stderr)
+
+    def test_first_release(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            # Arrange
+            call(["git", "init", "--initial-branch=main"])
+            call(["git", "config", "user.name", "user"])
+            call(["git", "config", "user.email", "user@example.com"])
+            Path("towncrier.toml").write_text("[tool.towncrier]")
+            newsfragments = Path("newsfragments")
+            newsfragments.mkdir()
+            (newsfragments / ".gitignore").write_text("!.gitignore")
+            call(["git", "add", "."])
+            call(["git", "commit", "-m", "Initial Commit"])
+
+            (newsfragments / "123.feature").write_text("Foo the bar")
+            call(["git", "add", "."])
+            call(["git", "commit", "-m", "Foo the bar"])
+
+            call(["git", "checkout", "-b", "next-resease"])
+            call(["towncrier", "--yes", "--version", "1.0"])
+            call(["git", "commit", "-m", "Prepare a release"])
+
+            # Act
+            result = runner.invoke(_main, ["--compare-with", "main"])
+
+            # Assert
+            self.assertEqual(0, result.exit_code, (result, result.output))
+            # TODO:
+            # self.assertIn("<text here>", result.output)
+
+    def test_second_release(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            # Arrange
+            call(["git", "init", "--initial-branch=main"])
+            call(["git", "config", "user.name", "user"])
+            call(["git", "config", "user.email", "user@example.com"])
+            Path("towncrier.toml").write_text("[tool.towncrier]")
+            newsfragments = Path("newsfragments")
+            newsfragments.mkdir()
+            (newsfragments / ".gitignore").write_text("!.gitignore")
+            call(["git", "add", "."])
+            call(["git", "commit", "-m", "Initial Commit"])
+
+            call(["towncrier", "--yes", "--version", "1.0"])
+            call(["git", "commit", "-m", "First release"])
+
+            (newsfragments / "123.feature").write_text("Foo the bar")
+            call(["git", "add", "."])
+            call(["git", "commit", "-m", "Foo the bar"])
+
+            call(["git", "checkout", "-b", "next-resease"])
+            call(["towncrier", "--yes", "--version", "2.0"])
+            call(["git", "commit", "-m", "Second release"])
+
+            # Act
+            result = runner.invoke(_main, ["--compare-with", "main"])
+
+            # Assert
+            self.assertEqual(0, result.exit_code, (result, result.output))
+            # TODO:
+            # self.assertIn("<text here>", result.output)
