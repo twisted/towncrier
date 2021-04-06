@@ -178,8 +178,7 @@ class TestChecker(TestCase):
 
             # Assert
             self.assertEqual(0, result.exit_code, (result, result.output))
-            # TODO:
-            # self.assertIn("<text here>", result.output)
+            self.assertIn("Checks SKIPPED: news file changes detected", result.output)
 
     def test_second_release(self):
         runner = CliRunner()
@@ -212,5 +211,4 @@ class TestChecker(TestCase):
 
             # Assert
             self.assertEqual(0, result.exit_code, (result, result.output))
-            # TODO:
-            # self.assertIn("<text here>", result.output)
+            self.assertIn("Checks SKIPPED: news file changes detected", result.output)
