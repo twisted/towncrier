@@ -163,3 +163,20 @@ Furthermore, you can add your own fragment types using:
     directory = "deprecation"
     name = "Deprecations"
     showcontent = true
+
+
+Automatic pull request checks
+-----------------------------
+
+To check if a feature branch is missing a news fragment, run::
+
+    towncrier check
+
+By default this compares the current branch against ``origin/master``. You can use ``--compare-with`` if the trunk is named differently::
+
+    towncrier check --compare-with origin/main
+
+The check succeeds if at least one of the following is true:
+
+- The current branch adds at least one news fragment
+- The current branch changes the news file (e.g. the PR is a new release)
