@@ -168,7 +168,7 @@ Furthermore, you can add your own fragment types using:
 Automatic pull request checks
 -----------------------------
 
-To check if a feature branch is missing a news fragment, run::
+To check if a feature branch adds at least one news fragment, run::
 
     towncrier check
 
