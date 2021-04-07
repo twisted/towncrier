@@ -39,7 +39,10 @@ def commit(message):
 def write(path, contents):
     dir = os.path.dirname(path)
     if dir:
-        os.makedirs(dir, exist_ok=True)
+        try:
+            os.makedirs(dir)
+        except OSError:
+            pass
     with open(path, "w") as f:
         f.write(contents)
 
