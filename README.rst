@@ -176,7 +176,4 @@ By default this compares the current branch against ``origin/master``. You can u
 
     towncrier check --compare-with origin/main
 
-The check succeeds if at least one of the following is true:
-
-- The current branch adds at least one news fragment
-- The current branch changes the news file (e.g. the PR is a new release)
+The check is automatically skipped when the main news file is modified inside the branch as this signals a release branch that is expected to not have news fragments.
