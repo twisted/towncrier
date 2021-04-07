@@ -183,11 +183,8 @@ class TestChecker(TestCase):
         with runner.isolated_filesystem():
             # Arrange
             write("towncrier.toml", "[tool.towncrier]")
-            write("newsfragments/.gitignore", "!.gitignore")
-            initial_commit()
-
             write("newsfragments/123.feature", "Foo the bar")
-            commit("Foo the bar")
+            initial_commit()
 
             call(["git", "checkout", "-b", "next-resease"])
             call(["towncrier", "--yes", "--version", "1.0"])
