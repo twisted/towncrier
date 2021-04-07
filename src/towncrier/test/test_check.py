@@ -174,6 +174,10 @@ class TestChecker(TestCase):
         self.assertEqual(b"", stderr)
 
     def test_first_release(self):
+        """The checks should be skipped on a branch that creates the news file.
+
+        If the checkes are not skipped in this case, towncrier check would fail
+        for the first release that has a changelog"""
         runner = CliRunner()
 
         with runner.isolated_filesystem():
@@ -197,6 +201,7 @@ class TestChecker(TestCase):
             self.assertIn("Checks SKIPPED: news file changes detected", result.output)
 
     def test_second_release(self):
+        """The checks should be skipped on a branch that modifies the news file."""
         runner = CliRunner()
 
         with runner.isolated_filesystem():
