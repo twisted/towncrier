@@ -2,12 +2,12 @@
 # See LICENSE for details.
 
 import os
+import os.path
 import sys
 
 from twisted.trial.unittest import TestCase
 from click.testing import CliRunner
 from subprocess import call, Popen, PIPE
-from pathlib import Path
 
 from towncrier.check import _main
 
@@ -29,6 +29,19 @@ def create_project(pyproject_path):
     call(["git", "add", "."])
     call(["git", "commit", "-m", "Initial Commit"])
     call(["git", "checkout", "-b", "otherbranch"])
+
+
+def commit(message):
+    call(["git", "add", "."])
+    call(["git", "commit", "-m", message])
+
+
+def write(path, contents):
+    dir = os.path.dirname(path)
+    if dir:
+        os.makedirs(dir, exist_ok=True)
+    with open(path, "w") as f:
+        f.write(contents)
 
 
 class TestChecker(TestCase):
@@ -158,20 +171,16 @@ class TestChecker(TestCase):
             call(["git", "init", "--initial-branch=main"])
             call(["git", "config", "user.name", "user"])
             call(["git", "config", "user.email", "user@example.com"])
-            Path("towncrier.toml").write_text("[tool.towncrier]")
-            newsfragments = Path("newsfragments")
-            newsfragments.mkdir()
-            (newsfragments / ".gitignore").write_text("!.gitignore")
-            call(["git", "add", "."])
-            call(["git", "commit", "-m", "Initial Commit"])
+            write("towncrier.toml", "[tool.towncrier]")
+            write("newsfragments/.gitignore", "!.gitignore")
+            commit("Initial Commit")
 
-            (newsfragments / "123.feature").write_text("Foo the bar")
-            call(["git", "add", "."])
-            call(["git", "commit", "-m", "Foo the bar"])
+            write("newsfragments/123.feature", "Foo the bar")
+            commit("Foo the bar")
 
             call(["git", "checkout", "-b", "next-resease"])
             call(["towncrier", "--yes", "--version", "1.0"])
-            call(["git", "commit", "-m", "Prepare a release"])
+            commit("Prepare a release")
 
             # Act
             result = runner.invoke(_main, ["--compare-with", "main"])
@@ -188,23 +197,19 @@ class TestChecker(TestCase):
             call(["git", "init", "--initial-branch=main"])
             call(["git", "config", "user.name", "user"])
             call(["git", "config", "user.email", "user@example.com"])
-            Path("towncrier.toml").write_text("[tool.towncrier]")
-            newsfragments = Path("newsfragments")
-            newsfragments.mkdir()
-            (newsfragments / ".gitignore").write_text("!.gitignore")
-            call(["git", "add", "."])
-            call(["git", "commit", "-m", "Initial Commit"])
+            write("towncrier.toml", "[tool.towncrier]")
+            write("newsfragments/.gitignore", "!.gitignore")
+            commit("Initial Commit")
 
             call(["towncrier", "--yes", "--version", "1.0"])
-            call(["git", "commit", "-m", "First release"])
+            commit("First release")
 
-            (newsfragments / "123.feature").write_text("Foo the bar")
-            call(["git", "add", "."])
-            call(["git", "commit", "-m", "Foo the bar"])
+            write("newsfragments/123.feature", "Foo the bar")
+            commit("Foo the bar")
 
             call(["git", "checkout", "-b", "next-resease"])
             call(["towncrier", "--yes", "--version", "2.0"])
-            call(["git", "commit", "-m", "Second release"])
+            commit("Second release")
 
             # Act
             result = runner.invoke(_main, ["--compare-with", "main"])
