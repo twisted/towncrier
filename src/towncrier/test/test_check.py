@@ -44,6 +44,13 @@ def write(path, contents):
         f.write(contents)
 
 
+def initial_commit():
+    call(["git", "init", "--initial-branch=main"])
+    call(["git", "config", "user.name", "user"])
+    call(["git", "config", "user.email", "user@example.com"])
+    commit("Initial Commit")
+
+
 class TestChecker(TestCase):
     maxDiff = None
 
@@ -168,12 +175,9 @@ class TestChecker(TestCase):
 
         with runner.isolated_filesystem():
             # Arrange
-            call(["git", "init", "--initial-branch=main"])
-            call(["git", "config", "user.name", "user"])
-            call(["git", "config", "user.email", "user@example.com"])
             write("towncrier.toml", "[tool.towncrier]")
             write("newsfragments/.gitignore", "!.gitignore")
-            commit("Initial Commit")
+            initial_commit()
 
             write("newsfragments/123.feature", "Foo the bar")
             commit("Foo the bar")
@@ -194,12 +198,9 @@ class TestChecker(TestCase):
 
         with runner.isolated_filesystem():
             # Arrange
-            call(["git", "init", "--initial-branch=main"])
-            call(["git", "config", "user.name", "user"])
-            call(["git", "config", "user.email", "user@example.com"])
             write("towncrier.toml", "[tool.towncrier]")
             write("newsfragments/.gitignore", "!.gitignore")
-            commit("Initial Commit")
+            initial_commit()
 
             call(["towncrier", "--yes", "--version", "1.0"])
             commit("First release")
