@@ -12,6 +12,7 @@ from subprocess import call, Popen, PIPE
 from towncrier.check import _main
 
 
+# Helper functions used in the tests
 def create_project(pyproject_path):
     with open(pyproject_path, "w") as f:
         f.write("[tool.towncrier]\n" 'package = "foo"\n')
@@ -32,11 +33,17 @@ def create_project(pyproject_path):
 
 
 def commit(message):
+    """Stage and commit the repo in the current working directory
+
+    There must be uncommitted changes otherwise git will complain:
+    "nothing to commit, working tree clean"
+    """
     call(["git", "add", "."])
     call(["git", "commit", "-m", message])
 
 
 def write(path, contents):
+    """Create a file with given contents including any missing parent directories"""
     dir = os.path.dirname(path)
     if dir:
         try:
@@ -48,7 +55,16 @@ def write(path, contents):
 
 
 def initial_commit():
+    """Create a git repo, configure it and make an initial commit
+
+    There must be uncommitted changes otherwise git will complain:
+    "nothing to commit, working tree clean"
+    """
+    # --initial-branch is explicitly set to `main` because
+    # git has deprecated the default branch name.
     call(["git", "init", "--initial-branch=main"])
+    # Without ``git config` user.name and user.email `git commit` fails
+    # unless the settings are set globally
     call(["git", "config", "user.name", "user"])
     call(["git", "config", "user.email", "user@example.com"])
     commit("Initial Commit")
