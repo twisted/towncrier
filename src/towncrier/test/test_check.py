@@ -48,7 +48,7 @@ def write(path, contents):
     if dir:
         try:
             os.makedirs(dir)
-        except OSError:
+        except OSError:  # pragma: no cover
             pass
     with open(path, "w") as f:
         f.write(contents)
