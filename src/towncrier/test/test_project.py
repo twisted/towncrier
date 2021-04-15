@@ -116,6 +116,13 @@ class InvocationTests(TestCase):
             os.makedirs("news")
             out = check_output([sys.executable, "-m", "towncrier", "--help"])
             self.assertIn(b"[OPTIONS] COMMAND [ARGS]...", out)
-            self.assertIn(b"--help  Show this message and exit.", out)
+            self.assertRegex(out, br".*--help\s+Show this message and exit.")
         finally:
             os.chdir(orig_dir)
+
+    def test_version(self):
+        """
+        `--version` command line option is available to show the current production version.
+        """
+        out = check_output(["towncrier", "--version"])
+        self.assertTrue(out.startswith(b"towncrier, version 2"))
