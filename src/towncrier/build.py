@@ -20,10 +20,6 @@ from ._writer import append_to_newsfile
 from ._git import remove_files, stage_newsfile
 
 
-def _get_date():
-    return date.today().isoformat()
-
-
 @click.command(name="build")
 @click.option(
     "--draft",
@@ -135,7 +131,10 @@ def __main(
                 project_name = ""
 
     if project_date is None:
-        project_date = _get_date().strip()
+        project_date = date.today()
+    else:
+        from dateutil.parser import parse
+        project_date = parse(project_date).date()
 
     if config["title_format"]:
         top_line = config["title_format"].format(
