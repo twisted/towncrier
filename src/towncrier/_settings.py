@@ -3,7 +3,7 @@
 
 import os
 import pkg_resources
-import toml
+import tomli
 
 from collections import OrderedDict
 
@@ -69,8 +69,8 @@ def load_config(directory):
 
 def load_config_from_file(directory, config_file):
 
-    with open(config_file, "r") as conffile:
-        config = toml.load(conffile)
+    with open(config_file, "r", encoding="utf8") as conffile:
+        config = tomli.load(conffile)
 
     return parse_toml(directory, config)
 

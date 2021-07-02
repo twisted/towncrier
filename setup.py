@@ -41,7 +41,7 @@ setup(
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
     use_incremental=True,
-    install_requires=["click", "click-default-group", "incremental", "jinja2", "setuptools", "toml"],
+    install_requires=["click", "click-default-group", "incremental", "jinja2", "setuptools", "tomli"],
     extras_require={"dev": ["packaging"]},
     package_dir={"": "src"},
     packages=find_packages("src"),
