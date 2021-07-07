@@ -67,6 +67,9 @@ jobs:
           - name: Windows
             runs-on: windows-latest
         python:
+          - name: CPython 3.5
+            tox: py35
+            action: 3.5
           - name: CPython 3.6
             tox: py36
             action: 3.6
