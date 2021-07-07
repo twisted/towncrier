@@ -48,7 +48,7 @@ setup(
         "jinja2",
         "setuptools",
         "toml; python_version < '3.6'",
-        "tomli; python_version > '3.5'",
+        "tomli; python_version > '3.6'",
     ],
     extras_require={"dev": ["packaging"]},
     package_dir={"": "src"},
