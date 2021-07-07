@@ -6,7 +6,7 @@ import os
 import sys
 import pkg_resources
 
-if sys.version_info > (3, 5):
+if sys.version_info >= (3, 6):
     from tomli import load as _toml_load
 else:
     from toml import load as _toml_load
