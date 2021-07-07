@@ -75,7 +75,7 @@ def load_config(directory):
 
 def load_config_from_file(directory, config_file):
 
-    with open(config_file, "r", encoding="utf8") as conffile:
+    with io.open(config_file, "r", encoding="utf8") as conffile:
         config = _toml_load(conffile)
 
     return parse_toml(directory, config)
