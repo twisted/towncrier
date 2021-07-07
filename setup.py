@@ -42,7 +42,7 @@ setup(
     use_incremental=True,
     install_requires=["click", "click-default-group", "incremental", "jinja2", "setuptools", "tomli"],
     extras_require={"dev": ["packaging"]},
-    python_requires=">=3.6",
+    requires_python=">=3.5",
     package_dir={"": "src"},
     packages=find_packages("src"),
     license="MIT",
