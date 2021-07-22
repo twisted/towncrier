@@ -8,15 +8,11 @@ import sys
 
 import click
 
-from subprocess import CalledProcessError, check_output, STDOUT
+from subprocess import CalledProcessError, STDOUT
 
 from ._settings import load_config_from_options
 from ._builder import find_fragments
-
-
-def _run(args, **kwargs):
-    kwargs["stderr"] = STDOUT
-    return check_output(args, **kwargs)
+from ._git import run
 
 
 @click.command(name="check")
@@ -31,20 +27,10 @@ def __main(comparewith, directory, config):
 
     base_directory, config = load_config_from_options(directory, config)
 
-    # Use UTF-8 both when sys.stdout does not have .encoding (Python 2.7) and
-    # when the attribute is present but set to None (explicitly piped output
-    # and also some CI such as GitHub Actions).
-    encoding = getattr(sys.stdout, "encoding", None)
-    if encoding is None:
-        encoding = "utf8"
-
     try:
-        files_changed = (
-            _run(
-                ["git", "diff", "--name-only", comparewith + "..."], cwd=base_directory
-            )
-            .decode(encoding)
-            .strip()
+        files_changed = run(
+            ["git", "diff", "--name-only", comparewith + "..."],
+            cwd=base_directory, stderr=STDOUT
         )
     except CalledProcessError as e:
         click.echo("git produced output while failing:")
