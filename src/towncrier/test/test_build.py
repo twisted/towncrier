@@ -6,6 +6,7 @@ import tempfile
 
 from datetime import date
 from pathlib import Path
+from subprocess import call
 from textwrap import dedent
 from unittest.mock import patch
 
@@ -747,8 +748,8 @@ class TestCli(TestCase):
                     "--yes",
                 ],
             )
-            # not git repository, manually remove fragment file
-            Path(f"newsfragments/{fragment_file}").unlink()
+            # Fragment files unknown to git are removed even without a git repo
+            assert not Path(f"newsfragments/{fragment_file}").exists()
             return result
 
         results = []
@@ -845,8 +846,8 @@ class TestCli(TestCase):
                 ],
                 catch_exceptions=False,
             )
-            # not git repository, manually remove fragment file
-            Path(f"newsfragments/{fragment_file}").unlink()
+            # Fragment files unknown to git are removed even without a git repo
+            assert not Path(f"newsfragments/{fragment_file}").exists()
             return result
 
         results = []
@@ -1530,3 +1531,55 @@ class TestCli(TestCase):
 
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected_output, result.output)
+
+    @with_git_project()
+    def test_uncommitted_files(self, runner, commit):
+        """
+        At build time, it will delete any fragment file regardless of its stage,
+        included files that are not part of the git reporsitory,
+        or are just staged or modified.
+        """
+        # 123 is committed, 124 is modified, 125 is just added, 126 is unknown
+
+        with open("foo/newsfragments/123.feature", "w") as f:
+            f.write("Adds levitation. File committed.")
+        with open("foo/newsfragments/124.feature", "w") as f:
+            f.write("Extends levitation. File modified in Git.")
+
+        commit()
+
+        with open("foo/newsfragments/125.feature", "w") as f:
+            f.write("Baz levitation. Staged file.")
+        with open("foo/newsfragments/126.feature", "w") as f:
+            f.write("Fix (literal) crash. File unknown to Git.")
+
+        with open("foo/newsfragments/124.feature", "a") as f:
+            f.write(" Extended for an hour.")
+        call(["git", "add", "foo/newsfragments/125.feature"])
+
+        result = runner.invoke(_main, ["--date", "01-01-2001", "--yes"])
+
+        self.assertEqual(0, result.exit_code)
+        for fragment in ("123", "124", "125", "126"):
+            self.assertFalse(os.path.isfile(f"foo/newsfragments/{fragment}.feature"))
+
+        path = "NEWS.rst"
+        self.assertTrue(os.path.isfile(path))
+        news_contents = open(path).read()
+        self.assertEqual(
+            news_contents,
+            dedent(
+                """\
+                Foo 1.2.3 (01-01-2001)
+                ======================
+
+                Features
+                --------
+
+                - Adds levitation. File committed. (#123)
+                - Extends levitation. File modified in Git. Extended for an hour. (#124)
+                - Baz levitation. Staged file. (#125)
+                - Fix (literal) crash. File unknown to Git. (#126)
+                """
+            ),
+        )
