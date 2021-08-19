@@ -76,7 +76,7 @@ def load_config(directory):
 
 def load_config_from_file(directory, config_file):
     if tomli:
-        with open(config_file, "rb") as conffile:
+        with io.open(config_file, "rb") as conffile:
             config = tomli.load(conffile)
     else:
         with io.open(config_file, "r", encoding="utf8", newline="") as conffile:
