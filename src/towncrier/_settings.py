@@ -79,7 +79,7 @@ def load_config_from_file(directory, config_file):
         with open(config_file, "rb") as conffile:
             config = tomli.load(conffile)
     else:
-        with io.open(config_file, "r", encoding="utf8") as conffile:
+        with io.open(config_file, "r", encoding="utf8", newlines="") as conffile:
             config = toml.load(conffile)
 
     return parse_toml(directory, config)
