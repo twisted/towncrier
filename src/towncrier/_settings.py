@@ -7,9 +7,10 @@ import sys
 import pkg_resources
 
 if sys.version_info >= (3, 6):
-    from tomli import load as _toml_load
+    import tomli
 else:
-    from toml import load as _toml_load
+    tomli = None
+    import toml
 
 from collections import OrderedDict
 
@@ -74,9 +75,12 @@ def load_config(directory):
 
 
 def load_config_from_file(directory, config_file):
-
-    with io.open(config_file, "r", encoding="utf8") as conffile:
-        config = _toml_load(conffile)
+    if tomli:
+        with io.open(config_file, "rb") as conffile:
+            config = tomli.load(conffile)
+    else:
+        with io.open(config_file, "r", encoding="utf8", newline="") as conffile:
+            config = toml.load(conffile)
 
     return parse_toml(directory, config)
 
