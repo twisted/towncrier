@@ -34,7 +34,7 @@ Install from PyPI::
 
 .. note::
 
-   ``towncrier``, as a command line tool, works on Python 3.5+ only.
+   ``towncrier``, as a command line tool, works on Python 2.7 and 3.5+ only.
    It is usable by projects written in other languages, provided you specify the project version either in the configuration file or on the command line.
    For Python 2/3 compatible projects, the version can be discovered automatically.
 

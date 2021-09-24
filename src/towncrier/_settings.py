@@ -1,9 +1,16 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
+import io
 import os
+import sys
 import pkg_resources
-import toml
+
+if sys.version_info >= (3, 6):
+    import tomli
+else:
+    tomli = None
+    import toml
 
 from collections import OrderedDict
 
@@ -68,9 +75,12 @@ def load_config(directory):
 
 
 def load_config_from_file(directory, config_file):
-
-    with open(config_file, "r") as conffile:
-        config = toml.load(conffile)
+    if tomli:
+        with io.open(config_file, "rb") as conffile:
+            config = tomli.load(conffile)
+    else:
+        with io.open(config_file, "r", encoding="utf8", newline="") as conffile:
+            config = toml.load(conffile)
 
     return parse_toml(directory, config)
 

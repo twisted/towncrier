@@ -1,0 +1,1 @@
+Disable universal newlines when reading TOML
