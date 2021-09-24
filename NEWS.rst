@@ -2,6 +2,29 @@
 
 .. towncrier release notes start
 
+towncrier 21.9.0.rc1 (2021-09-24)
+=================================
+
+Features
+--------
+
+- towncrier --version` was added to the command line interface to show the product version. (`#339 <https://github.com/hawkowl/towncrier/issues/339>`_)
+- Support Toml v1 syntax with tomli on Python 3.6+ (`#354 <https://github.com/hawkowl/towncrier/issues/354>`_)
+
+
+Bugfixes
+--------
+
+- Stop writing title twice when ``title_format`` is specified. (`#346 <https://github.com/hawkowl/towncrier/issues/346>`_)
+- Disable universal newlines when reading TOML (`#359 <https://github.com/hawkowl/towncrier/issues/359>`_)
+
+
+Misc
+----
+
+- `#332 <https://github.com/hawkowl/towncrier/issues/332>`_, `#333 <https://github.com/hawkowl/towncrier/issues/333>`_, `#334 <https://github.com/hawkowl/towncrier/issues/334>`_, `#338 <https://github.com/hawkowl/towncrier/issues/338>`_
+
+
 towncrier 21.3.0 (2021-04-02)
 =============================
 
