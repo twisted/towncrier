@@ -101,8 +101,17 @@ def parse_toml(base_path, config):
         sections[""] = ""
 
     if "type" in config:
-        for x in config["type"]:
-            types[x["directory"]] = {"name": x["name"], "showcontent": x["showcontent"]}
+        type_config = config["type"]
+        if hasattr(type_config, "values"):
+            type_config = type_config.values()
+        for type_config in type_config:
+            directory = type_config["directory"]
+            fragment_type_name = type_config["name"]
+            is_content_required = type_config["showcontent"]
+            types[directory] = {
+                "name": fragment_type_name,
+                "showcontent": is_content_required,
+            }
     else:
         types = _default_types
 

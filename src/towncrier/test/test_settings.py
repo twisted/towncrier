@@ -199,3 +199,83 @@ package = "foobar"
         self.assertEqual(
             str(e.exception), "Towncrier does not have a template named 'foo'."
         )
+
+    def test_custom_types_as_tables_array(self):
+        """
+        Custom fragment categories can be defined inside
+        the toml config file using an array of tables
+        (a table name in double brackets).
+        """
+        toml_content = (
+            "[tool.towncrier]\n"
+            "package = \"foobar\"\n"
+            "[[tool.towncrier.type]]\n"
+            "directory=\"foo\"\n"
+            "name=\"Foo\"\n"
+            "showcontent=true\n"
+            "[[tool.towncrier.type]]\n"
+            "directory=\"spam\"\n"
+            "name=\"Spam\"\n"
+            "showcontent=true\n"
+        )
+        expected = {
+            "foo": {
+                "name": "Foo",
+                "showcontent": True,
+            },
+            "spam": {
+                "name": "Spam",
+                "showcontent": True,
+            },
+        }
+
+        config = self._get_actual_config(
+            toml_content,
+        )
+        actual = config["types"]
+        self.assertDictEqual(expected, actual)
+
+    def test_custom_types_as_tables(self):
+        """
+        Custom fragment categories can be defined inside
+        the toml config file using tables.
+        """
+        test_project_path = self.mktemp()
+        os.makedirs(test_project_path)
+        toml_content = (
+            "[tool.towncrier]\n"
+            "package = \"foobar\"\n"
+            "[tool.towncrier.type.foo]\n"
+            "directory=\"bar\"\n"
+            "name=\"Bazz\"\n"
+            "showcontent=true\n"
+            "[tool.towncrier.type.spam]\n"
+            "directory=\"spam\"\n"
+            "name=\"Spam\"\n"
+            "showcontent=true\n"
+        )
+        expected = {
+            "bar": {
+                "name": "Bazz",
+                "showcontent": True,
+            },
+            "spam": {
+                "name": "Spam",
+                "showcontent": True,
+            },
+        }
+
+        config = self._get_actual_config(
+            toml_content,
+        )
+        actual = config["types"]
+        self.assertDictEqual(expected, actual)
+
+    def _get_actual_config(self, toml_content: str):
+        test_project_path = self.mktemp()
+        os.makedirs(test_project_path)
+        toml_path = os.path.join(test_project_path, "pyproject.toml")
+        with open(toml_path, "w") as f:
+            f.write(toml_content)
+        config = load_config(test_project_path)
+        return config
