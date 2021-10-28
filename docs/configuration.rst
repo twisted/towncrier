@@ -25,18 +25,59 @@ Top level keys
 - ``issue_format`` -- A format string for rendering the issue/ticket number in newsfiles. ``#{issue}`` by default.
 - ``underlines`` -- The characters used for underlining headers. ``["=", "-", "~"]`` by default.
 
-
 Custom fragment types
 ---------------------
+``Towncrier`` allows defining custom fragment types. Custom fragment types
+will be used instead ``towncrier`` default ones, they are not combined.
 
-Custom fragment types can be including in the
-pyproject.toml.
-Each custom type (``[[tool.towncrier.type]]``) has the following keys:
+Users can configure each of their own custom fragment types by adding tables to
+the pyproject.toml named ``[tool.towncrier.type.<a custom fragment type>]``.
+
+These tables may include the following optional keys:
+
+ * ``name``: The description of the fragment type, as it must be included
+   in the news file. If omitted, it defaults to  its  fragment type,
+   but capitalized.
+ * ``showcontent``: Whether if the fragment contents should be included in the
+   news file. If omitted, it defaults to ``true``
+
+
+
+For example, if you want your custom fragment types to be
+``["feat", "fix", "chore",]`` and you want all
+of them to use the default configuration except ``"chore"`` you can do it as
+follows:
+
+
+.. code-block:: toml
+
+
+    [tool.towncrier]
+
+
+    [tool.towncrier.fragment.feat]
+    [tool.towncrier.fragment.fix]
+
+    [tool.towncrier.fragment.chore]
+        name = "Other Tasks"
+        showcontent = false
+
+DEPRECATED: Defining custom fragment types with an array of toml tables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Users can create their own custom fragment types by adding an array of
+tables to the pyproject.toml named ``[[tool.towncrier.type]]``.
+
+If still using this way to configure custom fragment types,
+please notice that ``fragment_types`` must be empty or not provided.
+
+Each custom type (``[[tool.towncrier.type]]``) has the following
+mandatory keys:
  * ``directory``: The type of the fragment.
  * ``name``: The description of the fragment type, as it must be included
    in the news file.
  * ``showcontent``: Whether if the fragment contents should be included in the
    news file.
+
 
 
 For example:
@@ -48,3 +89,8 @@ For example:
     directory = "deprecation"
     name = "Deprecations"
     showcontent = true
+
+    [[tool.towncrier.type]]
+    directory = "chore"
+    name = "Other Tasks"
+    showcontent = false
