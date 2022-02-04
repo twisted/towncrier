@@ -75,7 +75,13 @@ Step-by-step
 
   - Edit ``src/towncrier/_version.py`` such as ``__version__ = Version('towncrier', 19, 9, 0)`` to remove the release candidate indication.
 
-  - Return to the towncrier build step and continue.
+  - Manually update the NEWS.rst by removing the `.rcN` version and update the release date.
+
+  - Commit, tag as ``19.9.0`` and push the tag to the primary repository.
+
+  - This will result in another build which will publish to PyPI for the final release.
+
+  - Confirm the presence of the release on PyPI.
 
 - If the final release has been completed, continue below.
 
