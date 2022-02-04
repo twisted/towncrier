@@ -77,7 +77,9 @@ Step-by-step
 
   - Manually update the NEWS.rst by removing the `.rcN` version and update the release date.
 
-  - Commit, tag as ``19.9.0`` and push the tag to the primary repository.
+  - Commit and push the changes to trigger the CI tests and make sure all are green.
+
+  - Tag as ``19.9.0`` and push the tag to the primary repository.
 
   - This will result in another build which will publish to PyPI for the final release.
 
