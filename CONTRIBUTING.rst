@@ -77,6 +77,8 @@ Step-by-step
 
   - Manually update the NEWS.rst by removing the `.rcN` version and update the release date.
 
+  - Disable the actual check for `tox -e check-newsfragment` so  that you will have a green test run.
+
   - Commit and push the changes to trigger the CI tests and make sure all are green.
 
   - Tag as ``19.9.0`` and push the tag to the primary repository.
@@ -85,7 +87,7 @@ Step-by-step
 
   - Confirm the presence of the release on PyPI.
 
-- If the final release has been completed, continue below.
+- If the final release has been completed, re-enable `tox -e check-newsfragment`.
 
 - Increment the patch version by one and set to a development version.
 
