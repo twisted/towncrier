@@ -24,3 +24,27 @@ Top level keys
 - ``title_format`` -- A format string for the title of your project. ``{name} {version} ({project_date})`` by default.
 - ``issue_format`` -- A format string for rendering the issue/ticket number in newsfiles. ``#{issue}`` by default.
 - ``underlines`` -- The characters used for underlining headers. ``["=", "-", "~"]`` by default.
+
+
+Custom fragment types
+---------------------
+
+Custom fragment types can be including in the
+pyproject.toml.
+Each custom type (``[[tool.towncrier.type]]``) has the following keys:
+ * ``directory``: The type of the fragment.
+ * ``name``: The description of the fragment type, as it must be included
+   in the news file.
+ * ``showcontent``: Whether if the fragment contents should be included in the
+   news file.
+
+
+For example:
+
+.. code-block:: toml
+
+    [tool.towncrier]
+    [[tool.towncrier.type]]
+    directory = "deprecation"
+    name = "Deprecations"
+    showcontent = true
