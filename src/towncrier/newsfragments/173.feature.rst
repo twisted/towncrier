@@ -1,3 +1,0 @@
-Improve news fragment file name parsing to allow using file names like
-``123.feature.1.ext`` which are convenient when one wants to use an appropriate
-extension (e.g. ``rst``, ``md``) to enable syntax highlighting.

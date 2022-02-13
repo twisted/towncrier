@@ -1,2 +1,0 @@
-When searching for the project, first check for an existing importable instance.
-This helps if the version is only available in the installed version and not the source.

@@ -66,8 +66,6 @@ def __main(comparewith, directory, config):
         click.echo("{}. {}".format(n, change))
     click.echo("----")
 
-    fragments = set()
-
     if config.get("directory"):
         fragment_base_directory = os.path.abspath(config["directory"])
         fragment_directory = None

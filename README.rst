@@ -34,7 +34,7 @@ Install from PyPI::
 
 .. note::
 
-   ``towncrier``, as a command line tool, works on Python 3.5+ only.
+   ``towncrier``, as a command line tool, works on Python 2.7 and 3.5+ only.
    It is usable by projects written in other languages, provided you specify the project version either in the configuration file or on the command line.
    For Python 2/3 compatible projects, the version can be discovered automatically.
 
@@ -144,7 +144,7 @@ Towncrier has the following global options, which can be specified in the toml f
     start_string = "Text used to detect where to add the generated content in the middle of a file. Generated content added after this text. Newline auto added."
     title_format = "{name} {version} ({project_date})"  # or false if template includes title
     issue_format = "format string for {issue} (issue is the first part of fragment name)"
-    underlines: "=-~"
+    underlines = "=-~"
     wrap = false  # Wrap text to 79 characters
     all_bullets = true  # make all fragments bullet points
 
