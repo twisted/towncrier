@@ -207,13 +207,13 @@ class TestChecker(TestCase):
         with runner.isolated_filesystem():
             create_project()
             # Before any release, the NEWS file might no exist.
-            self.assertNotIn('NEWS.rst', os.listdir())
+            self.assertNotIn('NEWS.rst', os.listdir('.'))
 
             call(["towncrier", "build", "--yes", "--version", "1.0"])
             commit("Prepare a release")
             # When missing,
             # the news file is automatically created with a new release.
-            self.assertIn('NEWS.rst', os.listdir())
+            self.assertIn('NEWS.rst', os.listdir('.'))
 
             # Act
             result = runner.invoke(towncrier_check, ["--compare-with", "main"])
@@ -239,7 +239,7 @@ class TestChecker(TestCase):
             call(["towncrier", "build",  "--yes", "--version", "1.0"])
             commit("First release")
             # The news file is now created.
-            self.assertIn('NEWS.rst', os.listdir())
+            self.assertIn('NEWS.rst', os.listdir('.'))
             call(["git", "checkout", "main"])
             call(["git", "merge", "otherbranch", "-m", "Sync release in main branch."])
 
