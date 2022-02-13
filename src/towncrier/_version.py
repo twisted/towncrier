@@ -7,5 +7,5 @@ Provides towncrier version information.
 
 from incremental import Version
 
-__version__ = Version("towncrier", 21, 3, 1, dev=0)
+__version__ = Version("towncrier", 21, 9, 1, dev=0)
 __all__ = ["__version__"]

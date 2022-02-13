@@ -1,1 +1,0 @@
-Support Toml v1 syntax with tomli on Python 3.6+
