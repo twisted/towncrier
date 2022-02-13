@@ -1,2 +1,0 @@
-The README now mentions the possibility to name the configuration file
-``towncrier.toml`` (in addition to ``pyproject.toml``).

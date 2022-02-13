@@ -34,7 +34,7 @@ Install from PyPI::
 
 .. note::
 
-   ``towncrier``, as a command line tool, works on Python 3.5+ only.
+   ``towncrier``, as a command line tool, works on Python 2.7 and 3.5+ only.
    It is usable by projects written in other languages, provided you specify the project version either in the configuration file or on the command line.
    For Python 2/3 compatible projects, the version can be discovered automatically.
 
@@ -42,19 +42,23 @@ In your project root, add a ``towncrier.toml`` or a ``pyproject.toml`` file (if 
 You can configure your project in two ways.
 To configure it via an explicit directory, add:
 
-.. code-block:: ini
+.. code-block:: toml
 
     [tool.towncrier]
     directory = "changes"
 
 Alternatively, to configure it relative to a (Python) package directory, add:
 
-.. code-block:: ini
+.. code-block:: toml
 
     [tool.towncrier]
     package = "mypackage"
     package_dir = "src"
     filename = "NEWS.rst"
+
+.. note::
+
+    ``towncrier`` will also look in ``pyproject.toml`` for configuration if ``towncrier.toml`` is not found.
 
 For the latter, news fragments (see "News Fragments" below) should be in a ``newsfragments`` directory under your package.
 Using the above example, your news fragments would be ``src/myproject/newsfragments/``).
@@ -126,7 +130,7 @@ Further Options
 
 Towncrier has the following global options, which can be specified in the toml file:
 
-.. code-block:: ini
+.. code-block:: toml
 
     [tool.towncrier]
     package = ""
@@ -137,18 +141,22 @@ Towncrier has the following global options, which can be specified in the toml f
     version = "1.2.3"  # project version if maintained separately
     name = "arbitrary project name"
     template = "path/to/template.rst"
-    start_line = "start of generated content"
+    start_string = "Text used to detect where to add the generated content in the middle of a file. Generated content added after this text. Newline auto added."
     title_format = "{name} {version} ({project_date})"  # or false if template includes title
     issue_format = "format string for {issue} (issue is the first part of fragment name)"
-    underlines: "=-~"
+    underlines = "=-~"
     wrap = false  # Wrap text to 79 characters
     all_bullets = true  # make all fragments bullet points
 
 If a single file is used, the content of that file gets overwritten each time.
 
+If ``title_format`` is unspecified or an empty string, the default format will be used.
+If set to ``false``, no title will be created.
+This can be useful if the specified template creates the title itself.
+
 Furthermore, you can add your own fragment types using:
 
-.. code-block:: ini
+.. code-block:: toml
 
     [tool.towncrier]
     [[tool.towncrier.type]]
