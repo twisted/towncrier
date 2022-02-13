@@ -52,7 +52,7 @@ def __main(comparewith, directory, config):
         raise
 
     if not files_changed:
-        click.echo("On trunk, or no diffs, so no newsfragment required.")
+        click.echo("On {} branch, or no diffs, so no newsfragment required.".format(comparewith))
         sys.exit(0)
 
     files = {
