@@ -1,1 +1,0 @@
-towncrier --version` was added to the command line interface to show the product version.
