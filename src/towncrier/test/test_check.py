@@ -205,6 +205,7 @@ class TestChecker(TestCase):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
+            # Arrange
             create_project()
             # Before any release, the NEWS file might no exist.
             self.assertNotIn('NEWS.rst', os.listdir('.'))
@@ -232,6 +233,7 @@ class TestChecker(TestCase):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
+            # Arrange
             create_project()
 
             # Do a first release without any checks.
@@ -249,7 +251,7 @@ class TestChecker(TestCase):
             write("foo/newsfragments/456.feature", "Foo the bar")
             commit("A feature in the second release.")
             call(["git", "checkout", "main"])
-            call(["git", "merge", "new-feature-branch", "-m", "Sync release in main branch."])
+            call(["git", "merge", "new-feature-branch", "-m", "Merge new-feature-branch."])
 
             # We now have the new release branch.
             call(["git", "checkout", "-b", "next-release"])
