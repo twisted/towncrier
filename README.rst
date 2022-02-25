@@ -156,15 +156,21 @@ If ``title_format`` is unspecified or an empty string, the default format will b
 If set to ``false``, no title will be created.
 This can be useful if the specified template creates the title itself.
 
-Furthermore, you can add your own fragment types using:
+Furthermore, you can customize each of your own fragment types using:
 
 .. code-block:: toml
 
     [tool.towncrier]
-    [[tool.towncrier.type]]
-    directory = "deprecation"
-    name = "Deprecations"
-    showcontent = true
+	# To add custom fragment types, with default setting, just add an empty section.
+    [tool.towncrier.feat]
+    [tool.towncrier.fix]
+
+	# Custom fragment types can have custom attributes
+	# that are used when rendering the result based on the template.
+    [tool.towncrier.chore]
+        name = "Other Tasks"
+        showcontent = false
+
 
 
 Automatic pull request checks
