@@ -12,6 +12,7 @@ import click
 import sys
 
 from datetime import date
+from dateutil.parser import parse
 
 from ._settings import load_config_from_options, ConfigError
 from ._builder import find_fragments, split_fragments, render_fragments
@@ -133,7 +134,6 @@ def __main(
     if project_date is None:
         project_date = date.today()
     else:
-        from dateutil.parser import parse
         project_date = parse(project_date).date()
 
     if config["title_format"]:
