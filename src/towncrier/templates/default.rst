@@ -3,10 +3,10 @@
 {{ top_underline * ((top_line)|length)}}
 {% elif versiondata.name %}
 {{ versiondata.name }} {{ versiondata.version }} ({{ versiondata.date }})
-{{ top_underline * ((versiondata.name + versiondata.version + versiondata.date)|length + 4)}}
+{{ top_underline * ((versiondata.name + versiondata.version)|length + 4)}}{{ top_underline * (versiondata.date|title|length)}}
 {% else %}
 {{ versiondata.version }} ({{ versiondata.date }})
-{{ top_underline * ((versiondata.version + versiondata.date)|length + 3)}}
+{{ top_underline * (versiondata.version|length + 3)}}{{ top_underline * (versiondata.date|title|length)}}
 {% endif %}
 {% for section, _ in sections.items() %}
 {% set underline = underlines[0] %}{% if section %}{{section}}
