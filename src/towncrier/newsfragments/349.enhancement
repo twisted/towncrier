@@ -1,1 +1,1 @@
-Changed type of `versiondata.date` in the main template from `string` to `date`. This allows users to customize the date rendering in the template with `strftime`, like so: `{{versiondata.date.strftime("%B")}}`.
+The `versiondata.date` is not `date` instance. This allows users to customize the date rendering in the template with `strftime`, like so: `{{versiondata.date.strftime("%B")}}`.
