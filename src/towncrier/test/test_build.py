@@ -836,3 +836,81 @@ class TestCli(TestCase):
         """)
 
         self.assertEqual(expected_output, output)
+
+    def test_uncommitted_files(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project()
+            with open("foo/newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+            with open("foo/newsfragments/124.feature", "w") as f:
+                f.write("Extends levitation")
+            with open("foo/newsfragments/125.feature", "w") as f:
+                f.write("Baz levitation")
+            with open("foo/newsfragments/126.feature", "w") as f:
+                f.write("Fix (literal) crash")
+
+            call(["git", "init"])
+            call(["git", "config", "user.name", "user"])
+            call(["git", "config", "user.email", "user@example.com"])
+            # 123 is committed, 124 is modified, 125 is just added, 126 is unknown
+            call([
+                "git", "add",
+                "foo/newsfragments/123.feature",
+                "foo/newsfragments/124.feature"
+            ])
+            call(["git", "commit", "-m", "Initial Commit"])
+            with open("foo/newsfragments/124.feature", "a") as f:
+                f.write(" for an hour")
+            call(["git", "add", "foo/newsfragments/125.feature"])
+
+            result = runner.invoke(_main, ["--date", "01-01-2001", "--yes"])
+
+            self.assertEqual(0, result.exit_code)
+            for fragment in ("123", "124", "125", "126"):
+                self.assertFalse(
+                    os.path.isfile(
+                        "foo/newsfragments/{}.feature".format(fragment)
+                    )
+                )
+
+            path = "NEWS.rst"
+            self.assertTrue(os.path.isfile(path))
+            news_contents = open(path).read()
+            self.assertEqual(
+                news_contents,
+                dedent(
+                    """\
+                    Foo 1.2.3 (01-01-2001)
+                    ======================
+
+                    Features
+                    --------
+
+                    - Adds levitation (#123)
+                    - Extends levitation for an hour (#124)
+                    - Baz levitation (#125)
+                    - Fix (literal) crash (#126)
+                    """
+                ),
+            )
+            self.assertEqual(
+                result.output,
+                dedent(
+                    """\
+                    Loading template...
+                    Finding news fragments...
+                    Rendering news fragments...
+                    Writing to newsfile...
+                    Staging newsfile...
+                    Removing news fragments...
+                    Removing the following files:
+                    {cwd}/foo/newsfragments/123.feature
+                    {cwd}/foo/newsfragments/124.feature
+                    {cwd}/foo/newsfragments/125.feature
+                    {cwd}/foo/newsfragments/126.feature
+                    Done!
+                    """.format(cwd=os.getcwd())
+                ),
+            )
