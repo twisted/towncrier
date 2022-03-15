@@ -2,6 +2,126 @@
 
 .. towncrier release notes start
 
+towncrier 21.9.0 (2022-02-04)
+=============================
+
+Features
+--------
+
+- towncrier --version` was added to the command line interface to show the product version. (`#339 <https://github.com/hawkowl/towncrier/issues/339>`_)
+- Support Toml v1 syntax with tomli on Python 3.6+ (`#354 <https://github.com/hawkowl/towncrier/issues/354>`_)
+
+
+Bugfixes
+--------
+
+- Stop writing title twice when ``title_format`` is specified. (`#346 <https://github.com/hawkowl/towncrier/issues/346>`_)
+- Disable universal newlines when reading TOML (`#359 <https://github.com/hawkowl/towncrier/issues/359>`_)
+
+
+Misc
+----
+
+- `#332 <https://github.com/hawkowl/towncrier/issues/332>`_, `#333 <https://github.com/hawkowl/towncrier/issues/333>`_, `#334 <https://github.com/hawkowl/towncrier/issues/334>`_, `#338 <https://github.com/hawkowl/towncrier/issues/338>`_
+
+
+towncrier 21.3.0 (2021-04-02)
+=============================
+
+No significant changes since the previous release candidate.
+
+
+towncrier 21.3.0.rc1 (2021-03-21)
+=================================
+
+Features
+--------
+
+- Ticket number from file names will be stripped down to avoid ticket links such as ``#007``. (`#126 <https://github.com/hawkowl/towncrier/issues/126>`_)
+- Allow definition of the project ``version`` and ``name`` in the configuration file.
+  This allows use of towncrier seamlessly with non-Python projects. (`#165 <https://github.com/hawkowl/towncrier/issues/165>`_)
+- Improve news fragment file name parsing to allow using file names like
+  ``123.feature.1.ext`` which are convenient when one wants to use an appropriate
+  extension (e.g. ``rst``, ``md``) to enable syntax highlighting. (`#173 <https://github.com/hawkowl/towncrier/issues/173>`_)
+- The new ``--edit`` option of the ``create`` subcommand launches an editor for entering the contents of the newsfragment. (`#275 <https://github.com/hawkowl/towncrier/issues/275>`_)
+- CPython 3.8 and 3.9 are now part of our automated test matrix and are officially supported. (`#291 <https://github.com/hawkowl/towncrier/issues/291>`_)
+- When searching for the project, first check for an existing importable instance.
+  This helps if the version is only available in the installed version and not the source. (`#297 <https://github.com/hawkowl/towncrier/issues/297>`_)
+- Support building with PEP 517. (`#314 <https://github.com/hawkowl/towncrier/issues/314>`_)
+
+
+Bugfixes
+--------
+
+- Configuration errors found during command line execution now trigger a message to stderr and no longer show a traceback. (`#84 <https://github.com/hawkowl/towncrier/issues/84>`_)
+- A configuration error is triggered when the newsfragment files couldn't be discovered. (`#85 <https://github.com/hawkowl/towncrier/issues/85>`_)
+- Invoking towncrier as `python -m towncrier` works. (`#163 <https://github.com/hawkowl/towncrier/issues/163>`_)
+- ``check`` subcommand defaults to UTF-8 encoding when ``sys.stdout.encoding`` is ``None``.
+  This happens, for example, with Python 2 on GitHub Actions or when the output is piped. (`#175 <https://github.com/hawkowl/towncrier/issues/175>`_)
+- Specifying ``title_format`` disables default top line creation to avoid duplication. (`#180 <https://github.com/hawkowl/towncrier/issues/180>`_)
+
+
+Improved Documentation
+----------------------
+
+- The README now mentions the possibility to name the configuration file
+  ``towncrier.toml`` (in addition to ``pyproject.toml``). (`#172 <https://github.com/hawkowl/towncrier/issues/172>`_)
+- ``start_line`` corrected to ``start_string`` in the readme to match the long standing implementation. (`#277 <https://github.com/hawkowl/towncrier/issues/277>`_)
+
+
+towncrier 19.9.0 (2021-03-20)
+=============================
+
+No significant changes.
+
+
+towncrier 19.9.0rc1 (2019-09-16)
+================================
+
+Features
+--------
+
+- Add ``create`` subcommand, which can be used to quickly create a news
+  fragment command in the location defined by config. (`#4 <https://github.com/hawkowl/towncrier/issues/4>`_)
+- Add support for subcommands, meaning the functionality of the ``towncrier``
+  executable is now replaced by the ``build`` subcommand::
+
+      $ towncrier build --draft
+
+  A new ``check`` subcommand is exposed. This is an alternative to calling the
+  ``towncrier.check`` module manually::
+
+      $ towncrier check
+
+  Calling ``towncrier`` without a subcommand will result in a call to the
+  ``build`` subcommand to ensure backwards compatibility. This may be removed in a
+  future release. (`#144 <https://github.com/hawkowl/towncrier/issues/144>`_)
+- Towncrier's templating now allows configuration of the version header. *CUSTOM TEMPLATE USERS PLEASE NOTE: You will need to add the version header information to your template!* (`#147 <https://github.com/hawkowl/towncrier/issues/147>`_)
+- towncrier now accepts the --config argument to specify a custom configuration file (`#157 <https://github.com/hawkowl/towncrier/issues/157>`_)
+- There is now the option for ``all_bullets = false`` in the configuration.
+  Setting ``all_bullets`` to false means that news fragments have to include
+  the bullet point if they should be rendered as enumerations, otherwise
+  they are rendered directly (this means fragments can include a header.).
+  It is necessary to set this option to avoid (incorrect) automatic indentation
+  of multiline fragments that do not include bullet points.
+  The ``single-file-no-bullets.rst`` template gives an example of
+  using these options. (`#158 <https://github.com/hawkowl/towncrier/issues/158>`_)
+- The ``single_file`` option can now be added to the configuration file. When set to ``true``, the filename key can now be formattable with the ``name``, ``version``, and ``project_date`` format variables. This allows subsequent versions to be written out to new files instead of appended to an existing one. (`#161 <https://github.com/hawkowl/towncrier/issues/161>`_)
+- You can now specify Towncrier-bundled templates in your configuration file. Available templates are `default`, `hr-between-versions` (as used in attrs), and `single-file-no-bullets`. (`#162 <https://github.com/hawkowl/towncrier/issues/162>`_)
+
+
+Bugfixes
+--------
+
+- Accept newsfragment filenames with multiple dots, like `fix-1.2.3.bugfix`. (`#142 <https://github.com/hawkowl/towncrier/issues/142>`_)
+
+
+Deprecations and Removals
+-------------------------
+
+- The `--pyproject` option for `towncrier check` is now replaced with `--config`, for consistency with other commands. (`#162 <https://github.com/hawkowl/towncrier/issues/162>`_)
+
+
 towncrier 19.2.0 (2019-02-15)
 =============================
 

@@ -1,1 +1,0 @@
-Configuration errors found during command line execution now trigger a message to stderr and no longer show a traceback.

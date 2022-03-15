@@ -1,11 +1,19 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
+import io
 import os
+import sys
 import pkg_resources
-import toml
+
+if sys.version_info >= (3, 6):
+    import tomli
+else:
+    tomli = None
+    import toml
 
 from collections import OrderedDict
+from .._settings import fragment_types as ft
 
 
 class ConfigError(Exception):
@@ -17,15 +25,6 @@ class ConfigError(Exception):
 _start_string = u".. towncrier release notes start\n"
 _title_format = None
 _template_fname = "towncrier:default"
-_default_types = OrderedDict(
-    [
-        (u"feature", {"name": u"Features", "showcontent": True}),
-        (u"bugfix", {"name": u"Bugfixes", "showcontent": True}),
-        (u"doc", {"name": u"Improved Documentation", "showcontent": True}),
-        (u"removal", {"name": u"Deprecations and Removals", "showcontent": True}),
-        (u"misc", {"name": u"Misc", "showcontent": False}),
-    ]
-)
 _underlines = ["=", "-", "~"]
 
 
@@ -68,9 +67,12 @@ def load_config(directory):
 
 
 def load_config_from_file(directory, config_file):
-
-    with open(config_file, "r") as conffile:
-        config = toml.load(conffile)
+    if tomli:
+        with io.open(config_file, "rb") as conffile:
+            config = tomli.load(conffile)
+    else:
+        with io.open(config_file, "r", encoding="utf8", newline="") as conffile:
+            config = toml.load(conffile)
 
     return parse_toml(directory, config)
 
@@ -82,19 +84,15 @@ def parse_toml(base_path, config):
     config = config["tool"]["towncrier"]
 
     sections = OrderedDict()
-    types = OrderedDict()
-
     if "section" in config:
         for x in config["section"]:
             sections[x.get("name", "")] = x["path"]
     else:
         sections[""] = ""
-
-    if "type" in config:
-        for x in config["type"]:
-            types[x["directory"]] = {"name": x["name"], "showcontent": x["showcontent"]}
-    else:
-        types = _default_types
+    fragment_types_loader = ft.BaseFragmentTypesLoader.factory(
+        config
+    )
+    types = fragment_types_loader.load()
 
     wrap = config.get("wrap", False)
 

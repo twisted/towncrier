@@ -4,10 +4,15 @@ include LICENSE
 include CODE_OF_CONDUCT.md
 include pyproject.toml
 include tox.ini
+include tox_build.sh
+include tox_check-release.sh
 recursive-include src *.rst
 
 exclude bin
+exclude admin
 exclude src/towncrier/newsfragments
 
 recursive-exclude bin *
+recursive-exclude admin *
 recursive-exclude src/towncrier/newsfragments *
+recursive-exclude docs *

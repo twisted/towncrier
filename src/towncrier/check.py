@@ -52,7 +52,7 @@ def __main(comparewith, directory, config):
         raise
 
     if not files_changed:
-        click.echo("On trunk, or no diffs, so no newsfragment required.")
+        click.echo("On {} branch, or no diffs, so no newsfragment required.".format(comparewith))
         sys.exit(0)
 
     files = {
@@ -66,7 +66,10 @@ def __main(comparewith, directory, config):
         click.echo("{}. {}".format(n, change))
     click.echo("----")
 
-    fragments = set()
+    news_file = os.path.normpath(os.path.join(base_directory, config["filename"]))
+    if news_file in files:
+        click.echo("Checks SKIPPED: news file changes detected.")
+        sys.exit(0)
 
     if config.get("directory"):
         fragment_base_directory = os.path.abspath(config["directory"])
