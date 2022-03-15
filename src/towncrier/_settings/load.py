@@ -13,6 +13,7 @@ else:
     import toml
 
 from collections import OrderedDict
+from .._settings import fragment_types as ft
 
 
 class ConfigError(Exception):
@@ -24,15 +25,6 @@ class ConfigError(Exception):
 _start_string = u".. towncrier release notes start\n"
 _title_format = None
 _template_fname = "towncrier:default"
-_default_types = OrderedDict(
-    [
-        (u"feature", {"name": u"Features", "showcontent": True}),
-        (u"bugfix", {"name": u"Bugfixes", "showcontent": True}),
-        (u"doc", {"name": u"Improved Documentation", "showcontent": True}),
-        (u"removal", {"name": u"Deprecations and Removals", "showcontent": True}),
-        (u"misc", {"name": u"Misc", "showcontent": False}),
-    ]
-)
 _underlines = ["=", "-", "~"]
 
 
@@ -92,19 +84,15 @@ def parse_toml(base_path, config):
     config = config["tool"]["towncrier"]
 
     sections = OrderedDict()
-    types = OrderedDict()
-
     if "section" in config:
         for x in config["section"]:
             sections[x.get("name", "")] = x["path"]
     else:
         sections[""] = ""
-
-    if "type" in config:
-        for x in config["type"]:
-            types[x["directory"]] = {"name": x["name"], "showcontent": x["showcontent"]}
-    else:
-        types = _default_types
+    fragment_types_loader = ft.BaseFragmentTypesLoader.factory(
+        config
+    )
+    types = fragment_types_loader.load()
 
     wrap = config.get("wrap", False)
 

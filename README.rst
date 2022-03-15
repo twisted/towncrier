@@ -13,6 +13,8 @@ Hear ye, hear ye, says the ``towncrier``
 ``towncrier`` is a utility to produce useful, summarised news files for your project.
 Rather than reading the Git history as some newer tools to produce it, or having one single file which developers all write to, ``towncrier`` reads "news fragments" which contain information `useful to end users`.
 
+Used by `Twisted <https://github.com/twisted/twisted>`_, `pytest <https://github.com/pytest-dev/pytest/>`_, `pip <https://github.com/pypa/pip/>`_, `BuildBot <https://github.com/buildbot/buildbot>`_, and `attrs <https://github.com/python-attrs/attrs>`_, among others.
+
 
 Philosophy
 ----------
@@ -154,15 +156,21 @@ If ``title_format`` is unspecified or an empty string, the default format will b
 If set to ``false``, no title will be created.
 This can be useful if the specified template creates the title itself.
 
-Furthermore, you can add your own fragment types using:
+Furthermore, you can customize each of your own fragment types using:
 
 .. code-block:: toml
 
     [tool.towncrier]
-    [[tool.towncrier.type]]
-    directory = "deprecation"
-    name = "Deprecations"
-    showcontent = true
+	# To add custom fragment types, with default setting, just add an empty section.
+    [tool.towncrier.feat]
+    [tool.towncrier.fix]
+
+	# Custom fragment types can have custom attributes
+	# that are used when rendering the result based on the template.
+    [tool.towncrier.chore]
+        name = "Other Tasks"
+        showcontent = false
+
 
 
 Automatic pull request checks
