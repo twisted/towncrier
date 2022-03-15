@@ -740,12 +740,25 @@ class TestCli(TestCase):
                     [tool.towncrier]
                     package = "foo"
                     title_format = false
+                    template = "template.rst"
                 """))
             os.mkdir("foo")
             os.mkdir("foo/newsfragments")
-            # Towncrier ignores .rst extension
-            with open("foo/newsfragments/124.feature.rst", "w") as f:
-                f.write("Extends levitation")
+            with open("template.rst", "w") as f:
+                f.write(dedent("""\
+                    Here's a hardcoded title added by the template
+                    ==============================================
+                    {% for section in sections %}
+                    {% set underline = "-" %}
+                    {% for category, val in definitions.items() if category in sections[section] %}
+
+                    {% for text, values in sections[section][category]|dictsort(by='value') %}
+                    - {{ text }}
+
+                    {% endfor %}
+                    {% endfor %}
+                    {% endfor %}
+                """))
 
             result = runner.invoke(
                 _main,
@@ -767,13 +780,8 @@ class TestCli(TestCase):
             Draft only -- nothing has been written.
             What is seen below is what would be written.
 
-            FooBarBaz 7.8.9 (20-01-2001)
-            ============================
-
-            Features
-            --------
-
-            - Extends levitation (#124)
+            Here's a hardcoded title added by the template
+            ==============================================
 
         """)
 
@@ -836,3 +844,65 @@ class TestCli(TestCase):
         """)
 
         self.assertEqual(expected_output, output)
+
+    def test_with_topline_and_template_and_draft(self):
+        """
+        Spacing is proper when drafting with a topline and a template.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(dedent("""\
+                    [tool.towncrier]
+                    title_format = "{version} - {project_date}"
+                    template = "template.rst"
+
+                      [[tool.towncrier.type]]
+                      directory = "feature"
+                      name = ""
+                      showcontent = true
+                """))
+            os.mkdir("newsfragments")
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+            with open("template.rst", "w") as f:
+                f.write(dedent("""\
+                    {% for section in sections %}
+                    {% set underline = "-" %}
+                    {% for category, val in definitions.items() if category in sections[section] %}
+
+                    {% for text, values in sections[section][category]|dictsort(by='value') %}
+                    - {{ text }}
+
+                    {% endfor %}
+                    {% endfor %}
+                    {% endfor %}
+                """))
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--version=7.8.9",
+                    "--name=foo",
+                    "--date=20-01-2001",
+                    "--draft",
+                ],
+            )
+
+        expected_output = dedent("""\
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            7.8.9 - 20-01-2001
+            ==================
+
+            - Adds levitation
+
+        """)
+
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertEqual(expected_output, result.output)
