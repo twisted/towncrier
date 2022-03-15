@@ -143,7 +143,7 @@ def __main(
         )
         render_title_with_fragments = False
         render_title_separately = True
-    elif config["title_format"] == False:  # noqa: E712
+    elif config["title_format"] is False:
         # This is an odd check but since we support both "" and False with
         # different effects we have to do something a bit abnormal here.
         top_line = ""
