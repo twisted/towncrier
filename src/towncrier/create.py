@@ -22,12 +22,17 @@ from ._settings import load_config_from_options
     default=False,
     help="Open an editor for writing the newsfragment content.",
 )  # TODO: default should be true
+@click.option(
+    "-m", "--message",
+    type=str,
+    help="Set message in new fragment."
+)
 @click.argument("filename")
-def _main(ctx, directory, config, filename, edit):
-    return __main(ctx, directory, config, filename, edit)
+def _main(ctx, directory, config, filename, edit, message):
+    return __main(ctx, directory, config, filename, edit, message)
 
 
-def __main(ctx, directory, config, filename, edit):
+def __main(ctx, directory, config, filename, edit, message):
     """
     The main entry point.
     """
@@ -66,9 +71,9 @@ def __main(ctx, directory, config, filename, edit):
         raise click.ClickException("{} already exists".format(segment_file))
 
     if edit:
-        content = _get_news_content_from_user()
+        content = _get_news_content_from_user(message)
     else:
-        content = "Add your info here"
+        content = message if message is not None else "Add your info here"
 
     if content is None:
         click.echo("Abort creating news fragment.")
@@ -80,12 +85,18 @@ def __main(ctx, directory, config, filename, edit):
     click.echo("Created news fragment at {}".format(segment_file))
 
 
-def _get_news_content_from_user():
-    content = click.edit(
+def _get_news_content_from_user(message):
+    initial_content = (
         "# Please write your news content. When finished, save the file.\n"
         "# In order to abort, exit without saving.\n"
         "# Lines starting with \"#\" are ignored.\n"
     )
+    if message is not None:
+        initial_content += (
+            "\n"
+            f"{message}\n"
+        )
+    content = click.edit(initial_content)
     if content is None:
         return None
     all_lines = content.split("\n")

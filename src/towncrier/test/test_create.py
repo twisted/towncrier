@@ -71,6 +71,11 @@ class TestCli(TestCase):
         with mock.patch("click.edit") as mock_edit:
             mock_edit.return_value = "".join(content)
             self._test_success(content=content, additional_args=["--edit"])
+            mock_edit.assert_called_once_with(
+                "# Please write your news content. When finished, save the file.\n"
+                "# In order to abort, exit without saving.\n"
+                "# Lines starting with \"#\" are ignored.\n"
+            )
 
     def test_edit_with_comment(self):
         """Create file editly with ignored line."""
@@ -92,6 +97,26 @@ class TestCli(TestCase):
                 result = runner.invoke(_main, ["123.feature.rst", "--edit"])
                 self.assertEqual([], os.listdir("foo/newsfragments"))
                 self.assertEqual(1, result.exit_code)
+
+    def test_message(self):
+        """Set fragment message in command line"""
+        message = "This is a message"
+        self._test_success(content=[message], additional_args=["-m", message])
+
+    def test_message_and_edit(self):
+        """Set fragment message in command line and edit"""
+        message = "This is a message"
+        content = ["This is line 1\n", "This is line 2"]
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = "".join(content)
+            self._test_success(content=content, additional_args=["-m", message, "--edit"])
+            mock_edit.assert_called_once_with(
+                "# Please write your news content. When finished, save the file.\n"
+                "# In order to abort, exit without saving.\n"
+                "# Lines starting with \"#\" are ignored.\n"
+                "\n"
+                f"{message}\n"
+            )
 
     def test_different_directory(self):
         """Ensure non-standard directories are used."""
