@@ -115,7 +115,7 @@ class TestCli(TestCase):
                 "# In order to abort, exit without saving.\n"
                 "# Lines starting with \"#\" are ignored.\n"
                 "\n"
-                f"{message}\n"
+                "{message}\n".format(message=message)
             )
 
     def test_different_directory(self):

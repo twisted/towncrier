@@ -94,7 +94,7 @@ def _get_news_content_from_user(message):
     if message is not None:
         initial_content += (
             "\n"
-            f"{message}\n"
+            "{message}\n".format(message=message)
         )
     content = click.edit(initial_content)
     if content is None:
