@@ -119,7 +119,10 @@ class TestCli(TestCase):
         edit_content = ["This is line 1\n", "This is line 2"]
         with mock.patch("click.edit") as mock_edit:
             mock_edit.return_value = "".join(edit_content)
-            self._test_success(content=edit_content, additional_args=["-c", content_line, "--edit"])
+            self._test_success(
+                content=edit_content,
+                additional_args=["-c", content_line, "--edit"]
+            )
             mock_edit.assert_called_once_with(
                 "# Please write your news content. When finished, save the file.\n"
                 "# In order to abort, exit without saving.\n"
