@@ -1,0 +1,2 @@
+
+The `towncrier create` command line now has a new `-m TEXT` argument that is used to define the content of the newly created fragment.
