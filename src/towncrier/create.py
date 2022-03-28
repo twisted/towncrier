@@ -25,14 +25,15 @@ from ._settings import load_config_from_options
 @click.option(
     "-c", "--content",
     type=str,
+    default="Add your info here",
     help="Sets the content of the new fragment."
 )
 @click.argument("filename")
-def _main(ctx, directory, config, filename, edit, message):
-    return __main(ctx, directory, config, filename, edit, message)
+def _main(ctx, directory, config, filename, edit, content):
+    return __main(ctx, directory, config, filename, edit, content)
 
 
-def __main(ctx, directory, config, filename, edit, message):
+def __main(ctx, directory, config, filename, edit, content):
     """
     The main entry point.
     """
@@ -71,9 +72,7 @@ def __main(ctx, directory, config, filename, edit, message):
         raise click.ClickException("{} already exists".format(segment_file))
 
     if edit:
-        content = _get_news_content_from_user(message)
-    else:
-        content = message if message is not None else "Add your info here"
+        content = _get_news_content_from_user(content)
 
     if content is None:
         click.echo("Abort creating news fragment.")
