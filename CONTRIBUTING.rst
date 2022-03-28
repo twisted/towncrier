@@ -50,7 +50,7 @@ Step-by-step
 
   - It is important to not use a fork so that pushed tags end up in the primary repository, server provided secrets for publishing to PyPI are available, and maybe more.
 
-- If working on the first release candidate from this branch, create a PR named in the form ``Release 19.9``.
+- If working on the first release candidate from this branch, create a PR named in the form ``Release 19.9.0``.
 
 - Request a review and address raised concerns until receiving an approval.
 
@@ -75,9 +75,19 @@ Step-by-step
 
   - Edit ``src/towncrier/_version.py`` such as ``__version__ = Version('towncrier', 19, 9, 0)`` to remove the release candidate indication.
 
-  - Return to the towncrier build step and continue.
+  - Manually update the NEWS.rst by removing the `.rcN` version and update the release date.
 
-- If the final release has been completed, continue below.
+  - Disable the actual check for `tox -e check-newsfragment` so  that you will have a green test run.
+
+  - Commit and push the changes to trigger the CI tests and make sure all are green.
+
+  - Tag as ``19.9.0`` and push the tag to the primary repository.
+
+  - This will result in another build which will publish to PyPI for the final release.
+
+  - Confirm the presence of the release on PyPI.
+
+- If the final release has been completed, re-enable `tox -e check-newsfragment`.
 
 - Increment the patch version by one and set to a development version.
 

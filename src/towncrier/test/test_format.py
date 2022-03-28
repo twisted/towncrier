@@ -3,8 +3,6 @@
 
 from __future__ import absolute_import, division
 
-from textwrap import dedent
-
 import pkg_resources
 
 from twisted.trial.unittest import TestCase
@@ -131,7 +129,6 @@ Bugfixes
         output = render_fragments(
             template,
             None,
-            "",
             fragments,
             definitions,
             ["-", "~"],
@@ -176,7 +173,6 @@ Bugfixes
         output = render_fragments(
             template,
             None,
-            "",
             fragments,
             definitions,
             ["*", "^"],
@@ -222,7 +218,6 @@ Misc
         output = render_fragments(
             template,
             u"xx{issue}",
-            "",
             fragments,
             definitions,
             ["-", "~"],
@@ -281,7 +276,6 @@ Features
         output = render_fragments(
             template,
             None,
-            "",
             fragments,
             definitions,
             ["-", "~"],
@@ -333,7 +327,6 @@ Features
         output = render_fragments(
             template,
             None,
-            "",
             fragments,
             definitions,
             ["-", "~"],
@@ -341,30 +334,3 @@ Features
             versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
         )
         self.assertEqual(output, expected_output)
-
-    def test_title_format_specified(self):
-        """
-        Title format replaces default top line rendering.
-        """
-        template = pkg_resources.resource_string(
-            "towncrier", "templates/default.rst"
-        ).decode("utf8")
-
-        fragments = split_fragments(fragments={}, definitions=OrderedDict())
-        output = render_fragments(
-            template=template,
-            issue_format=None,
-            top_line="A custom top line",
-            fragments=fragments,
-            definitions=OrderedDict(),
-            underlines=["-", "~"],
-            wrap=False,
-            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
-        )
-
-        expected_output = dedent(u"""\
-        A custom top line
-        =================
-        """)
-
-        self.assertEqual(expected_output, output)
