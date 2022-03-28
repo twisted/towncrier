@@ -22,9 +22,9 @@ jobs:
           - name: Linux
             runs-on: ubuntu-latest
         python:
-          - name: CPython 3.8
-            tox: py38
-            action: 3.8
+          - name: CPython 3.9
+            tox: py39
+            action: 3.9
         task:
           - name: Build
             tox: build
@@ -85,15 +85,18 @@ jobs:
           - name: CPython 3.9
             tox: py39
             action: 3.9
+          - name: CPython 3.10
+            tox: py310
+            action: '3.10'
           - name: PyPy 2.7
             tox: pypy27
             action: pypy-2.7
-          - name: PyPy 3.6
-            tox: pypy36
-            action: pypy-3.6
           - name: PyPy 3.7
             tox: pypy37
             action: pypy-3.7
+          - name: PyPy 3.8
+            tox: pypy38
+            action: pypy-3.8
         task:
           - name: Test
             tox: tests
@@ -135,9 +138,9 @@ jobs:
         python:
           # Using second most recent minor release for whatever little
           # increase in stability over using the latest minor.
-          - name: CPython 3.8
-            tox: py38
-            action: 3.8
+          - name: CPython 3.9
+            tox: py39
+            action: 3.9
         task:
           - name: Flake8
             tox: flake8
@@ -189,7 +192,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+        python-version: 3.9
 
     - name: Install dependencies
       run: |
