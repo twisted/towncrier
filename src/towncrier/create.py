@@ -23,9 +23,9 @@ from ._settings import load_config_from_options
     help="Open an editor for writing the newsfragment content.",
 )  # TODO: default should be true
 @click.option(
-    "-m", "--message",
+    "-c", "--content",
     type=str,
-    help="Set message in new fragment."
+    help="Sets the content of the new fragment."
 )
 @click.argument("filename")
 def _main(ctx, directory, config, filename, edit, message):

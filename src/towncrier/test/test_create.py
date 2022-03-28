@@ -99,12 +99,20 @@ class TestCli(TestCase):
                 self.assertEqual(1, result.exit_code)
 
     def test_message(self):
-        """Set fragment message in command line"""
+        """
+        When creating a new fragment the content can be passed as a
+        command line argument.
+        The text editor is not invoked.
+        """
         message = "This is a message"
         self._test_success(content=[message], additional_args=["-m", message])
 
     def test_message_and_edit(self):
-        """Set fragment message in command line and edit"""
+        """
+        When creating a new message, a initial content can be passed via
+        the command line and continue modifying the content by invoking the
+        text editor.
+        """
         message = "This is a message"
         content = ["This is line 1\n", "This is line 2"]
         with mock.patch("click.edit") as mock_edit:
