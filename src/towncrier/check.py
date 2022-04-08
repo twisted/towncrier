@@ -34,9 +34,7 @@ def __main(comparewith, directory, config):
     # Use UTF-8 both when sys.stdout does not have .encoding (Python 2.7) and
     # when the attribute is present but set to None (explicitly piped output
     # and also some CI such as GitHub Actions).
-    encoding = getattr(sys.stdout, "encoding", None)
-    if encoding is None:
-        encoding = "utf8"
+    encoding = getattr(sys.stdout, "encoding", "utf8")
 
     try:
         files_changed = (

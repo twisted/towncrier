@@ -43,12 +43,7 @@ class VersionFetchingTests(TestCase):
         """
         An exception is raised when getting the version failed due to missing Python package files.
         """
-        if sys.version_info >= (3, 6):
-            expected_exception = ModuleNotFoundError
-        else:
-            expected_exception = ImportError
-
-        with self.assertRaises(expected_exception):
+        with self.assertRaises(ModuleNotFoundError):
             get_version(".", "projectname_without_any_files")
 
     def test_already_installed_import(self):

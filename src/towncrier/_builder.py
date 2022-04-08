@@ -4,7 +4,6 @@
 from __future__ import absolute_import, division, print_function
 
 import os
-import sys
 import textwrap
 import traceback
 
@@ -90,14 +89,9 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
         else:
             section_dir = os.path.join(base_directory, val)
 
-        if sys.version_info >= (3,):
-            expected_exception = FileNotFoundError
-        else:
-            expected_exception = OSError
-
         try:
             files = os.listdir(section_dir)
-        except expected_exception as e:
+        except FileNotFoundError as e:
             message = "Failed to list the news fragment files.\n{}".format(
                 ''.join(traceback.format_exception_only(type(e), e)),
             )

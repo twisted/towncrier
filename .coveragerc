@@ -10,6 +10,8 @@ source =
    .tox/pypy*/site-packages/
 
 [report]
+show_missing = true
+skip_covered = true
 omit =
    src/towncrier/__main__.py
    src/towncrier/test/*
