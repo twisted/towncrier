@@ -64,7 +64,7 @@ jobs:
             runs-on: ubuntu-latest
           - name: macOS
             runs-on: macos-latest
-          - name: Windows
+          - name: Win
             runs-on: windows-latest
         python:
           - name: CPython 3.7
