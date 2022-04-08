@@ -1,0 +1,1 @@
+The `versiondata.date` is not `date` instance. This allows users to customize the date rendering in the template with `strftime`, like so: `{{versiondata.date.strftime("%B")}}`.

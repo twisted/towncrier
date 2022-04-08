@@ -49,6 +49,7 @@ setup(
         "setuptools",
         "toml; python_version < '3.6'",
         "tomli; python_version >= '3.6'",
+        "python-dateutil",
     ],
     extras_require={"dev": ["packaging"]},
     package_dir={"": "src"},

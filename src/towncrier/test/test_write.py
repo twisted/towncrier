@@ -268,3 +268,47 @@ Old text.
         """)
 
         self.assertEqual(expected_output, output)
+
+
+def test_dateformat(self):
+        """
+        Testing support of dateformat filter during template rendering. 
+        """
+        tempdir = self.mktemp()
+        os.mkdir(tempdir)
+
+        definitions = {}
+        fragments = split_fragments(fragments={}, definitions=definitions)
+
+        template = pkg_resources.resource_string(
+            "towncrier", "test/templates/date.rst"
+        ).decode("utf8")
+
+        content = render_fragments(
+            template=template,
+            issue_format=None,
+            top_line="",
+            fragments=fragments,
+            definitions=definitions,
+            underlines=["-", "~"],
+            wrap=True,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "13.3.2022"},
+        )
+
+        append_to_newsfile(
+            directory=tempdir,
+            filename="NEWS.rst",
+            start_string=None,
+            top_line="",
+            content=content,
+        )
+
+        with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
+            output = f.read()
+
+        expected_output = dedent("""\
+            MyProject 1.0 (1.1.2001 / Sun 13 Mar 2022)
+            ==========================================
+        """)
+
+        self.assertEqual(expected_output, output)

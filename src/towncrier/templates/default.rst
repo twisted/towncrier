@@ -1,10 +1,10 @@
 {% if render_title %}
 {% if versiondata.name %}
 {{ versiondata.name }} {{ versiondata.version }} ({{ versiondata.date }})
-{{ top_underline * ((versiondata.name + versiondata.version + versiondata.date)|length + 4)}}
+{{ top_underline * ((versiondata.name + versiondata.version)|length + 4)}}{{ top_underline * (versiondata.date|title|length)}}
 {% else %}
 {{ versiondata.version }} ({{ versiondata.date }})
-{{ top_underline * ((versiondata.version + versiondata.date)|length + 3)}}
+{{ top_underline * (versiondata.version|length + 3)}}{{ top_underline * (versiondata.date|title|length)}}
 {% endif %}
 {% endif %}
 {% for section, _ in sections.items() %}

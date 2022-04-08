@@ -12,16 +12,13 @@ import click
 import sys
 
 from datetime import date
+from dateutil.parser import parse
 
 from ._settings import load_config_from_options, ConfigError
 from ._builder import find_fragments, split_fragments, render_fragments
 from ._project import get_version, get_project_name
 from ._writer import append_to_newsfile
 from ._git import remove_files, stage_newsfile
-
-
-def _get_date():
-    return date.today().isoformat()
 
 
 @click.command(name="build")
@@ -135,7 +132,9 @@ def __main(
                 project_name = ""
 
     if project_date is None:
-        project_date = _get_date().strip()
+        project_date = date.today()
+    else:
+        project_date = parse(project_date).date()
 
     if config["title_format"]:
         top_line = config["title_format"].format(
