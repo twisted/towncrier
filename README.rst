@@ -36,9 +36,9 @@ Install from PyPI::
 
 .. note::
 
-   ``towncrier``, as a command line tool, works on Python 2.7 and 3.5+ only.
+   ``towncrier``, as a command line tool, works on Python 3.7+ only.
    It is usable by projects written in other languages, provided you specify the project version either in the configuration file or on the command line.
-   For Python 2/3 compatible projects, the version can be discovered automatically.
+   For Python-compatible projects, the version can be discovered automatically.
 
 In your project root, add a ``towncrier.toml`` or a ``pyproject.toml`` file (if both files exist, the first will take precedence).
 You can configure your project in two ways.
@@ -75,7 +75,7 @@ Using the above example, your news fragments would be ``src/myproject/newsfragme
 
 ``towncrier`` needs to know what version your project is, and there are three ways you can give it:
 
-- For Python 2/3 compatible projects, a ``__version__`` in the top level package.
+- For Python-compatible projects, a ``__version__`` in the top level package.
   This can be either a string literal, a tuple, or an `Incremental <https://github.com/hawkowl/incremental>`_ version.
 
 - Manually passing ``--version=<myversionhere>`` when interacting with ``towncrier``.
