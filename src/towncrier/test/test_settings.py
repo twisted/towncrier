@@ -226,8 +226,8 @@ package = "foobar"
         """
         toml_content = textwrap.dedent(toml_content)
         expected = [
-            (u"foo", {"name": u"Foo", "showcontent": False, }),
-            (u"spam", {"name": u"Spam", "showcontent": True, },),
+            ("foo", {"name": "Foo", "showcontent": False, }),
+            ("spam", {"name": "Spam", "showcontent": True, },),
         ]
         expected = clt.OrderedDict(expected)
         config = self.load_config_from_string(toml_content, )
@@ -253,9 +253,9 @@ package = "foobar"
         """
         toml_content = textwrap.dedent(toml_content)
         expected = [
-            (u"chore", {"name": u"Other Tasks", "showcontent": False, }),
-            (u"feat", {"name": u"Feat", "showcontent": True, }),
-            (u"fix", {"name": u"Fix", "showcontent": True, }),
+            ("chore", {"name": "Other Tasks", "showcontent": False, }),
+            ("feat", {"name": "Feat", "showcontent": True, }),
+            ("fix", {"name": "Fix", "showcontent": True, }),
         ]
 
         expected = clt.OrderedDict(expected)

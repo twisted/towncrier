@@ -14,10 +14,10 @@ from .._settings import fragment_types as ft
 class ConfigError(Exception):
     def __init__(self, *args, **kwargs):
         self.failing_option = kwargs.get("failing_option")
-        super(ConfigError, self).__init__(*args)
+        super().__init__(*args)
 
 
-_start_string = u".. towncrier release notes start\n"
+_start_string = ".. towncrier release notes start\n"
 _title_format = None
 _template_fname = "towncrier:default"
 _underlines = ["=", "-", "~"]
@@ -40,7 +40,7 @@ def load_config_from_options(directory, config):
 
     if config is None:
         raise ConfigError(
-            "No configuration file found.\nLooked in: %s" % (base_directory,)
+            f"No configuration file found.\nLooked in: {base_directory}"
         )
 
     return base_directory, config
@@ -62,7 +62,7 @@ def load_config(directory):
 
 
 def load_config_from_file(directory, config_file):
-    with io.open(config_file, "rb") as conffile:
+    with open(config_file, "rb") as conffile:
         config = tomli.load(conffile)
 
     return parse_toml(directory, config)
@@ -123,7 +123,7 @@ def parse_toml(base_path, config):
 
     if not os.path.exists(template):
         raise ConfigError(
-            "The template file '%s' does not exist." % (template,),
+            f"The template file '{template}' does not exist.",
             failing_option="template",
         )
 

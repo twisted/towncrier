@@ -185,8 +185,8 @@ class TestCli(TestCase):
                     sectdir = "news/" + section
                     os.mkdir(sectdir)
                     for type_ in types:
-                        with open("{}/1.{}".format(sectdir, type_), "w") as f:
-                            f.write("{} {}".format(section, type_))
+                        with open(f"{sectdir}/1.{type_}", "w") as f:
+                            f.write(f"{section} {type_}")
 
                 return runner.invoke(
                     _main, ["--draft", "--date", "01-01-2001"], catch_exceptions=False
@@ -196,10 +196,10 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,
-            u"Loading template...\nFinding news fragments...\nRendering news "
-            u"fragments...\nDraft only -- nothing has been written.\nWhat is "
-            u"seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
-            u"\n======================"
+            "Loading template...\nFinding news fragments...\nRendering news "
+            "fragments...\nDraft only -- nothing has been written.\nWhat is "
+            "seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
+            "\n======================"
             + dedent(
                 """
                   section-a
@@ -239,10 +239,10 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,
-            u"Loading template...\nFinding news fragments...\nRendering news "
-            u"fragments...\nDraft only -- nothing has been written.\nWhat is "
-            u"seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
-            u"\n======================"
+            "Loading template...\nFinding news fragments...\nRendering news "
+            "fragments...\nDraft only -- nothing has been written.\nWhat is "
+            "seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
+            "\n======================"
             + dedent(
                 """
                   section-b
@@ -532,7 +532,7 @@ class TestCli(TestCase):
 
             self.assertEqual(0, result.exit_code, result.output)
             self.assertTrue(os.path.exists("7.8.9-notes.rst"), os.listdir("."))
-            with open("7.8.9-notes.rst", "r") as f:
+            with open("7.8.9-notes.rst") as f:
                 output = f.read()
 
         self.assertEqual(
@@ -601,7 +601,7 @@ class TestCli(TestCase):
             self.assertEqual(0, result.exit_code, result.output)
             self.assertTrue(os.path.exists("{version}-notes.rst"), os.listdir("."))
             self.assertFalse(os.path.exists("7.8.9-notes.rst"), os.listdir("."))
-            with open("{version}-notes.rst", "r") as f:
+            with open("{version}-notes.rst") as f:
                 output = f.read()
 
         self.assertEqual(
@@ -650,7 +650,7 @@ class TestCli(TestCase):
             )
 
             self.assertEqual(0, result.exit_code, result.output)
-            with open("NEWS.rst", "r") as f:
+            with open("NEWS.rst") as f:
                 output = f.read()
 
         self.assertEqual(
@@ -823,7 +823,7 @@ class TestCli(TestCase):
 
             self.assertEqual(0, result.exit_code, result.output)
             self.assertTrue(os.path.exists("NEWS.rst"), os.listdir("."))
-            with open("NEWS.rst", "r") as f:
+            with open("NEWS.rst") as f:
                 output = f.read()
 
         expected_output = dedent("""\
