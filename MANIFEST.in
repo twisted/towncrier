@@ -6,6 +6,7 @@ include pyproject.toml
 include tox.ini
 include tox_build.sh
 include tox_check-release.sh
+include *.yaml
 recursive-include src *.rst
 
 exclude bin
