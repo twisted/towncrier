@@ -7,7 +7,6 @@ affecting existing content.
 """
 
 
-import io
 import os
 
 
