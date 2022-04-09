@@ -21,7 +21,7 @@ def append_to_newsfile(
         if not os.path.exists(news_file):
             existing_content = ""
         else:
-            with open(news_file, "r", encoding="utf8") as f:
+            with open(news_file, encoding="utf8") as f:
                 existing_content = f.read()
         existing_content = existing_content.split(start_string, 1)
     else:
