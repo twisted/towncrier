@@ -622,6 +622,9 @@ class TestCli(TestCase):
     def test_bullet_points_false(self):
         """
         When all_bullets is false, subsequent lines are not indented.
+
+        The automatic ticket number inserted by towcier will allign with the
+        manual bullet.
         """
         runner = CliRunner()
 
@@ -634,7 +637,24 @@ class TestCli(TestCase):
                 )
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
-                f.write("wow!\n~~~~\n\nAdds levitation.")
+                f.write(
+                    "wow!\n"
+                    "~~~~\n"
+                    "\n"
+                    "No indentation at all."
+                    )
+            with open("newsfragments/124.bugfix", "w") as f:
+                f.write(
+                    "#. Numbered bullet list."
+                    )
+            with open("newsfragments/125.removal", "w") as f:
+                f.write(
+                    "- Hyphen based bullet list."
+                    )
+            with open("newsfragments/126.doc", "w") as f:
+                f.write(
+                    "* Asterisk based bullet list."
+                    )
 
             result = runner.invoke(
                 _main,
@@ -650,26 +670,45 @@ class TestCli(TestCase):
             )
 
             self.assertEqual(0, result.exit_code, result.output)
-            with open("NEWS.rst") as f:
+            with open("NEWS.rst", "r") as f:
                 output = f.read()
 
         self.assertEqual(
             output,
-            dedent(
-                """
-            foo 7.8.9 (01-01-2001)
-            ======================
-
-            Features
-            --------
-
-            wow!
-            ~~~~
-
-            Adds levitation.
-            (#123)
             """
-            ).lstrip(),
+foo 7.8.9 (01-01-2001)
+======================
+
+Features
+--------
+
+wow!
+~~~~
+
+No indentation at all.
+(#123)
+
+
+Bugfixes
+--------
+
+#. Numbered bullet list.
+   (#124)
+
+
+Improved Documentation
+----------------------
+
+* Asterisk based bullet list.
+  (#126)
+
+
+Deprecations and Removals
+-------------------------
+
+- Hyphen based bullet list.
+  (#125)
+""".lstrip(),
         )
 
     def test_title_format_custom(self):
