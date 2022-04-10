@@ -34,11 +34,11 @@ class DefaultFragmentTypesLoader(BaseFragmentTypesLoader):
 
     _default_types = clt.OrderedDict(
         [
-            (u"feature", {"name": u"Features", "showcontent": True}),
-            (u"bugfix", {"name": u"Bugfixes", "showcontent": True}),
-            (u"doc", {"name": u"Improved Documentation", "showcontent": True}),
-            (u"removal", {"name": u"Deprecations and Removals", "showcontent": True}),
-            (u"misc", {"name": u"Misc", "showcontent": False}),
+            ("feature", {"name": "Features", "showcontent": True}),
+            ("bugfix", {"name": "Bugfixes", "showcontent": True}),
+            ("doc", {"name": "Improved Documentation", "showcontent": True}),
+            ("removal", {"name": "Deprecations and Removals", "showcontent": True}),
+            ("misc", {"name": "Misc", "showcontent": False}),
         ]
     )
 

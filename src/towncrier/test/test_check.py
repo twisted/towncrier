@@ -65,7 +65,7 @@ def initial_commit(branch='main'):
     """
     # --initial-branch is explicitly set to `main` because
     # git has deprecated the default branch name.
-    call(["git", "init", "--initial-branch={}".format(branch)])
+    call(["git", "init", f"--initial-branch={branch}"])
     # Without ``git config` user.name and user.email `git commit` fails
     # unless the settings are set globally
     call(["git", "config", "user.name", "user"])

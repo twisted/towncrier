@@ -1,7 +1,6 @@
 # Copyright (c) Amber Brown, 2018
 # See LICENSE for details.
 
-from __future__ import absolute_import, division
 
 import os
 import sys
@@ -50,7 +49,7 @@ def __main(comparewith, directory, config):
         raise
 
     if not files_changed:
-        click.echo("On {} branch, or no diffs, so no newsfragment required.".format(comparewith))
+        click.echo(f"On {comparewith} branch, or no diffs, so no newsfragment required.")
         sys.exit(0)
 
     files = {
@@ -61,7 +60,7 @@ def __main(comparewith, directory, config):
     click.echo("Looking at these files:")
     click.echo("----")
     for n, change in enumerate(files, start=1):
-        click.echo("{}. {}".format(n, change))
+        click.echo(f"{n}. {change}")
     click.echo("----")
 
     news_file = os.path.normpath(os.path.join(base_directory, config["filename"]))
@@ -95,7 +94,7 @@ def __main(comparewith, directory, config):
     else:
         click.echo("Found:")
         for n, fragment in enumerate(fragments_in_branch, start=1):
-            click.echo("{}. {}".format(n, fragment))
+            click.echo(f"{n}. {fragment}")
         sys.exit(0)
 
 

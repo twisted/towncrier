@@ -134,6 +134,8 @@ jobs:
             tox: flake8
           - name: Check Newsfragment
             tox: check-newsfragment
+          - name: Run pre-commit hooks
+            tox: pre-commit
 
     steps:
     - uses: actions/checkout@v2

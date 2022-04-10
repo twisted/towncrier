@@ -22,17 +22,17 @@ class WritingTests(TestCase):
                     "",
                     OrderedDict(
                         [
-                            (("142", "misc", 0), u""),
-                            (("1", "misc", 0), u""),
-                            (("4", "feature", 0), u"Stuff!"),
-                            (("4", "feature", 1), u"Second Stuff!"),
-                            (("2", "feature", 0), u"Foo added."),
-                            (("72", "feature", 0), u"Foo added."),
+                            (("142", "misc", 0), ""),
+                            (("1", "misc", 0), ""),
+                            (("4", "feature", 0), "Stuff!"),
+                            (("4", "feature", 1), "Second Stuff!"),
+                            (("2", "feature", 0), "Foo added."),
+                            (("72", "feature", 0), "Foo added."),
                         ]
                     ),
                 ),
                 ("Names", {}),
-                ("Web", {("3", "bugfix", 0): u"Web fixed."}),
+                ("Web", {("3", "bugfix", 0): "Web fixed."}),
             ]
         )
 
@@ -107,7 +107,7 @@ Old text.
             ),
         )
 
-        with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
+        with open(os.path.join(tempdir, "NEWS.rst")) as f:
             output = f.read()
 
         self.assertEqual(expected_output, output)
@@ -122,16 +122,16 @@ Old text.
                 (
                     "",
                     {
-                        ("142", "misc", 0): u"",
-                        ("1", "misc", 0): u"",
-                        ("4", "feature", 0): u"Stuff!",
-                        ("2", "feature", 0): u"Foo added.",
-                        ("72", "feature", 0): u"Foo added.",
-                        ("99", "feature", 0): u"Foo! " * 100,
+                        ("142", "misc", 0): "",
+                        ("1", "misc", 0): "",
+                        ("4", "feature", 0): "Stuff!",
+                        ("2", "feature", 0): "Foo added.",
+                        ("72", "feature", 0): "Foo added.",
+                        ("99", "feature", 0): "Foo! " * 100,
                     },
                 ),
                 ("Names", {}),
-                ("Web", {("3", "bugfix", 0): u"Web fixed."}),
+                ("Web", {("3", "bugfix", 0): "Web fixed."}),
             ]
         )
 
@@ -193,10 +193,8 @@ Old text.
 
         with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
             f.write(
-                (
                     "Hello there! Here is some info.\n\n"
                     ".. towncrier release notes start\nOld text.\n"
-                )
             )
 
         fragments = split_fragments(fragments, definitions)
@@ -221,7 +219,7 @@ Old text.
             ),
         )
 
-        with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
+        with open(os.path.join(tempdir, "NEWS.rst")) as f:
             output = f.read()
 
         self.assertEqual(expected_output, output)
@@ -259,7 +257,7 @@ Old text.
             content=content,
         )
 
-        with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
+        with open(os.path.join(tempdir, "NEWS.rst")) as f:
             output = f.read()
 
         expected_output = dedent("""\

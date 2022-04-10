@@ -3,9 +3,9 @@
 
 import os
 from textwrap import dedent
+from unittest import mock
 
 from twisted.trial.unittest import TestCase
-import mock
 
 from click.testing import CliRunner
 

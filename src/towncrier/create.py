@@ -5,7 +5,6 @@
 Create a new fragment.
 """
 
-from __future__ import absolute_import
 
 import os
 import click
@@ -69,7 +68,7 @@ def __main(ctx, directory, config, filename, edit, content):
 
     segment_file = os.path.join(fragments_directory, filename)
     if os.path.exists(segment_file):
-        raise click.ClickException("{} already exists".format(segment_file))
+        raise click.ClickException(f"{segment_file} already exists")
 
     if edit:
         content = _get_news_content_from_user(content)
@@ -81,7 +80,7 @@ def __main(ctx, directory, config, filename, edit, content):
     with open(segment_file, "w") as f:
         f.write(content)
 
-    click.echo("Created news fragment at {}".format(segment_file))
+    click.echo(f"Created news fragment at {segment_file}")
 
 
 def _get_news_content_from_user(message):
