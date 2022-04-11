@@ -670,7 +670,7 @@ class TestCli(TestCase):
             )
 
             self.assertEqual(0, result.exit_code, result.output)
-            with open("NEWS.rst", "r") as f:
+            with open("NEWS.rst") as f:
                 output = f.read()
 
         self.assertEqual(
