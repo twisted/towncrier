@@ -165,6 +165,3 @@ texinfo_documents = [
      author, 'Towncrier', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-

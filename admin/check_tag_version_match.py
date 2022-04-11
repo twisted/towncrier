@@ -24,7 +24,7 @@ if not run_version.startswith(TAG_PREFIX):
     print(f"Not a twisted release tag name '{run_version}.")
     sys.exit(1)
 
-run_version = run_version[len(TAG_PREFIX) :]
+run_version = run_version[len(TAG_PREFIX) :]  # noqa: E203
 
 if run_version != branch_version:
     print(f"Branch is at '{branch_version}' while tag is '{run_version}'")
