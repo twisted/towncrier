@@ -14,7 +14,6 @@ repos:
     hooks:
     - id: flake8
       language_version: python3.10
-      exclude: docs/code_examples
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.1.0
