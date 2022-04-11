@@ -2,11 +2,11 @@
 # See LICENSE for details.
 
 
+from collections import OrderedDict
+
 import pkg_resources
 
 from twisted.trial.unittest import TestCase
-
-from collections import OrderedDict
 
 from .._builder import render_fragments, split_fragments
 

@@ -47,12 +47,12 @@ def parse_newfragment_basename(basename, definitions):
             # NOTE: This allows news fragment names like fix-1.2.3.feature or
             # something-cool.feature.ext for projects that don't use ticket
             # numbers in news fragment names.
-            ticket = strip_if_integer_string(parts[i-1])
+            ticket = strip_if_integer_string(parts[i - 1])
             counter = 0
             # Use the following part as the counter if it exists and is a valid
             # digit.
-            if len(parts) > (i + 1) and parts[i+1].isdigit():
-                counter = int(parts[i+1])
+            if len(parts) > (i + 1) and parts[i + 1].isdigit():
+                counter = int(parts[i + 1])
             return ticket, category, counter
     else:
         # No valid category found.
@@ -92,7 +92,7 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
             files = os.listdir(section_dir)
         except FileNotFoundError as e:
             message = "Failed to list the news fragment files.\n{}".format(
-                ''.join(traceback.format_exception_only(type(e), e)),
+                "".join(traceback.format_exception_only(type(e), e)),
             )
             raise ConfigError(message)
 

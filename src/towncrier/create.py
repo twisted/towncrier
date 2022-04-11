@@ -7,6 +7,7 @@ Create a new fragment.
 
 
 import os
+
 import click
 
 from ._settings import load_config_from_options
@@ -22,10 +23,11 @@ from ._settings import load_config_from_options
     help="Open an editor for writing the newsfragment content.",
 )  # TODO: default should be true
 @click.option(
-    "-c", "--content",
+    "-c",
+    "--content",
     type=str,
     default="Add your info here",
-    help="Sets the content of the new fragment."
+    help="Sets the content of the new fragment.",
 )
 @click.argument("filename")
 def _main(ctx, directory, config, filename, edit, content):
@@ -87,13 +89,10 @@ def _get_news_content_from_user(message):
     initial_content = (
         "# Please write your news content. When finished, save the file.\n"
         "# In order to abort, exit without saving.\n"
-        "# Lines starting with \"#\" are ignored.\n"
+        '# Lines starting with "#" are ignored.\n'
     )
     if message is not None:
-        initial_content += (
-            "\n"
-            "{message}\n".format(message=message)
-        )
+        initial_content += "\n" "{message}\n".format(message=message)
     content = click.edit(initial_content)
     if content is None:
         return None

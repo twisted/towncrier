@@ -7,16 +7,17 @@ Build a combined news file from news fragments.
 
 
 import os
-import click
 import sys
 
 from datetime import date
 
-from ._settings import load_config_from_options, ConfigError
-from ._builder import find_fragments, split_fragments, render_fragments
-from ._project import get_version, get_project_name
-from ._writer import append_to_newsfile
+import click
+
+from ._builder import find_fragments, render_fragments, split_fragments
 from ._git import remove_files, stage_newsfile
+from ._project import get_project_name, get_version
+from ._settings import ConfigError, load_config_from_options
+from ._writer import append_to_newsfile
 
 
 def _get_date():
@@ -114,19 +115,21 @@ def __main(
     )
 
     if project_version is None:
-        project_version = config.get('version')
+        project_version = config.get("version")
         if project_version is None:
             project_version = get_version(
                 os.path.join(base_directory, config["package_dir"]), config["package"]
             ).strip()
 
     if project_name is None:
-        project_name = config.get('name')
+        project_name = config.get("name")
         if not project_name:
             package = config.get("package")
             if package:
                 project_name = get_project_name(
-                    os.path.abspath(os.path.join(base_directory, config["package_dir"])),
+                    os.path.abspath(
+                        os.path.join(base_directory, config["package_dir"])
+                    ),
                     package,
                 )
             else:
@@ -168,11 +171,13 @@ def __main(
     )
 
     if render_title_separately:
-        content = "\n".join([
-            top_line,
-            config["underlines"][0] * len(top_line),
-            rendered,
-        ])
+        content = "\n".join(
+            [
+                top_line,
+                config["underlines"][0] * len(top_line),
+                rendered,
+            ]
+        )
     else:
         content = rendered
 

@@ -5,12 +5,12 @@
 import os
 import sys
 
+from subprocess import STDOUT, CalledProcessError, check_output
+
 import click
 
-from subprocess import CalledProcessError, check_output, STDOUT
-
-from ._settings import load_config_from_options
 from ._builder import find_fragments
+from ._settings import load_config_from_options
 
 
 def _run(args, **kwargs):
@@ -49,7 +49,9 @@ def __main(comparewith, directory, config):
         raise
 
     if not files_changed:
-        click.echo(f"On {comparewith} branch, or no diffs, so no newsfragment required.")
+        click.echo(
+            f"On {comparewith} branch, or no diffs, so no newsfragment required."
+        )
         sys.exit(0)
 
     files = {

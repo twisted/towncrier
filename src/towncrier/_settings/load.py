@@ -2,11 +2,12 @@
 # See LICENSE for details.
 
 import os
-import pkg_resources
-
-import tomli
 
 from collections import OrderedDict
+
+import pkg_resources
+import tomli
+
 from .._settings import fragment_types as ft
 
 
@@ -38,9 +39,7 @@ def load_config_from_options(directory, config):
         config = load_config_from_file(os.path.dirname(config), config)
 
     if config is None:
-        raise ConfigError(
-            f"No configuration file found.\nLooked in: {base_directory}"
-        )
+        raise ConfigError(f"No configuration file found.\nLooked in: {base_directory}")
 
     return base_directory, config
 
@@ -79,9 +78,7 @@ def parse_toml(base_path, config):
             sections[x.get("name", "")] = x["path"]
     else:
         sections[""] = ""
-    fragment_types_loader = ft.BaseFragmentTypesLoader.factory(
-        config
-    )
+    fragment_types_loader = ft.BaseFragmentTypesLoader.factory(config)
     types = fragment_types_loader.load()
 
     wrap = config.get("wrap", False)

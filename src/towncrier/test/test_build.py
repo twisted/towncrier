@@ -2,14 +2,15 @@
 # See LICENSE for details.
 
 import os
+
 from subprocess import call
 from textwrap import dedent
-from twisted.trial.unittest import TestCase
 
 from click.testing import CliRunner
+from twisted.trial.unittest import TestCase
 
-from ..build import _main
 from .._shell import cli
+from ..build import _main
 
 
 def setup_simple_project():
@@ -387,9 +388,7 @@ class TestCli(TestCase):
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
 
-            result = runner.invoke(
-                _main, ["--date", "01-01-2001", "--draft"]
-            )
+            result = runner.invoke(_main, ["--date", "01-01-2001", "--draft"])
 
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(
@@ -565,7 +564,7 @@ class TestCli(TestCase):
 
         self.assertEqual(1, result.exit_code)
         self.assertEqual(
-            '`singlefile` is not a valid option. Did you mean `single_file`?\n',
+            "`singlefile` is not a valid option. Did you mean `single_file`?\n",
             result.output,
         )
 
@@ -631,30 +630,19 @@ class TestCli(TestCase):
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
                 f.write(
-                    '[tool.towncrier]\n'
+                    "[tool.towncrier]\n"
                     'template="towncrier:single-file-no-bullets"\n'
-                    'all_bullets=false'
+                    "all_bullets=false"
                 )
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
-                f.write(
-                    "wow!\n"
-                    "~~~~\n"
-                    "\n"
-                    "No indentation at all."
-                    )
+                f.write("wow!\n" "~~~~\n" "\n" "No indentation at all.")
             with open("newsfragments/124.bugfix", "w") as f:
-                f.write(
-                    "#. Numbered bullet list."
-                    )
+                f.write("#. Numbered bullet list.")
             with open("newsfragments/125.removal", "w") as f:
-                f.write(
-                    "- Hyphen based bullet list."
-                    )
+                f.write("- Hyphen based bullet list.")
             with open("newsfragments/126.doc", "w") as f:
-                f.write(
-                    "* Asterisk based bullet list."
-                    )
+                f.write("* Asterisk based bullet list.")
 
             result = runner.invoke(
                 _main,
@@ -719,11 +707,15 @@ Deprecations and Removals
 
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(dedent("""\
+                f.write(
+                    dedent(
+                        """\
                     [tool.towncrier]
                     package = "foo"
                     title_format = "[{project_date}] CUSTOM RELEASE for {name} version {version}"
-                """))
+                """
+                    )
+                )
             os.mkdir("foo")
             os.mkdir("foo/newsfragments")
             with open("foo/newsfragments/123.feature", "w") as f:
@@ -745,7 +737,8 @@ Deprecations and Removals
                 ],
             )
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -761,7 +754,8 @@ Deprecations and Removals
             - Adds levitation (#123)
             - Extends levitation (#124)
 
-        """)
+        """
+        )
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(expected_output, result.output)
@@ -775,16 +769,22 @@ Deprecations and Removals
 
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(dedent("""\
+                f.write(
+                    dedent(
+                        """\
                     [tool.towncrier]
                     package = "foo"
                     title_format = false
                     template = "template.rst"
-                """))
+                """
+                    )
+                )
             os.mkdir("foo")
             os.mkdir("foo/newsfragments")
             with open("template.rst", "w") as f:
-                f.write(dedent("""\
+                f.write(
+                    dedent(
+                        """\
                     Here's a hardcoded title added by the template
                     ==============================================
                     {% for section in sections %}
@@ -797,7 +797,9 @@ Deprecations and Removals
                     {% endfor %}
                     {% endfor %}
                     {% endfor %}
-                """))
+                """
+                    )
+                )
 
             result = runner.invoke(
                 _main,
@@ -812,7 +814,8 @@ Deprecations and Removals
                 ],
             )
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -822,7 +825,8 @@ Deprecations and Removals
             Here's a hardcoded title added by the template
             ==============================================
 
-        """)
+        """
+        )
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(expected_output, result.output)
@@ -837,10 +841,14 @@ Deprecations and Removals
 
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(dedent("""\
+                f.write(
+                    dedent(
+                        """\
                     [tool.towncrier]
                     start_string="Release notes start marker"
-                """))
+                """
+                    )
+                )
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
@@ -865,7 +873,8 @@ Deprecations and Removals
             with open("NEWS.rst") as f:
                 output = f.read()
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             a line
 
             another
@@ -880,7 +889,8 @@ Deprecations and Removals
             - Adds levitation (#123)
 
 
-        """)
+        """
+        )
 
         self.assertEqual(expected_output, output)
 
@@ -892,7 +902,9 @@ Deprecations and Removals
 
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(dedent("""\
+                f.write(
+                    dedent(
+                        """\
                     [tool.towncrier]
                     title_format = "{version} - {project_date}"
                     template = "template.rst"
@@ -901,12 +913,16 @@ Deprecations and Removals
                       directory = "feature"
                       name = ""
                       showcontent = true
-                """))
+                """
+                    )
+                )
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
             with open("template.rst", "w") as f:
-                f.write(dedent("""\
+                f.write(
+                    dedent(
+                        """\
                     {% for section in sections %}
                     {% set underline = "-" %}
                     {% for category, val in definitions.items() if category in sections[section] %}
@@ -917,7 +933,9 @@ Deprecations and Removals
                     {% endfor %}
                     {% endfor %}
                     {% endfor %}
-                """))
+                """
+                    )
+                )
 
             result = runner.invoke(
                 _main,
@@ -929,7 +947,8 @@ Deprecations and Removals
                 ],
             )
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -941,7 +960,8 @@ Deprecations and Removals
 
             - Adds levitation
 
-        """)
+        """
+        )
 
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected_output, result.output)

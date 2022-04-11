@@ -1,13 +1,14 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
-from twisted.trial.unittest import TestCase
-
-import pkg_resources
 import os
-from textwrap import dedent
 
 from collections import OrderedDict
+from textwrap import dedent
+
+import pkg_resources
+
+from twisted.trial.unittest import TestCase
 
 from .._builder import render_fragments, split_fragments
 from .._writer import append_to_newsfile
@@ -193,8 +194,8 @@ Old text.
 
         with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
             f.write(
-                    "Hello there! Here is some info.\n\n"
-                    ".. towncrier release notes start\nOld text.\n"
+                "Hello there! Here is some info.\n\n"
+                ".. towncrier release notes start\nOld text.\n"
             )
 
         fragments = split_fragments(fragments, definitions)
@@ -260,9 +261,11 @@ Old text.
         with open(os.path.join(tempdir, "NEWS.rst")) as f:
             output = f.read()
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             MyProject 1.0 (never)
             =====================
-        """)
+        """
+        )
 
         self.assertEqual(expected_output, output)

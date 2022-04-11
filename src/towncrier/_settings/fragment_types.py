@@ -25,7 +25,7 @@ class BaseFragmentTypesLoader:
         return new
 
     @abc.abstractmethod
-    def load(self,):
+    def load(self):
         """Load fragment types."""
 
 
@@ -42,7 +42,7 @@ class DefaultFragmentTypesLoader(BaseFragmentTypesLoader):
         ]
     )
 
-    def load(self,):
+    def load(self):
         """Load default types."""
         return self._default_types
 
@@ -64,7 +64,7 @@ class ArrayFragmentTypesLoader(BaseFragmentTypesLoader):
 
     """
 
-    def load(self,):
+    def load(self):
         """Load types from toml array of mappings."""
 
         types = clt.OrderedDict()
@@ -104,12 +104,13 @@ class TableFragmentTypesLoader(BaseFragmentTypesLoader):
         # The content will be shown.
 
     """
+
     def __init__(self, config):
         """Initialize."""
         self.config = config
         self.fragment_options = config.get("fragment", {})
 
-    def load(self,):
+    def load(self):
         """Load types from nested mapping."""
         fragment_types = self.fragment_options.keys()
         fragment_types = sorted(fragment_types)

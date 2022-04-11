@@ -11,6 +11,7 @@ import sys
 
 import pep517.meta
 
+
 TAG_PREFIX = "refs/tags/"
 
 if len(sys.argv) < 2:

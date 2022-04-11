@@ -54,9 +54,9 @@ def get_version(package_dir, package):
         return ".".join(map(str, version)).strip()
 
     raise Exception(
-            "I only know how to look at a __version__ that is a str, "
-            "an Increment Version, or a tuple. If you can't provide "
-            "that, use the --version argument and specify one."
+        "I only know how to look at a __version__ that is a str, "
+        "an Increment Version, or a tuple. If you can't provide "
+        "that, use the --version argument and specify one."
     )
 
 

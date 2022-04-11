@@ -54,6 +54,11 @@ exclude = '''
 )
 '''
 
+
+[tool.isort]
+profile = "attrs"
+
+
 [build-system]
 requires = [
     "setuptools ~= 44.1.1",

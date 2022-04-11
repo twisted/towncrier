@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 
-from setuptools import setup, find_packages
-
 # If incremental is not present then setuptools just silently uses v0.0.0 so
 # let's import it and fail instead.
 import incremental  # noqa
+
+from setuptools import find_packages, setup
 
 
 setup(
