@@ -5,9 +5,10 @@ import os
 import os.path
 import sys
 
-from twisted.trial.unittest import TestCase
+from subprocess import PIPE, Popen, call
+
 from click.testing import CliRunner
-from subprocess import call, Popen, PIPE
+from twisted.trial.unittest import TestCase
 
 from towncrier.check import _main as towncrier_check
 
@@ -18,10 +19,7 @@ def create_project(pyproject_path="pyproject.toml", main_branch="main"):
     news-fragment and then switch to a new in-work branch.
     """
     with open(pyproject_path, "w") as f:
-        f.write(
-            "[tool.towncrier]\n"
-            'package = "foo"\n'
-            )
+        f.write("[tool.towncrier]\n" 'package = "foo"\n')
     os.mkdir("foo")
     with open("foo/__init__.py", "w") as f:
         f.write('__version__ = "1.2.3"\n')
@@ -56,7 +54,7 @@ def write(path, contents):
         f.write(contents)
 
 
-def initial_commit(branch='main'):
+def initial_commit(branch="main"):
     """
     Create a git repo, configure it and make an initial commit
 
@@ -116,7 +114,8 @@ class TestChecker(TestCase):
 
             self.assertEqual(0, result.exit_code, result.output)
             self.assertEqual(
-                "On master branch, or no diffs, so no newsfragment required.\n", result.output
+                "On master branch, or no diffs, so no newsfragment required.\n",
+                result.output,
             )
 
     def test_fragment_exists(self):
@@ -186,7 +185,7 @@ class TestChecker(TestCase):
             call(["git", "commit", "-m", "add a newsfragment"])
 
             proc = Popen(
-                [sys.executable, '-m', 'towncrier.check', "--compare-with", "master"],
+                [sys.executable, "-m", "towncrier.check", "--compare-with", "master"],
                 stdout=PIPE,
                 stderr=PIPE,
             )
@@ -208,13 +207,13 @@ class TestChecker(TestCase):
             # Arrange
             create_project()
             # Before any release, the NEWS file might no exist.
-            self.assertNotIn('NEWS.rst', os.listdir('.'))
+            self.assertNotIn("NEWS.rst", os.listdir("."))
 
             call(["towncrier", "build", "--yes", "--version", "1.0"])
             commit("Prepare a release")
             # When missing,
             # the news file is automatically created with a new release.
-            self.assertIn('NEWS.rst', os.listdir('.'))
+            self.assertIn("NEWS.rst", os.listdir("."))
 
             # Act
             result = runner.invoke(towncrier_check, ["--compare-with", "main"])
@@ -238,10 +237,10 @@ class TestChecker(TestCase):
 
             # Do a first release without any checks.
             # And merge the release branch back into the main branch.
-            call(["towncrier", "build",  "--yes", "--version", "1.0"])
+            call(["towncrier", "build", "--yes", "--version", "1.0"])
             commit("First release")
             # The news file is now created.
-            self.assertIn('NEWS.rst', os.listdir('.'))
+            self.assertIn("NEWS.rst", os.listdir("."))
             call(["git", "checkout", "main"])
             call(["git", "merge", "otherbranch", "-m", "Sync release in main branch."])
 
@@ -251,7 +250,15 @@ class TestChecker(TestCase):
             write("foo/newsfragments/456.feature", "Foo the bar")
             commit("A feature in the second release.")
             call(["git", "checkout", "main"])
-            call(["git", "merge", "new-feature-branch", "-m", "Merge new-feature-branch."])
+            call(
+                [
+                    "git",
+                    "merge",
+                    "new-feature-branch",
+                    "-m",
+                    "Merge new-feature-branch.",
+                ]
+            )
 
             # We now have the new release branch.
             call(["git", "checkout", "-b", "next-release"])

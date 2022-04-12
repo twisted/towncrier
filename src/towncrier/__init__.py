@@ -7,4 +7,5 @@ towncrier, a builder for your news files.
 
 from ._version import __version__
 
+
 __all__ = ["__version__"]

@@ -2,12 +2,12 @@
 # See LICENSE for details.
 
 import os
+
 from textwrap import dedent
 from unittest import mock
 
-from twisted.trial.unittest import TestCase
-
 from click.testing import CliRunner
+from twisted.trial.unittest import TestCase
 
 from ..create import _main
 
@@ -36,7 +36,7 @@ class TestCli(TestCase):
     maxDiff = None
 
     def _test_success(
-            self, content=None, config=None, mkdir=True, additional_args=None
+        self, content=None, config=None, mkdir=True, additional_args=None
     ):
         runner = CliRunner()
 
@@ -74,7 +74,7 @@ class TestCli(TestCase):
             mock_edit.assert_called_once_with(
                 "# Please write your news content. When finished, save the file.\n"
                 "# In order to abort, exit without saving.\n"
-                "# Lines starting with \"#\" are ignored.\n"
+                '# Lines starting with "#" are ignored.\n'
                 "\n"
                 "Add your info here\n"
             )
@@ -120,13 +120,12 @@ class TestCli(TestCase):
         with mock.patch("click.edit") as mock_edit:
             mock_edit.return_value = "".join(edit_content)
             self._test_success(
-                content=edit_content,
-                additional_args=["-c", content_line, "--edit"]
+                content=edit_content, additional_args=["-c", content_line, "--edit"]
             )
             mock_edit.assert_called_once_with(
                 "# Please write your news content. When finished, save the file.\n"
                 "# In order to abort, exit without saving.\n"
-                "# Lines starting with \"#\" are ignored.\n"
+                '# Lines starting with "#" are ignored.\n'
                 "\n"
                 "{content_line}\n".format(content_line=content_line)
             )

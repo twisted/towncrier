@@ -3,12 +3,13 @@
 
 import collections as clt
 import os
-from textwrap import dedent
 import textwrap
+
+from textwrap import dedent
 
 from twisted.trial.unittest import TestCase
 
-from .._settings import load_config, ConfigError
+from .._settings import ConfigError, load_config
 
 
 class TomlSettingsTests(TestCase):
@@ -226,11 +227,25 @@ package = "foobar"
         """
         toml_content = textwrap.dedent(toml_content)
         expected = [
-            ("foo", {"name": "Foo", "showcontent": False, }),
-            ("spam", {"name": "Spam", "showcontent": True, },),
+            (
+                "foo",
+                {
+                    "name": "Foo",
+                    "showcontent": False,
+                },
+            ),
+            (
+                "spam",
+                {
+                    "name": "Spam",
+                    "showcontent": True,
+                },
+            ),
         ]
         expected = clt.OrderedDict(expected)
-        config = self.load_config_from_string(toml_content, )
+        config = self.load_config_from_string(
+            toml_content,
+        )
         actual = config["types"]
         self.assertDictEqual(expected, actual)
 
@@ -253,13 +268,33 @@ package = "foobar"
         """
         toml_content = textwrap.dedent(toml_content)
         expected = [
-            ("chore", {"name": "Other Tasks", "showcontent": False, }),
-            ("feat", {"name": "Feat", "showcontent": True, }),
-            ("fix", {"name": "Fix", "showcontent": True, }),
+            (
+                "chore",
+                {
+                    "name": "Other Tasks",
+                    "showcontent": False,
+                },
+            ),
+            (
+                "feat",
+                {
+                    "name": "Feat",
+                    "showcontent": True,
+                },
+            ),
+            (
+                "fix",
+                {
+                    "name": "Fix",
+                    "showcontent": True,
+                },
+            ),
         ]
 
         expected = clt.OrderedDict(expected)
-        config = self.load_config_from_string(toml_content, )
+        config = self.load_config_from_string(
+            toml_content,
+        )
         actual = config["types"]
         self.assertDictEqual(expected, actual)
 

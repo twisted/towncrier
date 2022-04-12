@@ -3,6 +3,7 @@
 
 import os
 import sys
+
 from subprocess import check_output
 
 from twisted.trial.unittest import TestCase
@@ -107,11 +108,11 @@ class InvocationTests(TestCase):
         try:
             os.chdir(new_dir)
             with open("pyproject.toml", "w") as f:
-                f.write('[tool.towncrier]\n' 'directory = "news"\n')
+                f.write("[tool.towncrier]\n" 'directory = "news"\n')
             os.makedirs("news")
             out = check_output([sys.executable, "-m", "towncrier", "--help"])
             self.assertIn(b"[OPTIONS] COMMAND [ARGS]...", out)
-            self.assertRegex(out, br".*--help\s+Show this message and exit.")
+            self.assertRegex(out, rb".*--help\s+Show this message and exit.")
         finally:
             os.chdir(orig_dir)
 
