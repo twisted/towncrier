@@ -121,9 +121,6 @@ jobs:
           - name: CPython 3.9
             tox: py39
             action: '3.9'
-          - name: PyPy 3.8
-            tox: pypy38
-            action: pypy-3.8
         task:
           - name: Test
             tox: tests
