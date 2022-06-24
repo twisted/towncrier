@@ -31,7 +31,7 @@ Custom fragment types
 will be used instead ``towncrier`` default ones, they are not combined.
 
 Users can configure each of their own custom fragment types by adding tables to
-the pyproject.toml named ``[tool.towncrier.type.<a custom fragment type>]``.
+the pyproject.toml named ``[tool.towncrier.fragment.<a custom fragment type>]``.
 
 These tables may include the following optional keys:
 
