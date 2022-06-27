@@ -238,6 +238,7 @@ jobs:
   all:
     name: All success
     runs-on: ubuntu-latest
+    if: always()
     needs:
       - build
       - test-linux
