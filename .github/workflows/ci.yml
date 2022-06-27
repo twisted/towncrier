@@ -236,7 +236,7 @@ jobs:
         verbose: true
 
   all:
-    name: All
+    name: All success
     runs-on: ubuntu-latest
     needs:
       - build
@@ -245,6 +245,13 @@ jobs:
       - check
       - pypi-publish
     steps:
-      - name: This
+      - name: Require all successes
         shell: python
-        run: import this
+        env:
+          RESULTS: ${{ toJSON(needs.*.result) }}
+        run: |
+          import json
+          import os
+          import sys
+          results = json.loads(os.environ["RESULTS"])
+          sys.exit(0 if all(result == "success" for result in results) else 1)
