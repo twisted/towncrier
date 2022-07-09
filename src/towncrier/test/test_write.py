@@ -2,14 +2,17 @@
 # See LICENSE for details.
 
 import os
+from pathlib import Path
 
 from collections import OrderedDict
 from textwrap import dedent
 
 import pkg_resources
 
+from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
+from ..build import _main
 from .._builder import render_fragments, split_fragments
 from .._writer import append_to_newsfile
 
@@ -266,6 +269,120 @@ Old text.
             MyProject 1.0 (never)
             =====================
         """
+        )
+
+        self.assertEqual(expected_output, output)
+
+    def test_with_title_format_duplicate_version_raise(self):
+        """
+        When `single_file` enabled as default,
+        and fragments of `version` already produced in the newsfile,
+        a duplicate `build` will throw a ValueError.
+        """
+        runner = CliRunner()
+
+        def do_build_once():
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--version",
+                    "7.8.9",
+                    "--name",
+                    "foo",
+                    "--date",
+                    "01-01-2001",
+                    "--yes",
+                ],
+            )
+            return result
+
+        # `single_file` default as true
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(dedent(
+                    """
+                    [tool.towncrier]
+                    title_format="{name} {version} ({project_date})"
+                    filename="{version}-notes.rst"
+                    """
+                ).lstrip())
+            with open("{version}-notes.rst", "w") as f:
+                f.write("Release Notes\n\n.. towncrier release notes start\n")
+            os.mkdir("newsfragments")
+
+            result = do_build_once()
+            self.assertEqual(0, result.exit_code)
+            # build again with the same version
+            result = do_build_once()
+            self.assertNotEqual(0, result.exit_code)
+            self.assertIsInstance(result.exception, ValueError)
+            self.assertSubstring("already produced newsfiles for this version",
+                result.exception.args[0])
+
+    def test_single_file_false_overwrite_duplicate_version(self):
+        """
+        When `single_file` disabled, multiple newsfiles generated and
+        the content of which get overwritten each time.
+        """
+        runner = CliRunner()
+
+        def do_build_once():
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--version",
+                    "7.8.9",
+                    "--name",
+                    "foo",
+                    "--date",
+                    "01-01-2001",
+                    "--yes",
+                ],
+            )
+            return result
+
+        # single_file = false
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(dedent(
+                    """
+                    [tool.towncrier]
+                    single_file=false
+                    title_format="{name} {version} ({project_date})"
+                    filename="{version}-notes.rst"
+                    """
+                ).lstrip())
+            os.mkdir("newsfragments")
+
+            result = do_build_once()
+            self.assertEqual(0, result.exit_code)
+            # build again with the same version
+            result = do_build_once()
+            self.assertEqual(0, result.exit_code)
+
+            notes = list(Path.cwd().glob('*-notes.rst'))
+            self.assertEqual(1, len(notes))
+            self.assertEqual("7.8.9-notes.rst", notes[0].name)
+
+            with open(notes[0]) as f:
+                output = f.read()
+
+        expected_output = dedent(
+            """\
+            foo 7.8.9 (01-01-2001)
+            ======================
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+            """
         )
 
         self.assertEqual(expected_output, output)
