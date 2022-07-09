@@ -26,7 +26,7 @@ def append_to_newsfile(
     else:
         existing_content = [""]
 
-    if top_line and top_line in existing_content:
+    if top_line and top_line in existing_content[-1]:
         raise ValueError("It seems you've already produced newsfiles for this version?")
 
     with open(os.path.join(directory, filename), "wb") as f:
