@@ -235,16 +235,32 @@ jobs:
         password: ${{ secrets.PYPI_TOKEN }}
         verbose: true
 
+  # This is a meta-job to simplify PR CI enforcement configuration in GitHub.
+  # Inside the GitHub config UI you only configure this job as required.
+  # All the extra requirements are defined "as code" as part of the `needs`
+  # list for this job.
   all:
-    name: All
+    name: All success
     runs-on: ubuntu-latest
+    # The always() part is very important.
+    # If not set, the job will be skipped on failing dependencies.
+    if: always()
     needs:
+      # This is the list of CI job that we are interested to be green before
+      # a merge.
       - build
       - test-linux
       - test-windows
       - check
       - pypi-publish
     steps:
-      - name: This
+      - name: Require all successes
         shell: python
-        run: import this
+        env:
+          RESULTS: ${{ toJSON(needs.*.result) }}
+        run: |
+          import json
+          import os
+          import sys
+          results = json.loads(os.environ["RESULTS"])
+          sys.exit(0 if all(result == "success" for result in results) else 1)
