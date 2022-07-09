@@ -1,0 +1,3 @@
+
+fix `single_file` option related newsfile naming and duplicate version
+writing behavior, to be consistent with documentation.
