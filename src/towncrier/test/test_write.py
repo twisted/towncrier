@@ -2,9 +2,9 @@
 # See LICENSE for details.
 
 import os
-from pathlib import Path
 
 from collections import OrderedDict
+from pathlib import Path
 from textwrap import dedent
 
 import pkg_resources
@@ -12,9 +12,9 @@ import pkg_resources
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
-from ..build import _main
 from .._builder import render_fragments, split_fragments
 from .._writer import append_to_newsfile
+from ..build import _main
 
 
 class WritingTests(TestCase):
@@ -302,13 +302,15 @@ Old text.
         # `single_file` default as true
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(dedent(
-                    """
+                f.write(
+                    dedent(
+                        """
                     [tool.towncrier]
                     title_format="{name} {version} ({project_date})"
                     filename="{version}-notes.rst"
                     """
-                ).lstrip())
+                    ).lstrip()
+                )
             with open("{version}-notes.rst", "w") as f:
                 f.write("Release Notes\n\n.. towncrier release notes start\n")
             os.mkdir("newsfragments")
@@ -319,8 +321,9 @@ Old text.
             result = do_build_once()
             self.assertNotEqual(0, result.exit_code)
             self.assertIsInstance(result.exception, ValueError)
-            self.assertSubstring("already produced newsfiles for this version",
-                result.exception.args[0])
+            self.assertSubstring(
+                "already produced newsfiles for this version", result.exception.args[0]
+            )
 
     def test_single_file_false_overwrite_duplicate_version(self):
         """
@@ -350,14 +353,16 @@ Old text.
         # single_file = false
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(dedent(
-                    """
+                f.write(
+                    dedent(
+                        """
                     [tool.towncrier]
                     single_file=false
                     title_format="{name} {version} ({project_date})"
                     filename="{version}-notes.rst"
                     """
-                ).lstrip())
+                    ).lstrip()
+                )
             os.mkdir("newsfragments")
 
             result = do_build_once()
@@ -366,7 +371,7 @@ Old text.
             result = do_build_once()
             self.assertEqual(0, result.exit_code)
 
-            notes = list(Path.cwd().glob('*-notes.rst'))
+            notes = list(Path.cwd().glob("*-notes.rst"))
             self.assertEqual(1, len(notes))
             self.assertEqual("7.8.9-notes.rst", notes[0].name)
 

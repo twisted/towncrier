@@ -2,8 +2,8 @@
 # See LICENSE for details.
 
 import os
-from pathlib import Path
 
+from pathlib import Path
 from subprocess import call
 from textwrap import dedent
 
@@ -525,7 +525,7 @@ class TestCli(TestCase):
                     "--date",
                     "01-01-2001",
                     "--yes",
-                ]
+                ],
             )
             # not git repository, manually remove fragment file
             Path(f"newsfragments/{fragment_file}").unlink()
@@ -538,12 +538,18 @@ class TestCli(TestCase):
                     '[tool.towncrier]\n single_file=false\n filename="{version}-notes.rst"'
                 )
             os.mkdir("newsfragments")
-            results.append(do_build_once_with("7.8.9", "123.feature", "Adds levitation"))
+            results.append(
+                do_build_once_with("7.8.9", "123.feature", "Adds levitation")
+            )
             results.append(do_build_once_with("7.9.0", "456.bugfix", "Adds catapult"))
 
             self.assertEqual(0, results[0].exit_code, results[0].output)
             self.assertEqual(0, results[1].exit_code, results[1].output)
-            self.assertEqual(2, len(list(Path.cwd().glob("*-notes.rst"))), "one newfile for each build")
+            self.assertEqual(
+                2,
+                len(list(Path.cwd().glob("*-notes.rst"))),
+                "one newfile for each build",
+            )
             self.assertTrue(os.path.exists("7.8.9-notes.rst"), os.listdir("."))
             self.assertTrue(os.path.exists("7.9.0-notes.rst"), os.listdir("."))
 
@@ -621,7 +627,7 @@ class TestCli(TestCase):
                     "--date",
                     "01-01-2001",
                     "--yes",
-                ]
+                ],
             )
             # not git repository, manually remove fragment file
             Path(f"newsfragments/{fragment_file}").unlink()
@@ -634,12 +640,18 @@ class TestCli(TestCase):
                     '[tool.towncrier]\n single_file=true\n filename="{version}-notes.rst"'
                 )
             os.mkdir("newsfragments")
-            results.append(do_build_once_with("7.8.9", "123.feature", "Adds levitation"))
+            results.append(
+                do_build_once_with("7.8.9", "123.feature", "Adds levitation")
+            )
             results.append(do_build_once_with("7.9.0", "456.bugfix", "Adds catapult"))
 
             self.assertEqual(0, results[0].exit_code, results[0].output)
             self.assertEqual(0, results[1].exit_code, results[1].output)
-            self.assertEqual(1, len(list(Path.cwd().glob("*-notes.rst"))), "single newfile for multiple builds")
+            self.assertEqual(
+                1,
+                len(list(Path.cwd().glob("*-notes.rst"))),
+                "single newfile for multiple builds",
+            )
             self.assertTrue(os.path.exists("{version}-notes.rst"), os.listdir("."))
 
             with open("{version}-notes.rst") as f:
