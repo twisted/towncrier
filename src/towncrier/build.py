@@ -193,7 +193,7 @@ def __main(
         start_string = config["start_string"]
         news_file = config["filename"]
 
-        if config["single_file"]:
+        if not config["single_file"]:
             # When single_file is enabled, the news file name changes based on the version.
             news_file = news_file.format(
                 name=project_name, version=project_version, project_date=project_date
