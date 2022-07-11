@@ -3,6 +3,7 @@
 
 import os
 
+from pathlib import Path
 from subprocess import call
 from textwrap import dedent
 
@@ -500,27 +501,23 @@ class TestCli(TestCase):
             ).lstrip(),
         )
 
-    def test_single_file(self):
+    def test_release_notes_in_separate_files(self):
         """
-        Enabling the single file mode will write the changelog to a filename
-        that is formatted from the filename args.
+        When `single_file = false` the release notes for each version are stored
+        in a separate file.
+        The name of the file is defined by the `filename` configuration value.
         """
         runner = CliRunner()
 
-        with runner.isolated_filesystem():
-            with open("pyproject.toml", "w") as f:
-                f.write(
-                    '[tool.towncrier]\n single_file=true\n filename="{version}-notes.rst"'
-                )
-            os.mkdir("newsfragments")
-            with open("newsfragments/123.feature", "w") as f:
-                f.write("Adds levitation")
+        def do_build_once_with(version, fragment_file, fragment):
+            with open(f"newsfragments/{fragment_file}", "w") as f:
+                f.write(fragment)
 
             result = runner.invoke(
                 _main,
                 [
                     "--version",
-                    "7.8.9",
+                    version,
                     "--name",
                     "foo",
                     "--date",
@@ -528,26 +525,72 @@ class TestCli(TestCase):
                     "--yes",
                 ],
             )
+            # not git repository, manually remove fragment file
+            Path(f"newsfragments/{fragment_file}").unlink()
+            return result
 
-            self.assertEqual(0, result.exit_code, result.output)
+        results = []
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(
+                    "\n".join(
+                        [
+                            "[tool.towncrier]",
+                            " single_file=false",
+                            ' filename="{version}-notes.rst"',
+                        ]
+                    )
+                )
+            os.mkdir("newsfragments")
+            results.append(
+                do_build_once_with("7.8.9", "123.feature", "Adds levitation")
+            )
+            results.append(do_build_once_with("7.9.0", "456.bugfix", "Adds catapult"))
+
+            self.assertEqual(0, results[0].exit_code, results[0].output)
+            self.assertEqual(0, results[1].exit_code, results[1].output)
+            self.assertEqual(
+                2,
+                len(list(Path.cwd().glob("*-notes.rst"))),
+                "one newfile for each build",
+            )
             self.assertTrue(os.path.exists("7.8.9-notes.rst"), os.listdir("."))
+            self.assertTrue(os.path.exists("7.9.0-notes.rst"), os.listdir("."))
+
+            outputs = []
             with open("7.8.9-notes.rst") as f:
-                output = f.read()
+                outputs.append(f.read())
+            with open("7.9.0-notes.rst") as f:
+                outputs.append(f.read())
 
-        self.assertEqual(
-            output,
-            dedent(
+            self.assertEqual(
+                outputs[0],
+                dedent(
+                    """
+                foo 7.8.9 (01-01-2001)
+                ======================
+
+                Features
+                --------
+
+                - Adds levitation (#123)
                 """
-            foo 7.8.9 (01-01-2001)
-            ======================
+                ).lstrip(),
+            )
+            self.assertEqual(
+                outputs[1],
+                dedent(
+                    """
+                foo 7.9.0 (01-01-2001)
+                ======================
 
-            Features
-            --------
+                Bugfixes
+                --------
 
-            - Adds levitation (#123)
-            """
-            ).lstrip(),
-        )
+                - Adds catapult (#456)
+                """
+                ).lstrip(),
+            )
 
     def test_singlefile_errors_and_explains_cleanly(self):
         """
@@ -568,27 +611,25 @@ class TestCli(TestCase):
             result.output,
         )
 
-    def test_single_file_false(self):
+    def test_all_version_notes_in_a_single_file(self):
         """
-        If formatting arguments are given in the filename arg and single_file is
-        false, the filename will not be formatted.
+        When `single_file = true` the single file is used to store the notes
+        for multiple versions.
+
+        The name of the file is fixed as the literal option `filename` option
+        in the configuration file, instead of extrapolated with variables.
         """
         runner = CliRunner()
 
-        with runner.isolated_filesystem():
-            with open("pyproject.toml", "w") as f:
-                f.write(
-                    '[tool.towncrier]\n single_file=false\n filename="{version}-notes.rst"'
-                )
-            os.mkdir("newsfragments")
-            with open("newsfragments/123.feature", "w") as f:
-                f.write("Adds levitation")
+        def do_build_once_with(version, fragment_file, fragment):
+            with open(f"newsfragments/{fragment_file}", "w") as f:
+                f.write(fragment)
 
             result = runner.invoke(
                 _main,
                 [
                     "--version",
-                    "7.8.9",
+                    version,
                     "--name",
                     "foo",
                     "--date",
@@ -596,27 +637,64 @@ class TestCli(TestCase):
                     "--yes",
                 ],
             )
+            # not git repository, manually remove fragment file
+            Path(f"newsfragments/{fragment_file}").unlink()
+            return result
 
-            self.assertEqual(0, result.exit_code, result.output)
+        results = []
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(
+                    "\n".join(
+                        [
+                            "[tool.towncrier]",
+                            " single_file=true",
+                            " # The `filename` variable is fixed and not formated in any way.",
+                            ' filename="{version}-notes.rst"',
+                        ]
+                    )
+                )
+            os.mkdir("newsfragments")
+            results.append(
+                do_build_once_with("7.8.9", "123.feature", "Adds levitation")
+            )
+            results.append(do_build_once_with("7.9.0", "456.bugfix", "Adds catapult"))
+
+            self.assertEqual(0, results[0].exit_code, results[0].output)
+            self.assertEqual(0, results[1].exit_code, results[1].output)
+            self.assertEqual(
+                1,
+                len(list(Path.cwd().glob("*-notes.rst"))),
+                "single newfile for multiple builds",
+            )
             self.assertTrue(os.path.exists("{version}-notes.rst"), os.listdir("."))
-            self.assertFalse(os.path.exists("7.8.9-notes.rst"), os.listdir("."))
+
             with open("{version}-notes.rst") as f:
                 output = f.read()
 
-        self.assertEqual(
-            output,
-            dedent(
+            self.assertEqual(
+                output,
+                dedent(
+                    """
+                foo 7.9.0 (01-01-2001)
+                ======================
+
+                Bugfixes
+                --------
+
+                - Adds catapult (#456)
+
+
+                foo 7.8.9 (01-01-2001)
+                ======================
+
+                Features
+                --------
+
+                - Adds levitation (#123)
                 """
-            foo 7.8.9 (01-01-2001)
-            ======================
-
-            Features
-            --------
-
-            - Adds levitation (#123)
-            """
-            ).lstrip(),
-        )
+                ).lstrip(),
+            )
 
     def test_bullet_points_false(self):
         """
