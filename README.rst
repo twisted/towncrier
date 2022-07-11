@@ -150,7 +150,18 @@ Towncrier has the following global options, which can be specified in the toml f
     wrap = false  # Wrap text to 79 characters
     all_bullets = true  # make all fragments bullet points
 
-If a single file is used, the content of that file gets overwritten each time.
+If ``single_file`` is set to ``true`` or unspecified, all changes will be written to a single 
+fixed newsfile, whose name is literally fixed as the ``filename`` option. In each run of ``towncrier build``,
+content of new changes will append at the top of old content, and after ``start_string`` if the 
+``start_string`` already appears in the newsfile. If the corresponding ``top_line``, which is formatted 
+as the option 'title_format', already exists in newsfile, ``ValueError`` will be raised to remind 
+you "already produced newsfiles for this version".
+
+If ``single_file`` is set to ``false`` instead, each versioned ``towncrier build`` will generate a 
+separate newsfile, whose name is formatted as the patten given by option ``filename``.
+For example, if ``filename="{version}-notes.rst"``, then the release note with version "7.8.9" will
+be written to the file "7.8.9-notes.rst". If the newsfile already exists, its content
+will be overwriten with new release note, without throwing a ``ValueError`` warning.
 
 If ``title_format`` is unspecified or an empty string, the default format will be used.
 If set to ``false``, no title will be created.
