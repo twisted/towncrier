@@ -532,11 +532,14 @@ class TestCli(TestCase):
         results = []
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write('\n'.join([
-                    '[tool.towncrier]',
-                    ' single_file=false',
-                    ' filename="{version}-notes.rst"',
-                    ])
+                f.write(
+                    "\n".join(
+                        [
+                            "[tool.towncrier]",
+                            " single_file=false",
+                            ' filename="{version}-notes.rst"',
+                        ]
+                    )
                 )
             os.mkdir("newsfragments")
             results.append(
@@ -612,7 +615,7 @@ class TestCli(TestCase):
         """
         When `single_file = true` the single file is used to store the notes
         for multiple versions.
-        
+
         The name of the file is fixed as the literal option `filename` option
         in the configuration file, instead of extrapolated with variables.
         """
@@ -641,12 +644,15 @@ class TestCli(TestCase):
         results = []
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write('\n'.join([
-                    '[tool.towncrier]',
-                    ' single_file=true',
-                    ' # The `filename` variable is fixed and not formated in any way.',
-                    ' filename="{version}-notes.rst"',
-                    ])
+                f.write(
+                    "\n".join(
+                        [
+                            "[tool.towncrier]",
+                            " single_file=true",
+                            " # The `filename` variable is fixed and not formated in any way.",
+                            ' filename="{version}-notes.rst"',
+                        ]
+                    )
                 )
             os.mkdir("newsfragments")
             results.append(
