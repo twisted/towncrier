@@ -501,13 +501,11 @@ class TestCli(TestCase):
             ).lstrip(),
         )
 
-    def test_single_file_false(self):
+    def test_release_notes_in_separate_files(self):
         """
-        Disabling the single file mode will write the changelog to a filename
-        that is formatted from the filename args, w.r.t. [documentation]
-        (https://towncrier.readthedocs.io/en/latest/index.html?highlight=single_file#further-options)
-        as:
-            single_file = true  # if false, filename is formatted like `title_format`.
+        When `single_file = false` the release notes for each version are stored
+        in a separate file.
+        The name of the file is defined by the `filename` configuration value.
         """
         runner = CliRunner()
 
@@ -534,8 +532,11 @@ class TestCli(TestCase):
         results = []
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(
-                    '[tool.towncrier]\n single_file=false\n filename="{version}-notes.rst"'
+                f.write('\n'.join([
+                    '[tool.towncrier]',
+                    ' single_file=false',
+                    ' filename="{version}-notes.rst"',
+                    ])
                 )
             os.mkdir("newsfragments")
             results.append(
@@ -607,9 +608,13 @@ class TestCli(TestCase):
             result.output,
         )
 
-    def test_single_file(self):
+    def test_all_version_notes_in_a_single_file(self):
         """
-        "If a single file is used, the content of that file gets overwritten each time."
+        When `single_file = true` the single file is used to store the notes
+        for multiple versions.
+        
+        The name of the file is fixed as the literal option `filename` option
+        in the configuration file, instead of extrapolated with variables.
         """
         runner = CliRunner()
 
@@ -636,8 +641,12 @@ class TestCli(TestCase):
         results = []
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(
-                    '[tool.towncrier]\n single_file=true\n filename="{version}-notes.rst"'
+                f.write('\n'.join([
+                    '[tool.towncrier]',
+                    ' single_file=true',
+                    ' # The `filename` variable is fixed and not formated in any way.',
+                    ' filename="{version}-notes.rst"',
+                    ])
                 )
             os.mkdir("newsfragments")
             results.append(

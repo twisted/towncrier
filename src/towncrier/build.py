@@ -193,8 +193,9 @@ def __main(
         start_string = config["start_string"]
         news_file = config["filename"]
 
-        if not config["single_file"]:
-            # When single_file is enabled, the news file name changes based on the version.
+        if config["single_file"] is False:
+            # The release notes for each version are stored in a separate file.
+            # The name of that file is generated based on the current version and project.
             news_file = news_file.format(
                 name=project_name, version=project_version, project_date=project_date
             )
