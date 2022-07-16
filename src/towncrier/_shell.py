@@ -18,10 +18,10 @@ from .create import _main as _create_cmd
 
 @click.group(cls=DefaultGroup, default="build", default_if_no_args=True)
 @click.version_option(__version__)
-def cli():
+def towncrier():
     pass
 
 
-cli.add_command(_build_cmd)
-cli.add_command(_check_cmd)
-cli.add_command(_create_cmd)
+towncrier.add_command(_build_cmd)
+towncrier.add_command(_check_cmd)
+towncrier.add_command(_create_cmd)
