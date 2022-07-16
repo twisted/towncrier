@@ -1,0 +1,4 @@
+Towncrier no longer used `incremental` to manage its version.
+Extracting the target project name and version from an `incremental Version`
+instance is still supported.
+You will need to intall the `incremental` extra dependency.

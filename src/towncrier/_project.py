@@ -10,7 +10,12 @@ import sys
 
 from importlib import import_module
 
-from incremental import Version
+
+# Incremental is a soft dependency.
+try:
+    from incremental import Version as IncrementalVersion
+except ImportError:
+    IncrementalVersion = None
 
 
 def _get_package(package_dir, package):
@@ -47,7 +52,7 @@ def get_version(package_dir, package):
     if isinstance(version, str):
         return version.strip()
 
-    if isinstance(version, Version):
+    if IncrementalVersion and isinstance(version, IncrementalVersion):
         return version.base().strip()
 
     if isinstance(version, tuple):
@@ -73,6 +78,6 @@ def get_project_name(package_dir, package):
     if isinstance(version, str):
         return package.title()
 
-    if isinstance(version, Version):
+    if IncrementalVersion and isinstance(version, IncrementalVersion):
         # Incremental has support for package names
         return version.package
