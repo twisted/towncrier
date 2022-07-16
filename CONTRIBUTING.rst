@@ -69,7 +69,7 @@ We recommend the following workflow:
       *Running the test suite* for details.
 
 
-   c. Document any user-facing changes in one of the `/docs/` files.
+   c. Document any user-facing changes in one of the ``/docs/`` files.
 
    d. Create a newsfragment in ``src/towncrier/newsfragments/`` describing the changes and containing information that is of interest to end-users.
 
