@@ -1,96 +1,136 @@
-Releasing
-=========
+Contributing to Towncrier
+=========================
 
-Summary
--------
+Want to contribute to this project? Great! We'd love to hear from you!
 
-- Create a release branch in the main repository, not in a fork.
-- Create a commit for a release candidate inside the release branch.
-- Create a Pull Request for the release. The same branch and PR will be used for both the release candidates and  the final release.
-- Get an approving review.
-- Once approved, tag the last commit in the branch as a release candidate.
-- Push the tag.  This will trigger a build including the upload of artifacts to PyPI.
-- Notify the Twisted maillist allow a week for feedback before continuing.
-- Make sure that tickets exist for all raised concerns.  These tickets should be marked using the ``blocking`` label.
-- Address each issue by either concluding that it is not really a release blocker and removing the label or by fixing via a PR to the release branch.
-- Prepare a commit for a final release and push it to the release branch.
-- Get an approving review for the final release.
-- Tag the commit using the final release version. This will trigger the upload of artifacts to PyPI.
+As a developer and user, you probably have some questions about our
+project and how to contribute.
+In this article we try to answer these and give you some recommendations.
 
 
-Step-by-step
-------------
+Ways to communicate and contribute
+----------------------------------
 
-.. note::
+There are several options to contribute to this project:
 
-    Commands are written with Linux in mind and a ``venv`` located in ``venv/``.
-    Adjust per your OS and virtual environment location.
-    For example, on Windows with an environment in the directory ``myenv/`` the Python command would be ``myenv/scripts/python``.
+* Open a new topic on our  `GitHub Discussions`_ page.
 
-- Define the final release version you are preparing.
+  Tell us about your ideas or ask questions there.
+  Discuss with us the next Towncrier release.
 
-  - towncrier uses `CalVer <https://calver.org/>`_ of the form ``YY.MM.micro`` with the micro version just incrementing.
-  - Normalize the version according to `incremental <https://github.com/twisted/incremental/>`_.
+* Help or comment on our GitHub `issues`_ tracker.
 
-    - This requires that ``towncrier[dev]`` extra is installed.
-    - ``venv/bin/python admin/canonicalize_version.py 19.09.00-rc1``
-    - Outputs ``19.9.0.rc1`` which is the form to be used.
+  There are certainly many issues where you can help with your expertise.
+  Or you would like to share your ideas with us.
 
-- Create a release branch with a name of the form ``release-19.9.0`` starting from the ``master`` branch.
+* Open a new issue using GitHub `issues`_ tracker.
 
-  - On the new release branch you will commit all tagged release candidate commits as well as the final tagged release commit.
+  If you found a bug or have a new cool feature, describe your findings.
+  Try to be as descriptive as possible to help us understand your issue.
 
-- Update the version to the release candidate with the first being ``rc1`` (as opposed to 0).
+* Check out the Freenode ``#twisted-dev`` IRC channel.
 
-  - In ``src/towncrier/_version.py`` the version is set using ``incremental`` such as ``__version__ = Version('towncrier', 19, 9, 0, release_candidate=1)``
+  If you prefer to discuss some topics personally, you may find the IRC
+  channel interesting.
 
-- Run ``venv/bin/towncrier build --yes`` to build the the newsfragments into the release notes document and to automatically remove the newsfragment files.
+* Modify the code.
 
-- Commit and push to the primary repository, not a fork.
+  If you would love to see the new feature in the next release, this is
+  probably the best way.
 
-  - It is important to not use a fork so that pushed tags end up in the primary repository, server provided secrets for publishing to PyPI are available, and maybe more.
 
-- If working on the first release candidate from this branch, create a PR named in the form ``Release 19.9.0``.
+Modifying the code
+------------------
 
-- Request a review and address raised concerns until receiving an approval.
+The source code is managed using Git and is hosted on GitHub::
 
-- Tag that commit such as ``19.9.0.rc1`` and push the tag to the primary repository.
+    https://github.com/twisted/towncrier
+    git@github.com:twisted/towncrier.git
 
-  - This will result in another build which will publish to PyPI.
-  - Confirm the presence of the release on PyPI.
 
-- `Dismiss the approving review <https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/dismissing-a-pull-request-review>`_.
+We recommend the following workflow:
 
-  - The review process will be reused for any subsequent release candidates, the final release, and the post-release tweaks so it must be cleared at each stage.
+#. `Fork our project <https://github.com/twisted/towncrier/fork>`_ on GitHub.
 
-- Notify the `Twisted-Python maillist <https://twistedmatrix.com/cgi-bin/mailman/listinfo/twisted-python>`_ of the release to allow for feedback if a pre-release and just for notification if a final release.
+#. Clone your forked Git repository (replace ``GITHUB_USER`` with your
+   account name on GitHub)::
 
-- If another release candidate is required:
+   $ git clone git@github.com:GITHUB_USER/towncrier.git
 
-  - Submit PRs against the release branch to integrate the needed changes.  Any PRs could be cherry picks from the ``master`` branch if already resolved there, or direct PRs against the release branch that will be merged back into master at the completion of the release.
 
-  - Return to the step where the version is updated and increment the release candidate number.
+#. Prepare a pull request:
 
-- If ready for a final release, remove the release candidate indicator from the version.
+   a. Create a new branch with::
 
-  - Edit ``src/towncrier/_version.py`` such as ``__version__ = Version('towncrier', 19, 9, 0)`` to remove the release candidate indication.
+      $ git checkout -b <BRANCH_NAME>
 
-  - Manually update the NEWS.rst by removing the `.rcN` version and update the release date.
+   b. Write your test cases and run the complete test suite, see the section
+      *Running the test suite* for details.
 
-  - Disable the actual check for `tox -e check-newsfragment` so  that you will have a green test run.
 
-  - Commit and push the changes to trigger the CI tests and make sure all are green.
+   c. Document any user facing changes in one of the `/docs/` files.
 
-  - Tag as ``19.9.0`` and push the tag to the primary repository.
+   d. Create a newsfragment in ``src/towncrier/newsfragments/`` describing the changes and containing information that are of interest for end-users.
 
-  - This will result in another build which will publish to PyPI for the final release.
+   e. Create a `pull request`_.
+      Describe in the pull request what you did and why. If you have open questions, ask.
 
-  - Confirm the presence of the release on PyPI.
+#. Wait for feedback. If you receive any comments, address these.
 
-- If the final release has been completed, re-enable `tox -e check-newsfragment`.
+#. After your pull request is merged, delete your branch.
 
-- Increment the patch version by one and set to a development version.
 
-  - In ``src/towncrier/_version.py`` the version is set using ``incremental`` such as ``__version__ = Version('towncrier', 19, 9, 1, dev=0)``
+.. _testsuite:
 
-- Merge without waiting for an approving review.
+Running the test suite
+----------------------
+
+We use the `twisted.trial`_ module and `tox`_ to run tests against all supported
+Python versions and operating systems. All test dependencies, other than tox, are installed
+automatically.
+
+The following list contains some ways how to run the test suite:
+
+* To run all tests, use::
+
+    $ tox
+
+  You may want to add the ``--skip-missing-interpreters`` option to avoid errors
+  when a specific Python interpreter version couldn't be found.
+
+*  To get a complete list about the available targets, run::
+
+    $ tox -av
+
+* To run only a specific test only, use the ``towncrier.test.FILE.CLASS.METHOD`` syntax,
+  for example::
+
+    $ tox -- towncrier.test.test_project.InvocationTests.test_version
+
+* To run some quality checks before you create the pull request,
+  we recommend to use this call::
+
+    $ tox -e check-manifest,check-newsfragment
+
+* Install `pre-commit <https://pre-commit.com/>`_ and activate::
+
+    $ pip install pre-commit
+    $ pre-commit
+    Or run as git hook
+    $ pre-commit install
+
+* To investigate and debug errors, use the ``trial`` command like this::
+
+    $ trial -b towncrier
+
+  This command creates a virtual environment and invokes a PDB session.
+
+
+.. ### Links
+
+.. _flake8: https://flake8.rtfd.io
+.. _GitHub Discussions: https://github.com/twisted/towncrier/discussions
+.. _issues:  https://github.com/twisted/towncrier/issues
+.. _pull request: https://github.com/twisted/towncrier/pulls
+.. _tox: https://tox.rtfd.org/
+.. _twisted.trial: https://twistedmatrix.com/trac/wiki/TwistedTrial
