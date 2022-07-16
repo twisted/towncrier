@@ -69,7 +69,7 @@ We recommend the following workflow:
    b. Write your test cases and run the complete test suite, see the section
       *Running the test suite* for details.
 
-   c. Document any user facing changes in the ``README.rst`` file.
+   c. Document any user facing changes in one of the `/docs/` files.
 
    d. Create a newsfragment in ``src/towncrier/newsfragments/`` describing the changes and containing information that are of interest for end-users.
 
@@ -111,14 +111,20 @@ The following list contains some ways how to run the test suite:
 * To run some quality checks before you create the pull request,
   we recommend to use this call::
 
-    $ tox -e flake8,check-manifest,check-newsfragment
+    $ tox -e check-manifest,check-newsfragment
+
+* Install `pre-commit <https://pre-commit.com/>`_ and activate::
+
+    $ pip install pre-commit
+    $ pre-commit
+    Or run as git hook
+    $ pre-commit install
 
 * To investigate and debug errors, use the ``trial`` command like this::
 
     $ trial -b towncrier
 
   This command creates a virtual environment and invokes a PDB session.
-
 
 
 .. ### Links
