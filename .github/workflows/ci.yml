@@ -151,21 +151,43 @@ jobs:
       run: |
         codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}"
 
-  lint:
-    name: Linters
+  check:
+    name: ${{ matrix.task.name}} - ${{ matrix.python.name }}
     runs-on: ubuntu-latest
-    env:
-      TOX_PARALLEL_NO_SPINNER: 1
+    needs:
+      - build
+    strategy:
+      fail-fast: false
+      matrix:
+        python:
+          # Using second most recent minor release for whatever little
+          # increase in stability over using the latest minor.
+          - name: CPython 3.9
+            tox: py39
+            python-version: '3.9'
+        task:
+          - name: Check Newsfragment
+            tox: check-newsfragment
+          - name: Check package manifest
+            tox: check-manifest
+          - name: Check pre-commit
+            tox: pre-commir
 
     steps:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
 
-    - name: Set up python
+    - name: Download package files
+      uses: actions/download-artifact@v3
+      with:
+        name: dist
+        path: dist/
+
+    - name: Set up ${{ matrix.python.name }}
       uses: actions/setup-python@v3
       with:
-        python-version: "3.10"
+        python-version: ${{ matrix.python.python-version }}
 
     - name: Install dependencies
       run: python -m pip install --upgrade pip tox
@@ -173,14 +195,7 @@ jobs:
     - uses: twisted/python-info-action@v1
 
     - name: Tox
-      run: tox -c tox.ini --parallel -e pre-commit
-
-    - name: Tox
-      run: tox -c tox.ini --parallel -e check-newsfragment
-
-    - name: Tox
-      run: tox -c tox.ini --parallel -e check-manifest
-
+      run: tox -c tox.ini -e ${{ matrix.task.tox }}
 
   pypi-publish:
     # https://github.community/t/is-it-possible-to-require-all-github-actions-tasks-to-pass-without-enumerating-them/117957/4?u=graingert
