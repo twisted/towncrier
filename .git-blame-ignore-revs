@@ -1,0 +1,11 @@
+# This file lists commits that should be ignored by the `git blame` command.
+# You can configure your checkout to use it by default by running:
+#
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+#
+# Or pass it to the blame command manually:
+#
+#   git blame --ignore-revs-file .git-blame-ignore-revs ...
+
+# black & isort
+9a58911ea760b996b88355b6b18420b88b5a0ea9

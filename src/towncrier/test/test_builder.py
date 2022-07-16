@@ -73,11 +73,11 @@ class TestParseNewsfragmentBasename(TestCase):
         """
         self.assertEqual(
             parse_newfragment_basename("  007.feature", ["feature"]),
-            ("7", "feature", 0)
+            ("7", "feature", 0),
         )
 
     def test_strip_with_counter(self):
         self.assertEqual(
             parse_newfragment_basename("  007.feature.3", ["feature"]),
-            ("7", "feature", 3)
+            ("7", "feature", 3),
         )

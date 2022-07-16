@@ -1,12 +1,15 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
-from twisted.trial.unittest import TestCase
-
+import collections as clt
 import os
+import textwrap
+
 from textwrap import dedent
 
-from .._settings import load_config, ConfigError
+from twisted.trial.unittest import TestCase
+
+from .._settings import ConfigError, load_config
 
 
 class TomlSettingsTests(TestCase):
@@ -172,7 +175,7 @@ package = "foobar"
             str(e.exception),
             "The template file '{}' does not exist.".format(
                 os.path.normpath(os.path.join(temp, "foo.rst")),
-            )
+            ),
         )
 
     def test_missing_template_in_towncrier(self):
@@ -199,3 +202,112 @@ package = "foobar"
         self.assertEqual(
             str(e.exception), "Towncrier does not have a template named 'foo'."
         )
+
+    def test_custom_types_as_tables_array_deprecated(self):
+        """
+        Custom fragment categories can be defined inside
+        the toml config file using an array of tables
+        (a table name in double brackets).
+
+        This functionality is considered deprecated, but we continue
+        to support it to keep backward compatibility.
+        """
+        toml_content = """
+        [tool.towncrier]
+        package = "foobar"
+        [[tool.towncrier.type]]
+        directory="foo"
+        name="Foo"
+        showcontent=false
+
+        [[tool.towncrier.type]]
+        directory="spam"
+        name="Spam"
+        showcontent=true
+        """
+        toml_content = textwrap.dedent(toml_content)
+        expected = [
+            (
+                "foo",
+                {
+                    "name": "Foo",
+                    "showcontent": False,
+                },
+            ),
+            (
+                "spam",
+                {
+                    "name": "Spam",
+                    "showcontent": True,
+                },
+            ),
+        ]
+        expected = clt.OrderedDict(expected)
+        config = self.load_config_from_string(
+            toml_content,
+        )
+        actual = config["types"]
+        self.assertDictEqual(expected, actual)
+
+    def test_custom_types_as_tables(self):
+        """
+        Custom fragment categories can be defined inside
+        the toml config file using tables.
+        """
+        test_project_path = self.mktemp()
+        os.makedirs(test_project_path)
+        toml_content = """
+        [tool.towncrier]
+        package = "foobar"
+        [tool.towncrier.fragment.feat]
+        ignored_field="Bazz"
+        [tool.towncrier.fragment.fix]
+        [tool.towncrier.fragment.chore]
+        name = "Other Tasks"
+        showcontent = false
+        """
+        toml_content = textwrap.dedent(toml_content)
+        expected = [
+            (
+                "chore",
+                {
+                    "name": "Other Tasks",
+                    "showcontent": False,
+                },
+            ),
+            (
+                "feat",
+                {
+                    "name": "Feat",
+                    "showcontent": True,
+                },
+            ),
+            (
+                "fix",
+                {
+                    "name": "Fix",
+                    "showcontent": True,
+                },
+            ),
+        ]
+
+        expected = clt.OrderedDict(expected)
+        config = self.load_config_from_string(
+            toml_content,
+        )
+        actual = config["types"]
+        self.assertDictEqual(expected, actual)
+
+    def load_config_from_string(self, toml_content):
+        """Load configuration from a string.
+
+        Given a string following toml syntax,
+        obtain the towncrier configuration.
+        """
+        test_project_path = self.mktemp()
+        os.makedirs(test_project_path)
+        toml_path = os.path.join(test_project_path, "pyproject.toml")
+        with open(toml_path, "w") as f:
+            f.write(toml_content)
+        config = load_config(test_project_path)
+        return config

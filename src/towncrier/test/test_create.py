@@ -2,12 +2,12 @@
 # See LICENSE for details.
 
 import os
-from textwrap import dedent
 
-from twisted.trial.unittest import TestCase
-import mock
+from textwrap import dedent
+from unittest import mock
 
 from click.testing import CliRunner
+from twisted.trial.unittest import TestCase
 
 from ..create import _main
 
@@ -36,7 +36,7 @@ class TestCli(TestCase):
     maxDiff = None
 
     def _test_success(
-            self, content=None, config=None, mkdir=True, additional_args=None
+        self, content=None, config=None, mkdir=True, additional_args=None
     ):
         runner = CliRunner()
 
@@ -71,6 +71,13 @@ class TestCli(TestCase):
         with mock.patch("click.edit") as mock_edit:
             mock_edit.return_value = "".join(content)
             self._test_success(content=content, additional_args=["--edit"])
+            mock_edit.assert_called_once_with(
+                "# Please write your news content. When finished, save the file.\n"
+                "# In order to abort, exit without saving.\n"
+                '# Lines starting with "#" are ignored.\n'
+                "\n"
+                "Add your info here\n"
+            )
 
     def test_edit_with_comment(self):
         """Create file editly with ignored line."""
@@ -92,6 +99,36 @@ class TestCli(TestCase):
                 result = runner.invoke(_main, ["123.feature.rst", "--edit"])
                 self.assertEqual([], os.listdir("foo/newsfragments"))
                 self.assertEqual(1, result.exit_code)
+
+    def test_content(self):
+        """
+        When creating a new fragment the content can be passed as a
+        command line argument.
+        The text editor is not invoked.
+        """
+        content_line = "This is a content"
+        self._test_success(content=[content_line], additional_args=["-c", content_line])
+
+    def test_message_and_edit(self):
+        """
+        When creating a new message, a initial content can be passed via
+        the command line and continue modifying the content by invoking the
+        text editor.
+        """
+        content_line = "This is a content line"
+        edit_content = ["This is line 1\n", "This is line 2"]
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = "".join(edit_content)
+            self._test_success(
+                content=edit_content, additional_args=["-c", content_line, "--edit"]
+            )
+            mock_edit.assert_called_once_with(
+                "# Please write your news content. When finished, save the file.\n"
+                "# In order to abort, exit without saving.\n"
+                '# Lines starting with "#" are ignored.\n'
+                "\n"
+                "{content_line}\n".format(content_line=content_line)
+            )
 
     def test_different_directory(self):
         """Ensure non-standard directories are used."""

@@ -1,0 +1,1 @@
+Move docs too master branch and document custom fragment types.

@@ -2,14 +2,16 @@
 # See LICENSE for details.
 
 import os
+
+from pathlib import Path
 from subprocess import call
 from textwrap import dedent
-from twisted.trial.unittest import TestCase
 
 from click.testing import CliRunner
+from twisted.trial.unittest import TestCase
 
-from ..build import _main
 from .._shell import cli
+from ..build import _main
 
 
 def setup_simple_project():
@@ -185,8 +187,8 @@ class TestCli(TestCase):
                     sectdir = "news/" + section
                     os.mkdir(sectdir)
                     for type_ in types:
-                        with open("{}/1.{}".format(sectdir, type_), "w") as f:
-                            f.write("{} {}".format(section, type_))
+                        with open(f"{sectdir}/1.{type_}", "w") as f:
+                            f.write(f"{section} {type_}")
 
                 return runner.invoke(
                     _main, ["--draft", "--date", "01-01-2001"], catch_exceptions=False
@@ -196,10 +198,10 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,
-            u"Loading template...\nFinding news fragments...\nRendering news "
-            u"fragments...\nDraft only -- nothing has been written.\nWhat is "
-            u"seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
-            u"\n======================"
+            "Loading template...\nFinding news fragments...\nRendering news "
+            "fragments...\nDraft only -- nothing has been written.\nWhat is "
+            "seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
+            "\n======================"
             + dedent(
                 """
                   section-a
@@ -239,10 +241,10 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,
-            u"Loading template...\nFinding news fragments...\nRendering news "
-            u"fragments...\nDraft only -- nothing has been written.\nWhat is "
-            u"seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
-            u"\n======================"
+            "Loading template...\nFinding news fragments...\nRendering news "
+            "fragments...\nDraft only -- nothing has been written.\nWhat is "
+            "seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
+            "\n======================"
             + dedent(
                 """
                   section-b
@@ -387,9 +389,7 @@ class TestCli(TestCase):
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
 
-            result = runner.invoke(
-                _main, ["--date", "01-01-2001", "--draft"]
-            )
+            result = runner.invoke(_main, ["--date", "01-01-2001", "--draft"])
 
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(
@@ -501,27 +501,23 @@ class TestCli(TestCase):
             ).lstrip(),
         )
 
-    def test_single_file(self):
+    def test_release_notes_in_separate_files(self):
         """
-        Enabling the single file mode will write the changelog to a filename
-        that is formatted from the filename args.
+        When `single_file = false` the release notes for each version are stored
+        in a separate file.
+        The name of the file is defined by the `filename` configuration value.
         """
         runner = CliRunner()
 
-        with runner.isolated_filesystem():
-            with open("pyproject.toml", "w") as f:
-                f.write(
-                    '[tool.towncrier]\n single_file=true\n filename="{version}-notes.rst"'
-                )
-            os.mkdir("newsfragments")
-            with open("newsfragments/123.feature", "w") as f:
-                f.write("Adds levitation")
+        def do_build_once_with(version, fragment_file, fragment):
+            with open(f"newsfragments/{fragment_file}", "w") as f:
+                f.write(fragment)
 
             result = runner.invoke(
                 _main,
                 [
                     "--version",
-                    "7.8.9",
+                    version,
                     "--name",
                     "foo",
                     "--date",
@@ -529,26 +525,72 @@ class TestCli(TestCase):
                     "--yes",
                 ],
             )
+            # not git repository, manually remove fragment file
+            Path(f"newsfragments/{fragment_file}").unlink()
+            return result
 
-            self.assertEqual(0, result.exit_code, result.output)
+        results = []
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(
+                    "\n".join(
+                        [
+                            "[tool.towncrier]",
+                            " single_file=false",
+                            ' filename="{version}-notes.rst"',
+                        ]
+                    )
+                )
+            os.mkdir("newsfragments")
+            results.append(
+                do_build_once_with("7.8.9", "123.feature", "Adds levitation")
+            )
+            results.append(do_build_once_with("7.9.0", "456.bugfix", "Adds catapult"))
+
+            self.assertEqual(0, results[0].exit_code, results[0].output)
+            self.assertEqual(0, results[1].exit_code, results[1].output)
+            self.assertEqual(
+                2,
+                len(list(Path.cwd().glob("*-notes.rst"))),
+                "one newfile for each build",
+            )
             self.assertTrue(os.path.exists("7.8.9-notes.rst"), os.listdir("."))
-            with open("7.8.9-notes.rst", "r") as f:
-                output = f.read()
+            self.assertTrue(os.path.exists("7.9.0-notes.rst"), os.listdir("."))
 
-        self.assertEqual(
-            output,
-            dedent(
+            outputs = []
+            with open("7.8.9-notes.rst") as f:
+                outputs.append(f.read())
+            with open("7.9.0-notes.rst") as f:
+                outputs.append(f.read())
+
+            self.assertEqual(
+                outputs[0],
+                dedent(
+                    """
+                foo 7.8.9 (01-01-2001)
+                ======================
+
+                Features
+                --------
+
+                - Adds levitation (#123)
                 """
-            foo 7.8.9 (01-01-2001)
-            ======================
+                ).lstrip(),
+            )
+            self.assertEqual(
+                outputs[1],
+                dedent(
+                    """
+                foo 7.9.0 (01-01-2001)
+                ======================
 
-            Features
-            --------
+                Bugfixes
+                --------
 
-            - Adds levitation (#123)
-            """
-            ).lstrip(),
-        )
+                - Adds catapult (#456)
+                """
+                ).lstrip(),
+            )
 
     def test_singlefile_errors_and_explains_cleanly(self):
         """
@@ -565,31 +607,29 @@ class TestCli(TestCase):
 
         self.assertEqual(1, result.exit_code)
         self.assertEqual(
-            '`singlefile` is not a valid option. Did you mean `single_file`?\n',
+            "`singlefile` is not a valid option. Did you mean `single_file`?\n",
             result.output,
         )
 
-    def test_single_file_false(self):
+    def test_all_version_notes_in_a_single_file(self):
         """
-        If formatting arguments are given in the filename arg and single_file is
-        false, the filename will not be formatted.
+        When `single_file = true` the single file is used to store the notes
+        for multiple versions.
+
+        The name of the file is fixed as the literal option `filename` option
+        in the configuration file, instead of extrapolated with variables.
         """
         runner = CliRunner()
 
-        with runner.isolated_filesystem():
-            with open("pyproject.toml", "w") as f:
-                f.write(
-                    '[tool.towncrier]\n single_file=false\n filename="{version}-notes.rst"'
-                )
-            os.mkdir("newsfragments")
-            with open("newsfragments/123.feature", "w") as f:
-                f.write("Adds levitation")
+        def do_build_once_with(version, fragment_file, fragment):
+            with open(f"newsfragments/{fragment_file}", "w") as f:
+                f.write(fragment)
 
             result = runner.invoke(
                 _main,
                 [
                     "--version",
-                    "7.8.9",
+                    version,
                     "--name",
                     "foo",
                     "--date",
@@ -597,44 +637,90 @@ class TestCli(TestCase):
                     "--yes",
                 ],
             )
+            # not git repository, manually remove fragment file
+            Path(f"newsfragments/{fragment_file}").unlink()
+            return result
 
-            self.assertEqual(0, result.exit_code, result.output)
+        results = []
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(
+                    "\n".join(
+                        [
+                            "[tool.towncrier]",
+                            " single_file=true",
+                            " # The `filename` variable is fixed and not formated in any way.",
+                            ' filename="{version}-notes.rst"',
+                        ]
+                    )
+                )
+            os.mkdir("newsfragments")
+            results.append(
+                do_build_once_with("7.8.9", "123.feature", "Adds levitation")
+            )
+            results.append(do_build_once_with("7.9.0", "456.bugfix", "Adds catapult"))
+
+            self.assertEqual(0, results[0].exit_code, results[0].output)
+            self.assertEqual(0, results[1].exit_code, results[1].output)
+            self.assertEqual(
+                1,
+                len(list(Path.cwd().glob("*-notes.rst"))),
+                "single newfile for multiple builds",
+            )
             self.assertTrue(os.path.exists("{version}-notes.rst"), os.listdir("."))
-            self.assertFalse(os.path.exists("7.8.9-notes.rst"), os.listdir("."))
-            with open("{version}-notes.rst", "r") as f:
+
+            with open("{version}-notes.rst") as f:
                 output = f.read()
 
-        self.assertEqual(
-            output,
-            dedent(
+            self.assertEqual(
+                output,
+                dedent(
+                    """
+                foo 7.9.0 (01-01-2001)
+                ======================
+
+                Bugfixes
+                --------
+
+                - Adds catapult (#456)
+
+
+                foo 7.8.9 (01-01-2001)
+                ======================
+
+                Features
+                --------
+
+                - Adds levitation (#123)
                 """
-            foo 7.8.9 (01-01-2001)
-            ======================
-
-            Features
-            --------
-
-            - Adds levitation (#123)
-            """
-            ).lstrip(),
-        )
+                ).lstrip(),
+            )
 
     def test_bullet_points_false(self):
         """
         When all_bullets is false, subsequent lines are not indented.
+
+        The automatic ticket number inserted by towcier will allign with the
+        manual bullet.
         """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
                 f.write(
-                    '[tool.towncrier]\n'
+                    "[tool.towncrier]\n"
                     'template="towncrier:single-file-no-bullets"\n'
-                    'all_bullets=false'
+                    "all_bullets=false"
                 )
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
-                f.write("wow!\n~~~~\n\nAdds levitation.")
+                f.write("wow!\n" "~~~~\n" "\n" "No indentation at all.")
+            with open("newsfragments/124.bugfix", "w") as f:
+                f.write("#. Numbered bullet list.")
+            with open("newsfragments/125.removal", "w") as f:
+                f.write("- Hyphen based bullet list.")
+            with open("newsfragments/126.doc", "w") as f:
+                f.write("* Asterisk based bullet list.")
 
             result = runner.invoke(
                 _main,
@@ -650,26 +736,45 @@ class TestCli(TestCase):
             )
 
             self.assertEqual(0, result.exit_code, result.output)
-            with open("NEWS.rst", "r") as f:
+            with open("NEWS.rst") as f:
                 output = f.read()
 
         self.assertEqual(
             output,
-            dedent(
-                """
-            foo 7.8.9 (01-01-2001)
-            ======================
-
-            Features
-            --------
-
-            wow!
-            ~~~~
-
-            Adds levitation.
-            (#123)
             """
-            ).lstrip(),
+foo 7.8.9 (01-01-2001)
+======================
+
+Features
+--------
+
+wow!
+~~~~
+
+No indentation at all.
+(#123)
+
+
+Bugfixes
+--------
+
+#. Numbered bullet list.
+   (#124)
+
+
+Improved Documentation
+----------------------
+
+* Asterisk based bullet list.
+  (#126)
+
+
+Deprecations and Removals
+-------------------------
+
+- Hyphen based bullet list.
+  (#125)
+""".lstrip(),
         )
 
     def test_title_format_custom(self):
@@ -680,11 +785,15 @@ class TestCli(TestCase):
 
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(dedent("""\
+                f.write(
+                    dedent(
+                        """\
                     [tool.towncrier]
                     package = "foo"
                     title_format = "[{project_date}] CUSTOM RELEASE for {name} version {version}"
-                """))
+                """
+                    )
+                )
             os.mkdir("foo")
             os.mkdir("foo/newsfragments")
             with open("foo/newsfragments/123.feature", "w") as f:
@@ -706,7 +815,8 @@ class TestCli(TestCase):
                 ],
             )
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -722,7 +832,8 @@ class TestCli(TestCase):
             - Adds levitation (#123)
             - Extends levitation (#124)
 
-        """)
+        """
+        )
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(expected_output, result.output)
@@ -736,16 +847,37 @@ class TestCli(TestCase):
 
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(dedent("""\
+                f.write(
+                    dedent(
+                        """\
                     [tool.towncrier]
                     package = "foo"
                     title_format = false
-                """))
+                    template = "template.rst"
+                """
+                    )
+                )
             os.mkdir("foo")
             os.mkdir("foo/newsfragments")
-            # Towncrier ignores .rst extension
-            with open("foo/newsfragments/124.feature.rst", "w") as f:
-                f.write("Extends levitation")
+            with open("template.rst", "w") as f:
+                f.write(
+                    dedent(
+                        """\
+                    Here's a hardcoded title added by the template
+                    ==============================================
+                    {% for section in sections %}
+                    {% set underline = "-" %}
+                    {% for category, val in definitions.items() if category in sections[section] %}
+
+                    {% for text, values in sections[section][category]|dictsort(by='value') %}
+                    - {{ text }}
+
+                    {% endfor %}
+                    {% endfor %}
+                    {% endfor %}
+                """
+                    )
+                )
 
             result = runner.invoke(
                 _main,
@@ -760,22 +892,19 @@ class TestCli(TestCase):
                 ],
             )
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
             Draft only -- nothing has been written.
             What is seen below is what would be written.
 
-            FooBarBaz 7.8.9 (20-01-2001)
-            ============================
+            Here's a hardcoded title added by the template
+            ==============================================
 
-            Features
-            --------
-
-            - Extends levitation (#124)
-
-        """)
+        """
+        )
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(expected_output, result.output)
@@ -790,10 +919,14 @@ class TestCli(TestCase):
 
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(dedent("""\
+                f.write(
+                    dedent(
+                        """\
                     [tool.towncrier]
                     start_string="Release notes start marker"
-                """))
+                """
+                    )
+                )
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
@@ -815,10 +948,11 @@ class TestCli(TestCase):
 
             self.assertEqual(0, result.exit_code, result.output)
             self.assertTrue(os.path.exists("NEWS.rst"), os.listdir("."))
-            with open("NEWS.rst", "r") as f:
+            with open("NEWS.rst") as f:
                 output = f.read()
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             a line
 
             another
@@ -833,6 +967,79 @@ class TestCli(TestCase):
             - Adds levitation (#123)
 
 
-        """)
+        """
+        )
 
         self.assertEqual(expected_output, output)
+
+    def test_with_topline_and_template_and_draft(self):
+        """
+        Spacing is proper when drafting with a topline and a template.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(
+                    dedent(
+                        """\
+                    [tool.towncrier]
+                    title_format = "{version} - {project_date}"
+                    template = "template.rst"
+
+                      [[tool.towncrier.type]]
+                      directory = "feature"
+                      name = ""
+                      showcontent = true
+                """
+                    )
+                )
+            os.mkdir("newsfragments")
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+            with open("template.rst", "w") as f:
+                f.write(
+                    dedent(
+                        """\
+                    {% for section in sections %}
+                    {% set underline = "-" %}
+                    {% for category, val in definitions.items() if category in sections[section] %}
+
+                    {% for text, values in sections[section][category]|dictsort(by='value') %}
+                    - {{ text }}
+
+                    {% endfor %}
+                    {% endfor %}
+                    {% endfor %}
+                """
+                    )
+                )
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--version=7.8.9",
+                    "--name=foo",
+                    "--date=20-01-2001",
+                    "--draft",
+                ],
+            )
+
+        expected_output = dedent(
+            """\
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            7.8.9 - 20-01-2001
+            ==================
+
+            - Adds levitation
+
+        """
+        )
+
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertEqual(expected_output, result.output)

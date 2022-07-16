@@ -1,16 +1,20 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
-from twisted.trial.unittest import TestCase
-
-import pkg_resources
 import os
-from textwrap import dedent
 
 from collections import OrderedDict
+from pathlib import Path
+from textwrap import dedent
+
+import pkg_resources
+
+from click.testing import CliRunner
+from twisted.trial.unittest import TestCase
 
 from .._builder import render_fragments, split_fragments
 from .._writer import append_to_newsfile
+from ..build import _main
 
 
 class WritingTests(TestCase):
@@ -22,17 +26,17 @@ class WritingTests(TestCase):
                     "",
                     OrderedDict(
                         [
-                            (("142", "misc", 0), u""),
-                            (("1", "misc", 0), u""),
-                            (("4", "feature", 0), u"Stuff!"),
-                            (("4", "feature", 1), u"Second Stuff!"),
-                            (("2", "feature", 0), u"Foo added."),
-                            (("72", "feature", 0), u"Foo added."),
+                            (("142", "misc", 0), ""),
+                            (("1", "misc", 0), ""),
+                            (("4", "feature", 0), "Stuff!"),
+                            (("4", "feature", 1), "Second Stuff!"),
+                            (("2", "feature", 0), "Foo added."),
+                            (("72", "feature", 0), "Foo added."),
                         ]
                     ),
                 ),
                 ("Names", {}),
-                ("Web", {("3", "bugfix", 0): u"Web fixed."}),
+                ("Web", {("3", "bugfix", 0): "Web fixed."}),
             ]
         )
 
@@ -99,7 +103,6 @@ Old text.
             render_fragments(
                 template,
                 None,
-                "",
                 fragments,
                 definitions,
                 ["-", "~"],
@@ -108,7 +111,7 @@ Old text.
             ),
         )
 
-        with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
+        with open(os.path.join(tempdir, "NEWS.rst")) as f:
             output = f.read()
 
         self.assertEqual(expected_output, output)
@@ -123,16 +126,16 @@ Old text.
                 (
                     "",
                     {
-                        ("142", "misc", 0): u"",
-                        ("1", "misc", 0): u"",
-                        ("4", "feature", 0): u"Stuff!",
-                        ("2", "feature", 0): u"Foo added.",
-                        ("72", "feature", 0): u"Foo added.",
-                        ("99", "feature", 0): u"Foo! " * 100,
+                        ("142", "misc", 0): "",
+                        ("1", "misc", 0): "",
+                        ("4", "feature", 0): "Stuff!",
+                        ("2", "feature", 0): "Foo added.",
+                        ("72", "feature", 0): "Foo added.",
+                        ("99", "feature", 0): "Foo! " * 100,
                     },
                 ),
                 ("Names", {}),
-                ("Web", {("3", "bugfix", 0): u"Web fixed."}),
+                ("Web", {("3", "bugfix", 0): "Web fixed."}),
             ]
         )
 
@@ -194,10 +197,8 @@ Old text.
 
         with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
             f.write(
-                (
-                    "Hello there! Here is some info.\n\n"
-                    ".. towncrier release notes start\nOld text.\n"
-                )
+                "Hello there! Here is some info.\n\n"
+                ".. towncrier release notes start\nOld text.\n"
             )
 
         fragments = split_fragments(fragments, definitions)
@@ -214,7 +215,6 @@ Old text.
             render_fragments(
                 template,
                 None,
-                "",
                 fragments,
                 definitions,
                 ["-", "~"],
@@ -223,7 +223,7 @@ Old text.
             ),
         )
 
-        with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
+        with open(os.path.join(tempdir, "NEWS.rst")) as f:
             output = f.read()
 
         self.assertEqual(expected_output, output)
@@ -246,7 +246,6 @@ Old text.
         content = render_fragments(
             template=template,
             issue_format=None,
-            top_line="",
             fragments=fragments,
             definitions=definitions,
             underlines=["-", "~"],
@@ -262,12 +261,133 @@ Old text.
             content=content,
         )
 
-        with open(os.path.join(tempdir, "NEWS.rst"), "r") as f:
+        with open(os.path.join(tempdir, "NEWS.rst")) as f:
             output = f.read()
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             MyProject 1.0 (never)
             =====================
-        """)
+        """
+        )
+
+        self.assertEqual(expected_output, output)
+
+    def test_with_title_format_duplicate_version_raise(self):
+        """
+        When `single_file` enabled as default,
+        and fragments of `version` already produced in the newsfile,
+        a duplicate `build` will throw a ValueError.
+        """
+        runner = CliRunner()
+
+        def do_build_once():
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--version",
+                    "7.8.9",
+                    "--name",
+                    "foo",
+                    "--date",
+                    "01-01-2001",
+                    "--yes",
+                ],
+            )
+            return result
+
+        # `single_file` default as true
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(
+                    dedent(
+                        """
+                    [tool.towncrier]
+                    title_format="{name} {version} ({project_date})"
+                    filename="{version}-notes.rst"
+                    """
+                    ).lstrip()
+                )
+            with open("{version}-notes.rst", "w") as f:
+                f.write("Release Notes\n\n.. towncrier release notes start\n")
+            os.mkdir("newsfragments")
+
+            result = do_build_once()
+            self.assertEqual(0, result.exit_code)
+            # build again with the same version
+            result = do_build_once()
+            self.assertNotEqual(0, result.exit_code)
+            self.assertIsInstance(result.exception, ValueError)
+            self.assertSubstring(
+                "already produced newsfiles for this version", result.exception.args[0]
+            )
+
+    def test_single_file_false_overwrite_duplicate_version(self):
+        """
+        When `single_file` disabled, multiple newsfiles generated and
+        the content of which get overwritten each time.
+        """
+        runner = CliRunner()
+
+        def do_build_once():
+            with open("newsfragments/123.feature", "w") as f:
+                f.write("Adds levitation")
+
+            result = runner.invoke(
+                _main,
+                [
+                    "--version",
+                    "7.8.9",
+                    "--name",
+                    "foo",
+                    "--date",
+                    "01-01-2001",
+                    "--yes",
+                ],
+            )
+            return result
+
+        # single_file = false
+        with runner.isolated_filesystem():
+            with open("pyproject.toml", "w") as f:
+                f.write(
+                    dedent(
+                        """
+                    [tool.towncrier]
+                    single_file=false
+                    title_format="{name} {version} ({project_date})"
+                    filename="{version}-notes.rst"
+                    """
+                    ).lstrip()
+                )
+            os.mkdir("newsfragments")
+
+            result = do_build_once()
+            self.assertEqual(0, result.exit_code)
+            # build again with the same version
+            result = do_build_once()
+            self.assertEqual(0, result.exit_code)
+
+            notes = list(Path.cwd().glob("*-notes.rst"))
+            self.assertEqual(1, len(notes))
+            self.assertEqual("7.8.9-notes.rst", notes[0].name)
+
+            with open(notes[0]) as f:
+                output = f.read()
+
+        expected_output = dedent(
+            """\
+            foo 7.8.9 (01-01-2001)
+            ======================
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+            """
+        )
 
         self.assertEqual(expected_output, output)

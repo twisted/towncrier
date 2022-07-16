@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
-from __future__ import absolute_import, division, print_function
-
-from setuptools import setup, find_packages
 
 # If incremental is not present then setuptools just silently uses v0.0.0 so
 # let's import it and fail instead.
-import incremental
+import incremental  # noqa
+
+from setuptools import find_packages, setup
 
 
 setup(
@@ -29,26 +28,23 @@ setup(
         "Operating System :: POSIX :: Linux",
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
     use_incremental=True,
+    python_requires=">=3.7",
     install_requires=[
         "click",
         "click-default-group",
         "incremental",
         "jinja2",
         "setuptools",
-        "toml; python_version < '3.6'",
-        "tomli; python_version >= '3.6'",
+        "tomli",
     ],
     extras_require={"dev": ["packaging"]},
     package_dir={"": "src"},
@@ -59,4 +55,5 @@ setup(
     description="Building newsfiles for your project.",
     long_description=open("README.rst").read(),
     entry_points={"console_scripts": ["towncrier = towncrier._shell:cli"]},
+    options={"bdist_wheel": {"universal": "1"}},
 )

@@ -13,6 +13,8 @@ Hear ye, hear ye, says the ``towncrier``
 ``towncrier`` is a utility to produce useful, summarised news files for your project.
 Rather than reading the Git history as some newer tools to produce it, or having one single file which developers all write to, ``towncrier`` reads "news fragments" which contain information `useful to end users`.
 
+Used by `Twisted <https://github.com/twisted/twisted>`_, `pytest <https://github.com/pytest-dev/pytest/>`_, `pip <https://github.com/pypa/pip/>`_, `BuildBot <https://github.com/buildbot/buildbot>`_, and `attrs <https://github.com/python-attrs/attrs>`_, among others.
+
 
 Philosophy
 ----------
@@ -34,9 +36,9 @@ Install from PyPI::
 
 .. note::
 
-   ``towncrier``, as a command line tool, works on Python 2.7 and 3.5+ only.
+   ``towncrier``, as a command line tool, works on Python 3.7+ only.
    It is usable by projects written in other languages, provided you specify the project version either in the configuration file or on the command line.
-   For Python 2/3 compatible projects, the version can be discovered automatically.
+   For Python-compatible projects, the version can be discovered automatically.
 
 In your project root, add a ``towncrier.toml`` or a ``pyproject.toml`` file (if both files exist, the first will take precedence).
 You can configure your project in two ways.
@@ -73,7 +75,7 @@ Using the above example, your news fragments would be ``src/myproject/newsfragme
 
 ``towncrier`` needs to know what version your project is, and there are three ways you can give it:
 
-- For Python 2/3 compatible projects, a ``__version__`` in the top level package.
+- For Python-compatible projects, a ``__version__`` in the top level package.
   This can be either a string literal, a tuple, or an `Incremental <https://github.com/hawkowl/incremental>`_ version.
 
 - Manually passing ``--version=<myversionhere>`` when interacting with ``towncrier``.
@@ -148,18 +150,49 @@ Towncrier has the following global options, which can be specified in the toml f
     wrap = false  # Wrap text to 79 characters
     all_bullets = true  # make all fragments bullet points
 
-If a single file is used, the content of that file gets overwritten each time.
+If ``single_file`` is set to ``true`` or unspecified, all changes will be written to a single
+fixed newsfile, whose name is literally fixed as the ``filename`` option. In each run of ``towncrier build``,
+content of new changes will append at the top of old content, and after ``start_string`` if the
+``start_string`` already appears in the newsfile. If the corresponding ``top_line``, which is formatted
+as the option 'title_format', already exists in newsfile, ``ValueError`` will be raised to remind
+you "already produced newsfiles for this version".
+
+If ``single_file`` is set to ``false`` instead, each versioned ``towncrier build`` will generate a
+separate newsfile, whose name is formatted as the patten given by option ``filename``.
+For example, if ``filename="{version}-notes.rst"``, then the release note with version "7.8.9" will
+be written to the file "7.8.9-notes.rst". If the newsfile already exists, its content
+will be overwriten with new release note, without throwing a ``ValueError`` warning.
 
 If ``title_format`` is unspecified or an empty string, the default format will be used.
 If set to ``false``, no title will be created.
 This can be useful if the specified template creates the title itself.
 
-Furthermore, you can add your own fragment types using:
+Furthermore, you can customize each of your own fragment types using:
 
 .. code-block:: toml
 
     [tool.towncrier]
-    [[tool.towncrier.type]]
-    directory = "deprecation"
-    name = "Deprecations"
-    showcontent = true
+	# To add custom fragment types, with default setting, just add an empty section.
+    [tool.towncrier.feat]
+    [tool.towncrier.fix]
+
+	# Custom fragment types can have custom attributes
+	# that are used when rendering the result based on the template.
+    [tool.towncrier.chore]
+        name = "Other Tasks"
+        showcontent = false
+
+
+
+Automatic pull request checks
+-----------------------------
+
+To check if a feature branch adds at least one news fragment, run::
+
+    towncrier check
+
+By default this compares the current branch against ``origin/master``. You can use ``--compare-with`` if the trunk is named differently::
+
+    towncrier check --compare-with origin/main
+
+The check is automatically skipped when the main news file is modified inside the branch as this signals a release branch that is expected to not have news fragments.

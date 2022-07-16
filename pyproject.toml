@@ -34,7 +34,7 @@
 
 
 [tool.black]
-target-version = ['py27']
+target-version = ['py37']
 exclude = '''
 
 (
@@ -53,6 +53,11 @@ exclude = '''
   )/
 )
 '''
+
+
+[tool.isort]
+profile = "attrs"
+
 
 [build-system]
 requires = [

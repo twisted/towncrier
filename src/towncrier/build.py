@@ -5,19 +5,19 @@
 Build a combined news file from news fragments.
 """
 
-from __future__ import absolute_import, division, print_function
 
 import os
-import click
 import sys
 
 from datetime import date
 
-from ._settings import load_config_from_options, ConfigError
-from ._builder import find_fragments, split_fragments, render_fragments
-from ._project import get_version, get_project_name
-from ._writer import append_to_newsfile
+import click
+
+from ._builder import find_fragments, render_fragments, split_fragments
 from ._git import remove_files, stage_newsfile
+from ._project import get_project_name, get_version
+from ._settings import ConfigError, load_config_from_options
+from ._writer import append_to_newsfile
 
 
 def _get_date():
@@ -115,19 +115,21 @@ def __main(
     )
 
     if project_version is None:
-        project_version = config.get('version')
+        project_version = config.get("version")
         if project_version is None:
             project_version = get_version(
                 os.path.join(base_directory, config["package_dir"]), config["package"]
             ).strip()
 
     if project_name is None:
-        project_name = config.get('name')
+        project_name = config.get("name")
         if not project_name:
             package = config.get("package")
             if package:
                 project_name = get_project_name(
-                    os.path.abspath(os.path.join(base_directory, config["package_dir"])),
+                    os.path.abspath(
+                        os.path.join(base_directory, config["package_dir"])
+                    ),
                     package,
                 )
             else:
@@ -141,14 +143,23 @@ def __main(
         top_line = config["title_format"].format(
             name=project_name, version=project_version, project_date=project_date
         )
+        render_title_with_fragments = False
+        render_title_separately = True
+    elif config["title_format"] is False:
+        # This is an odd check but since we support both "" and False with
+        # different effects we have to do something a bit abnormal here.
+        top_line = ""
+        render_title_separately = False
+        render_title_with_fragments = False
     else:
         top_line = ""
+        render_title_separately = False
+        render_title_with_fragments = True
 
     rendered = render_fragments(
         # The 0th underline is used for the top line
         template,
         config["issue_format"],
-        top_line,
         fragments,
         definitions,
         config["underlines"][1:],
@@ -156,7 +167,19 @@ def __main(
         {"name": project_name, "version": project_version, "date": project_date},
         top_underline=config["underlines"][0],
         all_bullets=config["all_bullets"],
+        render_title=render_title_with_fragments,
     )
+
+    if render_title_separately:
+        content = "\n".join(
+            [
+                top_line,
+                config["underlines"][0] * len(top_line),
+                rendered,
+            ]
+        )
+    else:
+        content = rendered
 
     if draft:
         click.echo(
@@ -164,14 +187,15 @@ def __main(
             "What is seen below is what would be written.\n",
             err=to_err,
         )
-        click.echo(rendered)
+        click.echo(content)
     else:
         click.echo("Writing to newsfile...", err=to_err)
         start_string = config["start_string"]
         news_file = config["filename"]
 
-        if config["single_file"]:
-            # When single_file is enabled, the news file name changes based on the version.
+        if config["single_file"] is False:
+            # The release notes for each version are stored in a separate file.
+            # The name of that file is generated based on the current version and project.
             news_file = news_file.format(
                 name=project_name, version=project_version, project_date=project_date
             )
@@ -181,7 +205,7 @@ def __main(
             news_file,
             start_string,
             top_line,
-            rendered,
+            content,
             single_file=config["single_file"],
         )
 

@@ -1,38 +1,25 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
-import io
 import os
-import sys
-import pkg_resources
-
-if sys.version_info >= (3, 6):
-    import tomli
-else:
-    tomli = None
-    import toml
 
 from collections import OrderedDict
+
+import pkg_resources
+import tomli
+
+from .._settings import fragment_types as ft
 
 
 class ConfigError(Exception):
     def __init__(self, *args, **kwargs):
         self.failing_option = kwargs.get("failing_option")
-        super(ConfigError, self).__init__(*args)
+        super().__init__(*args)
 
 
-_start_string = u".. towncrier release notes start\n"
+_start_string = ".. towncrier release notes start\n"
 _title_format = None
 _template_fname = "towncrier:default"
-_default_types = OrderedDict(
-    [
-        (u"feature", {"name": u"Features", "showcontent": True}),
-        (u"bugfix", {"name": u"Bugfixes", "showcontent": True}),
-        (u"doc", {"name": u"Improved Documentation", "showcontent": True}),
-        (u"removal", {"name": u"Deprecations and Removals", "showcontent": True}),
-        (u"misc", {"name": u"Misc", "showcontent": False}),
-    ]
-)
 _underlines = ["=", "-", "~"]
 
 
@@ -52,9 +39,7 @@ def load_config_from_options(directory, config):
         config = load_config_from_file(os.path.dirname(config), config)
 
     if config is None:
-        raise ConfigError(
-            "No configuration file found.\nLooked in: %s" % (base_directory,)
-        )
+        raise ConfigError(f"No configuration file found.\nLooked in: {base_directory}")
 
     return base_directory, config
 
@@ -75,12 +60,8 @@ def load_config(directory):
 
 
 def load_config_from_file(directory, config_file):
-    if tomli:
-        with io.open(config_file, "rb") as conffile:
-            config = tomli.load(conffile)
-    else:
-        with io.open(config_file, "r", encoding="utf8", newline="") as conffile:
-            config = toml.load(conffile)
+    with open(config_file, "rb") as conffile:
+        config = tomli.load(conffile)
 
     return parse_toml(directory, config)
 
@@ -92,19 +73,13 @@ def parse_toml(base_path, config):
     config = config["tool"]["towncrier"]
 
     sections = OrderedDict()
-    types = OrderedDict()
-
     if "section" in config:
         for x in config["section"]:
             sections[x.get("name", "")] = x["path"]
     else:
         sections[""] = ""
-
-    if "type" in config:
-        for x in config["type"]:
-            types[x["directory"]] = {"name": x["name"], "showcontent": x["showcontent"]}
-    else:
-        types = _default_types
+    fragment_types_loader = ft.BaseFragmentTypesLoader.factory(config)
+    types = fragment_types_loader.load()
 
     wrap = config.get("wrap", False)
 
@@ -144,7 +119,7 @@ def parse_toml(base_path, config):
 
     if not os.path.exists(template):
         raise ConfigError(
-            "The template file '%s' does not exist." % (template,),
+            f"The template file '{template}' does not exist.",
             failing_option="template",
         )
 

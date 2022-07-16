@@ -5,7 +5,6 @@
 Responsible for getting the version and name from a project.
 """
 
-from __future__ import absolute_import, division
 
 import sys
 
@@ -26,9 +25,9 @@ def _get_package(package_dir, package):
         try:
             module = import_module(package)
         except ImportError as e:
-            err = "tried to import {}, but ran into this error: {}".format(package, e)
+            err = f"tried to import {package}, but ran into this error: {e}"
             # NOTE: this might be redirected via "towncrier --draft > …".
-            print("ERROR: {}".format(err))
+            print(f"ERROR: {err}")
             raise
         finally:
             sys.path.pop(0)
@@ -55,11 +54,9 @@ def get_version(package_dir, package):
         return ".".join(map(str, version)).strip()
 
     raise Exception(
-        (
-            "I only know how to look at a __version__ that is a str, "
-            "an Increment Version, or a tuple. If you can't provide "
-            "that, use the --version argument and specify one."
-        )
+        "I only know how to look at a __version__ that is a str, "
+        "an Increment Version, or a tuple. If you can't provide "
+        "that, use the --version argument and specify one."
     )
 
 

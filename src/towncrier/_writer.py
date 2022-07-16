@@ -6,9 +6,7 @@ Responsible for writing the built news fragments to a news file without
 affecting existing content.
 """
 
-from __future__ import absolute_import, division
 
-import io
 import os
 
 
@@ -20,15 +18,15 @@ def append_to_newsfile(
 
     if single_file:
         if not os.path.exists(news_file):
-            existing_content = u""
+            existing_content = ""
         else:
-            with io.open(news_file, "r", encoding="utf8") as f:
+            with open(news_file, encoding="utf8") as f:
                 existing_content = f.read()
         existing_content = existing_content.split(start_string, 1)
     else:
-        existing_content = [u""]
+        existing_content = [""]
 
-    if top_line and top_line in existing_content:
+    if top_line and top_line in existing_content[-1]:
         raise ValueError("It seems you've already produced newsfiles for this version?")
 
     with open(os.path.join(directory, filename), "wb") as f:
@@ -36,7 +34,7 @@ def append_to_newsfile(
         if len(existing_content) > 1:
             f.write(existing_content.pop(0).rstrip().encode("utf8"))
             if start_string:
-                f.write((u"\n\n" + start_string + u"\n").encode("utf8"))
+                f.write(("\n\n" + start_string + "\n").encode("utf8"))
 
         f.write(content.encode("utf8"))
         if existing_content:

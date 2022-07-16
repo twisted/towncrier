@@ -39,8 +39,6 @@ There are several options to contribute to this project:
   probably the best way.
 
 
-.. _modify_code:
-
 Modifying the code
 ------------------
 
@@ -68,6 +66,7 @@ We recommend the following workflow:
 
    b. Write your test cases and run the complete test suite, see the section
       *Running the test suite* for details.
+
 
    c. Document any user facing changes in one of the `/docs/` files.
 

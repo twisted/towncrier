@@ -1,17 +1,16 @@
 # Copyright (c) Amber Brown, 2018
 # See LICENSE for details.
 
-from __future__ import absolute_import, division
 
 import os
 import sys
 
+from subprocess import STDOUT, CalledProcessError, check_output
+
 import click
 
-from subprocess import CalledProcessError, check_output, STDOUT
-
-from ._settings import load_config_from_options
 from ._builder import find_fragments
+from ._settings import load_config_from_options
 
 
 def _run(args, **kwargs):
@@ -34,9 +33,7 @@ def __main(comparewith, directory, config):
     # Use UTF-8 both when sys.stdout does not have .encoding (Python 2.7) and
     # when the attribute is present but set to None (explicitly piped output
     # and also some CI such as GitHub Actions).
-    encoding = getattr(sys.stdout, "encoding", None)
-    if encoding is None:
-        encoding = "utf8"
+    encoding = getattr(sys.stdout, "encoding", "utf8")
 
     try:
         files_changed = (
@@ -52,7 +49,9 @@ def __main(comparewith, directory, config):
         raise
 
     if not files_changed:
-        click.echo("On trunk, or no diffs, so no newsfragment required.")
+        click.echo(
+            f"On {comparewith} branch, or no diffs, so no newsfragment required."
+        )
         sys.exit(0)
 
     files = {
@@ -63,8 +62,13 @@ def __main(comparewith, directory, config):
     click.echo("Looking at these files:")
     click.echo("----")
     for n, change in enumerate(files, start=1):
-        click.echo("{}. {}".format(n, change))
+        click.echo(f"{n}. {change}")
     click.echo("----")
+
+    news_file = os.path.normpath(os.path.join(base_directory, config["filename"]))
+    if news_file in files:
+        click.echo("Checks SKIPPED: news file changes detected.")
+        sys.exit(0)
 
     if config.get("directory"):
         fragment_base_directory = os.path.abspath(config["directory"])
@@ -92,7 +96,7 @@ def __main(comparewith, directory, config):
     else:
         click.echo("Found:")
         for n, fragment in enumerate(fragments_in_branch, start=1):
-            click.echo("{}. {}".format(n, fragment))
+            click.echo(f"{n}. {fragment}")
         sys.exit(0)
 
 

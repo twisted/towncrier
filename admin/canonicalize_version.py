@@ -12,7 +12,7 @@ def cli(version):
 
     release_candidate = None
     if parsed_version.pre is not None:
-        if parsed_version.pre[0] == 'rc':
+        if parsed_version.pre[0] == "rc":
             release_candidate = parsed_version.pre[1]
 
     incremental_version = incremental.Version(

@@ -1,10 +1,8 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
-from __future__ import absolute_import, division, print_function
 
 import os
-import sys
 import textwrap
 import traceback
 
@@ -49,12 +47,12 @@ def parse_newfragment_basename(basename, definitions):
             # NOTE: This allows news fragment names like fix-1.2.3.feature or
             # something-cool.feature.ext for projects that don't use ticket
             # numbers in news fragment names.
-            ticket = strip_if_integer_string(parts[i-1])
+            ticket = strip_if_integer_string(parts[i - 1])
             counter = 0
             # Use the following part as the counter if it exists and is a valid
             # digit.
-            if len(parts) > (i + 1) and parts[i+1].isdigit():
-                counter = int(parts[i+1])
+            if len(parts) > (i + 1) and parts[i + 1].isdigit():
+                counter = int(parts[i + 1])
             return ticket, category, counter
     else:
         # No valid category found.
@@ -90,16 +88,11 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
         else:
             section_dir = os.path.join(base_directory, val)
 
-        if sys.version_info >= (3,):
-            expected_exception = FileNotFoundError
-        else:
-            expected_exception = OSError
-
         try:
             files = os.listdir(section_dir)
-        except expected_exception as e:
+        except FileNotFoundError as e:
             message = "Failed to list the news fragment files.\n{}".format(
-                ''.join(traceback.format_exception_only(type(e), e)),
+                "".join(traceback.format_exception_only(type(e), e)),
             )
             raise ConfigError(message)
 
@@ -140,7 +133,7 @@ def indent(text, prefix):
         for line in text.splitlines(True):
             yield (prefix + line if line.strip() else line)
 
-    return u"".join(prefixed_lines())
+    return "".join(prefixed_lines())
 
 
 # Takes the output from find_fragments above. Probably it would be useful to
@@ -159,13 +152,13 @@ def split_fragments(fragments, definitions, all_bullets=True):
                 # By default all fragmetns are append by "-" automatically,
                 # and need to be indented because of that.
                 # (otherwise, assume they are formatted correctly)
-                content = indent(content.strip(), u"  ")[2:]
+                content = indent(content.strip(), "  ")[2:]
             else:
                 # Assume the text is formatted correctly
                 content = content.rstrip()
 
             if definitions[category]["showcontent"] is False:
-                content = u""
+                content = ""
 
             texts = section.get(category, OrderedDict())
 
@@ -186,7 +179,7 @@ def issue_key(issue):
     # issues to sort as strings. We arbitrarily put string issues before
     # integer issues (hopefully no-one uses both at once).
     try:
-        return (int(issue), u"")
+        return (int(issue), "")
     except Exception:
         # Maybe we should sniff strings like "gh-10" -> (10, "gh-10")?
         return (-1, issue)
@@ -201,11 +194,11 @@ def bullet_key(entry):
     text, _ = entry
     if not text:
         return -1
-    if text[:2] == u"- ":
+    if text[:2] == "- ":
         return 0
     elif text[:2] == "* ":
         return 1
-    elif text[:3] == u"#. ":
+    elif text[:3] == "#. ":
         return 2
     return 3
 
@@ -214,7 +207,7 @@ def render_issue(issue_format, issue):
     if issue_format is None:
         try:
             int(issue)
-            return u"#" + issue
+            return "#" + issue
         except Exception:
             return issue
     else:
@@ -224,7 +217,6 @@ def render_issue(issue_format, issue):
 def render_fragments(
     template,
     issue_format,
-    top_line,
     fragments,
     definitions,
     underlines,
@@ -232,6 +224,7 @@ def render_fragments(
     versiondata,
     top_underline="=",
     all_bullets=False,
+    render_title=True,
 ):
     """
     Render the fragments into a news file.
@@ -282,14 +275,14 @@ def render_fragments(
         # If bullets are not assumed and we wrap, the subsequent
         # indentation depends on whether or not this is a bullet point.
         # (it is probably usually best to disable wrapping in that case)
-        if all_bullets or text[:2] == u"- " or text[:2] == u"* ":
-            return u"  "
+        if all_bullets or text[:2] == "- " or text[:2] == "* ":
+            return "  "
         elif text[:3] == "#. ":
-            return u"   "
-        return u""
+            return "   "
+        return ""
 
     res = jinja_template.render(
-        top_line=top_line,
+        render_title=render_title,
         sections=data,
         definitions=definitions,
         underlines=underlines,
@@ -298,7 +291,7 @@ def render_fragments(
         get_indent=get_indent,  # simplify indentation in the jinja template.
     )
 
-    for line in res.split(u"\n"):
+    for line in res.split("\n"):
         if wrap:
             done.append(
                 textwrap.fill(
@@ -312,4 +305,4 @@ def render_fragments(
         else:
             done.append(line)
 
-    return u"\n".join(done).rstrip() + u"\n"
+    return "\n".join(done).rstrip() + "\n"
