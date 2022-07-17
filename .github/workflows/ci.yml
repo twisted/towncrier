@@ -170,7 +170,7 @@ jobs:
           - name: Check package manifest
             tox: check-manifest
           - name: Check pre-commit
-            tox: pre-commir
+            tox: pre-commit
 
     steps:
     - uses: actions/checkout@v3
