@@ -2,10 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ trunk ]
     tags: [ "**" ]
   pull_request:
-    branches: [ master ]
 
 defaults:
   run:
