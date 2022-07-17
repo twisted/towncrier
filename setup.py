@@ -8,8 +8,9 @@ setup(
     maintainer_email="hawkowl@twistedmatrix.com",
     url="https://github.com/hawkowl/towncrier",
     project_urls={
-        "Chat": "https://webchat.freenode.net/?channels=%23twisted",
-        "Maillist": "https://twistedmatrix.com/cgi-bin/mailman/listinfo/twisted-python",
+        "Documentation": "https://towncrier.readthedocs.io/",
+        "Chat": "https://web.libera.chat/?channels=%23twisted",
+        "Mailing list": "https://mail.python.org/mailman3/lists/twisted.python.org/",
         "Issues": "https://github.com/twisted/towncrier/issues",
         "Repository": "https://github.com/twisted/towncrier",
         "Tests": "https://github.com/twisted/towncrier/actions?query=branch%3Amaster",
