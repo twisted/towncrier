@@ -19,7 +19,7 @@ def _run(args, **kwargs):
 
 
 @click.command(name="check")
-@click.option("--compare-with", default="origin/master")
+@click.option("--compare-with", default="origin/main")
 @click.option("--dir", "directory", default=None)
 @click.option("--config", "config", default=None)
 def _main(compare_with, directory, config):
