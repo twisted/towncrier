@@ -1,0 +1,1 @@
+Default branch for `towncrier check` is now "origin/main" instead of "origin/master"
