@@ -6,6 +6,7 @@ import os
 import sys
 
 from subprocess import STDOUT, CalledProcessError, check_output
+from warnings import warn
 
 import click
 
@@ -18,8 +19,26 @@ def _run(args, **kwargs):
     return check_output(args, **kwargs)
 
 
+def get_default_compare_branch(base_directory, encoding):
+    branches = (
+        _run(["git", "branch", "-r"], cwd=base_directory).decode(encoding).splitlines()
+    )
+    branches = [branch.strip() for branch in branches]
+    if "origin/main" in branches:
+        return "origin/main"
+    if "origin/master" in branches:
+        warn(
+            'Using "origin/master" as default compare branch is deprecated '
+            "and will be removed in a future version.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return "origin/master"
+    return None
+
+
 @click.command(name="check")
-@click.option("--compare-with", default="origin/main")
+@click.option("--compare-with")
 @click.option("--dir", "directory", default=None)
 @click.option("--config", "config", default=None)
 def _main(compare_with, directory, config):
@@ -34,6 +53,14 @@ def __main(comparewith, directory, config):
     # when the attribute is present but set to None (explicitly piped output
     # and also some CI such as GitHub Actions).
     encoding = getattr(sys.stdout, "encoding", "utf8")
+    if comparewith is None:
+        comparewith = get_default_compare_branch(
+            base_directory=base_directory, encoding=encoding
+        )
+
+    if comparewith is None:
+        click.echo("Could not detect default branch. Aborting.")
+        sys.exit(1)
 
     try:
         files_changed = (
