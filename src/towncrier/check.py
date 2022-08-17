@@ -10,7 +10,7 @@ from subprocess import STDOUT, CalledProcessError, check_output
 import click
 
 from ._builder import find_fragments
-from ._settings import load_config_from_options
+from ._settings import config_option_help, load_config_from_options
 
 
 def _run(args, **kwargs):
@@ -19,10 +19,34 @@ def _run(args, **kwargs):
 
 
 @click.command(name="check")
-@click.option("--compare-with", default="origin/master")
-@click.option("--dir", "directory", default=None)
-@click.option("--config", "config", default=None)
+@click.option(
+    "--compare-with",
+    default="origin/master",
+    metavar="BRANCH",
+    help=(
+        "Checks files changed running git diff --name-ony BRANCH... "
+        "BRANCH is the branch to be compared with. "
+        "Default to origin/master"
+    ),
+)
+@click.option(
+    "--dir",
+    "directory",
+    default=None,
+    metavar="PATH",
+    help="Check fragment in directory. Default to current directory.",
+)
+@click.option(
+    "--config",
+    "config",
+    default=None,
+    metavar="FILE_PATH",
+    help=config_option_help,
+)
 def _main(compare_with, directory, config):
+    """
+    Check for new fragments on a branch.
+    """
     return __main(compare_with, directory, config)
 
 

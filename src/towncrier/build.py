@@ -16,7 +16,11 @@ import click
 from ._builder import find_fragments, render_fragments, split_fragments
 from ._git import remove_files, stage_newsfile
 from ._project import get_project_name, get_version
-from ._settings import ConfigError, load_config_from_options
+from ._settings import (
+    ConfigError,
+    config_option_help,
+    load_config_from_options,
+)
 from ._writer import append_to_newsfile
 
 
@@ -30,11 +34,31 @@ def _get_date():
     "draft",
     default=False,
     flag_value=True,
-    help="Render the news fragments, don't write to files, don't check versions.",
+    help=(
+        "Render the news fragments to standard output. "
+        "Don't write to files, don't check versions."
+    ),
 )
-@click.option("--config", "config_file", default=None, help="Configuration file name.")
-@click.option("--dir", "directory", default=None)
-@click.option("--name", "project_name", default=None)
+@click.option(
+    "--config",
+    "config_file",
+    default=None,
+    metavar="FILE_PATH",
+    help=config_option_help,
+)
+@click.option(
+    "--dir",
+    "directory",
+    default=None,
+    metavar="PATH",
+    help="Build fragment in directory. Default to current directory.",
+)
+@click.option(
+    "--name",
+    "project_name",
+    default=None,
+    help="Pass a custom project name.",
+)
 @click.option(
     "--version",
     "project_version",
@@ -58,6 +82,9 @@ def _main(
     project_date,
     answer_yes,
 ):
+    """
+    Build a combined news file from news fragment.
+    """
     try:
         return __main(
             draft,
