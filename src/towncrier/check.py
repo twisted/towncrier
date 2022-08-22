@@ -11,7 +11,7 @@ from warnings import warn
 import click
 
 from ._builder import find_fragments
-from ._settings import load_config_from_options
+from ._settings import config_option_help, load_config_from_options
 
 
 def _run(args, **kwargs):
@@ -38,10 +38,34 @@ def get_default_compare_branch(base_directory, encoding):
 
 
 @click.command(name="check")
-@click.option("--compare-with")
-@click.option("--dir", "directory", default=None)
-@click.option("--config", "config", default=None)
+@click.option(
+    "--compare-with",
+    default=None,
+    metavar="BRANCH",
+    help=(
+        "Checks files changed running git diff --name-ony BRANCH... "
+        "BRANCH is the branch to be compared with. "
+        "Default to origin/master"
+    ),
+)
+@click.option(
+    "--dir",
+    "directory",
+    default=None,
+    metavar="PATH",
+    help="Check fragment in directory. Default to current directory.",
+)
+@click.option(
+    "--config",
+    "config",
+    default=None,
+    metavar="FILE_PATH",
+    help=config_option_help,
+)
 def _main(compare_with, directory, config):
+    """
+    Check for new fragments on a branch.
+    """
     return __main(compare_with, directory, config)
 
 

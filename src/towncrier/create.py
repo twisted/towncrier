@@ -5,18 +5,29 @@
 Create a new fragment.
 """
 
-
 import os
 
 import click
 
-from ._settings import load_config_from_options
+from ._settings import config_option_help, load_config_from_options
 
 
 @click.command(name="create")
 @click.pass_context
-@click.option("--dir", "directory", default=None)
-@click.option("--config", "config", default=None)
+@click.option(
+    "--dir",
+    "directory",
+    default=None,
+    metavar="PATH",
+    help="Create fragment in directory. Default to current directory.",
+)
+@click.option(
+    "--config",
+    "config",
+    default=None,
+    metavar="FILE_PATH",
+    help=config_option_help,
+)
 @click.option(
     "--edit/--no-edit",
     default=False,
@@ -31,6 +42,20 @@ from ._settings import load_config_from_options
 )
 @click.argument("filename")
 def _main(ctx, directory, config, filename, edit, content):
+    """
+    Create a new news fragment.
+
+    Create a new news fragment called FILENAME or pass the full path for a file.
+    Towncrier has a few standard types of news fragments, signified by the file extension.
+
+    \b
+    These are:
+    * .feature - a new feature
+    * .bugfix - a bug fix
+    * .doc - a documentation improvement,
+    * .removal - a deprecation or removal of public API,
+    * .misc - a ticket has been closed, but it is not of interest to users.
+    """
     return __main(ctx, directory, config, filename, edit, content)
 
 

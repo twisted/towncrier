@@ -163,10 +163,14 @@ jobs:
           # increase in stability over using the latest minor.
           - name: CPython 3.9
             tox: py39
-            action: 3.9
+            python-version: '3.9'
         task:
           - name: Check Newsfragment
             tox: check-newsfragment
+          - name: Check package manifest
+            tox: check-manifest
+          - name: Check pre-commit
+            tox: pre-commit
 
     steps:
     - uses: actions/checkout@v3
@@ -182,7 +186,7 @@ jobs:
     - name: Set up ${{ matrix.python.name }}
       uses: actions/setup-python@v3
       with:
-        python-version: ${{ matrix.python.action }}
+        python-version: ${{ matrix.python.python-version }}
 
     - name: Install dependencies
       run: python -m pip install --upgrade pip tox
