@@ -258,12 +258,6 @@ jobs:
       - pypi-publish
     steps:
       - name: Require all successes
-        shell: python
-        env:
-          RESULTS: ${{ toJSON(needs.*.result) }}
-        run: |
-          import json
-          import os
-          import sys
-          results = json.loads(os.environ["RESULTS"])
-          sys.exit(0 if all(result == "success" for result in results) else 1)
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
