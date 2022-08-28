@@ -1,1 +1,0 @@
-The extra newline between the title and rendered content when using ``--draft`` is no longer inserted.

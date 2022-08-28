@@ -1,3 +1,0 @@
-The detection of duplicate release notes was fixed and recording changes of same version is no longer triggered.
-
-Support for having the release notes for each version in a separate file is working again. This is regression introduced in VERSION 19.9.0rc1.
