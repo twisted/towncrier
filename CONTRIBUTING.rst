@@ -5,7 +5,7 @@ Want to contribute to this project? Great! We'd love to hear from you!
 
 As a developer and user, you probably have some questions about our
 project and how to contribute.
-In this article we try to answer these and give you some recommendations.
+In this article, we try to answer these and give you some recommendations.
 
 
 Ways to communicate and contribute
@@ -28,10 +28,11 @@ There are several options to contribute to this project:
   If you found a bug or have a new cool feature, describe your findings.
   Try to be as descriptive as possible to help us understand your issue.
 
-* Check out the Freenode ``#twisted-dev`` IRC channel.
+* Check out the Libera ``#twisted`` IRC channel or `Twisted Gitter <https://gitter.im/twisted/twisted>`_.
 
-  If you prefer to discuss some topics personally, you may find the IRC
-  channel interesting.
+  If you prefer to discuss some topics personally,
+  you may find the IRC or Gitter channels interesting.
+  They are bridged.
 
 * Modify the code.
 
@@ -68,12 +69,14 @@ We recommend the following workflow:
       *Running the test suite* for details.
 
 
-   c. Document any user facing changes in one of the `/docs/` files.
+   c. Document any user-facing changes in one of the ``/docs/`` files.
 
-   d. Create a newsfragment in ``src/towncrier/newsfragments/`` describing the changes and containing information that are of interest for end-users.
+   d. Create a newsfragment in ``src/towncrier/newsfragments/`` describing the changes and containing information that is of interest to end-users.
 
    e. Create a `pull request`_.
-      Describe in the pull request what you did and why. If you have open questions, ask.
+      Describe in the pull request what you did and why.
+      If you have open questions, ask.
+      (optional) Allow team members to edit the code on your PR.
 
 #. Wait for feedback. If you receive any comments, address these.
 
@@ -98,7 +101,7 @@ The following list contains some ways how to run the test suite:
   You may want to add the ``--skip-missing-interpreters`` option to avoid errors
   when a specific Python interpreter version couldn't be found.
 
-*  To get a complete list about the available targets, run::
+*  To get a complete list of the available targets, run::
 
     $ tox -av
 
@@ -108,15 +111,13 @@ The following list contains some ways how to run the test suite:
     $ tox -- towncrier.test.test_project.InvocationTests.test_version
 
 * To run some quality checks before you create the pull request,
-  we recommend to use this call::
+  we recommend using this call::
 
-    $ tox -e check-manifest,check-newsfragment
+    $ tox -e pre-commit,check-manifest,check-newsfragment
 
-* Install `pre-commit <https://pre-commit.com/>`_ and activate::
+* Or enable `pre-commit` as a git hook::
 
     $ pip install pre-commit
-    $ pre-commit
-    Or run as git hook
     $ pre-commit install
 
 * To investigate and debug errors, use the ``trial`` command like this::
