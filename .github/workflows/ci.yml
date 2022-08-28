@@ -167,7 +167,7 @@ jobs:
         task:
           - name: Check Newsfragment
             tox: check-newsfragment
-            run-if: ${{ github.ref != 'pre-commit-ci-update-config' }}
+            run-if: ${{ github.head_ref != 'pre-commit-ci-update-config' }}
           - name: Check package manifest
             tox: check-manifest
             run-if: true
