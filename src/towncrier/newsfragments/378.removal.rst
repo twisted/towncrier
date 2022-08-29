@@ -1,1 +1,0 @@
-Support for all Python versions older than 3.7 has been dropped.

@@ -1,1 +1,0 @@
-Improve ``CONTRIBUTING.rst`` and add PR template.
