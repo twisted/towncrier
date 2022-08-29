@@ -1,0 +1,18 @@
+version: 2
+
+sphinx:
+  # We want to fail as this is also our CI check for the docs.
+  fail_on_warning: True
+
+formats:
+  - pdf
+  - epub
+
+python:
+  version: 3.10
+  system_packages: False
+  install:
+    - method: pip
+      path: .
+      extra_requirements:
+        - dev
