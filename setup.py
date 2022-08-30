@@ -10,9 +10,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="towncrier",
-    maintainer="Amber Brown",
-    maintainer_email="hawkowl@twistedmatrix.com",
-    url="https://github.com/hawkowl/towncrier",
+    url="https://github.com/twisted/towncrier",
     project_urls={
         "Documentation": "https://towncrier.readthedocs.io/",
         "Chat": "https://web.libera.chat/?channels=%23twisted",
