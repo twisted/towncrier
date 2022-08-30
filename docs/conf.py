@@ -29,6 +29,11 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+from datetime import date
+
+from towncrier import __version__ as towncrier_version
+
+
 extensions = []
 
 # Add any paths that contain templates here, relative to this directory.
@@ -44,9 +49,24 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
+_today = date.today()
 project = "Towncrier"
-copyright = "2017, Amber Brown"
+copyright = "{}, Towncrier contibutors. Ver {}. Built on {}".format(
+    _today.year,
+    towncrier_version.public(),
+    _today.isoformat(),
+)
 author = "Amber Brown"
+
+# The version info for the project you're documenting, acts as replacement for
+# |version| and |release|, also used in various other places throughout the
+# built documents.
+# The short X.Y version.
+version = "{}.{}.{}".format(
+    towncrier_version.major, towncrier_version.minor, towncrier_version.micro
+)
+# The full version, including alpha/beta/rc tags.
+release = towncrier_version.public()
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
