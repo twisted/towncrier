@@ -6,3 +6,4 @@
    quickstart
    customisation/index
    configuration
+   release

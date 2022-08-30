@@ -72,11 +72,12 @@ please notice that ``fragment_types`` must be empty or not provided.
 
 Each custom type (``[[tool.towncrier.type]]``) has the following
 mandatory keys:
- * ``directory``: The type of the fragment.
- * ``name``: The description of the fragment type, as it must be included
-   in the news file.
- * ``showcontent``: Whether if the fragment contents should be included in the
-   news file.
+
+* ``directory``: The type of the fragment.
+* ``name``: The description of the fragment type, as it must be included
+  in the news file.
+* ``showcontent``: Whether if the fragment contents should be included in the
+  news file.
 
 
 
