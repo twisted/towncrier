@@ -42,11 +42,11 @@ Create a new release candidate using `GitHub New release UI <https://github.com/
 * Make sure to mark **This is a pre-release**.
 * Click `Publish release`
 
-This will trigger the PyPi release candidate.
+This will trigger the PyPI release candidate.
 
-Wait for the PyPi version to be published and then request a review for the PR from the `twisted/twisted-contributors` team.
+Wait for the PyPI version to be published and then request a review for the PR from the ``twisted/twisted-contributors`` team.
 
-In the PR request, you can give the link to the PyPi download and the documentation pages.
+In the PR request, you can give the link to the PyPI download and the documentation pages.
 The documentation link is also available as part of the standard Read The Docs PR checks.
 
 Notify the release candidate over IRC or Gitter to gain more attention.
