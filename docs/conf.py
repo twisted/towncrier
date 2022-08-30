@@ -51,10 +51,9 @@ master_doc = "index"
 # General information about the project.
 _today = date.today()
 project = "Towncrier"
-copyright = "{}, Towncrier contibutors. Ver {}. Built on {}".format(
+copyright = "{}, Towncrier contributors. Ver {}".format(
     _today.year,
     towncrier_version.public(),
-    _today.isoformat(),
 )
 author = "Amber Brown"
 
