@@ -47,7 +47,12 @@ setup(
         "setuptools",
         "tomli",
     ],
-    extras_require={"dev": ["packaging"]},
+    extras_require={
+        "dev": [
+            "packaging",
+            "sphinx>=5",
+        ],
+    },
     package_dir={"": "src"},
     packages=find_packages("src"),
     license="MIT",
