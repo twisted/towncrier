@@ -50,7 +50,7 @@ setup(
     extras_require={
         "dev": [
             "packaging",
-            "sphinx>=5",
+            "sphinx >= 5",
         ],
     },
     package_dir={"": "src"},
