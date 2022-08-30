@@ -5,7 +5,7 @@ sphinx:
   fail_on_warning: True
 
 # We don't need PDF and epub for the docs.
-formats:
+formats: []
 
 python:
   version: "3.8"
