@@ -1,5 +1,0 @@
-Make the check subcommand succeed for branches that change the news file
-
-This should enable the ``check`` subcommand to be used as a CI lint step and
-not fail when a pull request only modifies the configured news file (i.e. when
-the news file is being assembled for the next release).

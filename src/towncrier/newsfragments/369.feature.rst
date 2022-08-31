@@ -1,2 +1,0 @@
-Added support to tables in toml settings, which provides a more intuitive
-way to configure custom types.
