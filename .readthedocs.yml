@@ -4,9 +4,8 @@ sphinx:
   # We want to fail as this is also our CI check for the docs.
   fail_on_warning: True
 
-formats:
-  - pdf
-  - epub
+# We don't need PDF and epub for the docs.
+formats: []
 
 python:
   version: "3.8"
