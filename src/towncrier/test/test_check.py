@@ -6,10 +6,12 @@ import os.path
 import sys
 
 from subprocess import PIPE, Popen, call
+from unittest.mock import patch
 
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
+from towncrier import check
 from towncrier.check import _main as towncrier_check
 
 
@@ -271,3 +273,47 @@ class TestChecker(TestCase):
             # Assert
             self.assertEqual(0, result.exit_code, (result, result.output))
             self.assertIn("Checks SKIPPED: news file changes detected", result.output)
+
+    def test_get_default_compare_branch_missingf(self):
+        """
+        If there's no recognized remote origin, exit with an error.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            create_project()
+
+            result = runner.invoke(towncrier_check)
+
+        self.assertEqual(1, result.exit_code)
+        self.assertEqual("Could not detect default branch. Aborting.\n", result.output)
+
+    def test_get_default_compare_branch_main(self):
+        """
+        If there's a remote branch origin/main, prefer it over everything else.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            create_project()
+
+            with patch("towncrier.check._run") as m:
+                m.return_value = b"  origin/master\n  origin/main\n\n"
+                branch = check.get_default_compare_branch(".", "utf-8")
+
+        self.assertEqual("origin/main", branch)
+
+    def test_get_default_compare_branch_fallback(self):
+        """
+        If there's origin/master and no main, use it.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            create_project()
+
+            with patch("towncrier.check._run") as m:
+                m.return_value = b"  origin/master\n  origin/foo\n\n"
+                branch = check.get_default_compare_branch(".", "utf-8")
+
+        self.assertEqual("origin/master", branch)
