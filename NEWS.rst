@@ -2,6 +2,57 @@
 
 .. towncrier release notes start
 
+towncrier 22.8.0 (2022-08-29)
+=============================
+
+No significant changes since the previous release candidate.
+
+
+towncrier 22.8.0.rc1 (2022-08-28)
+=================================
+
+Features
+--------
+
+- Make the check subcommand succeed for branches that change the news file
+
+  This should enable the ``check`` subcommand to be used as a CI lint step and
+  not fail when a pull request only modifies the configured news file (i.e. when
+  the news file is being assembled for the next release). (`#337 <https://github.com/hawkowl/towncrier/issues/337>`_)
+- Added support to tables in toml settings, which provides a more intuitive
+  way to configure custom types. (`#369 <https://github.com/hawkowl/towncrier/issues/369>`_)
+- The `towncrier create` command line now has a new `-m TEXT` argument that is used to define the content of the newly created fragment. (`#374 <https://github.com/hawkowl/towncrier/issues/374>`_)
+
+
+Bugfixes
+--------
+
+- The extra newline between the title and rendered content when using ``--draft`` is no longer inserted. (`#105 <https://github.com/hawkowl/towncrier/issues/105>`_)
+- The detection of duplicate release notes was fixed and recording changes of same version is no longer triggered.
+
+  Support for having the release notes for each version in a separate file is working again. This is a regression introduced in VERSION 19.9.0rc1. (`#391 <https://github.com/hawkowl/towncrier/issues/391>`_)
+
+
+Improved Documentation
+----------------------
+
+- Improve ``CONTRIBUTING.rst`` and add PR template. (`#342 <https://github.com/hawkowl/towncrier/issues/342>`_)
+- Move docs too the main branch and document custom fragment types. (`#367 <https://github.com/hawkowl/towncrier/issues/367>`_)
+- The CLI help messages were updated to contain more information. (`#384 <https://github.com/hawkowl/towncrier/issues/384>`_)
+
+
+Deprecations and Removals
+-------------------------
+
+- Support for all Python versions older than 3.7 has been dropped. (`#378 <https://github.com/hawkowl/towncrier/issues/378>`_)
+
+
+Misc
+----
+
+- `#292 <https://github.com/hawkowl/towncrier/issues/292>`_, `#330 <https://github.com/hawkowl/towncrier/issues/330>`_, `#366 <https://github.com/hawkowl/towncrier/issues/366>`_, `#376 <https://github.com/hawkowl/towncrier/issues/376>`_, `#377 <https://github.com/hawkowl/towncrier/issues/377>`_, `#380 <https://github.com/hawkowl/towncrier/issues/380>`_, `#381 <https://github.com/hawkowl/towncrier/issues/381>`_, `#382 <https://github.com/hawkowl/towncrier/issues/382>`_, `#383 <https://github.com/hawkowl/towncrier/issues/383>`_, `#393 <https://github.com/hawkowl/towncrier/issues/393>`_, `#399 <https://github.com/hawkowl/towncrier/issues/399>`_, `#402 <https://github.com/hawkowl/towncrier/issues/402>`_
+
+
 towncrier 21.9.0 (2022-02-04)
 =============================
 

@@ -1,1 +1,0 @@
-Update the project URLs for the package, to point to current resources.
