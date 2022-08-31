@@ -1,13 +1,13 @@
 Hear ye, hear ye, says the ``towncrier``
 ========================================
 
-.. image:: https://img.shields.io/github/workflow/status/twisted/towncrier/CI/master
+.. image:: https://img.shields.io/github/workflow/status/twisted/towncrier/CI/trunk
     :alt: GitHub Actions
-    :target: https://github.com/twisted/towncrier/actions?query=branch%3Amaster
+    :target: https://github.com/twisted/towncrier/actions?query=branch%3Atrunk
 
-.. image:: https://img.shields.io/codecov/c/github/twisted/towncrier/master
+.. image:: https://img.shields.io/codecov/c/github/twisted/towncrier/trunk
     :alt: Codecov
-    :target: https://app.codecov.io/gh/twisted/towncrier/branch/master
+    :target: https://app.codecov.io/gh/twisted/towncrier/branch/trunk
 
 
 ``towncrier`` is a utility to produce useful, summarised news files for your project.
