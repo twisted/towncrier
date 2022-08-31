@@ -167,10 +167,10 @@ jobs:
         task:
           - name: Check Newsfragment
             tox: check-newsfragment
+            run-if: ${{ github.head_ref != 'pre-commit-ci-update-config' }}
           - name: Check package manifest
             tox: check-manifest
-          - name: Check pre-commit
-            tox: pre-commit
+            run-if: true
 
     steps:
     - uses: actions/checkout@v3
@@ -194,6 +194,7 @@ jobs:
     - uses: twisted/python-info-action@v1
 
     - name: Tox
+      if: ${{ matrix.task.run-if }}
       run: tox -c tox.ini -e ${{ matrix.task.tox }}
 
   pypi-publish:
