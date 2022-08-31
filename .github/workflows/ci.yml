@@ -171,9 +171,6 @@ jobs:
           - name: Check package manifest
             tox: check-manifest
             run-if: true
-          - name: Check pre-commit
-            tox: pre-commit
-            run-if: true
 
     steps:
     - uses: actions/checkout@v3
