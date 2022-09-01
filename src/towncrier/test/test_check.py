@@ -6,7 +6,6 @@ import os.path
 import sys
 
 from subprocess import PIPE, Popen, call
-from unittest.mock import patch
 
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
@@ -292,14 +291,7 @@ class TestChecker(TestCase):
         """
         If there's a remote branch origin/main, prefer it over everything else.
         """
-        runner = CliRunner()
-
-        with runner.isolated_filesystem():
-            create_project()
-
-            with patch("towncrier.check._run") as m:
-                m.return_value = b"  origin/master\n  origin/main\n\n"
-                branch = check.get_default_compare_branch(".", "utf-8")
+        branch = check._get_default_compare_branch(["origin/master", "origin/main"])
 
         self.assertEqual("origin/main", branch)
 
@@ -307,13 +299,6 @@ class TestChecker(TestCase):
         """
         If there's origin/master and no main, use it.
         """
-        runner = CliRunner()
-
-        with runner.isolated_filesystem():
-            create_project()
-
-            with patch("towncrier.check._run") as m:
-                m.return_value = b"  origin/master\n  origin/foo\n\n"
-                branch = check.get_default_compare_branch(".", "utf-8")
+        branch = check._get_default_compare_branch(["origin/master", "origin/foo"])
 
         self.assertEqual("origin/master", branch)

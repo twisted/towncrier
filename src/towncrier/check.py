@@ -19,11 +19,13 @@ def _run(args, **kwargs):
     return check_output(args, **kwargs)
 
 
-def get_default_compare_branch(base_directory, encoding):
-    branches = (
-        _run(["git", "branch", "-r"], cwd=base_directory).decode(encoding).splitlines()
-    )
-    branches = [branch.strip() for branch in branches]
+def _get_remote_branches(base_directory, encoding):
+    output = _run(["git", "branch", "-r"], cwd=base_directory).decode(encoding)
+
+    return [branch.strip() for branch in output.splitlines()]
+
+
+def _get_default_compare_branch(branches):
     if "origin/main" in branches:
         return "origin/main"
     if "origin/master" in branches:
@@ -78,8 +80,8 @@ def __main(comparewith, directory, config):
     # and also some CI such as GitHub Actions).
     encoding = getattr(sys.stdout, "encoding", "utf8")
     if comparewith is None:
-        comparewith = get_default_compare_branch(
-            base_directory=base_directory, encoding=encoding
+        comparewith = _get_default_compare_branch(
+            _get_remote_branches(base_directory=base_directory, encoding=encoding)
         )
 
     if comparewith is None:
