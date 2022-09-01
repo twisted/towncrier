@@ -66,3 +66,19 @@ requires = [
     "incremental == 17.5.0",
 ]
 build-backend = "setuptools.build_meta"
+
+[tool.coverage.run]
+parallel = true
+branch = true
+source = ["towncrier"]
+
+[tool.coverage.paths]
+source = ["src", ".tox/*/site-packages"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+omit = [
+    "src/towncrier/__main__.py",
+    "src/towncrier/test/*",
+]
