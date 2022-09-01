@@ -49,6 +49,7 @@ setup(
         "dev": [
             "packaging",
             "sphinx >= 5",
+            "twisted",
         ],
     },
     package_dir={"": "src"},
