@@ -191,8 +191,8 @@ To check if a feature branch adds at least one news fragment, run::
 
     towncrier check
 
-By default this compares the current branch against ``origin/master``. You can use ``--compare-with`` if the trunk is named differently::
+By default this compares the current branch against ``origin/main``. You can use ``--compare-with`` if the trunk is named differently::
 
-    towncrier check --compare-with origin/main
+    towncrier check --compare-with origin/master
 
 The check is automatically skipped when the main news file is modified inside the branch as this signals a release branch that is expected to not have news fragments.
