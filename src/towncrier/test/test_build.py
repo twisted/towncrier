@@ -3,6 +3,7 @@
 
 import os
 
+from datetime import date
 from pathlib import Path
 from subprocess import call
 from textwrap import dedent
@@ -279,6 +280,33 @@ class TestCli(TestCase):
             """
             ),
         )
+
+    def test_draft_no_date(self):
+        """
+        If no date is passed, today's date is used.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project()
+            fragment_path1 = "foo/newsfragments/123.feature"
+            fragment_path2 = "foo/newsfragments/124.feature.rst"
+            with open(fragment_path1, "w") as f:
+                f.write("Adds levitation")
+            with open(fragment_path2, "w") as f:
+                f.write("Extends levitation")
+
+            call(["git", "init"])
+            call(["git", "config", "user.name", "user"])
+            call(["git", "config", "user.email", "user@example.com"])
+            call(["git", "add", "."])
+            call(["git", "commit", "-m", "Initial Commit"])
+
+            today = date.today()
+            result = runner.invoke(_main, ["--draft"])
+
+            self.assertEqual(0, result.exit_code)
+            self.assertIn(f"Foo 1.2.3 ({today.isoformat()})", result.output)
 
     def test_no_confirmation(self):
         runner = CliRunner()
