@@ -45,7 +45,7 @@ def get_default_compare_branch(base_directory, encoding):
     help=(
         "Checks files changed running git diff --name-ony BRANCH... "
         "BRANCH is the branch to be compared with. "
-        "Default to origin/master"
+        "Default to origin/main"
     ),
 )
 @click.option(
