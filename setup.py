@@ -17,7 +17,7 @@ setup(
         "Mailing list": "https://mail.python.org/mailman3/lists/twisted.python.org/",
         "Issues": "https://github.com/twisted/towncrier/issues",
         "Repository": "https://github.com/twisted/towncrier",
-        "Tests": "https://github.com/twisted/towncrier/actions?query=branch%3Amaster",
+        "Tests": "https://github.com/twisted/towncrier/actions?query=branch%3Atrunk",
         "Coverage": "https://codecov.io/gh/twisted/towncrier",
         "Distribution": "https://pypi.org/project/towncrier",
     },
