@@ -65,13 +65,9 @@ def __main(comparewith, directory, config):
 
     base_directory, config = load_config_from_options(directory, config)
 
-    # Use UTF-8 both when sys.stdout does not have .encoding (Python 2.7) and
-    # when the attribute is present but set to None (explicitly piped output
-    # and also some CI such as GitHub Actions).
-    encoding = getattr(sys.stdout, "encoding", "utf8")
     if comparewith is None:
         comparewith = _get_default_compare_branch(
-            get_remote_branches(base_directory=base_directory, encoding=encoding)
+            get_remote_branches(base_directory=base_directory)
         )
 
     if comparewith is None:
@@ -80,7 +76,7 @@ def __main(comparewith, directory, config):
 
     try:
         files_changed = list_changed_files_compared_to_branch(
-            base_directory, encoding, comparewith
+            base_directory, comparewith
         )
     except CalledProcessError as e:
         click.echo("git produced output while failing:")

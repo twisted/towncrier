@@ -29,19 +29,19 @@ def stage_newsfile(directory, filename):
     call(["git", "add", os.path.join(directory, filename)])
 
 
-def get_remote_branches(base_directory, encoding):
+def get_remote_branches(base_directory):
     output = check_output(
-        ["git", "branch", "-r"], cwd=base_directory, encoding=encoding, stderr=STDOUT
+        ["git", "branch", "-r"], cwd=base_directory, encoding="utf-8", stderr=STDOUT
     )
 
     return [branch.strip() for branch in output.strip().splitlines()]
 
 
-def list_changed_files_compared_to_branch(base_directory, encoding, compare_with):
+def list_changed_files_compared_to_branch(base_directory, compare_with):
     output = check_output(
         ["git", "diff", "--name-only", compare_with + "..."],
         cwd=base_directory,
-        encoding=encoding,
+        encoding="utf-8",
         stderr=STDOUT,
     )
 
