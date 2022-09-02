@@ -34,13 +34,12 @@ def append_to_newsfile(
             f.write(header)
             if start_string:
                 f.write("\n\n" + start_string + "\n")
-            else:
-                xxx
 
         f.write(content)
+
         if old_body:
             f.write("\n\n")
-        f.write(old_body.lstrip())
+        f.write(old_body)
 
 
 def _load_existing_content(news_file, start_string, single_file):
@@ -62,6 +61,6 @@ def _load_existing_content(news_file, start_string, single_file):
 
     t = content.split(start_string, 1)
     if len(t) == 2:
-        return t[0].rstrip(), t[1]
+        return t[0].rstrip(), t[1].lstrip()
 
-    return "", content
+    return "", content.lstrip()

@@ -717,6 +717,7 @@ class TestCli(TestCase):
                     "01-01-2001",
                     "--yes",
                 ],
+                catch_exceptions=False,
             )
             # not git repository, manually remove fragment file
             Path(f"newsfragments/{fragment_file}").unlink()
@@ -1010,7 +1011,7 @@ Deprecations and Removals
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
             with open("NEWS.rst", "w") as f:
-                f.write("a line\n\nanother\n\nRelease notes start marker\n")
+                f.write("a line\n\nanother\n\nRelease notes start marker\na footer!\n")
 
             result = runner.invoke(
                 _main,
@@ -1045,6 +1046,7 @@ Deprecations and Removals
             - Adds levitation (#123)
 
 
+            a footer!
         """
         )
 
