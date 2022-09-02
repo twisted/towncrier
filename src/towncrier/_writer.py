@@ -11,7 +11,7 @@ import os
 
 
 def append_to_newsfile(
-    directory, filename, start_string, top_line, content, single_file=True
+    directory, filename, start_string, top_line, content, single_file
 ):
 
     news_file = os.path.join(directory, filename)
@@ -35,6 +35,8 @@ def append_to_newsfile(
             f.write(existing_content.pop(0).rstrip().encode("utf8"))
             if start_string:
                 f.write(("\n\n" + start_string + "\n").encode("utf8"))
+            else:
+                xxxx
 
         f.write(content.encode("utf8"))
         if existing_content:

@@ -109,6 +109,7 @@ Old text.
                 wrap=True,
                 versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
             ),
+            True,
         )
 
         with open(os.path.join(tempdir, "NEWS.rst")) as f:
@@ -221,6 +222,8 @@ Old text.
                 wrap=True,
                 versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
             ),
+            True,
+
         )
 
         with open(os.path.join(tempdir, "NEWS.rst")) as f:
@@ -259,6 +262,7 @@ Old text.
             start_string=None,
             top_line="",
             content=content,
+            single_file=True,
         )
 
         with open(os.path.join(tempdir, "NEWS.rst")) as f:
