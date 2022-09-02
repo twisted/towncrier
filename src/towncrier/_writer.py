@@ -24,7 +24,9 @@ def append_to_newsfile(
     """
     news_file = os.path.join(directory, filename)
 
-    header, prev_body = _load_existing_content(news_file, start_string, single_file)
+    header, prev_body = _figure_out_existing_content(
+        news_file, start_string, single_file
+    )
 
     if top_line and top_line in prev_body:
         raise ValueError("It seems you've already produced newsfiles for this version?")
@@ -49,7 +51,7 @@ def _write_news(f, header, start_string, new_content, old_body):
         f.write(f"\n\n{old_body}")
 
 
-def _load_existing_content(news_file, start_string, single_file):
+def _figure_out_existing_content(news_file, start_string, single_file):
     """
     Try to read *news_file* and split it into header (everything before
     *start_string*) and the old body (everything after *start_string*).
