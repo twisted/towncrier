@@ -223,7 +223,6 @@ Old text.
                 versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
             ),
             True,
-
         )
 
         with open(os.path.join(tempdir, "NEWS.rst")) as f:
