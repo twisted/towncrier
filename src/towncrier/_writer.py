@@ -32,23 +32,13 @@ def append_to_newsfile(
         raise ValueError("It seems you've already produced newsfiles for this version?")
 
     with open(news_file, "w", encoding="utf8") as f:
-        _write_news(f, header, start_string, content, prev_body)
+        if header:
+            f.write(header)
 
+        f.write(content)
 
-def _write_news(f, header, start_string, new_content, old_body):
-    """
-    Write complete news into *f*.
-    """
-    if header:
-        f.write(header)
-        # If we have a header, we also have a start_string, because the header
-        # is computed by splitting the file at start_string.
-        f.write(f"\n\n{start_string}\n")
-
-    f.write(new_content)
-
-    if old_body:
-        f.write(f"\n\n{old_body}")
+        if prev_body:
+            f.write(f"\n\n{prev_body}")
 
 
 def _figure_out_existing_content(news_file, start_string, single_file):
@@ -70,6 +60,6 @@ def _figure_out_existing_content(news_file, start_string, single_file):
 
     t = content.split(start_string, 1)
     if len(t) == 2:
-        return t[0].rstrip(), t[1].lstrip()
+        return f"{t[0].rstrip()}\n\n{start_string}\n", t[1].lstrip()
 
     return "", content.lstrip()
