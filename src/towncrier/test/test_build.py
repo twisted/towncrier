@@ -23,6 +23,11 @@ def setup_simple_project():
     os.mkdir("foo/newsfragments")
 
 
+def read_all(filename):
+    with open(filename) as f:
+        return f.read()
+
+
 class TestCli(TestCase):
     maxDiff = None
 
@@ -125,8 +130,7 @@ class TestCli(TestCase):
 
             result = runner.invoke(_main, ["--date", "01-01-2001"])
 
-            with open("NEWS.rst") as f:
-                news = f.read()
+            news = read_all("NEWS.rst")
 
         self.assertEqual(0, result.exit_code)
         self.assertIn("No significant changes.\n", news)
@@ -576,10 +580,8 @@ class TestCli(TestCase):
             self.assertTrue(os.path.exists("7.9.0-notes.rst"), os.listdir("."))
 
             outputs = []
-            with open("7.8.9-notes.rst") as f:
-                outputs.append(f.read())
-            with open("7.9.0-notes.rst") as f:
-                outputs.append(f.read())
+            outputs.append(read_all("7.8.9-notes.rst"))
+            outputs.append(read_all("7.9.0-notes.rst"))
 
             self.assertEqual(
                 outputs[0],
@@ -687,8 +689,7 @@ class TestCli(TestCase):
             )
             self.assertTrue(os.path.exists("{version}-notes.rst"), os.listdir("."))
 
-            with open("{version}-notes.rst") as f:
-                output = f.read()
+            output = read_all("{version}-notes.rst")
 
             self.assertEqual(
                 output,
@@ -754,8 +755,7 @@ class TestCli(TestCase):
             )
 
             self.assertEqual(0, result.exit_code, result.output)
-            with open("NEWS.rst") as f:
-                output = f.read()
+            output = read_all("NEWS.rst")
 
         self.assertEqual(
             output,
@@ -966,8 +966,7 @@ Deprecations and Removals
 
             self.assertEqual(0, result.exit_code, result.output)
             self.assertTrue(os.path.exists("NEWS.rst"), os.listdir("."))
-            with open("NEWS.rst") as f:
-                output = f.read()
+            output = read_all("NEWS.rst")
 
         expected_output = dedent(
             """\
