@@ -96,7 +96,7 @@ jobs:
         python-version: ${{ matrix.python.action }}
 
     - name: Install dependencies
-      run: python -m pip install --upgrade pip tox codecov
+      run: python -m pip install --upgrade pip tox codecov coverage[toml]
 
     - uses: twisted/python-info-action@v1
 
@@ -139,7 +139,7 @@ jobs:
         python-version: ${{ matrix.python.action }}
 
     - name: Install dependencies
-      run: python -m pip install --upgrade pip tox codecov
+      run: python -m pip install --upgrade pip tox codecov coverage[toml]
 
     - uses: twisted/python-info-action@v1
 
