@@ -24,22 +24,29 @@ def append_to_newsfile(
     """
     news_file = os.path.join(directory, filename)
 
-    header, old_body = _load_existing_content(news_file, start_string, single_file)
+    header, prev_body = _load_existing_content(news_file, start_string, single_file)
 
-    if top_line and top_line in old_body:
+    if top_line and top_line in prev_body:
         raise ValueError("It seems you've already produced newsfiles for this version?")
 
     with open(news_file, "w", encoding="utf8") as f:
-        if header:
-            f.write(header)
-            if start_string:
-                f.write("\n\n" + start_string + "\n")
+        _write_news(f, header, start_string, content, prev_body)
 
-        f.write(content)
 
-        if old_body:
-            f.write("\n\n")
-        f.write(old_body)
+def _write_news(f, header, start_string, new_content, old_body):
+    """
+    Write complete news into *f*.
+    """
+    if header:
+        f.write(header)
+        # If we have a header, we also have a start_string, because the header
+        # is computed by splitting the file at start_string.
+        f.write(f"\n\n{start_string}\n")
+
+    f.write(new_content)
+
+    if old_body:
+        f.write(f"\n\n{old_body}")
 
 
 def _load_existing_content(news_file, start_string, single_file):
