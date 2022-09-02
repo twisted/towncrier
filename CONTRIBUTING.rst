@@ -89,12 +89,27 @@ Running the test suite
 ----------------------
 
 We use the `twisted.trial`_ module and `tox`_ to run tests against all supported
-Python versions and operating systems. All test dependencies, other than tox, are installed
-automatically.
+Python versions and operating systems.
 
 The following list contains some ways how to run the test suite:
 
-* To run all tests, use::
+* To install this project into a virtualenv along with the dependencies necessary
+  to run the tests and build the documentation::
+
+    $ pip install -e .[dev]
+
+* To run the tests, use ``trial`` like so::
+
+    $ trial towncrier
+
+* To investigate and debug errors, use the ``trial`` command like this::
+
+    $ trial -b towncrier
+
+  This will invoke a PDB session. If you press ``c`` it will continue running
+  the test suite until it runs into an error.
+
+* To run all tests against all supported versions, install tox and use::
 
     $ tox
 
@@ -120,12 +135,10 @@ The following list contains some ways how to run the test suite:
     $ pip install pre-commit
     $ pre-commit install
 
-* To investigate and debug errors, use the ``trial`` command like this::
 
-    $ trial -b towncrier
-
-  This command creates a virtual environment and invokes a PDB session.
-
+**Please note**: If the test suite works in tox, but doesn't by calling
+``trial``, it could be that you've got GPG-signing active for git commits which
+fails with our dummy test commits.
 
 .. ### Links
 
