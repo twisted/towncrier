@@ -116,8 +116,7 @@ def _get_news_content_from_user(message):
         "# In order to abort, exit without saving.\n"
         '# Lines starting with "#" are ignored.\n'
     )
-    if message is not None:
-        initial_content += "\n" "{message}\n".format(message=message)
+    initial_content += f"\n{message}\n"
     content = click.edit(initial_content)
     if content is None:
         return None

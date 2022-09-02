@@ -5,24 +5,14 @@
 import os
 import sys
 
-from subprocess import STDOUT, CalledProcessError, check_output
+from subprocess import CalledProcessError
 from warnings import warn
 
 import click
 
 from ._builder import find_fragments
+from ._git import get_remote_branches, list_changed_files_compared_to_branch
 from ._settings import config_option_help, load_config_from_options
-
-
-def _run(args, **kwargs):
-    kwargs["stderr"] = STDOUT
-    return check_output(args, **kwargs)
-
-
-def _get_remote_branches(base_directory, encoding):
-    output = _run(["git", "branch", "-r"], cwd=base_directory).decode(encoding)
-
-    return [branch.strip() for branch in output.splitlines()]
 
 
 def _get_default_compare_branch(branches):
@@ -75,13 +65,9 @@ def __main(comparewith, directory, config):
 
     base_directory, config = load_config_from_options(directory, config)
 
-    # Use UTF-8 both when sys.stdout does not have .encoding (Python 2.7) and
-    # when the attribute is present but set to None (explicitly piped output
-    # and also some CI such as GitHub Actions).
-    encoding = getattr(sys.stdout, "encoding", "utf8")
     if comparewith is None:
         comparewith = _get_default_compare_branch(
-            _get_remote_branches(base_directory=base_directory, encoding=encoding)
+            get_remote_branches(base_directory=base_directory)
         )
 
     if comparewith is None:
@@ -89,12 +75,8 @@ def __main(comparewith, directory, config):
         sys.exit(1)
 
     try:
-        files_changed = (
-            _run(
-                ["git", "diff", "--name-only", comparewith + "..."], cwd=base_directory
-            )
-            .decode(encoding)
-            .strip()
+        files_changed = list_changed_files_compared_to_branch(
+            base_directory, comparewith
         )
     except CalledProcessError as e:
         click.echo("git produced output while failing:")
@@ -108,8 +90,7 @@ def __main(comparewith, directory, config):
         sys.exit(0)
 
     files = {
-        os.path.normpath(os.path.join(base_directory, path))
-        for path in files_changed.strip().splitlines()
+        os.path.normpath(os.path.join(base_directory, path)) for path in files_changed
     }
 
     click.echo("Looking at these files:")

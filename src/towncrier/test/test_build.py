@@ -7,6 +7,7 @@ from datetime import date
 from pathlib import Path
 from subprocess import call
 from textwrap import dedent
+from unittest.mock import patch
 
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
@@ -22,6 +23,11 @@ def setup_simple_project():
     with open("foo/__init__.py", "w") as f:
         f.write('__version__ = "1.2.3"\n')
     os.mkdir("foo/newsfragments")
+
+
+def read_all(filename):
+    with open(filename) as f:
+        return f.read()
 
 
 class TestCli(TestCase):
@@ -100,7 +106,7 @@ class TestCli(TestCase):
         self.assertEqual(1, result.exit_code, result.output)
         self.assertIn("Failed to list the news fragment files.\n", result.output)
 
-    def test_no_newsfragments(self):
+    def test_no_newsfragments_draft(self):
         """
         An empty newsfragment directory acts as if there are no changes.
         """
@@ -113,6 +119,23 @@ class TestCli(TestCase):
 
         self.assertEqual(0, result.exit_code)
         self.assertIn("No significant changes.\n", result.output)
+
+    def test_no_newsfragments(self):
+        """
+        An empty newsfragment directory acts as if there are no changes and
+        removing files handles it gracefully.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project()
+
+            result = runner.invoke(_main, ["--date", "01-01-2001"])
+
+            news = read_all("NEWS.rst")
+
+        self.assertEqual(0, result.exit_code)
+        self.assertIn("No significant changes.\n", news)
 
     def test_collision(self):
         runner = CliRunner()
@@ -333,6 +356,38 @@ class TestCli(TestCase):
             self.assertTrue(os.path.isfile(path))
             self.assertFalse(os.path.isfile(fragment_path1))
             self.assertFalse(os.path.isfile(fragment_path2))
+
+    def test_confirmation_says_no(self):
+        """
+        If the user says "no" to removing the newsfragements, we end up with
+        a NEWS.rst AND the newsfragments.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project()
+            fragment_path1 = "foo/newsfragments/123.feature"
+            fragment_path2 = "foo/newsfragments/124.feature.rst"
+            with open(fragment_path1, "w") as f:
+                f.write("Adds levitation")
+            with open(fragment_path2, "w") as f:
+                f.write("Extends levitation")
+
+            call(["git", "init"])
+            call(["git", "config", "user.name", "user"])
+            call(["git", "config", "user.email", "user@example.com"])
+            call(["git", "add", "."])
+            call(["git", "commit", "-m", "Initial Commit"])
+
+            with patch("towncrier._git.click.confirm") as m:
+                m.return_value = False
+                result = runner.invoke(_main, [])
+
+            self.assertEqual(0, result.exit_code)
+            path = "NEWS.rst"
+            self.assertTrue(os.path.isfile(path))
+            self.assertTrue(os.path.isfile(fragment_path1))
+            self.assertTrue(os.path.isfile(fragment_path2))
 
     def test_needs_config(self):
         """
@@ -586,10 +641,8 @@ class TestCli(TestCase):
             self.assertTrue(os.path.exists("7.9.0-notes.rst"), os.listdir("."))
 
             outputs = []
-            with open("7.8.9-notes.rst") as f:
-                outputs.append(f.read())
-            with open("7.9.0-notes.rst") as f:
-                outputs.append(f.read())
+            outputs.append(read_all("7.8.9-notes.rst"))
+            outputs.append(read_all("7.9.0-notes.rst"))
 
             self.assertEqual(
                 outputs[0],
@@ -697,8 +750,7 @@ class TestCli(TestCase):
             )
             self.assertTrue(os.path.exists("{version}-notes.rst"), os.listdir("."))
 
-            with open("{version}-notes.rst") as f:
-                output = f.read()
+            output = read_all("{version}-notes.rst")
 
             self.assertEqual(
                 output,
@@ -764,8 +816,7 @@ class TestCli(TestCase):
             )
 
             self.assertEqual(0, result.exit_code, result.output)
-            with open("NEWS.rst") as f:
-                output = f.read()
+            output = read_all("NEWS.rst")
 
         self.assertEqual(
             output,
@@ -976,8 +1027,7 @@ Deprecations and Removals
 
             self.assertEqual(0, result.exit_code, result.output)
             self.assertTrue(os.path.exists("NEWS.rst"), os.listdir("."))
-            with open("NEWS.rst") as f:
-                output = f.read()
+            output = read_all("NEWS.rst")
 
         expected_output = dedent(
             """\
