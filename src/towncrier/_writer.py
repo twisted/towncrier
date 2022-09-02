@@ -29,18 +29,18 @@ def append_to_newsfile(
     if top_line and top_line in old_body:
         raise ValueError("It seems you've already produced newsfiles for this version?")
 
-    with open(news_file, "wb") as f:
+    with open(news_file, "w", encoding="utf8") as f:
         if header:
-            f.write(header.encode("utf8"))
+            f.write(header)
             if start_string:
-                f.write(("\n\n" + start_string + "\n").encode("utf8"))
+                f.write("\n\n" + start_string + "\n")
             else:
                 xxx
 
-        f.write(content.encode("utf8"))
+        f.write(content)
         if old_body:
-            f.write(b"\n\n")
-        f.write(old_body.lstrip().encode("utf8"))
+            f.write("\n\n")
+        f.write(old_body.lstrip())
 
 
 def _load_existing_content(news_file, start_string, single_file):
@@ -55,7 +55,7 @@ def _load_existing_content(news_file, start_string, single_file):
     if not single_file or not os.path.exists(news_file):
         # Per-release news files always start empty.
         # Non-existent files have no existing content.
-        return ("", "")
+        return "", ""
 
     with open(news_file, encoding="utf8") as f:
         content = f.read()
