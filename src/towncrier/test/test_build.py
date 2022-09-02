@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 from subprocess import call
 from textwrap import dedent
+from unittest.mock import patch
 
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
@@ -327,6 +328,38 @@ class TestCli(TestCase):
             self.assertTrue(os.path.isfile(path))
             self.assertFalse(os.path.isfile(fragment_path1))
             self.assertFalse(os.path.isfile(fragment_path2))
+
+    def test_confirmation_says_no(self):
+        """
+        If the user says "no" to removing the newsfragements, we end up with
+        a NEWS.rst AND the newsfragments.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project()
+            fragment_path1 = "foo/newsfragments/123.feature"
+            fragment_path2 = "foo/newsfragments/124.feature.rst"
+            with open(fragment_path1, "w") as f:
+                f.write("Adds levitation")
+            with open(fragment_path2, "w") as f:
+                f.write("Extends levitation")
+
+            call(["git", "init"])
+            call(["git", "config", "user.name", "user"])
+            call(["git", "config", "user.email", "user@example.com"])
+            call(["git", "add", "."])
+            call(["git", "commit", "-m", "Initial Commit"])
+
+            with patch("towncrier._git.click.confirm") as m:
+                m.return_value = False
+                result = runner.invoke(_main, [])
+
+            self.assertEqual(0, result.exit_code)
+            path = "NEWS.rst"
+            self.assertTrue(os.path.isfile(path))
+            self.assertTrue(os.path.isfile(fragment_path1))
+            self.assertTrue(os.path.isfile(fragment_path2))
 
     def test_needs_config(self):
         """
