@@ -99,7 +99,7 @@ class TestCli(TestCase):
         self.assertEqual(1, result.exit_code, result.output)
         self.assertIn("Failed to list the news fragment files.\n", result.output)
 
-    def test_no_newsfragments(self):
+    def test_no_newsfragments_draft(self):
         """
         An empty newsfragment directory acts as if there are no changes.
         """
@@ -112,6 +112,24 @@ class TestCli(TestCase):
 
         self.assertEqual(0, result.exit_code)
         self.assertIn("No significant changes.\n", result.output)
+
+    def test_no_newsfragments(self):
+        """
+        An empty newsfragment directory acts as if there are no changes and
+        removing files handles it gracefully.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project()
+
+            result = runner.invoke(_main, ["--date", "01-01-2001"])
+
+            with open("NEWS.rst") as f:
+                news = f.read()
+
+        self.assertEqual(0, result.exit_code)
+        self.assertIn("No significant changes.\n", news)
 
     def test_collision(self):
         runner = CliRunner()
