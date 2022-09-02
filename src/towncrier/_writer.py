@@ -13,36 +13,55 @@ import os
 def append_to_newsfile(
     directory, filename, start_string, top_line, content, single_file
 ):
+    """
+    Write *content* to *directory*/*filename* behind *start_string*.
 
+    Double-check *top_line* (i.e. the release header) is not already in the
+    file.
+
+    if *single_file* is True, add it to an existing file, otherwise create a
+    fresh one.
+    """
     news_file = os.path.join(directory, filename)
 
-    existing_content = _load_existing_content(news_file, start_string, single_file)
+    header, old_body = _load_existing_content(news_file, start_string, single_file)
 
-    if top_line and top_line in existing_content[-1]:
+    if top_line and top_line in old_body:
         raise ValueError("It seems you've already produced newsfiles for this version?")
 
-    with open(os.path.join(directory, filename), "wb") as f:
-
-        if len(existing_content) > 1:
-            f.write(existing_content.pop(0).rstrip().encode("utf8"))
+    with open(news_file, "wb") as f:
+        if header:
+            f.write(header.encode("utf8"))
             if start_string:
                 f.write(("\n\n" + start_string + "\n").encode("utf8"))
+            else:
+                xxx
 
         f.write(content.encode("utf8"))
-        if existing_content:
-            if existing_content[0]:
-                f.write(b"\n\n")
-            f.write(existing_content[0].lstrip().encode("utf8"))
+        if old_body:
+            f.write(b"\n\n")
+        f.write(old_body.lstrip().encode("utf8"))
 
 
 def _load_existing_content(news_file, start_string, single_file):
-    if not single_file:
-        # Per-release news files always start empty.
-        return [""]
+    """
+    Try to read *news_file* and split it into header (everything before
+    *start_string*) and the old body (everything after *start_string*).
 
-    if not os.path.exists(news_file):
-        # Non-existent files are equivalent to empty files.
-        return [""]
+    If there's no *start_string*, return empty header.
+
+    Empty file and per-release files have neither.
+    """
+    if not single_file or not os.path.exists(news_file):
+        # Per-release news files always start empty.
+        # Non-existent files have no existing content.
+        return ("", "")
 
     with open(news_file, encoding="utf8") as f:
-        return f.read().split(start_string, 1)
+        content = f.read()
+
+    t = content.split(start_string, 1)
+    if len(t) == 2:
+        return t[0].rstrip(), t[1]
+
+    return "", content
