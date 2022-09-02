@@ -3,7 +3,7 @@
 
 import os
 
-from subprocess import call
+from subprocess import STDOUT, call, check_output
 
 import click
 
@@ -27,3 +27,22 @@ def remove_files(fragment_filenames, answer_yes):
 def stage_newsfile(directory, filename):
 
     call(["git", "add", os.path.join(directory, filename)])
+
+
+def get_remote_branches(base_directory, encoding):
+    output = check_output(
+        ["git", "branch", "-r"], cwd=base_directory, encoding=encoding, stderr=STDOUT
+    )
+
+    return [branch.strip() for branch in output.strip().splitlines()]
+
+
+def list_changed_files_compared_to_branch(base_directory, encoding, compare_with):
+    output = check_output(
+        ["git", "diff", "--name-only", compare_with + "..."],
+        cwd=base_directory,
+        encoding=encoding,
+        stderr=STDOUT,
+    )
+
+    return output.strip().splitlines()
