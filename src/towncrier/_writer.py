@@ -31,7 +31,10 @@ def append_to_newsfile(
     if top_line and top_line in prev_body:
         raise ValueError("It seems you've already produced newsfiles for this version?")
 
-    with open(news_file, "w", encoding="utf8") as f:
+    # Leave newlines alone. This probably leads to inconsistent newlines,
+    # because we've loaded existing content with universal newlines, but that's
+    # the original behavior.
+    with open(news_file, "w", encoding="utf8", newline="") as f:
         if header:
             f.write(header)
 
@@ -55,6 +58,8 @@ def _figure_out_existing_content(news_file, start_string, single_file):
         # Non-existent files have no existing content.
         return "", ""
 
+    # If we didn't use universal newlines here, we wouldn't find *start_string*
+    # which usually contains a `\n`.
     with open(news_file, encoding="utf8") as f:
         content = f.read()
 
