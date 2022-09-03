@@ -795,7 +795,7 @@ class TestCli(TestCase):
                 )
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
-                f.write("wow!\n" "~~~~\n" "\n" "No indentation at all.")
+                f.write("wow!\n~~~~\n\nNo indentation at all.")
             with open("newsfragments/124.bugfix", "w") as f:
                 f.write("#. Numbered bullet list.")
             with open("newsfragments/125.removal", "w") as f:
