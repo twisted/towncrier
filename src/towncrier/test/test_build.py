@@ -717,6 +717,7 @@ class TestCli(TestCase):
                     "01-01-2001",
                     "--yes",
                 ],
+                catch_exceptions=False,
             )
             # not git repository, manually remove fragment file
             Path(f"newsfragments/{fragment_file}").unlink()
@@ -780,7 +781,7 @@ class TestCli(TestCase):
         """
         When all_bullets is false, subsequent lines are not indented.
 
-        The automatic ticket number inserted by towcier will allign with the
+        The automatic ticket number inserted by towncrier will align with the
         manual bullet.
         """
         runner = CliRunner()
@@ -794,7 +795,7 @@ class TestCli(TestCase):
                 )
             os.mkdir("newsfragments")
             with open("newsfragments/123.feature", "w") as f:
-                f.write("wow!\n" "~~~~\n" "\n" "No indentation at all.")
+                f.write("wow!\n~~~~\n\nNo indentation at all.")
             with open("newsfragments/124.bugfix", "w") as f:
                 f.write("#. Numbered bullet list.")
             with open("newsfragments/125.removal", "w") as f:
@@ -1010,7 +1011,7 @@ Deprecations and Removals
             with open("newsfragments/123.feature", "w") as f:
                 f.write("Adds levitation")
             with open("NEWS.rst", "w") as f:
-                f.write("a line\n\nanother\n\nRelease notes start marker\n")
+                f.write("a line\n\nanother\n\nRelease notes start marker\na footer!\n")
 
             result = runner.invoke(
                 _main,
@@ -1045,6 +1046,7 @@ Deprecations and Removals
             - Adds levitation (#123)
 
 
+            a footer!
         """
         )
 

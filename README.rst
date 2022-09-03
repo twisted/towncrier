@@ -158,7 +158,7 @@ as the option 'title_format', already exists in newsfile, ``ValueError`` will be
 you "already produced newsfiles for this version".
 
 If ``single_file`` is set to ``false`` instead, each versioned ``towncrier build`` will generate a
-separate newsfile, whose name is formatted as the patten given by option ``filename``.
+separate newsfile, whose name is formatted as the pattern given by option ``filename``.
 For example, if ``filename="{version}-notes.rst"``, then the release note with version "7.8.9" will
 be written to the file "7.8.9-notes.rst". If the newsfile already exists, its content
 will be overwriten with new release note, without throwing a ``ValueError`` warning.

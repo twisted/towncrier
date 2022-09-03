@@ -18,6 +18,8 @@ from ..build import _main
 
 
 class WritingTests(TestCase):
+    maxDiff = None
+
     def test_append_at_top(self):
 
         fragments = OrderedDict(
@@ -109,6 +111,7 @@ Old text.
                 wrap=True,
                 versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
             ),
+            single_file=True,
         )
 
         with open(os.path.join(tempdir, "NEWS.rst")) as f:
@@ -221,6 +224,7 @@ Old text.
                 wrap=True,
                 versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
             ),
+            single_file=True,
         )
 
         with open(os.path.join(tempdir, "NEWS.rst")) as f:
@@ -259,6 +263,7 @@ Old text.
             start_string=None,
             top_line="",
             content=content,
+            single_file=True,
         )
 
         with open(os.path.join(tempdir, "NEWS.rst")) as f:

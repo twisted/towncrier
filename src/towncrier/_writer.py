@@ -6,38 +6,64 @@ Responsible for writing the built news fragments to a news file without
 affecting existing content.
 """
 
-
-import os
+from pathlib import Path
 
 
 def append_to_newsfile(
-    directory, filename, start_string, top_line, content, single_file=True
+    directory, filename, start_string, top_line, content, single_file
 ):
+    """
+    Write *content* to *directory*/*filename* behind *start_string*.
 
-    news_file = os.path.join(directory, filename)
+    Double-check *top_line* (i.e. the release header) is not already in the
+    file.
 
-    if single_file:
-        if not os.path.exists(news_file):
-            existing_content = ""
-        else:
-            with open(news_file, encoding="utf8") as f:
-                existing_content = f.read()
-        existing_content = existing_content.split(start_string, 1)
-    else:
-        existing_content = [""]
+    if *single_file* is True, add it to an existing file, otherwise create a
+    fresh one.
+    """
+    news_file = Path(directory) / filename
 
-    if top_line and top_line in existing_content[-1]:
+    header, prev_body = _figure_out_existing_content(
+        news_file, start_string, single_file
+    )
+
+    if top_line and top_line in prev_body:
         raise ValueError("It seems you've already produced newsfiles for this version?")
 
-    with open(os.path.join(directory, filename), "wb") as f:
+    # Leave newlines alone. This probably leads to inconsistent newlines,
+    # because we've loaded existing content with universal newlines, but that's
+    # the original behavior.
+    with news_file.open("w", encoding="utf8", newline="") as f:
+        if header:
+            f.write(header)
 
-        if len(existing_content) > 1:
-            f.write(existing_content.pop(0).rstrip().encode("utf8"))
-            if start_string:
-                f.write(("\n\n" + start_string + "\n").encode("utf8"))
+        f.write(content)
 
-        f.write(content.encode("utf8"))
-        if existing_content:
-            if existing_content[0]:
-                f.write(b"\n\n")
-            f.write(existing_content[0].lstrip().encode("utf8"))
+        if prev_body:
+            f.write(f"\n\n{prev_body}")
+
+
+def _figure_out_existing_content(news_file, start_string, single_file):
+    """
+    Try to read *news_file* and split it into header (everything before
+    *start_string*) and the old body (everything after *start_string*).
+
+    If there's no *start_string*, return empty header.
+
+    Empty file and per-release files have neither.
+    """
+    if not single_file or not news_file.exists():
+        # Per-release news files always start empty.
+        # Non-existent files have no existing content.
+        return "", ""
+
+    # If we didn't use universal newlines here, we wouldn't find *start_string*
+    # which usually contains a `\n`.
+    with news_file.open(encoding="utf8") as f:
+        content = f.read()
+
+    t = content.split(start_string, 1)
+    if len(t) == 2:
+        return f"{t[0].rstrip()}\n\n{start_string}\n", t[1].lstrip()
+
+    return "", content.lstrip()
