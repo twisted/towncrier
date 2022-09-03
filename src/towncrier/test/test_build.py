@@ -781,7 +781,7 @@ class TestCli(TestCase):
         """
         When all_bullets is false, subsequent lines are not indented.
 
-        The automatic ticket number inserted by towcier will allign with the
+        The automatic ticket number inserted by towncrier will align with the
         manual bullet.
         """
         runner = CliRunner()
