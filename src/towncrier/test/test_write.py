@@ -222,7 +222,7 @@ Old text.
                 wrap=True,
                 versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
             ),
-            True,
+            single_file=True,
         )
 
         with open(os.path.join(tempdir, "NEWS.rst")) as f:
