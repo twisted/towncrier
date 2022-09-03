@@ -6,8 +6,7 @@ Responsible for writing the built news fragments to a news file without
 affecting existing content.
 """
 
-
-import os
+from pathlib import Path
 
 
 def append_to_newsfile(
@@ -22,7 +21,7 @@ def append_to_newsfile(
     if *single_file* is True, add it to an existing file, otherwise create a
     fresh one.
     """
-    news_file = os.path.join(directory, filename)
+    news_file = Path(directory) / filename
 
     header, prev_body = _figure_out_existing_content(
         news_file, start_string, single_file
@@ -34,7 +33,7 @@ def append_to_newsfile(
     # Leave newlines alone. This probably leads to inconsistent newlines,
     # because we've loaded existing content with universal newlines, but that's
     # the original behavior.
-    with open(news_file, "w", encoding="utf8", newline="") as f:
+    with news_file.open("w", encoding="utf8", newline="") as f:
         if header:
             f.write(header)
 
@@ -53,14 +52,14 @@ def _figure_out_existing_content(news_file, start_string, single_file):
 
     Empty file and per-release files have neither.
     """
-    if not single_file or not os.path.exists(news_file):
+    if not single_file or not news_file.exists():
         # Per-release news files always start empty.
         # Non-existent files have no existing content.
         return "", ""
 
     # If we didn't use universal newlines here, we wouldn't find *start_string*
     # which usually contains a `\n`.
-    with open(news_file, encoding="utf8") as f:
+    with news_file.open(encoding="utf8") as f:
         content = f.read()
 
     t = content.split(start_string, 1)
