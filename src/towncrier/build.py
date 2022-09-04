@@ -16,11 +16,7 @@ import click
 from ._builder import find_fragments, render_fragments, split_fragments
 from ._git import remove_files, stage_newsfile
 from ._project import get_project_name, get_version
-from ._settings import (
-    ConfigError,
-    config_option_help,
-    load_config_from_options,
-)
+from ._settings import ConfigError, config_option_help, load_config_from_options
 from ._writer import append_to_newsfile
 
 

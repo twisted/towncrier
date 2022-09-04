@@ -57,6 +57,7 @@ exclude = '''
 
 [tool.isort]
 profile = "attrs"
+line_length = 88
 
 
 [build-system]
