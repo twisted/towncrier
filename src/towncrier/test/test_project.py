@@ -8,7 +8,7 @@ from subprocess import check_output
 
 from twisted.trial.unittest import TestCase
 
-from .._project import get_version
+from .._project import get_project_name, get_version
 
 
 class VersionFetchingTests(TestCase):
@@ -39,6 +39,21 @@ class VersionFetchingTests(TestCase):
 
         version = get_version(temp, "mytestproja")
         self.assertEqual(version, "1.3.12")
+
+    def test_unknown_type(self):
+        """
+        A __version__ of unknown type will lead to an exception.
+        """
+        temp = self.mktemp()
+        os.makedirs(temp)
+        os.makedirs(os.path.join(temp, "mytestprojb"))
+
+        with open(os.path.join(temp, "mytestprojb", "__init__.py"), "w") as f:
+            f.write("__version__ = object()")
+
+        self.assertRaises(Exception, get_version, temp, "mytestprojb")
+
+        self.assertRaises(TypeError, get_project_name, temp, "mytestprojb")
 
     def test_import_fails(self):
         """
