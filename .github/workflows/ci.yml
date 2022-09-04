@@ -171,6 +171,9 @@ jobs:
           - name: Check package manifest
             tox: check-manifest
             run-if: true
+          - name: Check mypy
+            tox: typecheck
+            run-if: true
 
     steps:
     - uses: actions/checkout@v3
