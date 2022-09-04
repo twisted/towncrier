@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import abc
 import collections as clt
 
-from typing import Any, Iterable, Mapping, Type
+from typing import Any, Iterable, Mapping
 
 
 class BaseFragmentTypesLoader:
@@ -14,8 +16,8 @@ class BaseFragmentTypesLoader:
         self.config = config
 
     @classmethod
-    def factory(cls, config: Mapping[str, Any]) -> "BaseFragmentTypesLoader":
-        fragment_types_class: Type[BaseFragmentTypesLoader] = DefaultFragmentTypesLoader
+    def factory(cls, config: Mapping[str, Any]) -> BaseFragmentTypesLoader:
+        fragment_types_class: type[BaseFragmentTypesLoader] = DefaultFragmentTypesLoader
         fragment_types = config.get("fragment", {})
         types_config = config.get("type", {})
         if fragment_types:

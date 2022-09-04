@@ -2,12 +2,14 @@
 # See LICENSE for details.
 
 
+from __future__ import annotations
+
 import os
 import textwrap
 import traceback
 
 from collections import OrderedDict
-from typing import Any, Dict, Iterator, List, Mapping, Optional, Sequence, Tuple, Union
+from typing import Any, Iterator, Mapping, Sequence
 
 from jinja2 import Template
 
@@ -27,7 +29,7 @@ def strip_if_integer_string(s: str) -> str:
 # could not be parsed or doesn't contain a valid category.
 def parse_newfragment_basename(
     basename: str, definitions: Sequence[str]
-) -> Union[Tuple[str, str, int], Tuple[None, None, None]]:
+) -> tuple[str, str, int] | tuple[None, None, None]:
     invalid = (None, None, None)
     parts = basename.split(".")
 
@@ -80,9 +82,9 @@ def parse_newfragment_basename(
 def find_fragments(
     base_directory: str,
     sections: Mapping[str, str],
-    fragment_directory: Optional[str],
+    fragment_directory: str | None,
     definitions: Sequence[str],
-) -> Tuple[Mapping[str, Mapping[Tuple[str, str, int], str]], List[str]]:
+) -> tuple[Mapping[str, Mapping[tuple[str, str, int], str]], list[str]]:
     """
     Sections are a dictonary of section names to paths.
     """
@@ -150,7 +152,7 @@ def indent(text: str, prefix: str) -> str:
 # add an example output here. Next time someone digs deep enough to figure it
 # out, please do so...
 def split_fragments(
-    fragments: Mapping[str, Mapping[Tuple[str, str, int], str]],
+    fragments: Mapping[str, Mapping[tuple[str, str, int], str]],
     definitions: Mapping[str, Mapping[str, Any]],
     all_bullets: bool = True,
 ) -> Mapping[str, Mapping[str, Mapping[str, Sequence[str]]]]:
@@ -158,7 +160,7 @@ def split_fragments(
     output = OrderedDict()
 
     for section_name, section_fragments in fragments.items():
-        section: Dict[str, Dict[str, List[str]]] = {}
+        section: dict[str, dict[str, list[str]]] = {}
 
         for (ticket, category, counter), content in section_fragments.items():
 
@@ -188,7 +190,7 @@ def split_fragments(
     return output
 
 
-def issue_key(issue: str) -> Tuple[int, str]:
+def issue_key(issue: str) -> tuple[int, str]:
     # We want integer issues to sort as integers, and we also want string
     # issues to sort as strings. We arbitrarily put string issues before
     # integer issues (hopefully no-one uses both at once).
@@ -199,12 +201,12 @@ def issue_key(issue: str) -> Tuple[int, str]:
         return (-1, issue)
 
 
-def entry_key(entry: Tuple[str, Sequence[str]]) -> List[Tuple[int, str]]:
+def entry_key(entry: tuple[str, Sequence[str]]) -> list[tuple[int, str]]:
     _, issues = entry
     return [issue_key(issue) for issue in issues]
 
 
-def bullet_key(entry: Tuple[str, Sequence[str]]) -> int:
+def bullet_key(entry: tuple[str, Sequence[str]]) -> int:
     text, _ = entry
     if not text:
         return -1
@@ -217,7 +219,7 @@ def bullet_key(entry: Tuple[str, Sequence[str]]) -> int:
     return 3
 
 
-def render_issue(issue_format: Optional[str], issue: str) -> str:
+def render_issue(issue_format: str | None, issue: str) -> str:
     if issue_format is None:
         try:
             int(issue)
@@ -230,7 +232,7 @@ def render_issue(issue_format: Optional[str], issue: str) -> str:
 
 def render_fragments(
     template: str,
-    issue_format: Optional[str],
+    issue_format: str | None,
     fragments: Mapping[str, Mapping[str, Mapping[str, Sequence[str]]]],
     definitions: Sequence[str],
     underlines: Sequence[str],
@@ -246,7 +248,7 @@ def render_fragments(
 
     jinja_template = Template(template, trim_blocks=True)
 
-    data: Dict[str, Dict[str, Dict[str, List[str]]]] = OrderedDict()
+    data: dict[str, dict[str, dict[str, list[str]]]] = OrderedDict()
 
     for section_name, section_value in fragments.items():
 

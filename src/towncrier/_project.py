@@ -6,6 +6,8 @@ Responsible for getting the version and name from a project.
 """
 
 
+from __future__ import annotations
+
 import sys
 
 from importlib import import_module

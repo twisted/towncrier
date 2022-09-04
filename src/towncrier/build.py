@@ -6,11 +6,12 @@ Build a combined news file from news fragments.
 """
 
 
+from __future__ import annotations
+
 import os
 import sys
 
 from datetime import date
-from typing import Optional
 
 import click
 
@@ -72,11 +73,11 @@ def _get_date() -> str:
 )
 def _main(
     draft: bool,
-    directory: Optional[str],
-    config_file: Optional[str],
-    project_name: Optional[str],
-    project_version: Optional[str],
-    project_date: Optional[str],
+    directory: str | None,
+    config_file: str | None,
+    project_name: str | None,
+    project_version: str | None,
+    project_date: str | None,
     answer_yes: bool,
 ) -> None:
     """
@@ -99,11 +100,11 @@ def _main(
 
 def __main(
     draft: bool,
-    directory: Optional[str],
-    config_file: Optional[str],
-    project_name: Optional[str],
-    project_version: Optional[str],
-    project_date: Optional[str],
+    directory: str | None,
+    config_file: str | None,
+    project_name: str | None,
+    project_version: str | None,
+    project_date: str | None,
     answer_yes: bool,
 ) -> None:
     """

@@ -7,6 +7,8 @@ Entry point of the command line interface.
 Each sub-command has its separate CLI definition andd help messages.
 """
 
+from __future__ import annotations
+
 import click
 
 from click_default_group import DefaultGroup

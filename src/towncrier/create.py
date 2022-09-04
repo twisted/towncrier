@@ -5,9 +5,9 @@
 Create a new fragment.
 """
 
-import os
+from __future__ import annotations
 
-from typing import Optional
+import os
 
 import click
 
@@ -45,8 +45,8 @@ from ._settings import config_option_help, load_config_from_options
 @click.argument("filename")
 def _main(
     ctx: click.Context,
-    directory: Optional[str],
-    config: Optional[str],
+    directory: str | None,
+    config: str | None,
     filename: str,
     edit: bool,
     content: str,
@@ -70,8 +70,8 @@ def _main(
 
 def __main(
     ctx: click.Context,
-    directory: Optional[str],
-    config_path: Optional[str],
+    directory: str | None,
+    config_path: str | None,
     filename: str,
     edit: bool,
     content: str,
@@ -126,7 +126,7 @@ def __main(
     click.echo(f"Created news fragment at {segment_file}")
 
 
-def _get_news_content_from_user(message: str) -> Optional[str]:
+def _get_news_content_from_user(message: str) -> str | None:
     initial_content = (
         "# Please write your news content. When finished, save the file.\n"
         "# In order to abort, exit without saving.\n"

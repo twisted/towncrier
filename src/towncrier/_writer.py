@@ -6,8 +6,9 @@ Responsible for writing the built news fragments to a news file without
 affecting existing content.
 """
 
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Tuple
 
 
 def append_to_newsfile(
@@ -51,7 +52,7 @@ def append_to_newsfile(
 
 def _figure_out_existing_content(
     news_file: Path, start_string: str, single_file: bool
-) -> Tuple[str, str]:
+) -> tuple[str, str]:
     """
     Try to read *news_file* and split it into header (everything before
     *start_string*) and the old body (everything after *start_string*).

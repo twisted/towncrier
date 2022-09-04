@@ -1,10 +1,12 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
+from __future__ import annotations
+
 import os
 
 from collections import OrderedDict
-from typing import Any, Mapping, Optional, Tuple
+from typing import Any, Mapping
 
 import pkg_resources
 import tomli
@@ -25,8 +27,8 @@ _underlines = ["=", "-", "~"]
 
 
 def load_config_from_options(
-    directory: Optional[str], config_path: Optional[str]
-) -> Tuple[str, Mapping[str, Any]]:
+    directory: str | None, config_path: str | None
+) -> tuple[str, Mapping[str, Any]]:
     if config_path is None:
         if directory is None:
             directory = os.getcwd()
@@ -47,7 +49,7 @@ def load_config_from_options(
     return base_directory, config
 
 
-def load_config(directory: str) -> Optional[Mapping[str, Any]]:
+def load_config(directory: str) -> Mapping[str, Any] | None:
 
     towncrier_toml = os.path.join(directory, "towncrier.toml")
     pyproject_toml = os.path.join(directory, "pyproject.toml")
