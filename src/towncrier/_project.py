@@ -9,11 +9,12 @@ Responsible for getting the version and name from a project.
 import sys
 
 from importlib import import_module
+from types import ModuleType
 
 from incremental import Version
 
 
-def _get_package(package_dir, package):
+def _get_package(package_dir: str, package: str) -> ModuleType:
 
     try:
         module = import_module(package)
@@ -35,7 +36,7 @@ def _get_package(package_dir, package):
     return module
 
 
-def get_version(package_dir, package):
+def get_version(package_dir: str, package: str) -> str:
 
     module = _get_package(package_dir, package)
 
@@ -60,7 +61,7 @@ def get_version(package_dir, package):
     )
 
 
-def get_project_name(package_dir, package):
+def get_project_name(package_dir: str, package: str) -> str:
 
     module = _get_package(package_dir, package)
 
@@ -76,3 +77,5 @@ def get_project_name(package_dir, package):
     if isinstance(version, Version):
         # Incremental has support for package names
         return version.package
+
+    raise TypeError(f"Unsupported type for __version__: {type(version)}")

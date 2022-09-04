@@ -10,6 +10,7 @@ import os
 import sys
 
 from datetime import date
+from typing import Optional
 
 import click
 
@@ -20,7 +21,7 @@ from ._settings import ConfigError, config_option_help, load_config_from_options
 from ._writer import append_to_newsfile
 
 
-def _get_date():
+def _get_date() -> str:
     return date.today().isoformat()
 
 
@@ -70,14 +71,14 @@ def _get_date():
     help="Do not ask for confirmation to remove news fragments.",
 )
 def _main(
-    draft,
-    directory,
-    config_file,
-    project_name,
-    project_version,
-    project_date,
-    answer_yes,
-):
+    draft: bool,
+    directory: Optional[str],
+    config_file: Optional[str],
+    project_name: Optional[str],
+    project_version: Optional[str],
+    project_date: Optional[str],
+    answer_yes: bool,
+) -> None:
     """
     Build a combined news file from news fragment.
     """
@@ -97,14 +98,14 @@ def _main(
 
 
 def __main(
-    draft,
-    directory,
-    config_file,
-    project_name,
-    project_version,
-    project_date,
-    answer_yes,
-):
+    draft: bool,
+    directory: Optional[str],
+    config_file: Optional[str],
+    project_name: Optional[str],
+    project_version: Optional[str],
+    project_date: Optional[str],
+    answer_yes: bool,
+) -> None:
     """
     The main entry point.
     """
@@ -128,13 +129,13 @@ def __main(
         )
         fragment_directory = "newsfragments"
 
-    fragments, fragment_filenames = find_fragments(
+    fragment_contents, fragment_filenames = find_fragments(
         fragment_base_directory, config["sections"], fragment_directory, definitions
     )
 
     click.echo("Rendering news fragments...", err=to_err)
     fragments = split_fragments(
-        fragments, definitions, all_bullets=config["all_bullets"]
+        fragment_contents, definitions, all_bullets=config["all_bullets"]
     )
 
     if project_version is None:

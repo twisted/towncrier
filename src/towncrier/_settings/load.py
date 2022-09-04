@@ -4,6 +4,7 @@
 import os
 
 from collections import OrderedDict
+from typing import Any, Mapping, Optional, Tuple
 
 import pkg_resources
 import tomli
@@ -12,7 +13,7 @@ from .._settings import fragment_types as ft
 
 
 class ConfigError(Exception):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: str, **kwargs: str):
         self.failing_option = kwargs.get("failing_option")
         super().__init__(*args)
 
@@ -23,20 +24,22 @@ _template_fname = "towncrier:default"
 _underlines = ["=", "-", "~"]
 
 
-def load_config_from_options(directory, config):
-    if config is None:
+def load_config_from_options(
+    directory: Optional[str], config_path: Optional[str]
+) -> Tuple[str, Mapping[str, Any]]:
+    if config_path is None:
         if directory is None:
             directory = os.getcwd()
 
         base_directory = os.path.abspath(directory)
         config = load_config(base_directory)
     else:
-        config = os.path.abspath(config)
+        config_path = os.path.abspath(config_path)
         if directory:
             base_directory = os.path.abspath(directory)
         else:
-            base_directory = os.path.dirname(config)
-        config = load_config_from_file(os.path.dirname(config), config)
+            base_directory = os.path.dirname(config_path)
+        config = load_config_from_file(os.path.dirname(config_path), config_path)
 
     if config is None:
         raise ConfigError(f"No configuration file found.\nLooked in: {base_directory}")
@@ -44,7 +47,7 @@ def load_config_from_options(directory, config):
     return base_directory, config
 
 
-def load_config(directory):
+def load_config(directory: str) -> Optional[Mapping[str, Any]]:
 
     towncrier_toml = os.path.join(directory, "towncrier.toml")
     pyproject_toml = os.path.join(directory, "pyproject.toml")
@@ -59,14 +62,14 @@ def load_config(directory):
     return load_config_from_file(directory, config_file)
 
 
-def load_config_from_file(directory, config_file):
+def load_config_from_file(directory: str, config_file: str) -> Mapping[str, Any]:
     with open(config_file, "rb") as conffile:
         config = tomli.load(conffile)
 
     return parse_toml(directory, config)
 
 
-def parse_toml(base_path, config):
+def parse_toml(base_path: str, config: Mapping[str, Any]) -> Mapping[str, Any]:
     if "tool" not in config:
         raise ConfigError("No [tool.towncrier] section.", failing_option="all")
 

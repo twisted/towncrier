@@ -19,7 +19,7 @@ from .create import _main as _create_cmd
 
 @click.group(cls=DefaultGroup, default="build", default_if_no_args=True)
 @click.version_option(__version__.public())
-def cli():
+def cli() -> None:
     """
     Towncrier is a utility to produce useful, summarised news files for your project.
     Rather than reading the Git history as some newer tools to produce it, or having

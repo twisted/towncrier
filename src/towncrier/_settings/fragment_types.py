@@ -1,19 +1,21 @@
 import abc
 import collections as clt
 
+from typing import Any, Iterable, Mapping, Type
+
 
 class BaseFragmentTypesLoader:
     """Base class to load fragment types."""
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, config):
+    def __init__(self, config: Mapping[str, Any]):
         """Initialize."""
         self.config = config
 
     @classmethod
-    def factory(cls, config):
-        fragment_types_class = DefaultFragmentTypesLoader
+    def factory(cls, config: Mapping[str, Any]) -> "BaseFragmentTypesLoader":
+        fragment_types_class: Type[BaseFragmentTypesLoader] = DefaultFragmentTypesLoader
         fragment_types = config.get("fragment", {})
         types_config = config.get("type", {})
         if fragment_types:
@@ -25,7 +27,7 @@ class BaseFragmentTypesLoader:
         return new
 
     @abc.abstractmethod
-    def load(self):
+    def load(self) -> Mapping[str, Mapping[str, Any]]:
         """Load fragment types."""
 
 
@@ -42,7 +44,7 @@ class DefaultFragmentTypesLoader(BaseFragmentTypesLoader):
         ]
     )
 
-    def load(self):
+    def load(self) -> Mapping[str, Mapping[str, Any]]:
         """Load default types."""
         return self._default_types
 
@@ -64,7 +66,7 @@ class ArrayFragmentTypesLoader(BaseFragmentTypesLoader):
 
     """
 
-    def load(self):
+    def load(self) -> Mapping[str, Mapping[str, Any]]:
         """Load types from toml array of mappings."""
 
         types = clt.OrderedDict()
@@ -105,14 +107,14 @@ class TableFragmentTypesLoader(BaseFragmentTypesLoader):
 
     """
 
-    def __init__(self, config):
+    def __init__(self, config: Mapping[str, Mapping[str, Any]]):
         """Initialize."""
         self.config = config
         self.fragment_options = config.get("fragment", {})
 
-    def load(self):
+    def load(self) -> Mapping[str, Mapping[str, Any]]:
         """Load types from nested mapping."""
-        fragment_types = self.fragment_options.keys()
+        fragment_types: Iterable[str] = self.fragment_options.keys()
         fragment_types = sorted(fragment_types)
         custom_types_sequence = [
             (fragment_type, self._load_options(fragment_type))
@@ -121,7 +123,7 @@ class TableFragmentTypesLoader(BaseFragmentTypesLoader):
         types = clt.OrderedDict(custom_types_sequence)
         return types
 
-    def _load_options(self, fragment_type):
+    def _load_options(self, fragment_type: str) -> Mapping[str, Any]:
         """Load fragment options."""
         capitalized_fragment_type = fragment_type.capitalize()
         options = self.fragment_options.get(fragment_type, {})

@@ -7,11 +7,17 @@ affecting existing content.
 """
 
 from pathlib import Path
+from typing import Tuple
 
 
 def append_to_newsfile(
-    directory, filename, start_string, top_line, content, single_file
-):
+    directory: str,
+    filename: str,
+    start_string: str,
+    top_line: str,
+    content: str,
+    single_file: bool = True,
+) -> None:
     """
     Write *content* to *directory*/*filename* behind *start_string*.
 
@@ -43,7 +49,9 @@ def append_to_newsfile(
             f.write(f"\n\n{prev_body}")
 
 
-def _figure_out_existing_content(news_file, start_string, single_file):
+def _figure_out_existing_content(
+    news_file: Path, start_string: str, single_file: bool
+) -> Tuple[str, str]:
     """
     Try to read *news_file* and split it into header (everything before
     *start_string*) and the old body (everything after *start_string*).
