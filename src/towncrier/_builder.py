@@ -271,9 +271,6 @@ def render_fragments(
             # - Fix the other thing (#1)
             # - Fix the thing (#2, #7, #123)
             entries.sort(key=entry_key)
-            # Argument "key" to "sort" of "list" has incompatible type
-            # has "Callable[[Tuple[str, Sequence[str]]], Sequence[Tuple[int, str]]]";
-            # exp "Callable[[Tuple[str, List[str]]], Union[SupportsDunderLT, SupportsDunderGT]]"
             if not all_bullets:
                 entries.sort(key=bullet_key)
 
