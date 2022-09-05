@@ -17,7 +17,7 @@ def append_to_newsfile(
     start_string: str,
     top_line: str,
     content: str,
-    single_file: bool = True,
+    single_file: bool,
 ) -> None:
     """
     Write *content* to *directory*/*filename* behind *start_string*.
