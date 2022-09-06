@@ -5,6 +5,8 @@
 Create a new fragment.
 """
 
+from __future__ import annotations
+
 import os
 
 import click
@@ -41,7 +43,14 @@ from ._settings import config_option_help, load_config_from_options
     help="Sets the content of the new fragment.",
 )
 @click.argument("filename")
-def _main(ctx, directory, config, filename, edit, content):
+def _main(
+    ctx: click.Context,
+    directory: str | None,
+    config: str | None,
+    filename: str,
+    edit: bool,
+    content: str,
+) -> None:
     """
     Create a new news fragment.
 
@@ -56,14 +65,21 @@ def _main(ctx, directory, config, filename, edit, content):
     * .removal - a deprecation or removal of public API,
     * .misc - a ticket has been closed, but it is not of interest to users.
     """
-    return __main(ctx, directory, config, filename, edit, content)
+    __main(ctx, directory, config, filename, edit, content)
 
 
-def __main(ctx, directory, config, filename, edit, content):
+def __main(
+    ctx: click.Context,
+    directory: str | None,
+    config_path: str | None,
+    filename: str,
+    edit: bool,
+    content: str,
+) -> None:
     """
     The main entry point.
     """
-    base_directory, config = load_config_from_options(directory, config)
+    base_directory, config = load_config_from_options(directory, config_path)
 
     definitions = config["types"] or []
     if len(filename.split(".")) < 2 or (
@@ -98,11 +114,11 @@ def __main(ctx, directory, config, filename, edit, content):
         raise click.ClickException(f"{segment_file} already exists")
 
     if edit:
-        content = _get_news_content_from_user(content)
-
-    if content is None:
-        click.echo("Abort creating news fragment.")
-        ctx.exit(1)
+        edited_content = _get_news_content_from_user(content)
+        if edited_content is None:
+            click.echo("Abort creating news fragment.")
+            ctx.exit(1)
+        content = edited_content
 
     with open(segment_file, "w") as f:
         f.write(content)
@@ -110,7 +126,7 @@ def __main(ctx, directory, config, filename, edit, content):
     click.echo(f"Created news fragment at {segment_file}")
 
 
-def _get_news_content_from_user(message):
+def _get_news_content_from_user(message: str) -> str | None:
     initial_content = (
         "# Please write your news content. When finished, save the file.\n"
         "# In order to abort, exit without saving.\n"

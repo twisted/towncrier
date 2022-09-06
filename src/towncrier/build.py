@@ -6,6 +6,8 @@ Build a combined news file from news fragments.
 """
 
 
+from __future__ import annotations
+
 import os
 import sys
 
@@ -16,15 +18,11 @@ import click
 from ._builder import find_fragments, render_fragments, split_fragments
 from ._git import remove_files, stage_newsfile
 from ._project import get_project_name, get_version
-from ._settings import (
-    ConfigError,
-    config_option_help,
-    load_config_from_options,
-)
+from ._settings import ConfigError, config_option_help, load_config_from_options
 from ._writer import append_to_newsfile
 
 
-def _get_date():
+def _get_date() -> str:
     return date.today().isoformat()
 
 
@@ -74,14 +72,14 @@ def _get_date():
     help="Do not ask for confirmation to remove news fragments.",
 )
 def _main(
-    draft,
-    directory,
-    config_file,
-    project_name,
-    project_version,
-    project_date,
-    answer_yes,
-):
+    draft: bool,
+    directory: str | None,
+    config_file: str | None,
+    project_name: str | None,
+    project_version: str | None,
+    project_date: str | None,
+    answer_yes: bool,
+) -> None:
     """
     Build a combined news file from news fragment.
     """
@@ -101,14 +99,14 @@ def _main(
 
 
 def __main(
-    draft,
-    directory,
-    config_file,
-    project_name,
-    project_version,
-    project_date,
-    answer_yes,
-):
+    draft: bool,
+    directory: str | None,
+    config_file: str | None,
+    project_name: str | None,
+    project_version: str | None,
+    project_date: str | None,
+    answer_yes: bool,
+) -> None:
     """
     The main entry point.
     """
@@ -132,13 +130,13 @@ def __main(
         )
         fragment_directory = "newsfragments"
 
-    fragments, fragment_filenames = find_fragments(
+    fragment_contents, fragment_filenames = find_fragments(
         fragment_base_directory, config["sections"], fragment_directory, definitions
     )
 
     click.echo("Rendering news fragments...", err=to_err)
     fragments = split_fragments(
-        fragments, definitions, all_bullets=config["all_bullets"]
+        fragment_contents, definitions, all_bullets=config["all_bullets"]
     )
 
     if project_version is None:

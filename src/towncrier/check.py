@@ -2,10 +2,13 @@
 # See LICENSE for details.
 
 
+from __future__ import annotations
+
 import os
 import sys
 
 from subprocess import CalledProcessError
+from typing import Container
 from warnings import warn
 
 import click
@@ -15,7 +18,7 @@ from ._git import get_remote_branches, list_changed_files_compared_to_branch
 from ._settings import config_option_help, load_config_from_options
 
 
-def _get_default_compare_branch(branches):
+def _get_default_compare_branch(branches: Container[str]) -> str | None:
     if "origin/main" in branches:
         return "origin/main"
     if "origin/master" in branches:
@@ -54,16 +57,18 @@ def _get_default_compare_branch(branches):
     metavar="FILE_PATH",
     help=config_option_help,
 )
-def _main(compare_with, directory, config):
+def _main(compare_with: str | None, directory: str | None, config: str | None) -> None:
     """
     Check for new fragments on a branch.
     """
-    return __main(compare_with, directory, config)
+    __main(compare_with, directory, config)
 
 
-def __main(comparewith, directory, config):
+def __main(
+    comparewith: str | None, directory: str | None, config_path: str | None
+) -> None:
 
-    base_directory, config = load_config_from_options(directory, config)
+    base_directory, config = load_config_from_options(directory, config_path)
 
     if comparewith is None:
         comparewith = _get_default_compare_branch(

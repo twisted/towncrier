@@ -2,18 +2,21 @@
 # See LICENSE for details.
 
 
+from __future__ import annotations
+
 import os
 import textwrap
 import traceback
 
 from collections import OrderedDict
+from typing import Any, Iterator, Mapping, Sequence
 
 from jinja2 import Template
 
 from ._settings import ConfigError
 
 
-def strip_if_integer_string(s):
+def strip_if_integer_string(s: str) -> str:
     try:
         i = int(s)
     except ValueError:
@@ -24,7 +27,9 @@ def strip_if_integer_string(s):
 
 # Returns ticket, category and counter or (None, None, None) if the basename
 # could not be parsed or doesn't contain a valid category.
-def parse_newfragment_basename(basename, definitions):
+def parse_newfragment_basename(
+    basename: str, definitions: Sequence[str]
+) -> tuple[str, str, int] | tuple[None, None, None]:
     invalid = (None, None, None)
     parts = basename.split(".")
 
@@ -74,7 +79,12 @@ def parse_newfragment_basename(basename, definitions):
 # We should really use attrs.
 #
 # Also returns a list of the paths that the fragments were taken from.
-def find_fragments(base_directory, sections, fragment_directory, definitions):
+def find_fragments(
+    base_directory: str,
+    sections: Mapping[str, str],
+    fragment_directory: str | None,
+    definitions: Sequence[str],
+) -> tuple[Mapping[str, Mapping[tuple[str, str, int], str]], list[str]]:
     """
     Sections are a dictonary of section names to paths.
     """
@@ -105,6 +115,8 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
             )
             if category is None:
                 continue
+            assert ticket is not None
+            assert counter is not None
 
             full_filename = os.path.join(section_dir, basename)
             fragment_filenames.append(full_filename)
@@ -124,12 +136,12 @@ def find_fragments(base_directory, sections, fragment_directory, definitions):
     return content, fragment_filenames
 
 
-def indent(text, prefix):
+def indent(text: str, prefix: str) -> str:
     """
     Adds `prefix` to the beginning of non-empty lines in `text`.
     """
     # Based on Python 3's textwrap.indent
-    def prefixed_lines():
+    def prefixed_lines() -> Iterator[str]:
         for line in text.splitlines(True):
             yield (prefix + line if line.strip() else line)
 
@@ -139,12 +151,16 @@ def indent(text, prefix):
 # Takes the output from find_fragments above. Probably it would be useful to
 # add an example output here. Next time someone digs deep enough to figure it
 # out, please do so...
-def split_fragments(fragments, definitions, all_bullets=True):
+def split_fragments(
+    fragments: Mapping[str, Mapping[tuple[str, str, int], str]],
+    definitions: Mapping[str, Mapping[str, Any]],
+    all_bullets: bool = True,
+) -> Mapping[str, Mapping[str, Mapping[str, Sequence[str]]]]:
 
     output = OrderedDict()
 
     for section_name, section_fragments in fragments.items():
-        section = {}
+        section: dict[str, dict[str, list[str]]] = {}
 
         for (ticket, category, counter), content in section_fragments.items():
 
@@ -174,7 +190,7 @@ def split_fragments(fragments, definitions, all_bullets=True):
     return output
 
 
-def issue_key(issue):
+def issue_key(issue: str) -> tuple[int, str]:
     # We want integer issues to sort as integers, and we also want string
     # issues to sort as strings. We arbitrarily put string issues before
     # integer issues (hopefully no-one uses both at once).
@@ -185,12 +201,12 @@ def issue_key(issue):
         return (-1, issue)
 
 
-def entry_key(entry):
+def entry_key(entry: tuple[str, Sequence[str]]) -> list[tuple[int, str]]:
     _, issues = entry
     return [issue_key(issue) for issue in issues]
 
 
-def bullet_key(entry):
+def bullet_key(entry: tuple[str, Sequence[str]]) -> int:
     text, _ = entry
     if not text:
         return -1
@@ -203,7 +219,7 @@ def bullet_key(entry):
     return 3
 
 
-def render_issue(issue_format, issue):
+def render_issue(issue_format: str | None, issue: str) -> str:
     if issue_format is None:
         try:
             int(issue)
@@ -215,24 +231,24 @@ def render_issue(issue_format, issue):
 
 
 def render_fragments(
-    template,
-    issue_format,
-    fragments,
-    definitions,
-    underlines,
-    wrap,
-    versiondata,
-    top_underline="=",
-    all_bullets=False,
-    render_title=True,
-):
+    template: str,
+    issue_format: str | None,
+    fragments: Mapping[str, Mapping[str, Mapping[str, Sequence[str]]]],
+    definitions: Sequence[str],
+    underlines: Sequence[str],
+    wrap: bool,
+    versiondata: Mapping[str, str],
+    top_underline: str = "=",
+    all_bullets: bool = False,
+    render_title: bool = True,
+) -> str:
     """
     Render the fragments into a news file.
     """
 
     jinja_template = Template(template, trim_blocks=True)
 
-    data = OrderedDict()
+    data: dict[str, dict[str, dict[str, list[str]]]] = OrderedDict()
 
     for section_name, section_value in fragments.items():
 
@@ -271,7 +287,7 @@ def render_fragments(
 
     done = []
 
-    def get_indent(text):
+    def get_indent(text: str) -> str:
         # If bullets are not assumed and we wrap, the subsequent
         # indentation depends on whether or not this is a bullet point.
         # (it is probably usually best to disable wrapping in that case)

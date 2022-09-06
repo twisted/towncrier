@@ -1,6 +1,8 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
+from __future__ import annotations
+
 import os
 
 from subprocess import STDOUT, call, check_output
@@ -8,7 +10,7 @@ from subprocess import STDOUT, call, check_output
 import click
 
 
-def remove_files(fragment_filenames, answer_yes):
+def remove_files(fragment_filenames: list[str], answer_yes: bool) -> None:
     if not fragment_filenames:
         return
 
@@ -24,12 +26,12 @@ def remove_files(fragment_filenames, answer_yes):
         call(["git", "rm", "--quiet"] + fragment_filenames)
 
 
-def stage_newsfile(directory, filename):
+def stage_newsfile(directory: str, filename: str) -> None:
 
     call(["git", "add", os.path.join(directory, filename)])
 
 
-def get_remote_branches(base_directory):
+def get_remote_branches(base_directory: str) -> list[str]:
     output = check_output(
         ["git", "branch", "-r"], cwd=base_directory, encoding="utf-8", stderr=STDOUT
     )
@@ -37,7 +39,9 @@ def get_remote_branches(base_directory):
     return [branch.strip() for branch in output.strip().splitlines()]
 
 
-def list_changed_files_compared_to_branch(base_directory, compare_with):
+def list_changed_files_compared_to_branch(
+    base_directory: str, compare_with: str
+) -> list[str]:
     output = check_output(
         ["git", "diff", "--name-only", compare_with + "..."],
         cwd=base_directory,

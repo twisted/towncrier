@@ -1,5 +1,7 @@
 """Subpackage to handle settings parsing."""
 
+from __future__ import annotations
+
 from towncrier._settings import load
 
 
