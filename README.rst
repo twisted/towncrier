@@ -173,12 +173,12 @@ Furthermore, you can customize each of your own fragment types using:
 
     [tool.towncrier]
 	# To add custom fragment types, with default setting, just add an empty section.
-    [tool.towncrier.feat]
-    [tool.towncrier.fix]
+    [tool.towncrier.fragment.feat]
+    [tool.towncrier.fragment.fix]
 
 	# Custom fragment types can have custom attributes
 	# that are used when rendering the result based on the template.
-    [tool.towncrier.chore]
+    [tool.towncrier.fragment.chore]
         name = "Other Tasks"
         showcontent = false
 
