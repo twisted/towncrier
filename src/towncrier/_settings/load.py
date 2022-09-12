@@ -4,14 +4,20 @@
 from __future__ import annotations
 
 import os
+import sys
 
 from collections import OrderedDict
 from typing import Any, Mapping
 
 import pkg_resources
-import tomli
 
 from .._settings import fragment_types as ft
+
+
+if sys.version_info < (3, 11):
+    import tomli as tomllib
+else:
+    import tomllib
 
 
 class ConfigError(Exception):
@@ -66,7 +72,7 @@ def load_config(directory: str) -> Mapping[str, Any] | None:
 
 def load_config_from_file(directory: str, config_file: str) -> Mapping[str, Any]:
     with open(config_file, "rb") as conffile:
-        config = tomli.load(conffile)
+        config = tomllib.load(conffile)
 
     return parse_toml(directory, config)
 
