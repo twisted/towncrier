@@ -20,7 +20,8 @@
 
 {% if definitions[category]['showcontent'] %}
 {% for text, values in sections[section][category].items() %}
-- {{ text }} ({{ values|join(', ') }})
+- {{ text }}{% if values %} ({{ values|join(', ') }}){% endif %}
+
 {% endfor %}
 
 {% else %}
