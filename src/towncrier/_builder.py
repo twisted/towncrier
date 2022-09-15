@@ -92,7 +92,7 @@ def find_fragments(
     """
     content = OrderedDict()
     fragment_filenames = []
-    unlinked_fragment_counter: DefaultDict[Optional[str], int] = defaultdict(int)
+    unlinked_fragment_counter: DefaultDict[str | None, int] = defaultdict(int)
 
     for key, val in sections.items():
 
