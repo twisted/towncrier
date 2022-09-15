@@ -93,6 +93,10 @@ For example::
 
     towncrier create 123.feature
 
+If a news fragment is not tied to an issue, use `+` as the basename (a random hash will be added to the filename to keep it unique):
+
+    towncrier create +.feature
+
 To produce a draft of the news file, run::
 
     towncrier build --draft

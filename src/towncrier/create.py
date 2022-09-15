@@ -82,6 +82,9 @@ def __main(
     base_directory, config = load_config_from_options(directory, config_path)
 
     definitions = config["types"] or []
+    if filename.startswith("+."):
+        # Add in a random hex string to the start of the unlinked fragment.
+        filename = f"+{os.urandom(4).hex()}{filename[1:]}"
     if len(filename.split(".")) < 2 or (
         filename.split(".")[-1] not in definitions
         and filename.split(".")[-2] not in definitions
