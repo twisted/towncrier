@@ -84,7 +84,7 @@ def find_fragments(
     sections: Mapping[str, str],
     fragment_directory: str | None,
     definitions: Sequence[str],
-    unlinked_fragment_prefix: str | None = None
+    unlinked_fragment_prefix: str | None = None,
 ) -> tuple[Mapping[str, Mapping[tuple[str, str, int], str]], list[str]]:
     """
     Sections are a dictonary of section names to paths.
