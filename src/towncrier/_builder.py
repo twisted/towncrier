@@ -9,7 +9,7 @@ import textwrap
 import traceback
 
 from collections import OrderedDict, defaultdict
-from typing import Any, Iterator, Mapping, Sequence
+from typing import Any, DefaultDict, Iterator, Mapping, Optional, Sequence
 
 from jinja2 import Template
 
@@ -92,7 +92,7 @@ def find_fragments(
     """
     content = OrderedDict()
     fragment_filenames = []
-    unlinked_fragment_counter = defaultdict(int)
+    unlinked_fragment_counter: DefaultDict[Optional[str], int] = defaultdict(int)
 
     for key, val in sections.items():
 
@@ -208,7 +208,7 @@ def issue_key(issue: str) -> tuple[int, str]:
         return (-1, issue)
 
 
-def entry_key(entry: tuple[str, Sequence[str]]) -> list[tuple[int, str]]:
+def entry_key(entry: tuple[str, Sequence[str]]) -> tuple[str, list[tuple[int, str]]]:
     content, issues = entry
     # Empty issues (unlinked fragments) should sort last by content.
     return "" if issues else content, [issue_key(issue) for issue in issues]
