@@ -91,6 +91,10 @@ source = ["src", ".tox/*/site-packages"]
 [tool.coverage.report]
 show_missing = true
 skip_covered = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+]
 omit = [
     "src/towncrier/__main__.py",
     "src/towncrier/test/*",

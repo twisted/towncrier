@@ -114,51 +114,49 @@ def __main(
     to_err = draft
 
     click.echo("Loading template...", err=to_err)
-    with open(config["template"], "rb") as tmpl:
+    with open(config.template, "rb") as tmpl:
         template = tmpl.read().decode("utf8")
 
     click.echo("Finding news fragments...", err=to_err)
 
-    definitions = config["types"]
+    definitions = config.types
 
-    if config.get("directory"):
-        fragment_base_directory = os.path.abspath(config["directory"])
+    if config.directory:
+        fragment_base_directory = os.path.abspath(config.directory)
         fragment_directory = None
     else:
         fragment_base_directory = os.path.abspath(
-            os.path.join(base_directory, config["package_dir"], config["package"])
+            os.path.join(base_directory, config.package_dir, config.package)
         )
         fragment_directory = "newsfragments"
 
     fragment_contents, fragment_filenames = find_fragments(
         fragment_base_directory,
-        config["sections"],
+        config.sections,
         fragment_directory,
         definitions,
-        config["orphan_prefix"],
+        config.orphan_prefix,
     )
 
     click.echo("Rendering news fragments...", err=to_err)
     fragments = split_fragments(
-        fragment_contents, definitions, all_bullets=config["all_bullets"]
+        fragment_contents, definitions, all_bullets=config.all_bullets
     )
 
     if project_version is None:
-        project_version = config.get("version")
+        project_version = config.version
         if project_version is None:
             project_version = get_version(
-                os.path.join(base_directory, config["package_dir"]), config["package"]
+                os.path.join(base_directory, config.package_dir), config.package
             ).strip()
 
     if project_name is None:
-        project_name = config.get("name")
+        project_name = config.name
         if not project_name:
-            package = config.get("package")
+            package = config.package
             if package:
                 project_name = get_project_name(
-                    os.path.abspath(
-                        os.path.join(base_directory, config["package_dir"])
-                    ),
+                    os.path.abspath(os.path.join(base_directory, config.package_dir)),
                     package,
                 )
             else:
@@ -168,13 +166,13 @@ def __main(
     if project_date is None:
         project_date = _get_date().strip()
 
-    if config["title_format"]:
-        top_line = config["title_format"].format(
+    if config.title_format:
+        top_line = config.title_format.format(
             name=project_name, version=project_version, project_date=project_date
         )
         render_title_with_fragments = False
         render_title_separately = True
-    elif config["title_format"] is False:
+    elif config.title_format is False:
         # This is an odd check but since we support both "" and False with
         # different effects we have to do something a bit abnormal here.
         top_line = ""
@@ -188,14 +186,14 @@ def __main(
     rendered = render_fragments(
         # The 0th underline is used for the top line
         template,
-        config["issue_format"],
+        config.issue_format,
         fragments,
         definitions,
-        config["underlines"][1:],
-        config["wrap"],
+        config.underlines[1:],
+        config.wrap,
         {"name": project_name, "version": project_version, "date": project_date},
-        top_underline=config["underlines"][0],
-        all_bullets=config["all_bullets"],
+        top_underline=config.underlines[0],
+        all_bullets=config.all_bullets,
         render_title=render_title_with_fragments,
     )
 
@@ -203,7 +201,7 @@ def __main(
         content = "\n".join(
             [
                 top_line,
-                config["underlines"][0] * len(top_line),
+                config.underlines[0] * len(top_line),
                 rendered,
             ]
         )
@@ -219,10 +217,10 @@ def __main(
         click.echo(content)
     else:
         click.echo("Writing to newsfile...", err=to_err)
-        start_string = config["start_string"]
-        news_file = config["filename"]
+        start_string = config.start_string
+        news_file = config.filename
 
-        if config["single_file"] is False:
+        if config.single_file is False:
             # The release notes for each version are stored in a separate file.
             # The name of that file is generated based on the current version and project.
             news_file = news_file.format(
@@ -235,7 +233,7 @@ def __main(
             start_string,
             top_line,
             content,
-            single_file=config["single_file"],
+            single_file=config.single_file,
         )
 
         click.echo("Staging newsfile...", err=to_err)

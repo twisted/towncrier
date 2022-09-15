@@ -29,11 +29,11 @@ orphan_prefix = "~"
             )
 
         config = load_config(temp)
-        self.assertEqual(config["package"], "foobar")
-        self.assertEqual(config["package_dir"], ".")
-        self.assertEqual(config["filename"], "NEWS.rst")
-        self.assertEqual(config["underlines"], ["=", "-", "~"])
-        self.assertEqual(config["orphan_prefix"], "~")
+        self.assertEqual(config.package, "foobar")
+        self.assertEqual(config.package_dir, ".")
+        self.assertEqual(config.filename, "NEWS.rst")
+        self.assertEqual(config.underlines, ["=", "-", "~"])
+        self.assertEqual(config.orphan_prefix, "~")
 
     def test_missing(self):
         """
@@ -151,7 +151,7 @@ orphan_prefix = "~"
             )
 
         config = load_config(temp)
-        self.assertEqual(config["package"], "a")
+        self.assertEqual(config.package, "a")
 
     def test_missing_template(self):
         """
@@ -248,7 +248,7 @@ orphan_prefix = "~"
         config = self.load_config_from_string(
             toml_content,
         )
-        actual = config["types"]
+        actual = config.types
         self.assertDictEqual(expected, actual)
 
     def test_custom_types_as_tables(self):
@@ -297,7 +297,7 @@ orphan_prefix = "~"
         config = self.load_config_from_string(
             toml_content,
         )
-        actual = config["types"]
+        actual = config.types
         self.assertDictEqual(expected, actual)
 
     def load_config_from_string(self, toml_content):

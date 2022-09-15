@@ -104,17 +104,17 @@ def __main(
         click.echo(f"{n}. {change}")
     click.echo("----")
 
-    news_file = os.path.normpath(os.path.join(base_directory, config["filename"]))
+    news_file = os.path.normpath(os.path.join(base_directory, config.filename))
     if news_file in files:
         click.echo("Checks SKIPPED: news file changes detected.")
         sys.exit(0)
 
-    if config.get("directory"):
-        fragment_base_directory = os.path.abspath(config["directory"])
+    if config.directory:
+        fragment_base_directory = os.path.abspath(config.directory)
         fragment_directory = None
     else:
         fragment_base_directory = os.path.abspath(
-            os.path.join(base_directory, config["package_dir"], config["package"])
+            os.path.join(base_directory, config.package_dir, config.package)
         )
         fragment_directory = "newsfragments"
 
@@ -122,9 +122,9 @@ def __main(
         os.path.normpath(path)
         for path in find_fragments(
             fragment_base_directory,
-            config["sections"],
+            config.sections,
             fragment_directory,
-            config["types"],
+            config.types.keys(),
         )[1]
     }
     fragments_in_branch = fragments & files

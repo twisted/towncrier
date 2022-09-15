@@ -81,8 +81,8 @@ def __main(
     """
     base_directory, config = load_config_from_options(directory, config_path)
 
-    definitions = config["types"] or []
-    orphan_prefix = config["orphan_prefix"]
+    definitions = config.types or {}
+    orphan_prefix = config.orphan_prefix
     if orphan_prefix and filename.startswith(f"{orphan_prefix}."):
         # Append a random hex string to the orphan news fragment base name.
         filename = f"{orphan_prefix}{os.urandom(4).hex()}{filename[1:]}"
@@ -96,16 +96,16 @@ def __main(
             "one of: {}".format(filename, ", ".join(definitions))
         )
 
-    if config.get("directory"):
+    if config.directory:
         fragments_directory = os.path.abspath(
-            os.path.join(base_directory, config["directory"])
+            os.path.join(base_directory, config.directory)
         )
     else:
         fragments_directory = os.path.abspath(
             os.path.join(
                 base_directory,
-                config["package_dir"],
-                config["package"],
+                config.package_dir,
+                config.package,
                 "newsfragments",
             )
         )
