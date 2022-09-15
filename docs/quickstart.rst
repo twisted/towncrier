@@ -100,8 +100,8 @@ You should get an output similar to this::
     Bugfixes
     --------
 
-    - Fixed an unreported thing!
     - Fixed a thing! (#1234)
+    - Fixed an unreported thing!
 
 
     Improved Documentation
