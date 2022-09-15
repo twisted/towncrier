@@ -2,8 +2,10 @@
 # See LICENSE for details.
 
 import os
+import tempfile
 
 from datetime import date
+from functools import wraps
 from pathlib import Path
 from subprocess import call
 from textwrap import dedent
@@ -28,6 +30,21 @@ def setup_simple_project():
 def read_all(filename):
     with open(filename) as f:
         return f.read()
+
+
+def with_isolated_runner(fn):
+    """
+    Run *fn* within an isolated filesystem and add the kwarg *runner* to its
+    arguments.
+    """
+
+    @wraps(fn)
+    def test(*args, **kw):
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            return fn(*args, runner=runner, **kw)
+
+    return test
 
 
 class TestCli(TestCase):
@@ -98,17 +115,39 @@ class TestCli(TestCase):
     def test_subcommand(self):
         self._test_command(_main)
 
-    def test_no_newsfragment_directory(self):
+    @with_isolated_runner
+    def test_in_different_dir(self, runner):
+        """
+        The current working directory doesn't matter as long as we pass
+        the correct one.
+        """
+        project_dir = Path(".").resolve()
+
+        setup_simple_project()
+        Path("foo/newsfragments/123.feature").write_text("Adds levitation")
+        # Ensure our assetion below is meaningful.
+        self.assertFalse((project_dir / "NEWS.rst").exists())
+
+        # Create a temporary directory, run Towncrier from there and assert
+        # it didn't litter into it.
+        with tempfile.TemporaryDirectory() as td:
+            os.chdir(td)
+            result = runner.invoke(cli, ("--yes", "--dir", str(project_dir)))
+
+            self.assertEqual([], list(Path(td).glob("*")))
+
+        self.assertEqual(0, result.exit_code)
+        self.assertTrue((project_dir / "NEWS.rst").exists())
+
+    @with_isolated_runner
+    def test_no_newsfragment_directory(self, runner):
         """
         A missing newsfragment directory acts as if there are no changes.
         """
-        runner = CliRunner()
+        setup_simple_project()
+        os.rmdir("foo/newsfragments")
 
-        with runner.isolated_filesystem():
-            setup_simple_project()
-            os.rmdir("foo/newsfragments")
-
-            result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
+        result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
 
         self.assertEqual(1, result.exit_code, result.output)
         self.assertIn("Failed to list the news fragment files.\n", result.output)
