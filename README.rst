@@ -153,6 +153,7 @@ Towncrier has the following global options, which can be specified in the toml f
     underlines = "=-~"
     wrap = false  # Wrap text to 79 characters
     all_bullets = true  # make all fragments bullet points
+    unlinked_fragment_prefix = "+"   # Prefix for fragment files that aren't linked to an issue, set to "" to disable.
 
 If ``single_file`` is set to ``true`` or unspecified, all changes will be written to a single
 fixed newsfile, whose name is literally fixed as the ``filename`` option. In each run of ``towncrier build``,

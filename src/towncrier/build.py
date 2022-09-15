@@ -131,7 +131,11 @@ def __main(
         fragment_directory = "newsfragments"
 
     fragment_contents, fragment_filenames = find_fragments(
-        fragment_base_directory, config["sections"], fragment_directory, definitions
+        fragment_base_directory,
+        config["sections"],
+        fragment_directory,
+        definitions,
+        config["unlinked_fragment_prefix"],
     )
 
     click.echo("Rendering news fragments...", err=to_err)

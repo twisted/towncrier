@@ -81,9 +81,3 @@ class TestParseNewsfragmentBasename(TestCase):
             parse_newfragment_basename("  007.feature.3", ["feature"]),
             ("7", "feature", 3),
         )
-
-    def test_unlinked_feature(self):
-        self.assertEqual(
-            parse_newfragment_basename("+anything.feature", ["feature"]),
-            ("", "feature", 0),
-        )

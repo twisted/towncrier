@@ -38,8 +38,6 @@ def parse_newfragment_basename(
     if len(parts) == 2:
         ticket, category = parts
         ticket = strip_if_integer_string(ticket)
-        if ticket.startswith("+"):
-            ticket = ""
         return (ticket, category, 0) if category in definitions else invalid
 
     # There are at least 3 parts. Search for a valid category from the second
@@ -86,6 +84,7 @@ def find_fragments(
     sections: Mapping[str, str],
     fragment_directory: str | None,
     definitions: Sequence[str],
+    unlinked_fragment_prefix: str | None = None
 ) -> tuple[Mapping[str, Mapping[tuple[str, str, int], str]], list[str]]:
     """
     Sections are a dictonary of section names to paths.
@@ -116,15 +115,16 @@ def find_fragments(
             ticket, category, counter = parse_newfragment_basename(
                 basename, definitions
             )
-            if not ticket:
-                # Multiple unlinked fragments are allowed, just hard code an
-                # incrementing counter.
-                counter = unlinked_fragment_counter[category]
-                unlinked_fragment_counter[category] += 1
             if category is None:
                 continue
             assert ticket is not None
             assert counter is not None
+            if unlinked_fragment_prefix and ticket.startswith(unlinked_fragment_prefix):
+                ticket = ""
+                # Multiple unlinked fragments are allowed, just hard code an
+                # incrementing counter.
+                counter = unlinked_fragment_counter[category]
+                unlinked_fragment_counter[category] += 1
 
             full_filename = os.path.join(section_dir, basename)
             fragment_filenames.append(full_filename)
