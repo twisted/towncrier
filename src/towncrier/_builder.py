@@ -9,7 +9,7 @@ import textwrap
 import traceback
 
 from collections import OrderedDict, defaultdict
-from typing import Any, DefaultDict, Iterator, Mapping, Optional, Sequence
+from typing import Any, DefaultDict, Iterator, Mapping, Sequence
 
 from jinja2 import Template
 
