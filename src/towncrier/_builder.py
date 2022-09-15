@@ -84,14 +84,16 @@ def find_fragments(
     sections: Mapping[str, str],
     fragment_directory: str | None,
     definitions: Sequence[str],
-    unlinked_fragment_prefix: str | None = None,
+    orphan_prefix: str | None = None,
 ) -> tuple[Mapping[str, Mapping[tuple[str, str, int], str]], list[str]]:
     """
     Sections are a dictonary of section names to paths.
     """
     content = OrderedDict()
     fragment_filenames = []
-    unlinked_fragment_counter: DefaultDict[str | None, int] = defaultdict(int)
+    # Multiple orphan news fragments are allowed per section, so initialize a counter
+    # that can be incremented automatically.
+    orphan_fragment_counter: DefaultDict[str | None, int] = defaultdict(int)
 
     for key, val in sections.items():
 
@@ -119,12 +121,11 @@ def find_fragments(
                 continue
             assert ticket is not None
             assert counter is not None
-            if unlinked_fragment_prefix and ticket.startswith(unlinked_fragment_prefix):
+            if orphan_prefix and ticket.startswith(orphan_prefix):
                 ticket = ""
-                # Multiple unlinked fragments are allowed, just hard code an
-                # incrementing counter.
-                counter = unlinked_fragment_counter[category]
-                unlinked_fragment_counter[category] += 1
+                # Use and increment the orphan news fragment counter.
+                counter = orphan_fragment_counter[category]
+                orphan_fragment_counter[category] += 1
 
             full_filename = os.path.join(section_dir, basename)
             fragment_filenames.append(full_filename)
@@ -188,7 +189,8 @@ def split_fragments(
 
             tickets = texts.setdefault(content, [])
             if ticket:
-                # Don't add the ticket if it's blank (meaning it's an unlinked fragment).
+                # Only add the ticket if we have one (it can be blank for orphan news
+                # fragments).
                 tickets.append(ticket)
                 tickets.sort()
 
@@ -210,7 +212,7 @@ def issue_key(issue: str) -> tuple[int, str]:
 
 def entry_key(entry: tuple[str, Sequence[str]]) -> tuple[str, list[tuple[int, str]]]:
     content, issues = entry
-    # Empty issues (unlinked fragments) should sort last by content.
+    # Orphan news fragments (those without any issues) should sort last by content.
     return "" if issues else content, [issue_key(issue) for issue in issues]
 
 

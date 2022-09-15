@@ -24,7 +24,7 @@ class TomlSettingsTests(TestCase):
             f.write(
                 """[tool.towncrier]
 package = "foobar"
-unlinked_fragment_prefix = "~"
+orphan_prefix = "~"
 """
             )
 
@@ -33,7 +33,7 @@ unlinked_fragment_prefix = "~"
         self.assertEqual(config["package_dir"], ".")
         self.assertEqual(config["filename"], "NEWS.rst")
         self.assertEqual(config["underlines"], ["=", "-", "~"])
-        self.assertEqual(config["unlinked_fragment_prefix"], "~")
+        self.assertEqual(config["orphan_prefix"], "~")
 
     def test_missing(self):
         """

@@ -82,10 +82,10 @@ def __main(
     base_directory, config = load_config_from_options(directory, config_path)
 
     definitions = config["types"] or []
-    unlinked_fragment = config["unlinked_fragment_prefix"]
-    if unlinked_fragment and filename.startswith(f"{unlinked_fragment}."):
-        # Add in a random hex string to the start of the unlinked fragment.
-        filename = f"{unlinked_fragment}{os.urandom(4).hex()}{filename[1:]}"
+    orphan_prefix = config["orphan_prefix"]
+    if orphan_prefix and filename.startswith(f"{orphan_prefix}."):
+        # Append a random hex string to the orphan news fragment base name.
+        filename = f"{orphan_prefix}{os.urandom(4).hex()}{filename[1:]}"
     if len(filename.split(".")) < 2 or (
         filename.split(".")[-1] not in definitions
         and filename.split(".")[-2] not in definitions

@@ -135,7 +135,7 @@ def __main(
         config["sections"],
         fragment_directory,
         definitions,
-        config["unlinked_fragment_prefix"],
+        config["orphan_prefix"],
     )
 
     click.echo("Rendering news fragments...", err=to_err)

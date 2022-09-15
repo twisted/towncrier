@@ -183,8 +183,12 @@ class TestCli(TestCase):
         self.assertEqual(type(result.exception), SystemExit)
         self.assertIn("123.feature.rst already exists", result.output)
 
-    def test_create_unlinked_fragment(self):
-        """Ensure a random hash is added to unlinked fragment files."""
+    def test_create_orphan_fragment(self):
+        """
+        When a fragment starts with the only the orphan prefix (``+`` by default), the
+        create CLI automatically extends the new file's base name to contain a random
+        value to avoid commit collisions.
+        """
         runner = CliRunner()
 
         with runner.isolated_filesystem():

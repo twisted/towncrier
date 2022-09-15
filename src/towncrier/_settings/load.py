@@ -151,5 +151,5 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Mapping[str, Any]:
         "underlines": config.get("underlines", _underlines),
         "wrap": wrap,
         "all_bullets": all_bullets,
-        "unlinked_fragment_prefix": config.get("unlinked_fragment_prefix", "+"),
+        "orphan_prefix": config.get("orphan_prefix", "+"),
     }
