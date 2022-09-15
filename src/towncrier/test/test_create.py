@@ -200,4 +200,4 @@ class TestCli(TestCase):
         self.assertTrue(filename.endswith(".feature"))
         self.assertTrue(filename.startswith("+"))
         # Length should be '+' character and 8 random hex characters.
-        self.assertEqual(len(filename.split('.')[0]), 9)
+        self.assertEqual(len(filename.split(".")[0]), 9)
