@@ -93,6 +93,10 @@ For example::
 
     towncrier create 123.feature
 
+If a news fragment is not tied to an issue, use `+` as the basename (a random hash will be added to the filename to keep it unique):
+
+    towncrier create +.feature
+
 To produce a draft of the news file, run::
 
     towncrier build --draft
@@ -149,6 +153,7 @@ Towncrier has the following global options, which can be specified in the toml f
     underlines = "=-~"
     wrap = false  # Wrap text to 79 characters
     all_bullets = true  # make all fragments bullet points
+    orphan_prefix = "+"   # Prefix for orphan news fragment files, set to "" to disable.
 
 If ``single_file`` is set to ``true`` or unspecified, all changes will be written to a single
 fixed newsfile, whose name is literally fixed as the ``filename`` option. In each run of ``towncrier build``,

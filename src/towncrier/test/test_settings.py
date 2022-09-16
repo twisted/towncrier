@@ -24,6 +24,7 @@ class TomlSettingsTests(TestCase):
             f.write(
                 """[tool.towncrier]
 package = "foobar"
+orphan_prefix = "~"
 """
             )
 
@@ -32,6 +33,7 @@ package = "foobar"
         self.assertEqual(config["package_dir"], ".")
         self.assertEqual(config["filename"], "NEWS.rst")
         self.assertEqual(config["underlines"], ["=", "-", "~"])
+        self.assertEqual(config["orphan_prefix"], "~")
 
     def test_missing(self):
         """

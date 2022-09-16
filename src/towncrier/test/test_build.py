@@ -50,6 +50,11 @@ class TestCli(TestCase):
             # newsfragment
             with open("foo/newsfragments/fix-1.2.feature", "w") as f:
                 f.write("Baz fix levitation")
+            # Towncrier supports fragments not linked to a feature
+            with open("foo/newsfragments/+anything.feature", "w") as f:
+                f.write("Orphaned feature")
+            with open("foo/newsfragments/+xxx.feature", "w") as f:
+                f.write("Another orphaned feature")
             # Towncrier ignores files that don't have a dot
             with open("foo/newsfragments/README", "w") as f:
                 f.write("Blah blah")
@@ -80,6 +85,8 @@ class TestCli(TestCase):
                 - Baz fix levitation (#2)
                 - Adds levitation (#123)
                 - Extends levitation (#124)
+                - Another orphaned feature
+                - Orphaned feature
 
                 """
             ),

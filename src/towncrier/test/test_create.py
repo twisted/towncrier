@@ -182,3 +182,26 @@ class TestCli(TestCase):
 
         self.assertEqual(type(result.exception), SystemExit)
         self.assertIn("123.feature.rst already exists", result.output)
+
+    def test_create_orphan_fragment(self):
+        """
+        When a fragment starts with the only the orphan prefix (``+`` by default), the
+        create CLI automatically extends the new file's base name to contain a random
+        value to avoid commit collisions.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project()
+
+            self.assertEqual([], os.listdir("foo/newsfragments"))
+
+            runner.invoke(_main, ["+.feature"])
+            fragments = os.listdir("foo/newsfragments")
+
+        self.assertEqual(1, len(fragments))
+        filename = fragments[0]
+        self.assertTrue(filename.endswith(".feature"))
+        self.assertTrue(filename.startswith("+"))
+        # Length should be '+' character and 8 random hex characters.
+        self.assertEqual(len(filename.split(".")[0]), 9)

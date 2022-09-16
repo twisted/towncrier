@@ -76,6 +76,11 @@ We can create some example news files to demonstrate::
     $ echo 'The final part is ignored, so set it to whatever you want.' > src/myproject/newsfragments/8765.removal.txt
     $ echo 'misc is special, and does not put the contents of the file in the newsfile.' > src/myproject/newsfragments/1.misc
 
+For orphan news fragments (those that don't need to be linked to any ticket ID or other identifier), start the file name with ``+``.
+The content will still be included in the release notes, at the end of the category corresponding to the file extension::
+
+    $ echo 'Fixed an unreported thing!' > src/myproject/newsfragments/+anything.bugfix
+
 We can then see our news fragments compiled by running ``towncrier`` in draft mode::
 
     $ towncrier --draft
@@ -97,6 +102,7 @@ You should get an output similar to this::
     --------
 
     - Fixed a thing! (#1234)
+    - Fixed an unreported thing!
 
 
     Improved Documentation

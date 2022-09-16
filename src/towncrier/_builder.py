@@ -8,8 +8,8 @@ import os
 import textwrap
 import traceback
 
-from collections import OrderedDict
-from typing import Any, Iterator, Mapping, Sequence
+from collections import OrderedDict, defaultdict
+from typing import Any, DefaultDict, Iterator, Mapping, Sequence
 
 from jinja2 import Template
 
@@ -84,12 +84,16 @@ def find_fragments(
     sections: Mapping[str, str],
     fragment_directory: str | None,
     definitions: Sequence[str],
+    orphan_prefix: str | None = None,
 ) -> tuple[Mapping[str, Mapping[tuple[str, str, int], str]], list[str]]:
     """
     Sections are a dictonary of section names to paths.
     """
     content = OrderedDict()
     fragment_filenames = []
+    # Multiple orphan news fragments are allowed per section, so initialize a counter
+    # that can be incremented automatically.
+    orphan_fragment_counter: DefaultDict[str | None, int] = defaultdict(int)
 
     for key, val in sections.items():
 
@@ -117,6 +121,11 @@ def find_fragments(
                 continue
             assert ticket is not None
             assert counter is not None
+            if orphan_prefix and ticket.startswith(orphan_prefix):
+                ticket = ""
+                # Use and increment the orphan news fragment counter.
+                counter = orphan_fragment_counter[category]
+                orphan_fragment_counter[category] += 1
 
             full_filename = os.path.join(section_dir, basename)
             fragment_filenames.append(full_filename)
@@ -176,14 +185,14 @@ def split_fragments(
             if definitions[category]["showcontent"] is False:
                 content = ""
 
-            texts = section.get(category, OrderedDict())
+            texts = section.setdefault(category, OrderedDict())
 
-            if texts.get(content):
-                texts[content] = sorted(texts[content] + [ticket])
-            else:
-                texts[content] = [ticket]
-
-            section[category] = texts
+            tickets = texts.setdefault(content, [])
+            if ticket:
+                # Only add the ticket if we have one (it can be blank for orphan news
+                # fragments).
+                tickets.append(ticket)
+                tickets.sort()
 
         output[section_name] = section
 
@@ -201,9 +210,10 @@ def issue_key(issue: str) -> tuple[int, str]:
         return (-1, issue)
 
 
-def entry_key(entry: tuple[str, Sequence[str]]) -> list[tuple[int, str]]:
-    _, issues = entry
-    return [issue_key(issue) for issue in issues]
+def entry_key(entry: tuple[str, Sequence[str]]) -> tuple[str, list[tuple[int, str]]]:
+    content, issues = entry
+    # Orphan news fragments (those without any issues) should sort last by content.
+    return "" if issues else content, [issue_key(issue) for issue in issues]
 
 
 def bullet_key(entry: tuple[str, Sequence[str]]) -> int:
