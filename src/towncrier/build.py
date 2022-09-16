@@ -119,8 +119,6 @@ def __main(
 
     click.echo("Finding news fragments...", err=to_err)
 
-    definitions = config.types
-
     if config.directory:
         fragment_base_directory = os.path.abspath(config.directory)
         fragment_directory = None
@@ -134,13 +132,13 @@ def __main(
         fragment_base_directory,
         config.sections,
         fragment_directory,
-        definitions,
+        config.types,
         config.orphan_prefix,
     )
 
     click.echo("Rendering news fragments...", err=to_err)
     fragments = split_fragments(
-        fragment_contents, definitions, all_bullets=config.all_bullets
+        fragment_contents, config.types, all_bullets=config.all_bullets
     )
 
     if project_version is None:
@@ -188,7 +186,7 @@ def __main(
         template,
         config.issue_format,
         fragments,
-        definitions,
+        config.types,
         config.underlines[1:],
         config.wrap,
         {"name": project_name, "version": project_version, "date": project_date},
@@ -217,7 +215,6 @@ def __main(
         click.echo(content)
     else:
         click.echo("Writing to newsfile...", err=to_err)
-        start_string = config.start_string
         news_file = config.filename
 
         if config.single_file is False:
@@ -230,7 +227,7 @@ def __main(
         append_to_newsfile(
             base_directory,
             news_file,
-            start_string,
+            config.start_string,
             top_line,
             content,
             single_file=config.single_file,
