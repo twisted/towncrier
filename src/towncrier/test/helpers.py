@@ -13,7 +13,7 @@ def write(path, contents):
     Create a file with given contents including any missing parent directories
     """
     p = Path(path)
-    p.parent.mkdir(parents=True)
+    p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(contents)
 
 
@@ -33,10 +33,14 @@ def with_isolated_runner(fn):
 
 
 def setup_simple_project(
-    *, config=None, pyproject_path="pyproject.toml", mkdir_newsfragments=True
+    *,
+    config=None,
+    extra_config="",
+    pyproject_path="pyproject.toml",
+    mkdir_newsfragments=True,
 ):
     if config is None:
-        config = "[tool.towncrier]\n" 'package = "foo"\n'
+        config = "[tool.towncrier]\n" 'package = "foo"\n' + extra_config
 
     Path(pyproject_path).write_text(config)
     Path("foo").mkdir()

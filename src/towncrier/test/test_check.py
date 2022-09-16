@@ -14,15 +14,17 @@ from twisted.trial.unittest import TestCase
 from towncrier import check
 from towncrier.check import _main as towncrier_check
 
-from .helpers import setup_simple_project, write
+from .helpers import setup_simple_project, with_isolated_runner, write
 
 
-def create_project(pyproject_path="pyproject.toml", main_branch="main"):
+def create_project(
+    pyproject_path="pyproject.toml", main_branch="main", extra_config=""
+):
     """
     Create the project files in the main branch that already has a
     news-fragment and then switch to a new in-work branch.
     """
-    setup_simple_project(pyproject_path=pyproject_path)
+    setup_simple_project(pyproject_path=pyproject_path, extra_config=extra_config)
     Path("foo/newsfragments/123.feature").write_text("Adds levitation")
     initial_commit(branch=main_branch)
     call(["git", "checkout", "-b", "otherbranch"])
@@ -102,35 +104,46 @@ class TestChecker(TestCase):
                 result.output,
             )
 
-    def test_fragment_exists(self):
-        runner = CliRunner()
+    @with_isolated_runner
+    def test_fragment_exists(self, runner):
+        create_project("pyproject.toml")
 
-        with runner.isolated_filesystem():
-            create_project("pyproject.toml", main_branch="master")
+        write("foo/somefile.py", "import os")
+        commit("add a file")
 
-            file_path = "foo/somefile.py"
-            with open(file_path, "w") as f:
-                f.write("import os")
+        fragment_path = Path("foo/newsfragments/1234.feature").absolute()
+        write(fragment_path, "Adds gravity back")
+        commit("add a newsfragment")
 
-            call(["git", "add", "foo/somefile.py"])
-            call(["git", "commit", "-m", "add a file"])
+        result = runner.invoke(towncrier_check, ["--compare-with", "main"])
 
-            fragment_path = "foo/newsfragments/1234.feature"
-            with open(fragment_path, "w") as f:
-                f.write("Adds gravity back")
+        self.assertTrue(
+            result.output.endswith("Found:\n1. " + str(fragment_path) + "\n"),
+            (result.output, str(fragment_path)),
+        )
+        self.assertEqual(0, result.exit_code, result.output)
 
-            call(["git", "add", fragment_path])
-            call(["git", "commit", "-m", "add a newsfragment"])
+    @with_isolated_runner
+    def test_fragment_exists_hidden(self, runner):
+        """
+        Location of fragments can be configured using tool.towncrier.directory.
+        """
+        create_project("pyproject.toml", extra_config="directory = 'deep/fragz'\n")
 
-            result = runner.invoke(towncrier_check, ["--compare-with", "master"])
+        write("foo/bar/somefile.py", "import os")
+        commit("add a file")
 
-            self.assertTrue(
-                result.output.endswith(
-                    "Found:\n1. " + os.path.abspath(fragment_path) + "\n"
-                ),
-                result,
-            )
-            self.assertEqual(0, result.exit_code, result)
+        fragment_path = Path("deep/fragz/1234.feature").absolute()
+        write(fragment_path, "Adds gravity back")
+        commit("add a newsfragment")
+
+        result = runner.invoke(towncrier_check, ["--compare-with", "main"])
+
+        self.assertTrue(
+            result.output.endswith("Found:\n1. " + str(fragment_path) + "\n"),
+            (result.output, str(fragment_path)),
+        )
+        self.assertEqual(0, result.exit_code, result.output)
 
     def test_fragment_missing(self):
         runner = CliRunner()
@@ -256,7 +269,7 @@ class TestChecker(TestCase):
             self.assertEqual(0, result.exit_code, (result, result.output))
             self.assertIn("Checks SKIPPED: news file changes detected", result.output)
 
-    def test_get_default_compare_branch_missingf(self):
+    def test_get_default_compare_branch_missing(self):
         """
         If there's no recognized remote origin, exit with an error.
         """
