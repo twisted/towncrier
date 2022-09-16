@@ -101,14 +101,13 @@ class TestCli(TestCase):
 
         # Create a temporary directory, run Towncrier from there and assert
         # it didn't litter into it.
-        with tempfile.TemporaryDirectory() as td:
-            os.chdir(td)
-            result = runner.invoke(cli, ("--yes", "--dir", str(project_dir)))
+        td = tempfile.TemporaryDirectory()
+        self.addCleanup(td.cleanup)
 
-            self.assertEqual([], list(Path(td).glob("*")))
-            # Staying in the temporary directory break cleanup on Windows.
-            os.chdir(project_dir)
+        os.chdir(td.name)
+        result = runner.invoke(cli, ("--yes", "--dir", str(project_dir)))
 
+        self.assertEqual([], list(Path(td.name).glob("*")))
         self.assertEqual(0, result.exit_code)
         self.assertTrue((project_dir / "NEWS.rst").exists())
 
@@ -128,18 +127,19 @@ class TestCli(TestCase):
 
         # Create a temporary directory, move the config file there, run
         # Towncrier from there, and assert it didn't litter into it.
-        with tempfile.TemporaryDirectory() as td:
-            os.chdir(td)
-            (project_dir / "pyproject.toml").rename("pyproject.toml")
-            result = runner.invoke(
-                cli, ("--yes", "--config", "pyproject.toml", "--dir", str(project_dir))
-            )
+        td = tempfile.TemporaryDirectory()
+        self.addCleanup(td.cleanup)
 
-            # There's only pyproject.toml in this directory.
-            self.assertEqual([Path(td) / "pyproject.toml"], list(Path(td).glob("*")))
-            # Staying in the temporary directory break cleanup on Windows.
-            os.chdir(project_dir)
+        os.chdir(td.name)
+        (project_dir / "pyproject.toml").rename("pyproject.toml")
+        result = runner.invoke(
+            cli, ("--yes", "--config", "pyproject.toml", "--dir", str(project_dir))
+        )
 
+        # There's only pyproject.toml in this directory.
+        self.assertEqual(
+            [Path(td.name) / "pyproject.toml"], list(Path(td.name).glob("*"))
+        )
         self.assertEqual(0, result.exit_code)
         self.assertTrue((project_dir / "NEWS.rst").exists())
 
