@@ -116,7 +116,7 @@ class TestCli(TestCase):
         self._test_command(_main)
 
     @with_isolated_runner
-    def test_in_different_dir(self, runner):
+    def test_in_different_dir_dir_option(self, runner):
         """
         The current working directory doesn't matter as long as we pass
         the correct one.
@@ -135,6 +135,35 @@ class TestCli(TestCase):
             result = runner.invoke(cli, ("--yes", "--dir", str(project_dir)))
 
             self.assertEqual([], list(Path(td).glob("*")))
+
+        self.assertEqual(0, result.exit_code)
+        self.assertTrue((project_dir / "NEWS.rst").exists())
+
+    @with_isolated_runner
+    def test_in_different_dir_config_option(self, runner):
+        """
+        The current working directory and the location of the configuration
+        don't matter as long as we pass corrct paths to the directory and the
+        config file.
+        """
+        project_dir = Path(".").resolve()
+
+        setup_simple_project()
+        Path("foo/newsfragments/123.feature").write_text("Adds levitation")
+        # Ensure our assetion below is meaningful.
+        self.assertFalse((project_dir / "NEWS.rst").exists())
+
+        # Create a temporary directory, run Towncrier from there and assert
+        # it didn't litter into it.
+        with tempfile.TemporaryDirectory() as td:
+            os.chdir(td)
+            (project_dir / "pyproject.toml").rename("pyproject.toml")
+            result = runner.invoke(
+                cli, ("--yes", "--config", "pyproject.toml", "--dir", str(project_dir))
+            )
+
+            # There's only pyproject.toml in this directory.
+            self.assertEqual([Path(td) / "pyproject.toml"], list(Path(td).glob("*")))
 
         self.assertEqual(0, result.exit_code)
         self.assertTrue((project_dir / "NEWS.rst").exists())
