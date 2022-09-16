@@ -135,6 +135,8 @@ class TestCli(TestCase):
             result = runner.invoke(cli, ("--yes", "--dir", str(project_dir)))
 
             self.assertEqual([], list(Path(td).glob("*")))
+            # Staying in the temporary directory break cleanup on Windows.
+            os.chdir(project_dir)
 
         self.assertEqual(0, result.exit_code)
         self.assertTrue((project_dir / "NEWS.rst").exists())
@@ -153,8 +155,8 @@ class TestCli(TestCase):
         # Ensure our assetion below is meaningful.
         self.assertFalse((project_dir / "NEWS.rst").exists())
 
-        # Create a temporary directory, run Towncrier from there and assert
-        # it didn't litter into it.
+        # Create a temporary directory, move the config file there, run
+        # Towncrier from there, and assert it didn't litter into it.
         with tempfile.TemporaryDirectory() as td:
             os.chdir(td)
             (project_dir / "pyproject.toml").rename("pyproject.toml")
@@ -164,6 +166,8 @@ class TestCli(TestCase):
 
             # There's only pyproject.toml in this directory.
             self.assertEqual([Path(td) / "pyproject.toml"], list(Path(td).glob("*")))
+            # Staying in the temporary directory break cleanup on Windows.
+            os.chdir(project_dir)
 
         self.assertEqual(0, result.exit_code)
         self.assertTrue((project_dir / "NEWS.rst").exists())
