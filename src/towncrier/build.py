@@ -119,7 +119,7 @@ def __main(
 
     click.echo("Finding news fragments...", err=to_err)
 
-    if config.directory:
+    if config.directory is not None:
         fragment_base_directory = os.path.abspath(config.directory)
         fragment_directory = None
     else:
