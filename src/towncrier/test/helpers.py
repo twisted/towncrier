@@ -1,14 +1,17 @@
+from __future__ import annotations
+
 from functools import wraps
 from pathlib import Path
+from typing import Any, Callable
 
 from click.testing import CliRunner
 
 
-def read(filename):
+def read(filename: str | Path) -> str:
     return Path(filename).read_text()
 
 
-def write(path, contents):
+def write(path: str | Path, contents: str) -> None:
     """
     Create a file with given contents including any missing parent directories
     """
@@ -17,14 +20,14 @@ def write(path, contents):
     p.write_text(contents)
 
 
-def with_isolated_runner(fn):
+def with_isolated_runner(fn: Callable[..., Any]) -> Callable[..., Any]:
     """
     Run *fn* within an isolated filesystem and add the kwarg *runner* to its
     arguments.
     """
 
     @wraps(fn)
-    def test(*args, **kw):
+    def test(*args: Any, **kw: Any) -> Any:
         runner = CliRunner()
         with runner.isolated_filesystem():
             return fn(*args, runner=runner, **kw)
@@ -34,11 +37,11 @@ def with_isolated_runner(fn):
 
 def setup_simple_project(
     *,
-    config=None,
-    extra_config="",
-    pyproject_path="pyproject.toml",
-    mkdir_newsfragments=True,
-):
+    config: str | None = None,
+    extra_config: str = "",
+    pyproject_path: str = "pyproject.toml",
+    mkdir_newsfragments: bool = True,
+) -> None:
     if config is None:
         config = "[tool.towncrier]\n" 'package = "foo"\n' + extra_config
 
