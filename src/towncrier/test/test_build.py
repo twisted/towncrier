@@ -5,7 +5,6 @@ import os
 import tempfile
 
 from datetime import date
-from functools import wraps
 from pathlib import Path
 from subprocess import call
 from textwrap import dedent
@@ -16,35 +15,7 @@ from twisted.trial.unittest import TestCase
 
 from .._shell import cli
 from ..build import _main
-
-
-def setup_simple_project():
-    with open("pyproject.toml", "w") as f:
-        f.write("[tool.towncrier]\n" 'package = "foo"\n')
-    os.mkdir("foo")
-    with open("foo/__init__.py", "w") as f:
-        f.write('__version__ = "1.2.3"\n')
-    os.mkdir("foo/newsfragments")
-
-
-def read_all(filename):
-    with open(filename) as f:
-        return f.read()
-
-
-def with_isolated_runner(fn):
-    """
-    Run *fn* within an isolated filesystem and add the kwarg *runner* to its
-    arguments.
-    """
-
-    @wraps(fn)
-    def test(*args, **kw):
-        runner = CliRunner()
-        with runner.isolated_filesystem():
-            return fn(*args, runner=runner, **kw)
-
-    return test
+from .helpers import read, setup_simple_project, with_isolated_runner
 
 
 class TestCli(TestCase):
@@ -211,7 +182,7 @@ class TestCli(TestCase):
 
             result = runner.invoke(_main, ["--date", "01-01-2001"])
 
-            news = read_all("NEWS.rst")
+            news = read("NEWS.rst")
 
         self.assertEqual(0, result.exit_code)
         self.assertIn("No significant changes.\n", news)
@@ -720,8 +691,8 @@ class TestCli(TestCase):
             self.assertTrue(os.path.exists("7.9.0-notes.rst"), os.listdir("."))
 
             outputs = []
-            outputs.append(read_all("7.8.9-notes.rst"))
-            outputs.append(read_all("7.9.0-notes.rst"))
+            outputs.append(read("7.8.9-notes.rst"))
+            outputs.append(read("7.9.0-notes.rst"))
 
             self.assertEqual(
                 outputs[0],
@@ -830,7 +801,7 @@ class TestCli(TestCase):
             )
             self.assertTrue(os.path.exists("{version}-notes.rst"), os.listdir("."))
 
-            output = read_all("{version}-notes.rst")
+            output = read("{version}-notes.rst")
 
             self.assertEqual(
                 output,
@@ -896,7 +867,7 @@ class TestCli(TestCase):
             )
 
             self.assertEqual(0, result.exit_code, result.output)
-            output = read_all("NEWS.rst")
+            output = read("NEWS.rst")
 
         self.assertEqual(
             output,
@@ -1107,7 +1078,7 @@ Deprecations and Removals
 
             self.assertEqual(0, result.exit_code, result.output)
             self.assertTrue(os.path.exists("NEWS.rst"), os.listdir("."))
-            output = read_all("NEWS.rst")
+            output = read("NEWS.rst")
 
         expected_output = dedent(
             """\

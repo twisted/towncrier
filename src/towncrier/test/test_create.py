@@ -10,26 +10,7 @@ from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from ..create import _main
-
-
-def setup_simple_project(config=None, mkdir=True):
-    if not config:
-        config = dedent(
-            """\
-            [tool.towncrier]
-            package = "foo"
-            """
-        )
-
-    with open("pyproject.toml", "w") as f:
-        f.write(config)
-
-    os.mkdir("foo")
-    with open("foo/__init__.py", "w") as f:
-        f.write('__version__ = "1.2.3"\n')
-
-    if mkdir:
-        os.mkdir("foo/newsfragments")
+from .helpers import setup_simple_project
 
 
 class TestCli(TestCase):
@@ -41,7 +22,7 @@ class TestCli(TestCase):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
-            setup_simple_project(config, mkdir)
+            setup_simple_project(config=config, mkdir_newsfragments=mkdir)
 
             args = ["123.feature.rst"]
             if content is None:
@@ -95,7 +76,7 @@ class TestCli(TestCase):
             runner = CliRunner()
 
             with runner.isolated_filesystem():
-                setup_simple_project(config=None, mkdir=True)
+                setup_simple_project(config=None, mkdir_newsfragments=True)
                 result = runner.invoke(_main, ["123.feature.rst", "--edit"])
                 self.assertEqual([], os.listdir("foo/newsfragments"))
                 self.assertEqual(1, result.exit_code)
@@ -141,7 +122,7 @@ class TestCli(TestCase):
         )
 
         with runner.isolated_filesystem():
-            setup_simple_project(config, mkdir=False)
+            setup_simple_project(config=config, mkdir_newsfragments=False)
             os.mkdir("releasenotes")
 
             result = runner.invoke(_main, ["123.feature.rst"])

@@ -5,6 +5,7 @@ import os
 import os.path
 import sys
 
+from pathlib import Path
 from subprocess import PIPE, Popen, call
 
 from click.testing import CliRunner
@@ -13,22 +14,16 @@ from twisted.trial.unittest import TestCase
 from towncrier import check
 from towncrier.check import _main as towncrier_check
 
+from .helpers import setup_simple_project, write
+
 
 def create_project(pyproject_path="pyproject.toml", main_branch="main"):
     """
     Create the project files in the main branch that already has a
     news-fragment and then switch to a new in-work branch.
     """
-    with open(pyproject_path, "w") as f:
-        f.write("[tool.towncrier]\n" 'package = "foo"\n')
-    os.mkdir("foo")
-    with open("foo/__init__.py", "w") as f:
-        f.write('__version__ = "1.2.3"\n')
-    os.mkdir("foo/newsfragments")
-    fragment_path = "foo/newsfragments/123.feature"
-    with open(fragment_path, "w") as f:
-        f.write("Adds levitation")
-
+    setup_simple_project(pyproject_path=pyproject_path)
+    Path("foo/newsfragments/123.feature").write_text("Adds levitation")
     initial_commit(branch=main_branch)
     call(["git", "checkout", "-b", "otherbranch"])
 
@@ -41,18 +36,6 @@ def commit(message):
     """
     call(["git", "add", "."])
     call(["git", "commit", "-m", message])
-
-
-def write(path, contents):
-    """Create a file with given contents including any missing parent directories"""
-    dir = os.path.dirname(path)
-    if dir:
-        try:
-            os.makedirs(dir)
-        except OSError:  # pragma: no cover
-            pass
-    with open(path, "w") as f:
-        f.write(contents)
 
 
 def initial_commit(branch="main"):
