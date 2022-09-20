@@ -9,7 +9,7 @@ import textwrap
 import traceback
 
 from collections import OrderedDict, defaultdict
-from typing import Any, DefaultDict, Iterator, Mapping, Sequence
+from typing import Any, DefaultDict, Iterable, Iterator, Mapping, Sequence
 
 from jinja2 import Template
 
@@ -28,7 +28,7 @@ def strip_if_integer_string(s: str) -> str:
 # Returns ticket, category and counter or (None, None, None) if the basename
 # could not be parsed or doesn't contain a valid category.
 def parse_newfragment_basename(
-    basename: str, definitions: Sequence[str]
+    basename: str, frag_type_names: Iterable[str]
 ) -> tuple[str, str, int] | tuple[None, None, None]:
     invalid = (None, None, None)
     parts = basename.split(".")
@@ -38,14 +38,14 @@ def parse_newfragment_basename(
     if len(parts) == 2:
         ticket, category = parts
         ticket = strip_if_integer_string(ticket)
-        return (ticket, category, 0) if category in definitions else invalid
+        return (ticket, category, 0) if category in frag_type_names else invalid
 
     # There are at least 3 parts. Search for a valid category from the second
     # part onwards.
     # The category is used as the reference point in the parts list to later
     # infer the issue number and counter value.
     for i in range(1, len(parts)):
-        if parts[i] in definitions:
+        if parts[i] in frag_type_names:
             # Current part is a valid category according to given definitions.
             category = parts[i]
             # Use the previous part as the ticket number.
@@ -83,7 +83,7 @@ def find_fragments(
     base_directory: str,
     sections: Mapping[str, str],
     fragment_directory: str | None,
-    definitions: Sequence[str],
+    frag_type_names: Iterable[str],
     orphan_prefix: str | None = None,
 ) -> tuple[Mapping[str, Mapping[tuple[str, str, int], str]], list[str]]:
     """
@@ -115,7 +115,7 @@ def find_fragments(
         for basename in files:
 
             ticket, category, counter = parse_newfragment_basename(
-                basename, definitions
+                basename, frag_type_names
             )
             if category is None:
                 continue
@@ -244,7 +244,7 @@ def render_fragments(
     template: str,
     issue_format: str | None,
     fragments: Mapping[str, Mapping[str, Mapping[str, Sequence[str]]]],
-    definitions: Sequence[str],
+    definitions: Mapping[str, Mapping[str, Any]],
     underlines: Sequence[str],
     wrap: bool,
     versiondata: Mapping[str, str],

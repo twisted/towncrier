@@ -64,7 +64,7 @@ line_length = 88
 strict = true
 # 2022-09-04: Trial's API isn't annotated yet, which limits the usefulness of type-checking
 #             the unit tests. Therefore they have not been annotated yet.
-exclude = '^src/towncrier/test/.*\.py$'
+exclude = '^src/towncrier/test/test_.*\.py$'
 
 [[tool.mypy.overrides]]
 module = 'click_default_group'
@@ -91,6 +91,10 @@ source = ["src", ".tox/*/site-packages"]
 [tool.coverage.report]
 show_missing = true
 skip_covered = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+]
 omit = [
     "src/towncrier/__main__.py",
     "src/towncrier/test/*",

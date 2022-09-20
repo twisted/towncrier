@@ -81,31 +81,29 @@ def __main(
     """
     base_directory, config = load_config_from_options(directory, config_path)
 
-    definitions = config["types"] or []
-    orphan_prefix = config["orphan_prefix"]
-    if orphan_prefix and filename.startswith(f"{orphan_prefix}."):
+    if config.orphan_prefix and filename.startswith(f"{config.orphan_prefix}."):
         # Append a random hex string to the orphan news fragment base name.
-        filename = f"{orphan_prefix}{os.urandom(4).hex()}{filename[1:]}"
+        filename = f"{config.orphan_prefix}{os.urandom(4).hex()}{filename[1:]}"
     if len(filename.split(".")) < 2 or (
-        filename.split(".")[-1] not in definitions
-        and filename.split(".")[-2] not in definitions
+        filename.split(".")[-1] not in config.types
+        and filename.split(".")[-2] not in config.types
     ):
         raise click.BadParameter(
             "Expected filename '{}' to be of format '{{name}}.{{type}}', "
             "where '{{name}}' is an arbitrary slug and '{{type}}' is "
-            "one of: {}".format(filename, ", ".join(definitions))
+            "one of: {}".format(filename, ", ".join(config.types))
         )
 
-    if config.get("directory"):
+    if config.directory:
         fragments_directory = os.path.abspath(
-            os.path.join(base_directory, config["directory"])
+            os.path.join(base_directory, config.directory)
         )
     else:
         fragments_directory = os.path.abspath(
             os.path.join(
                 base_directory,
-                config["package_dir"],
-                config["package"],
+                config.package_dir,
+                config.package,
                 "newsfragments",
             )
         )
