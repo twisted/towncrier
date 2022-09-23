@@ -5,10 +5,18 @@ import os
 import sys
 
 from subprocess import check_output
+from unittest import skipIf
 
 from twisted.trial.unittest import TestCase
 
 from .._project import get_project_name, get_version
+from .helpers import write
+
+
+try:
+    from importlib.metadata import version
+except ImportError:
+    version = None
 
 
 class VersionFetchingTests(TestCase):
@@ -39,6 +47,52 @@ class VersionFetchingTests(TestCase):
 
         version = get_version(temp, "mytestproja")
         self.assertEqual(version, "1.3.12")
+
+    @skipIf(version is None, "Needs importlib.metadata.")
+    def test_incremental(self):
+        """
+        An incremental Version __version__  is picked up.
+        """
+        pkg = "../src"
+
+        self.assertEqual(version("towncrier"), get_version(pkg, "towncrier"))
+        self.assertEqual("towncrier", get_project_name(pkg, "towncrier"))
+
+    def _setup_missing(self):
+        """
+        Create a minimalistic project with missing metadata in a temporary
+        directory.
+        """
+        tmp_dir = self.mktemp()
+        pkg = os.path.join(tmp_dir, "missing")
+        os.makedirs(pkg)
+        init = os.path.join(tmp_dir, "__init__.py")
+
+        write(init, "# nope\n")
+
+        return tmp_dir
+
+    def test_missing_version(self):
+        """
+        Missing __version__ string leads to an exception.
+        """
+        tmp_dir = self._setup_missing()
+
+        with self.assertRaises(Exception) as e:
+            get_version(tmp_dir, "missing")
+
+        self.assertEqual(
+            ("No __version__, I don't know how else to look",), e.exception.args
+        )
+
+    def test_missing_version_project_name(self):
+        """
+        Missing __version__ string leads to the package name becoming the
+        project name.
+        """
+        tmp_dir = self._setup_missing()
+
+        self.assertEqual("Missing", get_project_name(tmp_dir, "missing"))
 
     def test_unknown_type(self):
         """
