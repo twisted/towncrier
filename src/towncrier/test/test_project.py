@@ -19,12 +19,6 @@ except ImportError:
     version = None
 
 
-try:
-    from importlib.metadata import version
-except ImportError:
-    version = None
-
-
 class VersionFetchingTests(TestCase):
     def test_str(self):
         """
