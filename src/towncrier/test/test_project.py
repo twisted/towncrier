@@ -5,10 +5,17 @@ import os
 import sys
 
 from subprocess import check_output
+from unittest import skipIf
 
 from twisted.trial.unittest import TestCase
 
 from .._project import get_project_name, get_version
+
+
+try:
+    from importlib.metadata import version
+except ImportError:
+    version = None
 
 
 class VersionFetchingTests(TestCase):
@@ -39,6 +46,16 @@ class VersionFetchingTests(TestCase):
 
         version = get_version(temp, "mytestproja")
         self.assertEqual(version, "1.3.12")
+
+    @skipIf(version is None, "Needs importlib.metadata.")
+    def test_incremental(self):
+        """
+        An incremental Version __version__  is picked up.
+        """
+        init = "../src/towncrier/__init__.py"
+
+        self.assertEqual(version("towncrier"), get_version(init, "towncrier"))
+        self.assertEqual("towncrier", get_project_name(init, "towncrier"))
 
     def test_unknown_type(self):
         """

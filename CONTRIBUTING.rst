@@ -88,7 +88,7 @@ We recommend the following workflow:
 Running the test suite
 ----------------------
 
-We use the `twisted.trial`_ module and `tox`_ to run tests against all supported
+We use the `twisted.trial`_ module and `nox`_ to run tests against all supported
 Python versions and operating systems.
 
 The following list contains some ways how to run the test suite:
@@ -109,26 +109,26 @@ The following list contains some ways how to run the test suite:
   This will invoke a PDB session. If you press ``c`` it will continue running
   the test suite until it runs into an error.
 
-* To run all tests against all supported versions, install tox and use::
+* To run all tests against all supported versions, install nox and use::
 
-    $ tox
+    $ nox
 
-  You may want to add the ``--skip-missing-interpreters`` option to avoid errors
+  You may want to add the ``--no-error-on-missing-interpreters`` option to avoid errors
   when a specific Python interpreter version couldn't be found.
 
 *  To get a complete list of the available targets, run::
 
-    $ tox -av
+    $ nox -l
 
 * To run only a specific test only, use the ``towncrier.test.FILE.CLASS.METHOD`` syntax,
   for example::
 
-    $ tox -- towncrier.test.test_project.InvocationTests.test_version
+    $ nox -e tests -- towncrier.test.test_project.InvocationTests.test_version
 
 * To run some quality checks before you create the pull request,
   we recommend using this call::
 
-    $ tox -e pre-commit,check-manifest,check-newsfragment
+    $ nox -e pre_commit check_manifest check_newsfragment
 
 * Or enable `pre-commit` as a git hook::
 
@@ -136,15 +136,15 @@ The following list contains some ways how to run the test suite:
     $ pre-commit install
 
 
-**Please note**: If the test suite works in tox, but doesn't by calling
+**Please note**: If the test suite works in nox, but doesn't by calling
 ``trial``, it could be that you've got GPG-signing active for git commits which
 fails with our dummy test commits.
 
 .. ### Links
 
-.. _flake8: https://flake8.rtfd.io
+.. _flake8: https://flake8.pycqa.org/
 .. _GitHub Discussions: https://github.com/twisted/towncrier/discussions
 .. _issues:  https://github.com/twisted/towncrier/issues
 .. _pull request: https://github.com/twisted/towncrier/pulls
-.. _tox: https://tox.rtfd.org/
-.. _twisted.trial: https://twistedmatrix.com/trac/wiki/TwistedTrial
+.. _nox: https://nox.thea.codes/
+.. _twisted.trial: https://github.com/twisted/trac-wiki-archive/blob/trunk/TwistedTrial.mediawiki

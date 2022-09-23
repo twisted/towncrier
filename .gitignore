@@ -18,7 +18,7 @@ apidocs/
 *.pyproj
 .DS_Store
 .eggs
-.tox/
+.nox/
 .coverage.*
 .vscode
 .idea
