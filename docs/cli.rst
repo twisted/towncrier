@@ -27,6 +27,7 @@ Build the combined news file from news fragments.
 
    Only render news fragments to standard output.
    Don't write to files, don't check versions.
+   Only renders the news fragments **without** the surrounding template.
 
 .. option:: --name NAME
 
