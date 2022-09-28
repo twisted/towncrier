@@ -1173,3 +1173,36 @@ Deprecations and Removals
 
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected_output, result.output)
+
+    def test_markdown_filename(self):
+        """
+        When a filename ending with `.md` is configured, the configuration defaults for
+        underlines and title_prefixes change to be markdown compatible.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project(extra_config='filename = "CHANGELOG.md"')
+            Path("foo/newsfragments/123.feature").write_text("Adds levitation")
+            result = runner.invoke(_main, ["--date=01-01-2001", "--draft"])
+
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertEqual(
+            result.output,
+            dedent(
+                """
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            # Foo 1.2.3 (01-01-2001)
+
+            ### Features
+
+            - Adds levitation (#123)
+
+            """
+            ).lstrip(),
+        )
