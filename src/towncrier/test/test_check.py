@@ -4,6 +4,7 @@
 import os
 import os.path
 import sys
+import warnings
 
 from pathlib import Path
 from subprocess import PIPE, Popen, call
@@ -293,8 +294,10 @@ class TestChecker(TestCase):
 
     def test_get_default_compare_branch_fallback(self):
         """
-        If there's origin/master and no main, use it.
+        If there's origin/master and no main, use it and warn about it.
         """
-        branch = check._get_default_compare_branch(["origin/master", "origin/foo"])
+        with warnings.catch_warnings(record=True) as w:
+            branch = check._get_default_compare_branch(["origin/master", "origin/foo"])
 
         self.assertEqual("origin/master", branch)
+        self.assertTrue(w[0].message.args[0].startswith('Using "origin/master'))
