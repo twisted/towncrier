@@ -39,6 +39,12 @@ Custom fragment types
 ``towncrier`` allows defining custom fragment types.
 Custom fragment types will be used instead ``towncrier`` default ones, they are not combined.
 
+There are two ways to add custom fragment types.
+
+
+Defining Custom Fragment Types With a TOML Mapping
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Users can configure each of their own custom fragment types by adding tables to
 the pyproject.toml named ``[tool.towncrier.fragment.<a custom fragment type>]``.
 
@@ -58,6 +64,44 @@ For example, if you want your custom fragment types to be ``["feat", "fix", "cho
    [tool.towncrier.fragment.fix]
 
    [tool.towncrier.fragment.chore]
+   name = "Other Tasks"
+   showcontent = false
+
+
+.. warning::
+
+   Since TOML mappings aren't ordered, the sections are always rendered alphabetically.
+
+
+Defining Custom Fragment Types With an Array of TOML Tables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Users can create their own custom fragment types by adding an array of
+tables to the pyproject.toml named ``[[tool.towncrier.type]]``.
+
+If you use this way to configure custom fragment types, please note that ``fragment_types`` must be empty or not provided.
+
+Each custom type (``[[tool.towncrier.type]]``) has the following
+mandatory keys:
+
+* ``directory``: The type / category of the fragment.
+* ``name``: The description of the fragment type, as it must be included
+  in the news file.
+* ``showcontent``: Whether if the fragment contents should be included in the
+  news file.
+
+For example:
+
+.. code-block:: toml
+
+   [tool.towncrier]
+   [[tool.towncrier.type]]
+   directory = "deprecation"
+   name = "Deprecations"
+   showcontent = true
+
+   [[tool.towncrier.type]]
+   directory = "chore"
    name = "Other Tasks"
    showcontent = false
 
