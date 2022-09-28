@@ -12,6 +12,7 @@ import sys
 
 from importlib import import_module
 from types import ModuleType
+from typing import cast
 
 from incremental import Version
 
@@ -51,7 +52,7 @@ def get_version(package_dir: str, package: str) -> str:
         return version.strip()
 
     if isinstance(version, Version):
-        return version.base().strip()
+        return cast(str, version.base().strip())
 
     if isinstance(version, tuple):
         return ".".join(map(str, version)).strip()
@@ -78,6 +79,6 @@ def get_project_name(package_dir: str, package: str) -> str:
 
     if isinstance(version, Version):
         # Incremental has support for package names
-        return version.package
+        return cast(str, version.package)
 
     raise TypeError(f"Unsupported type for __version__: {type(version)}")

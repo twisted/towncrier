@@ -22,27 +22,25 @@ jobs:
             runs-on: ubuntu-latest
         python:
           - name: CPython 3.9
-            tox: py39
             action: 3.9
         task:
           - name: Build
-            tox: build
+            nox: build
 
     steps:
     - uses: actions/checkout@v3
 
     - name: Set up ${{ matrix.python.name }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python.action }}
 
     - name: Install dependencies
-      run: python -m pip install --upgrade pip tox
+      run: python -m pip install --upgrade pip nox
 
     - uses: twisted/python-info-action@v1
 
-    - name: Tox
-      run: tox -c tox.ini -e ${{ matrix.task.tox }}
+    - run: nox -e ${{ matrix.task.nox }}
 
     - name: Publish
       uses: actions/upload-artifact@v3
@@ -60,29 +58,22 @@ jobs:
       matrix:
         python:
           - name: CPython 3.7
-            tox: py37
             action: 3.7
           - name: CPython 3.8
-            tox: py38
             action: 3.8
           - name: CPython 3.9
-            tox: py39
             action: 3.9
           - name: CPython 3.10
-            tox: py310
             action: '3.10'
           - name: CPython 3.11
-            tox: py311
             action: '3.11.0-beta - 3.11'
           - name: PyPy 3.7
-            tox: pypy37
-            action: pypy-3.7
+            action: pypy3.7
           - name: PyPy 3.8
-            tox: pypy38
-            action: pypy-3.8
+            action: pypy3.8
         task:
           - name: Test
-            tox: tests
+            nox: tests
 
     steps:
     - uses: actions/checkout@v3
@@ -94,17 +85,16 @@ jobs:
         path: dist/
 
     - name: Set up ${{ matrix.python.name }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python.action }}
 
     - name: Install dependencies
-      run: python -m pip install --upgrade pip tox codecov coverage[toml]
+      run: python -m pip install --upgrade pip nox codecov coverage[toml]
 
     - uses: twisted/python-info-action@v1
 
-    - name: Tox
-      run: tox -c tox.ini --installpkg dist/*.whl -e ${{ matrix.python.tox }}-tests
+    - run: nox --python ${{ matrix.python.action }} -e ${{ matrix.task.nox }} -- --use-wheel dist/*.whl
 
     - name: Codecov
       run: |
@@ -121,11 +111,10 @@ jobs:
       matrix:
         python:
           - name: CPython 3.9
-            tox: py39
             action: '3.9'
         task:
           - name: Test
-            tox: tests
+            nox: tests
 
     steps:
     - uses: actions/checkout@v3
@@ -137,17 +126,16 @@ jobs:
         path: dist/
 
     - name: Set up ${{ matrix.python.name }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python.action }}
 
     - name: Install dependencies
-      run: python -m pip install --upgrade pip tox codecov coverage[toml]
+      run: python -m pip install --upgrade pip nox codecov coverage[toml]
 
     - uses: twisted/python-info-action@v1
 
-    - name: Tox
-      run: tox -c tox.ini --installpkg dist/*.whl -e ${{ matrix.python.tox }}-tests
+    - run: nox --python ${{ matrix.python.action }} -e ${{ matrix.task.nox }} -- --use-wheel dist/*.whl
 
     - name: Codecov
       run: |
@@ -165,17 +153,16 @@ jobs:
           # Using second most recent minor release for whatever little
           # increase in stability over using the latest minor.
           - name: CPython 3.9
-            tox: py39
             python-version: '3.9'
         task:
           - name: Check Newsfragment
-            tox: check-newsfragment
+            nox: check_newsfragment
             run-if: ${{ github.head_ref != 'pre-commit-ci-update-config' }}
           - name: Check package manifest
-            tox: check-manifest
+            nox: check_manifest
             run-if: true
           - name: Check mypy
-            tox: typecheck
+            nox: typecheck
             run-if: true
 
     steps:
@@ -190,18 +177,18 @@ jobs:
         path: dist/
 
     - name: Set up ${{ matrix.python.name }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python.python-version }}
 
     - name: Install dependencies
-      run: python -m pip install --upgrade pip tox
+      run: python -m pip install --upgrade pip nox
 
     - uses: twisted/python-info-action@v1
 
-    - name: Tox
+    - run: nox -e ${{ matrix.task.nox }}
       if: ${{ matrix.task.run-if }}
-      run: tox -c tox.ini -e ${{ matrix.task.tox }}
+
 
   pypi-publish:
     # https://github.community/t/is-it-possible-to-require-all-github-actions-tasks-to-pass-without-enumerating-them/117957/4?u=graingert
@@ -222,7 +209,7 @@ jobs:
         path: dist/
 
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: 3.9
 

@@ -41,7 +41,7 @@ exclude = '''
   /(
       \.eggs         # exclude a few common directories in the
     | \.git          # root of the project
-    | \.tox
+    | \.nox
     | \.venv
     | \.env
     | env
@@ -71,6 +71,11 @@ module = 'click_default_group'
 # 2022-09-04: This library has no type annotations.
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = 'incremental'
+# No released version with type hints.
+ignore_missing_imports = true
+
 
 [build-system]
 requires = [
@@ -86,7 +91,7 @@ branch = true
 source = ["towncrier"]
 
 [tool.coverage.paths]
-source = ["src", ".tox/*/site-packages"]
+source = ["src", ".nox/*/site-packages"]
 
 [tool.coverage.report]
 show_missing = true

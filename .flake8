@@ -1,3 +1,6 @@
 [flake8]
 # Allow for longer test strings. Code is formatted to 88 columns by Black.
 max-line-length = 99
+extend-ignore =
+    # Conflict between flake8 & black about whitespace in slices.
+    E203

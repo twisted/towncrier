@@ -61,5 +61,4 @@ setup(
     description="Building newsfiles for your project.",
     long_description=open("README.rst").read(),
     entry_points={"console_scripts": ["towncrier = towncrier._shell:cli"]},
-    options={"bdist_wheel": {"universal": "1"}},
 )
