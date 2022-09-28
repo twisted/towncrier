@@ -38,6 +38,7 @@ class DefaultFragmentTypesLoader(BaseFragmentTypesLoader):
 
     _default_types = clt.OrderedDict(
         [
+            # Keep in-sync with docs/tutorial.rst.
             ("feature", {"name": "Features", "showcontent": True}),
             ("bugfix", {"name": "Bugfixes", "showcontent": True}),
             ("doc", {"name": "Improved Documentation", "showcontent": True}),

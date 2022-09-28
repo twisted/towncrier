@@ -1,5 +1,5 @@
-Releasing
-=========
+Release Process
+===============
 
 ..  note::
     Commands are written with Linux in mind and a ``venv`` located in ``venv/``.
