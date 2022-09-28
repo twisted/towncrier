@@ -50,6 +50,7 @@ setup(
         "dev": [
             "packaging",
             "sphinx >= 5",
+            "furo",
             "twisted",
         ],
     },

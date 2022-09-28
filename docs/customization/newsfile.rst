@@ -1,4 +1,4 @@
-Customising the News File Output
+Customizing the News File Output
 ================================
 
 Adding Content Above ``towncrier``
