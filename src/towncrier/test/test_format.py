@@ -119,22 +119,55 @@ Bugfixes
 
 - Web fixed. (#3)
 """
+        expected_md_output = """# MyProject 1.0 (never)
+
+### Features
+
+- Fun! (baz)
+- Foo added. (#2, #9, #72)
+- Stuff! (#4)
+
+
+### Misc
+
+- bar, #1, #9, #142
+
+
+## Names
+
+No significant changes.
+
+
+## Web
+
+### Bugfixes
+
+- Web fixed. (#3)
+"""
 
         template = pkg_resources.resource_string(
             "towncrier", "templates/default.rst"
         ).decode("utf8")
 
         fragments = split_fragments(fragments, definitions)
-        output = render_fragments(
-            template,
-            None,
-            fragments,
-            definitions,
-            ["-", "~"],
+        render_kwargs = dict(
+            template=template,
+            issue_format=None,
+            fragments=fragments,
+            definitions=definitions,
+            underlines=["-", "~"],
             wrap=True,
             versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
+            title_prefixes = ["", "", ""]
         )
+        output = render_fragments(**render_kwargs)
         self.assertEqual(output, expected_output)
+        render_kwargs["top_underline"] = ""
+        render_kwargs["underlines"] = ["", ""]
+        render_kwargs["title_prefixes"] = ["# ", "## ", "### "]
+        output = render_fragments(**render_kwargs)
+        print(output)
+        self.assertEqual(output, expected_md_output)
 
         # Check again with non-default underlines
         expected_output_weird_underlines = """MyProject 1.0 (never)

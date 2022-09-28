@@ -45,6 +45,7 @@ class Config:
     title_format: str | Literal[False]
     issue_format: str | None
     underlines: list[str]
+    title_prefixes: list[str]
     wrap: bool
     all_bullets: bool
     orphan_prefix: str
@@ -60,6 +61,9 @@ _start_string = ".. towncrier release notes start\n"
 _title_format = None
 _template_fname = "towncrier:default"
 _underlines = ["=", "-", "~"]
+_md_underlines = ["", "", ""]
+_prefixes = ["", "", ""]
+_md_prefixes = ["# ", "## ", "### "]
 
 
 def load_config_from_options(
@@ -164,11 +168,13 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
             failing_option="template",
         )
 
+    filename = config.get("filename", "NEWS.rst")
+    is_md = filename.endswith(".md")
     return Config(
         package=config.get("package", ""),
         package_dir=config.get("package_dir", "."),
         single_file=single_file,
-        filename=config.get("filename", "NEWS.rst"),
+        filename=filename,
         directory=config.get("directory"),
         version=config.get("version"),
         name=config.get("name"),
@@ -178,7 +184,8 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
         start_string=config.get("start_string", _start_string),
         title_format=config.get("title_format", _title_format),
         issue_format=config.get("issue_format"),
-        underlines=config.get("underlines", _underlines),
+        underlines=config.get("underlines", _md_underlines if is_md else _underlines),
+        title_prefixes=config.get("title_prefixes", _md_prefixes if is_md else _prefixes),
         wrap=wrap,
         all_bullets=all_bullets,
         orphan_prefix=config.get("orphan_prefix", "+"),

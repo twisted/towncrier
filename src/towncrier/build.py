@@ -193,6 +193,7 @@ def __main(
         top_underline=config.underlines[0],
         all_bullets=config.all_bullets,
         render_title=render_title_with_fragments,
+        title_prefixes=config.title_prefixes,
     )
 
     if render_title_separately:
