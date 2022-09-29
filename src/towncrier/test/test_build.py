@@ -1178,31 +1178,51 @@ Deprecations and Removals
         """
         When a filename ending with `.md` is configured, the configuration defaults for
         underlines and title_prefixes change to be markdown compatible.
+
+        Test against both draft and build mode.
         """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
-            setup_simple_project(extra_config='filename = "CHANGELOG.md"')
+            setup_simple_project(extra_config='filename = "CHANGES.md"')
             Path("foo/newsfragments/123.feature").write_text("Adds levitation")
-            result = runner.invoke(_main, ["--date=01-01-2001", "--draft"])
 
-        self.assertEqual(0, result.exit_code, result.output)
-        self.assertEqual(
-            result.output,
-            dedent(
+            draft_result = runner.invoke(_main, ["--date=01-01-2001", "--draft"])
+            self.assertEqual(0, draft_result.exit_code, draft_result.output)
+            self.assertEqual(
+                draft_result.output,
+                dedent(
+                    """
+                Loading template...
+                Finding news fragments...
+                Rendering news fragments...
+                Draft only -- nothing has been written.
+                What is seen below is what would be written.
+
+                # Foo 1.2.3 (01-01-2001)
+
+                ### Features
+
+                - Adds levitation (#123)
+
                 """
-            Loading template...
-            Finding news fragments...
-            Rendering news fragments...
-            Draft only -- nothing has been written.
-            What is seen below is what would be written.
+                ).lstrip(),
+            )
 
-            # Foo 1.2.3 (01-01-2001)
+            result = runner.invoke(_main, ["--date=01-01-2001"])
+            changes_text = Path("CHANGES.md").read_text()
 
-            ### Features
+            self.assertEqual(0, result.exit_code, result.output)
 
-            - Adds levitation (#123)
+            self.assertEqual(
+                changes_text,
+                dedent(
+                    """
+                # Foo 1.2.3 (01-01-2001)
 
-            """
-            ).lstrip(),
-        )
+                ### Features
+
+                - Adds levitation (#123)
+                """
+                ).lstrip(),
+            )            
