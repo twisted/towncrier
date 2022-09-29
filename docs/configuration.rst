@@ -31,6 +31,10 @@ Top level keys
   ``["=", "-", "~"]`` by default (unless ``filename`` has an ``.md`` extension, in which case it's ``["", "", ""]``).
 - ``title_prefix`` -- Strings to prefix to the title, sections, and categories.
   ``["", "", ""]`` by default (unless ``filename`` has an ``.md`` extension, in which case it is ``["# ", "## ", "### "]``).
+- ``bullet`` -- The bullet string to use before issues.
+  ``"- "`` by default (unless ``filename`` has an ``.md`` extension, in which case it is ``"  - "``).
+- ``issues_spacing`` -- Add an empty newline between issues when rendering.
+  ``False`` by default (unless ``filename`` has an ``.md`` extension, in which case it is ``True``).
 
 
 Custom fragment types

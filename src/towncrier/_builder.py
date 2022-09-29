@@ -163,7 +163,7 @@ def indent(text: str, prefix: str) -> str:
 def split_fragments(
     fragments: Mapping[str, Mapping[tuple[str, str, int], str]],
     definitions: Mapping[str, Mapping[str, Any]],
-    all_bullets: bool = True,
+    bullet_indent: int | None = 2,
 ) -> Mapping[str, Mapping[str, Mapping[str, Sequence[str]]]]:
 
     output = OrderedDict()
@@ -173,11 +173,11 @@ def split_fragments(
 
         for (ticket, category, counter), content in section_fragments.items():
 
-            if all_bullets:
-                # By default all fragmetns are append by "-" automatically,
+            if bullet_indent:
+                # By default all fragments are append by "- " automatically,
                 # and need to be indented because of that.
                 # (otherwise, assume they are formatted correctly)
-                content = indent(content.strip(), "  ")[2:]
+                content = indent(content.strip(), " " * bullet_indent)[bullet_indent:]
             else:
                 # Assume the text is formatted correctly
                 content = content.rstrip()
@@ -252,6 +252,8 @@ def render_fragments(
     all_bullets: bool = False,
     render_title: bool = True,
     title_prefixes: Sequence[str] = ["", "", ""],
+    bullet: str = "- ",
+    issues_spaced: bool=False,
 ) -> str:
     """
     Render the fragments into a news file.
@@ -319,6 +321,8 @@ def render_fragments(
         title_prefix=title_prefixes[0],
         section_prefix=title_prefixes[1],
         category_prefix=title_prefixes[2],
+        bullet=bullet,
+        issues_spaced=issues_spaced,
     )
 
     for line in res.split("\n"):

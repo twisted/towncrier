@@ -57,7 +57,7 @@ class FormatterTests(TestCase):
         Basic functionality -- getting a bunch of news fragments and formatting
         them into a rST file -- works.
         """
-        fragments = OrderedDict(
+        raw_fragments = OrderedDict(
             [
                 (
                     "",
@@ -72,7 +72,7 @@ class FormatterTests(TestCase):
                         ("2", "feature", 0): "Foo added.",
                         ("72", "feature", 0): "Foo added.",
                         ("9", "feature", 0): "Foo added.",
-                        ("baz", "feature", 0): "Fun!",
+                        ("baz", "feature", 0): "Fun!\nLines.",
                     },
                 ),
                 ("Names", {}),
@@ -94,7 +94,8 @@ class FormatterTests(TestCase):
 Features
 --------
 
-- Fun! (baz)
+- Fun!
+  Lines. (baz)
 - Foo added. (#2, #9, #72)
 - Stuff! (#4)
 
@@ -123,14 +124,17 @@ Bugfixes
 
 ### Features
 
-- Fun! (baz)
-- Foo added. (#2, #9, #72)
-- Stuff! (#4)
+  - Fun!
+    Lines. (baz)
+
+  - Foo added. (#2, #9, #72)
+
+  - Stuff! (#4)
 
 
 ### Misc
 
-- bar, #1, #9, #142
+  - bar, #1, #9, #142
 
 
 ## Names
@@ -142,14 +146,14 @@ No significant changes.
 
 ### Bugfixes
 
-- Web fixed. (#3)
+  - Web fixed. (#3)
 """
 
         template = pkg_resources.resource_string(
             "towncrier", "templates/default.rst"
         ).decode("utf8")
 
-        fragments = split_fragments(fragments, definitions)
+        fragments = split_fragments(raw_fragments, definitions)
         render_kwargs = dict(
             template=template,
             issue_format=None,
@@ -165,8 +169,11 @@ No significant changes.
         render_kwargs["top_underline"] = ""
         render_kwargs["underlines"] = ["", ""]
         render_kwargs["title_prefixes"] = ["# ", "## ", "### "]
+        render_kwargs["bullet"] = "  - "
+        render_kwargs["issues_spaced"] = True
+
+        render_kwargs["fragments"] = split_fragments(raw_fragments, definitions, bullet_indent=4)
         output = render_fragments(**render_kwargs)
-        print(output)
         self.assertEqual(output, expected_md_output)
 
         # Check again with non-default underlines
@@ -176,7 +183,8 @@ No significant changes.
 Features
 ********
 
-- Fun! (baz)
+- Fun!
+  Lines. (baz)
 - Foo added. (#2, #9, #72)
 - Stuff! (#4)
 

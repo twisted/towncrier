@@ -28,12 +28,15 @@
 
 {% if definitions[category]['showcontent'] %}
 {% for text, values in sections[section][category].items() %}
-- {{ text }}{% if values %} ({{ values|join(', ') }}){% endif %}
+{{ bullet }}{{ text }}{% if values %} ({{ values|join(', ') }}){% endif %}
 
+{% if issues_spaced and not loop.last %}
+
+{% endif %}
 {% endfor %}
 
 {% else %}
-- {{ sections[section][category]['']|join(', ') }}
+{{ bullet }}{{ sections[section][category]['']|join(', ') }}
 
 {% endif %}
 {% if not sections[section][category] %}

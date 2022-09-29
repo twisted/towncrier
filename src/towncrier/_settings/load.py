@@ -49,6 +49,8 @@ class Config:
     wrap: bool
     all_bullets: bool
     orphan_prefix: str
+    bullet: str
+    issues_spaced: bool
 
 
 class ConfigError(Exception):
@@ -64,6 +66,18 @@ _underlines = ["=", "-", "~"]
 _md_underlines = ["", "", ""]
 _prefixes = ["", "", ""]
 _md_prefixes = ["# ", "## ", "### "]
+_bullet = "- "
+_md_bullet = "  - "
+
+
+# The default options differ when using a filename that has an extension of ``.md``:
+
+# Firstly, no underlines are used, but instead markdown h1, h2 and h3 prefixes are used
+# for the title, categories, and sections respectively.
+
+# Secondly, Python's standard markdown implementation needs indentation and an empty
+# line between bullets to render multi-line bullets correctly, so the bullet
+# representation is ``"  - "`` and the ``issues_spaced`` defaults to True.
 
 
 def load_config_from_options(
@@ -189,6 +203,8 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
             "title_prefixes", _md_prefixes if is_md else _prefixes
         ),
         wrap=wrap,
+        bullet=_md_bullet if is_md else _bullet,
+        issues_spaced=is_md,
         all_bullets=all_bullets,
         orphan_prefix=config.get("orphan_prefix", "+"),
     )

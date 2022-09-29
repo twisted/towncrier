@@ -138,7 +138,9 @@ def __main(
 
     click.echo("Rendering news fragments...", err=to_err)
     fragments = split_fragments(
-        fragment_contents, config.types, all_bullets=config.all_bullets
+        fragment_contents,
+        config.types,
+        bullet_indent=config.all_bullets and len(config.bullet),
     )
 
     if project_version is None:
@@ -194,6 +196,8 @@ def __main(
         all_bullets=config.all_bullets,
         render_title=render_title_with_fragments,
         title_prefixes=config.title_prefixes,
+        bullet=config.bullet,
+        issues_spaced=config.issues_spaced,
     )
 
     if render_title_separately:
