@@ -158,7 +158,7 @@ No significant changes.
             underlines=["-", "~"],
             wrap=True,
             versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
-            title_prefixes = ["", "", ""]
+            title_prefixes=["", "", ""],
         )
         output = render_fragments(**render_kwargs)
         self.assertEqual(output, expected_output)

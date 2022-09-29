@@ -185,7 +185,9 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
         title_format=config.get("title_format", _title_format),
         issue_format=config.get("issue_format"),
         underlines=config.get("underlines", _md_underlines if is_md else _underlines),
-        title_prefixes=config.get("title_prefixes", _md_prefixes if is_md else _prefixes),
+        title_prefixes=config.get(
+            "title_prefixes", _md_prefixes if is_md else _prefixes
+        ),
         wrap=wrap,
         all_bullets=all_bullets,
         orphan_prefix=config.get("orphan_prefix", "+"),

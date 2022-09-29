@@ -1225,4 +1225,4 @@ Deprecations and Removals
                 - Adds levitation (#123)
                 """
                 ).lstrip(),
-            )            
+            )

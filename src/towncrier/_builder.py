@@ -316,9 +316,9 @@ def render_fragments(
         versiondata=versiondata,
         top_underline=top_underline,
         get_indent=get_indent,  # simplify indentation in the jinja template.
-        title_prefix = title_prefixes[0],
-        section_prefix = title_prefixes[1],
-        category_prefix = title_prefixes[2],
+        title_prefix=title_prefixes[0],
+        section_prefix=title_prefixes[1],
+        category_prefix=title_prefixes[2],
     )
 
     for line in res.split("\n"):
