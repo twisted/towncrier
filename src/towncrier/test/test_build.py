@@ -1187,7 +1187,7 @@ Deprecations and Removals
             setup_simple_project(extra_config='filename = "CHANGES.md"')
             Path("foo/newsfragments/123.feature").write_text("Adds levitation")
             Path("foo/newsfragments/456.feature").write_text(
-                "Revert levitation change\r\nIt was a bad idea..."
+                "Revert levitation change\nIt was a bad idea...", newline=""
             )
 
             draft_result = runner.invoke(_main, ["--date=01-01-2001", "--draft"])
