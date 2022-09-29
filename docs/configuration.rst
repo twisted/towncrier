@@ -17,11 +17,14 @@ Top level keys
 ~~~~~~~~~~~~~~
 
 - ``directory`` -- If you are not storing your news fragments in your Python package, or aren't using Python, this is the path to where your newsfragments will be put.
-- ``newsfile`` -- The filename of your news file. ``NEWS.rst`` by default.
-- ``package`` -- The package name of your project. (Python projects only)
-- ``package_dir`` -- The folder your package lives. ``./`` by default, some projects might need to use ``src``. (Python projects only)
+- ``filename`` -- The filename of your news file.
+  ``NEWS.rst`` by default.
+- ``package`` -- The package name of your project.
+  (Python projects only)
+- ``package_dir`` -- The folder your package lives. ``./`` by default, some projects might need to use ``src``.
+  (Python projects only)
 - ``template`` -- Path to an alternate template for generating the news file, if you have one.
-- ``start_line`` -- The magic string that ``towncrier`` looks for when considering where the release notes should start.
+- ``start_string`` -- The magic string that ``towncrier`` looks for when considering where the release notes should start.
   ``.. towncrier release notes start`` by default.
 - ``title_format`` -- A format string for the title of your project.
   ``{name} {version} ({project_date})`` by default.

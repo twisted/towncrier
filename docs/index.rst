@@ -12,6 +12,7 @@ Narrative
    :maxdepth: 1
 
    tutorial
+   markdown
 
 
 Reference
