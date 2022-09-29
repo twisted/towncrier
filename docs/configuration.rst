@@ -30,7 +30,7 @@ Top level keys
 - ``underlines`` -- The characters used for underlining headers.
   ``["=", "-", "~"]`` by default (unless ``filename`` has an ``.md`` extension, in which case it's ``["", "", ""]``).
 - ``title_prefix`` -- Strings to prefix to the title, sections, and categories.
-  ``["", "", ""]`` by default (unless ``filename`` has an ``.md`` extension, in which case it is ``["# ", "## ", "### "]``). 
+  ``["", "", ""]`` by default (unless ``filename`` has an ``.md`` extension, in which case it is ``["# ", "## ", "### "]``).
 
 
 Custom fragment types
