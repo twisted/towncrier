@@ -253,7 +253,7 @@ def render_fragments(
     render_title: bool = True,
     title_prefixes: Sequence[str] = ["", "", ""],
     bullet: str = "- ",
-    issues_spaced: bool=False,
+    issues_spaced: bool = False,
 ) -> str:
     """
     Render the fragments into a news file.

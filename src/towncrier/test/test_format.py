@@ -172,7 +172,9 @@ No significant changes.
         render_kwargs["bullet"] = "  - "
         render_kwargs["issues_spaced"] = True
 
-        render_kwargs["fragments"] = split_fragments(raw_fragments, definitions, bullet_indent=4)
+        render_kwargs["fragments"] = split_fragments(
+            raw_fragments, definitions, bullet_indent=4
+        )
         output = render_fragments(**render_kwargs)
         self.assertEqual(output, expected_md_output)
 

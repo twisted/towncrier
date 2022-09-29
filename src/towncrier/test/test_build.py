@@ -1186,7 +1186,9 @@ Deprecations and Removals
         with runner.isolated_filesystem():
             setup_simple_project(extra_config='filename = "CHANGES.md"')
             Path("foo/newsfragments/123.feature").write_text("Adds levitation")
-            Path("foo/newsfragments/456.feature").write_text("Revert levitation change\nIt was a bad idea...")
+            Path("foo/newsfragments/456.feature").write_text(
+                "Revert levitation change\nIt was a bad idea..."
+            )
 
             draft_result = runner.invoke(_main, ["--date=01-01-2001", "--draft"])
             self.assertEqual(0, draft_result.exit_code, draft_result.output)
