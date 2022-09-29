@@ -1,7 +1,7 @@
 Tutorial
 ========
 
-This tutorial assumes you have a Python project with a *reStructuredText* (rst) news file (also known as changelog) file that you wish to use ``towncrier`` on, to generate its news file.
+This tutorial assumes you have a Python project with a *reStructuredText* (rst) or *markdown* (md) news file (also known as changelog) file that you wish to use ``towncrier`` on, to generate its news file.
 It will cover setting up your project with a basic configuration, which you can then feel free to `customize <customization/index.html>`_.
 
 Install from PyPI::
@@ -143,6 +143,9 @@ You should get an output similar to this::
    ----
 
    - #1, #2
+
+
+Note: if you configure a markdown file (for example, ``filename = "CHANGES.md"`` in your configuration file), the titles will be output in markdown format instead.
 
 
 Producing News Files In Production

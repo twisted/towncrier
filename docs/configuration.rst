@@ -28,7 +28,9 @@ Top level keys
 - ``issue_format`` -- A format string for rendering the issue/ticket number in newsfiles.
   ``#{issue}`` by default.
 - ``underlines`` -- The characters used for underlining headers.
-  ``["=", "-", "~"]`` by default.
+  ``["=", "-", "~"]`` by default (unless ``filename`` has an ``.md`` extension, in which case it's ``["", "", ""]``).
+- ``title_prefix`` -- Strings to prefix to the title, sections, and categories.
+  ``["", "", ""] by default (unless ``filename`` has an ``.md`` extension, in which case it is ``["# ", "## ", "### "]``). 
 
 
 Custom fragment types
