@@ -105,10 +105,11 @@ jobs:
         name: coverage-${{ github.run_id }}
         # Is important to keep the unique names for the coverage files
         # so that when uploaded to the same artifact, they don't overlap.
-        path: .coverage.*
+        path: .coverage*
 
     - name: Codecov
       run: |
+        ls -al .coverage*
         coverage combine
         codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}"
 
@@ -149,8 +150,21 @@ jobs:
 
     - run: nox --python ${{ matrix.python.action }} -e ${{ matrix.task.nox }} -- --use-wheel dist/*.whl
 
+    - name: Store coverage file
+      uses: actions/upload-artifact@v3
+      with:
+        # We have a single artifact shared for each workflow run.
+        # in this way we should intefere with coverage reports from other PRs
+        # or previous runs for the same PR.
+        name: coverage-${{ github.run_id }}
+        # Is important to keep the unique names for the coverage files
+        # so that when uploaded to the same artifact, they don't overlap.
+        path: .coverage*
+
     - name: Codecov
       run: |
+        ls -al .coverage*
+        coverage combine
         codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}"
 
   check:
@@ -253,6 +267,8 @@ jobs:
       - test-windows
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
     - name: Install dependencies
       run: python -m pip install --upgrade pip coverage[toml] diff_cover
@@ -267,7 +283,7 @@ jobs:
       run: coverage combine
 
     - name: Report coverage
-      run: coverage report
+      run: coverage report --no-skip-covered --show-missing
 
     - name: Diff coverage
       run: |
