@@ -283,13 +283,28 @@ jobs:
       run: coverage combine
 
     - name: Report coverage
-      run: coverage report --no-skip-covered --show-missing
+      id: coverage-report
+      run: |
+          coverage report --no-skip-covered --show-missing
+          echo "coverage-report=$(coverage report --show-missing)" >> $GITHUB_OUTPUT
+
+    # Use the generic JS script to call our custom script
+    # for sending a comment to a PR.
+    - uses: actions/github-script@v3
+      env:
+        COMMENT_MARKER: coverage-report
+        COMMENT_BODY: ${{ needs.coverage-report.outputs.report }}
+      with:
+        script: |
+          const script = require(`${process.env.GITHUB_WORKSPACE}/.github/scripts/pr_comment.js`)
+          // Only pass top level objects as GHA does dependecy injection.
+          await script({github, context, process})
 
     - name: Diff coverage
       run: |
         git fetch
         coverage xml
-        diff-cover --fail-under=100 --compare-branch origin/trunk  coverage.xml
+        diff-cover --fail-under=100 --compare-branch origin/trunk coverage.xml
 
 
   # This is a meta-job to simplify PR CI enforcement configuration in GitHub.
