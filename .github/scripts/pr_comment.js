@@ -24,12 +24,23 @@ module.exports = async ({octokit_rest, context, process}) => {
     */
     var doAction = async function() {
 
+        fs = require('fs');
+        var body = fs.readFile(
+            process.env.GITHUB_WORKSPACE + "/" + process.env.COMMENT_BODY)
+
+        var comments = await octokit.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.event.number,
+          })
+        console.log(comments)
+
         await octokit_rest.issues.createComment({
             owner: context.repo.owner,
             repo: context.repo.repo,
             issue_number: context.event.number,
-            body: process.env.COMMENT_BODY,
-          });
+            body: body,
+          })
 
     }
 
