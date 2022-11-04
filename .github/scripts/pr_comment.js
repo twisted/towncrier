@@ -7,7 +7,8 @@ Update the content of the existing comment.
 
 https://octokit.github.io/rest.js/v19
 */
-module.exports = async ({octokit_rest, context, process}) => {
+module.exports = async ({github, context, process}) => {
+    var octokit_rest = github
     if (context.eventName != "pull_request") {
         // Only PR are supported.
         return
@@ -24,23 +25,49 @@ module.exports = async ({octokit_rest, context, process}) => {
     */
     var doAction = async function() {
 
-        fs = require('fs');
-        var body = fs.readFile(
-            process.env.GITHUB_WORKSPACE + "/" + process.env.COMMENT_BODY)
+        console.log(context)
 
-        var comments = await octokit.rest.issues.listComments({
+        fs = require('fs');
+
+        const body = fs.readFileSync(
+            process.env.GITHUB_WORKSPACE + "/" + process.env.COMMENT_BODY, 'utf8');
+        var comment_id = null
+        var comment_marker = '\n' + process.env.COMMENT_MARKER
+        var comment_body = body + comment_marker
+
+        var comments = await octokit_rest.issues.listComments({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            issue_number: context.event.number,
+            issue_number: context.payload.number,
           })
+
         console.log(comments)
 
+        comments.data.forEach(comment => {
+            if (comment.body.endsWith(comment_marker)) {
+                comment_id = comment.id
+            }
+        })
+
+        if (comment_id) {
+            // We have an existing comment.
+            // update the content.
+            await octokit_rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment_id,
+                body: comment_body,
+            })
+            return
+        }
+
+        // Create a new comment.
         await octokit_rest.issues.createComment({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            issue_number: context.event.number,
-            body: body,
-          })
+            issue_number: context.payload.number,
+            body: comment_body,
+        })
 
     }
 

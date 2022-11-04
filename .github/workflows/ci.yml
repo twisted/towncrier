@@ -291,7 +291,7 @@ jobs:
     # for sending a comment to a PR.
     - uses: actions/github-script@v3
       env:
-        COMMENT_MARKER: coverage-report
+        COMMENT_MARKER: "<!--- automatic-coverage-report -->"
         COMMENT_BODY: coverage-report.txt
       with:
         script: |
