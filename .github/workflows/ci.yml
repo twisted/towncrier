@@ -287,8 +287,9 @@ jobs:
 
     - name: Diff coverage
       run: |
+        git fetch
         coverage xml
-        diff-cover --fail-under=100 coverage.xml
+        diff-cover --fail-under=100 --compare-branch origin/trunk  coverage.xml
 
 
   # This is a meta-job to simplify PR CI enforcement configuration in GitHub.
