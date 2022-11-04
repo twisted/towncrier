@@ -309,6 +309,7 @@ jobs:
       - test-windows
       - check
       - pypi-publish
+      - coverage-report
     steps:
       - name: Require all successes
         uses: re-actors/alls-green@3a2de129f0713010a71314c74e33c0e3ef90e696
