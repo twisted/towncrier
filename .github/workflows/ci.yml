@@ -99,9 +99,6 @@ jobs:
     - name: Store coverage file
       uses: actions/upload-artifact@v3
       with:
-        # We have a single artifact shared for each workflow run.
-        # in this way we should not interfere with coverage reports from other PRs
-        # or previous runs for the same PR.
         name: coverage
         # It is important to keep the unique names for the coverage files
         # so that when uploaded to the same artifact, they don't overlap.
@@ -153,9 +150,6 @@ jobs:
     - name: Store coverage file
       uses: actions/upload-artifact@v3
       with:
-        # We have a single artifact shared for each workflow run.
-        # in this way we should not interfere with coverage reports from other PRs
-        # or previous runs for the same PR.
         name: coverage
         # It is important to keep the unique names for the coverage files
         # so that when uploaded to the same artifact, they don't overlap.
