@@ -286,8 +286,13 @@ jobs:
 
     - name: Report coverage
       run: |
+          coverage xml
           coverage report --no-skip-covered --show-missing
-          coverage report --show-missing > coverage-report.txt
+          # Wrap in
+          echo '```' > coverage-report.txt
+          coverage report --show-missing >> coverage-report.txt
+          diff-cover --compare-branch origin/trunk coverage.xml  >> coverage-report.txt
+          echo '```' >> coverage-report.txt
 
     # Use the generic JS script to call our custom script
     # for sending a comment to a PR.
@@ -301,10 +306,9 @@ jobs:
           // Only pass top level objects as GHA does dependecy injection.
           await script({github, context, process})
 
-    - name: Diff coverage
+    - name: Enforce diff coverage
       run: |
-        coverage xml
-        diff-cover --fail-under=100 --compare-branch origin/trunk coverage.xml
+          diff-cover --fail-under=100 --compare-branch origin/trunk coverage.xml
 
 
   # This is a meta-job to simplify PR CI enforcement configuration in GitHub.
