@@ -296,7 +296,8 @@ jobs:
 
     # Use the generic JS script to call our custom script
     # for sending a comment to a PR.
-    - uses: actions/github-script@v3
+    - name: Send coverage comment to PR
+      uses: actions/github-script@v3
       env:
         COMMENT_MARKER: "<!--- automatic-coverage-report -->"
         COMMENT_BODY: coverage-report.txt
