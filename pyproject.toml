@@ -107,5 +107,4 @@ exclude_lines = [
 ]
 omit = [
     "src/towncrier/__main__.py",
-    "src/towncrier/test/*",
 ]
