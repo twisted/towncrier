@@ -102,7 +102,7 @@ jobs:
         # We have a single artifact shared for each workflow run.
         # in this way we should not interfere with coverage reports from other PRs
         # or previous runs for the same PR.
-        name: coverage-${{ github.run_id }}
+        name: coverage
         # It is important to keep the unique names for the coverage files
         # so that when uploaded to the same artifact, they don't overlap.
         path: .coverage*
@@ -156,7 +156,7 @@ jobs:
         # We have a single artifact shared for each workflow run.
         # in this way we should not interfere with coverage reports from other PRs
         # or previous runs for the same PR.
-        name: coverage-${{ github.run_id }}
+        name: coverage
         # It is important to keep the unique names for the coverage files
         # so that when uploaded to the same artifact, they don't overlap.
         path: .coverage*
@@ -278,7 +278,7 @@ jobs:
     - name: Download coverage reports
       uses: actions/download-artifact@v3
       with:
-        name: coverage-${{ github.run_id }}
+        name: coverage
         path: .
 
     - name: Combine coverage
