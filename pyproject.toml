@@ -94,6 +94,7 @@ source = ["towncrier"]
 source = [
     "src",
     "*.nox/*/site-packages",
+    # required until coverage 6.6.0 is used: https://github.com/nedbat/coveragepy/issues/991
     "*.nox\\*\\*\\site-packages"
 ]
 
