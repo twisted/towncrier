@@ -33,7 +33,7 @@ module.exports = async ({github, context, process}) => {
             process.env.GITHUB_WORKSPACE + "/" + process.env.COMMENT_BODY, 'utf8');
         var comment_id = null
         var comment_marker = '\n' + process.env.COMMENT_MARKER
-        var comment_body =  body + comment_marker
+        var comment_body = body + comment_marker
 
         var comments = await octokit_rest.issues.listComments({
             owner: context.repo.owner,
