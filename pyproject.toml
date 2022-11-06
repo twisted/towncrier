@@ -91,7 +91,12 @@ branch = true
 source = ["towncrier"]
 
 [tool.coverage.paths]
-source = ["src", ".nox/*/site-packages"]
+source = [
+    "src",
+    "*.nox/*/site-packages",
+    # required until coverage 6.6.0 is used: https://github.com/nedbat/coveragepy/issues/991
+    "*.nox\\*\\*\\site-packages"
+]
 
 [tool.coverage.report]
 show_missing = true
@@ -102,5 +107,4 @@ exclude_lines = [
 ]
 omit = [
     "src/towncrier/__main__.py",
-    "src/towncrier/test/*",
 ]
