@@ -262,6 +262,8 @@ jobs:
       # Even we send a comment to a PR, we use the issues API.
       # Issues and PR share the same comment API.
       issues: write
+      # This is for sending inline review comments.
+      pull-requests: write
     needs:
       # We are waiting only for test jobs.
       - test-linux
@@ -293,7 +295,7 @@ jobs:
           echo '```' > coverage-report.txt
           coverage report --show-missing >> coverage-report.txt
           echo '```' >> coverage-report.txt
-          diff-cover --markdown-report diff-cover.md  --compare-branch origin/trunk coverage.xml
+          diff-cover --markdown-report diff-cover.md --json-report diff-cover.json --compare-branch origin/trunk coverage.xml
           cat diff-cover.md >> coverage-report.txt
 
     # Use the generic JS script to call our custom script
@@ -303,11 +305,13 @@ jobs:
       env:
         COMMENT_MARKER: "<!--- automatic-coverage-report -->"
         COMMENT_BODY: coverage-report.txt
+        REPORT_JSON: diff-cover.json
       with:
         script: |
           const script = require(`${process.env.GITHUB_WORKSPACE}/.github/scripts/pr_comment.js`)
           // Only pass top level objects as GHA does dependecy injection.
-          await script({github, context, process})
+          const retry_delay = 5
+          await script({github, context, process, retry_delay})
 
     - name: Enforce diff coverage
       run: |
