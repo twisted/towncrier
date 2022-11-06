@@ -41,13 +41,30 @@ var github = {
     },
     pulls: {
         listReviews: (options) => {
-            console.log('Listing existing revies...')
+            console.log('Listing existing reviews...')
             console.log(options)
             return {data: [
                 {'id': 120, 'body': 'some-other-pr-review'},
                 // Comment the line below to trigger creating a new comment.
                 {'id': 156, 'body': 'review marker\n<!--- comment-marker -->'},
             ]}
+        },
+        listReviewComments: (options) => {
+            console.log('Listing existing review comments...')
+            console.log(options)
+            return {data: [
+                {'id': 120, 'body': 'some-other-pr-review'},
+                // Comment the line below to trigger creating a new comment.
+                {'id': 156, 'body': 'review marker\n<!--- comment-marker -->'},
+            ]}
+        },
+        createReviewComment: (options) => {
+            console.log('Creating new review comment...')
+            console.log(options)
+        },
+        deleteReviewComment: (options) => {
+            console.log('Deleting review comment...')
+            console.log(options)
         },
         createReview: (options) => {
             console.log('Creating new review...')

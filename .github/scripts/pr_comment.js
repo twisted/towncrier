@@ -69,50 +69,49 @@ module.exports = async ({github, context, process, retry_delay}) => {
     */
     var doDiffComments = async (report) => {
 
-        var review_id = null
-        const existing_reviews = await octokit.rest.pulls.listReviews({
+        // Start by deleting any previous comments.
+        const existing_comments = await octokit.rest.pulls.listReviewComments({
             owner: context.repo.owner,
             repo: context.repo.repo,
             pull_number: context.payload.number,
-        })
-        existing_reviews.data.forEach((review) => {
-            if (review.body.endsWith(comment_marker)) {
-                review_id = review.id
+        });
+        existing_comments.data.forEach(async (comment) => {
+            if (! comment.body.endsWith(comment_marker)) {
+                // Not our comment.
+                return
             }
+            await octokit.rest.pulls.deleteReviewComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+              })
         })
-
-        if (review_id) {
-            // We have an existing review.
-            // Delete it as we will replace it with a new one.
-
-        }
 
         // Prepare inline comments.
         var comments = []
         Object.keys(report.src_stats).forEach((path) => {
-            report.src_stats[path].violation_lines.forEach((position) => {
+            report.src_stats[path].violation_lines.forEach((line) => {
                 comments.push({
                     path,
-                    position,
-                    body: 'Missing coverage.'
+                    line,
                 })
             })
           })
 
-        if (!comments) {
-            // Coverage is complete. Nothing to comment about.
-            return
-        }
-
-        await octokit.rest.pulls.createReview({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            commit_id: context.payload.after,
-            pull_number: context.payload.number,
-            event: "COMMENT",
-            body: "Missing coverage report." + comment_marker,
-            comments
+        comments.forEach(async (comment) => {
+            await octokit.rest.pulls.createReviewComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_id: context.payload.after,
+                pull_number: context.payload.number,
+                body: 'Missing coverage.' + comment_marker,
+                path: comment.path,
+                line: comment.line,
+              })
+            // Wait 1 second to avoid the mitigate the limit.
+            await sleep(1)
         })
+
     }
 
     /*
