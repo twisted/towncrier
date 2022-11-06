@@ -119,6 +119,12 @@ def __main(
 
     click.echo("Finding news fragments...", err=to_err)
 
+    if directory == "sdfafsdfasd":
+        bla = "some line not covered"
+        # a comment
+        bla = "some line not covered"
+        bla = "some line not covered"
+
     if config.directory is not None:
         fragment_base_directory = os.path.abspath(config.directory)
         fragment_directory = None
@@ -127,6 +133,13 @@ def __main(
             os.path.join(base_directory, config.package_dir, config.package)
         )
         fragment_directory = "newsfragments"
+
+    if directory == "sdfasdf":
+        bla = "some line not covered"
+        # a comment
+        bla = "some line not covered"
+        bla = "some line not covered"
+        fragment_directory = bla
 
     fragment_contents, fragment_filenames = find_fragments(
         fragment_base_directory,
