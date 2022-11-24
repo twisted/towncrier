@@ -15,6 +15,8 @@ from datetime import date
 
 import click
 
+from click import Context, Option
+
 from ._builder import find_fragments, render_fragments, split_fragments
 from ._git import remove_files, stage_newsfile
 from ._project import get_project_name, get_version
@@ -24,6 +26,18 @@ from ._writer import append_to_newsfile
 
 def _get_date() -> str:
     return date.today().isoformat()
+
+
+def validate_answer(ctx: Context, param: Option, value: bool) -> bool:
+    value_check = (
+        ctx.params.get("answer_yes")
+        if param.name == "answer_keep"
+        else ctx.params.get("answer_keep")
+    )
+    if value_check and value:
+        click.echo("You can not choose both --yes and --no at the same time")
+        ctx.abort()
+    return value
 
 
 @click.command(name="build")
@@ -67,9 +81,18 @@ def _get_date() -> str:
 @click.option(
     "--yes",
     "answer_yes",
-    default=False,
+    default=None,
     flag_value=True,
     help="Do not ask for confirmation to remove news fragments.",
+    callback=validate_answer,
+)
+@click.option(
+    "--keep",
+    "answer_keep",
+    default=None,
+    flag_value=True,
+    help="Keep the newsfragments.",
+    callback=validate_answer,
 )
 def _main(
     draft: bool,
@@ -79,6 +102,7 @@ def _main(
     project_version: str | None,
     project_date: str | None,
     answer_yes: bool,
+    answer_keep: bool,
 ) -> None:
     """
     Build a combined news file from news fragment.
@@ -92,6 +116,7 @@ def _main(
             project_version,
             project_date,
             answer_yes,
+            answer_keep,
         )
     except ConfigError as e:
         print(e, file=sys.stderr)
@@ -106,6 +131,7 @@ def __main(
     project_version: str | None,
     project_date: str | None,
     answer_yes: bool,
+    answer_keep: bool,
 ) -> None:
     """
     The main entry point.
@@ -237,7 +263,7 @@ def __main(
         stage_newsfile(base_directory, news_file)
 
         click.echo("Removing news fragments...", err=to_err)
-        remove_files(fragment_filenames, answer_yes)
+        remove_files(fragment_filenames, answer_yes, answer_keep)
 
         click.echo("Done!", err=to_err)
 
