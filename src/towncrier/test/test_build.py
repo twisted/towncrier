@@ -408,6 +408,11 @@ class TestCli(TestCase):
             self.assertFalse(os.path.isfile(fragment_path2))
 
     def test_keep_fragments(self):
+        """
+        The `--keep` option will build the full final news file
+        without deleting the fragment files and without
+        any extra CLI interaction or confirmation.
+        """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
@@ -428,12 +433,17 @@ class TestCli(TestCase):
             result = runner.invoke(_main, ["--date", "01-01-2001", "--keep"])
 
             self.assertEqual(0, result.exit_code)
-            path = "NEWS.rst"
-            self.assertTrue(os.path.isfile(path))
+            # The NEWS file is created.
+            # So this is not just `--draft`.
+            self.assertTrue(os.path.isfile("NEWS.rst"))
             self.assertTrue(os.path.isfile(fragment_path1))
             self.assertTrue(os.path.isfile(fragment_path2))
 
     def test_yes_keep_error(self):
+        """
+        It will fail to perform any action when the
+        conflicting --keep and --yes options are provided.
+        """
         runner = CliRunner()
 
         with runner.isolated_filesystem():

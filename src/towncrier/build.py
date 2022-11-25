@@ -28,7 +28,7 @@ def _get_date() -> str:
     return date.today().isoformat()
 
 
-def validate_answer(ctx: Context, param: Option, value: bool) -> bool:
+def _validate_answer(ctx: Context, param: Option, value: bool) -> bool:
     value_check = (
         ctx.params.get("answer_yes")
         if param.name == "answer_keep"

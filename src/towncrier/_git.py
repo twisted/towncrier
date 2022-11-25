@@ -26,7 +26,8 @@ def remove_files(
     for filename in fragment_filenames:
         click.echo(filename)
 
-    if answer_keep and not answer_yes:
+    if answer_keep:
+        # Not proceeding with the removal of the files.
         return
 
     if answer_yes or click.confirm("Is it okay if I remove those files?", default=True):
