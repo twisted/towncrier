@@ -443,6 +443,10 @@ class TestCli(TestCase):
         """
         It will fail to perform any action when the
         conflicting --keep and --yes options are provided.
+
+        Called twice with the different order of --keep and --yes options
+        to make sure both orders are validated since click triggers the validator
+        in the order it parses the command line.
         """
         runner = CliRunner()
 

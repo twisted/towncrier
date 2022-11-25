@@ -35,7 +35,7 @@ def _validate_answer(ctx: Context, param: Option, value: bool) -> bool:
         else ctx.params.get("answer_keep")
     )
     if value_check and value:
-        click.echo("You can not choose both --yes and --no at the same time")
+        click.echo("You can not choose both --yes and --keep at the same time")
         ctx.abort()
     return value
 
@@ -84,15 +84,15 @@ def _validate_answer(ctx: Context, param: Option, value: bool) -> bool:
     default=None,
     flag_value=True,
     help="Do not ask for confirmation to remove news fragments.",
-    callback=validate_answer,
+    callback=_validate_answer,
 )
 @click.option(
     "--keep",
     "answer_keep",
     default=None,
     flag_value=True,
-    help="Keep the newsfragments.",
-    callback=validate_answer,
+    help="Do not ask for confirmations. But keep news fragments.",
+    callback=_validate_answer,
 )
 def _main(
     draft: bool,
