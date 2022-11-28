@@ -16,19 +16,20 @@ def remove_files(
     if not fragment_filenames:
         return
 
-    if answer_yes:
-        click.echo("Removing the following files:")
-    elif answer_keep:
-        click.echo("Keeping the following files:")
-    else:
-        click.echo("I want to remove the following files:")
+    try:
+        if answer_keep:
+            click.echo("Keeping the following files:")
+            # Not proceeding with the removal of the files.
+            return
 
-    for filename in fragment_filenames:
-        click.echo(filename)
-
-    if answer_keep:
-        # Not proceeding with the removal of the files.
-        return
+        if answer_yes:
+            click.echo("Removing the following files:")
+        else:
+            click.echo("I want to remove the following files:")
+    finally:
+        # Will always be printed, even for answer_keep to help with possible troubleshooting
+        for filename in fragment_filenames:
+            click.echo(filename)
 
     if answer_yes or click.confirm("Is it okay if I remove those files?", default=True):
         call(["git", "rm", "--quiet"] + fragment_filenames)
