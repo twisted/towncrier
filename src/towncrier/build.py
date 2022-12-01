@@ -17,8 +17,10 @@ import click
 
 from click import Context, Option
 
+from towncrier._remover import remove_news_fragment_files
+
 from ._builder import find_fragments, render_fragments, split_fragments
-from ._git import remove_files, stage_newsfile
+from ._git import stage_newsfile
 from ._project import get_project_name, get_version
 from ._settings import ConfigError, config_option_help, load_config_from_options
 from ._writer import append_to_newsfile
@@ -263,7 +265,7 @@ def __main(
         stage_newsfile(base_directory, news_file)
 
         click.echo("Removing news fragments...", err=to_err)
-        remove_files(fragment_filenames, answer_yes, answer_keep)
+        remove_news_fragment_files(fragment_filenames, answer_yes, answer_keep)
 
         click.echo("Done!", err=to_err)
 
