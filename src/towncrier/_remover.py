@@ -3,19 +3,22 @@
 
 from __future__ import annotations
 
+from typing import Callable
+
 import click
 
-from towncrier._git import remove_files
 
-
-def remove_news_fragment_files(
-    fragment_filenames: list[str], answer_yes: bool, answer_keep: bool
-) -> None:
+def should_remove_fragment_files(
+    fragment_filenames: list[str],
+    answer_yes: bool,
+    answer_keep: bool,
+    confirm_fn: Callable[[], bool],
+) -> bool:
     try:
         if answer_keep:
             click.echo("Keeping the following files:")
             # Not proceeding with the removal of the files.
-            return
+            return False
 
         if answer_yes:
             click.echo("Removing the following files:")
@@ -26,5 +29,6 @@ def remove_news_fragment_files(
         for filename in fragment_filenames:
             click.echo(filename)
 
-    if answer_yes or click.confirm("Is it okay if I remove those files?", default=True):
-        remove_files(fragment_filenames)
+    if answer_yes or confirm_fn():
+        return True
+    return False
