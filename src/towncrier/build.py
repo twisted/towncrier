@@ -12,14 +12,12 @@ import os
 import sys
 
 from datetime import date
-from functools import partial
 
 import click
 
 from click import Context, Option
 
 from towncrier import _git
-from towncrier._remover import should_remove_fragment_files
 
 from ._builder import find_fragments, render_fragments, split_fragments
 from ._project import get_project_name, get_version
@@ -270,13 +268,35 @@ def __main(
             fragment_filenames,
             answer_yes,
             answer_keep,
-            confirm_fn=partial(
-                click.confirm, "Is it okay if I remove those files?", default=True
-            ),
         ):
             _git.remove_files(fragment_filenames)
 
         click.echo("Done!", err=to_err)
+
+
+def should_remove_fragment_files(
+    fragment_filenames: list[str],
+    answer_yes: bool,
+    answer_keep: bool,
+) -> bool:
+    try:
+        if answer_keep:
+            click.echo("Keeping the following files:")
+            # Not proceeding with the removal of the files.
+            return False
+
+        if answer_yes:
+            click.echo("Removing the following files:")
+        else:
+            click.echo("I want to remove the following files:")
+    finally:
+        # Will always be printed, even for answer_keep to help with possible troubleshooting
+        for filename in fragment_filenames:
+            click.echo(filename)
+
+    if answer_yes or click.confirm("Is it okay if I remove those files?", default=True):
+        return True
+    return False
 
 
 if __name__ == "__main__":  # pragma: no cover

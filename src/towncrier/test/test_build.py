@@ -489,7 +489,7 @@ class TestCli(TestCase):
             call(["git", "add", "."])
             call(["git", "commit", "-m", "Initial Commit"])
 
-            with patch("towncrier._remover.click.confirm") as m:
+            with patch("towncrier.build.click.confirm") as m:
                 m.return_value = False
                 result = runner.invoke(_main, [])
 
