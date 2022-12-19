@@ -6,9 +6,6 @@ on:
     tags: [ "**" ]
   pull_request:
 
-permissions:
-  contents: read
-
 defaults:
   run:
     shell: bash
@@ -99,18 +96,8 @@ jobs:
 
     - run: nox --python ${{ matrix.python.action }} -e ${{ matrix.task.nox }} -- --use-wheel dist/*.whl
 
-    - name: Store coverage file
-      uses: actions/upload-artifact@v3
-      with:
-        name: coverage
-        # It is important to keep the unique names for the coverage files
-        # so that when uploaded to the same artifact, they don't overlap.
-        path: .coverage*
-
     - name: Codecov
       run: |
-        ls -al .coverage*
-        coverage combine
         codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}"
 
 
@@ -150,18 +137,8 @@ jobs:
 
     - run: nox --python ${{ matrix.python.action }} -e ${{ matrix.task.nox }} -- --use-wheel dist/*.whl
 
-    - name: Store coverage file
-      uses: actions/upload-artifact@v3
-      with:
-        name: coverage
-        # It is important to keep the unique names for the coverage files
-        # so that when uploaded to the same artifact, they don't overlap.
-        path: .coverage*
-
     - name: Codecov
       run: |
-        ls -al .coverage*
-        coverage combine
         codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}"
 
   check:
@@ -255,65 +232,6 @@ jobs:
         password: ${{ secrets.PYPI_TOKEN }}
         verbose: true
 
-  coverage-report:
-    name: Coverage report
-    runs-on: ubuntu-latest
-    permissions:
-      # Even we send a comment to a PR, we use the issues API.
-      # Issues and PR share the same comment API.
-      issues: write
-    needs:
-      # We are waiting only for test jobs.
-      - test-linux
-      - test-windows
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install --upgrade coverage[toml] diff_cover
-
-    - name: Download coverage reports
-      uses: actions/download-artifact@v3
-      with:
-        name: coverage
-        path: .
-
-    - name: Combine coverage
-      run: coverage combine
-
-    - name: Report coverage
-      run: |
-          coverage xml
-          coverage report --no-skip-covered --show-missing
-          # Wrap output in markdown verbatim text.
-          echo '```' > coverage-report.txt
-          coverage report --show-missing >> coverage-report.txt
-          echo '```' >> coverage-report.txt
-          diff-cover --markdown-report diff-cover.md  --compare-branch origin/trunk coverage.xml
-          cat diff-cover.md >> coverage-report.txt
-
-    # Use the generic JS script to call our custom script
-    # for sending a comment to a PR.
-    - name: Send coverage comment to PR
-      uses: actions/github-script@v3
-      env:
-        COMMENT_MARKER: "<!--- automatic-coverage-report -->"
-        COMMENT_BODY: coverage-report.txt
-      with:
-        script: |
-          const script = require(`${process.env.GITHUB_WORKSPACE}/.github/scripts/pr_comment.js`)
-          // Only pass top level objects as GHA does dependecy injection.
-          await script({github, context, process})
-
-    - name: Enforce diff coverage
-      run: |
-          diff-cover --fail-under=100 --compare-branch origin/trunk coverage.xml
-
-
   # This is a meta-job to simplify PR CI enforcement configuration in GitHub.
   # Inside the GitHub config UI you only configure this job as required.
   # All the extra requirements are defined "as code" as part of the `needs`
@@ -332,9 +250,8 @@ jobs:
       - test-windows
       - check
       - pypi-publish
-      - coverage-report
     steps:
       - name: Require all successes
-        uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe
+        uses: re-actors/alls-green@3a2de129f0713010a71314c74e33c0e3ef90e696
         with:
           jobs: ${{ toJSON(needs) }}

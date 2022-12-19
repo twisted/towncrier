@@ -50,6 +50,10 @@ Build the combined news file from news fragments.
    Do not ask for confirmations.
    Useful for automated tasks.
 
+.. option:: --keep
+
+   Don't delete news fragments after the build and don't ask for confirmation whether to delete or keep the fragments.
+
 
 ``towncrier create``
 --------------------

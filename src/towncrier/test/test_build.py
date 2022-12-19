@@ -407,6 +407,66 @@ class TestCli(TestCase):
             self.assertFalse(os.path.isfile(fragment_path1))
             self.assertFalse(os.path.isfile(fragment_path2))
 
+    @with_isolated_runner
+    def test_keep_fragments(self, runner):
+        """
+        The `--keep` option will build the full final news file
+        without deleting the fragment files and without
+        any extra CLI interaction or confirmation.
+        """
+        setup_simple_project()
+        fragment_path1 = "foo/newsfragments/123.feature"
+        fragment_path2 = "foo/newsfragments/124.feature.rst"
+        with open(fragment_path1, "w") as f:
+            f.write("Adds levitation")
+        with open(fragment_path2, "w") as f:
+            f.write("Extends levitation")
+
+        call(["git", "init"])
+        call(["git", "config", "user.name", "user"])
+        call(["git", "config", "user.email", "user@example.com"])
+        call(["git", "add", "."])
+        call(["git", "commit", "-m", "Initial Commit"])
+
+        result = runner.invoke(_main, ["--date", "01-01-2001", "--keep"])
+
+        self.assertEqual(0, result.exit_code)
+        # The NEWS file is created.
+        # So this is not just `--draft`.
+        self.assertTrue(os.path.isfile("NEWS.rst"))
+        self.assertTrue(os.path.isfile(fragment_path1))
+        self.assertTrue(os.path.isfile(fragment_path2))
+
+    @with_isolated_runner
+    def test_yes_keep_error(self, runner):
+        """
+        It will fail to perform any action when the
+        conflicting --keep and --yes options are provided.
+
+        Called twice with the different order of --keep and --yes options
+        to make sure both orders are validated since click triggers the validator
+        in the order it parses the command line.
+        """
+        setup_simple_project()
+        fragment_path1 = "foo/newsfragments/123.feature"
+        fragment_path2 = "foo/newsfragments/124.feature.rst"
+        with open(fragment_path1, "w") as f:
+            f.write("Adds levitation")
+        with open(fragment_path2, "w") as f:
+            f.write("Extends levitation")
+
+        call(["git", "init"])
+        call(["git", "config", "user.name", "user"])
+        call(["git", "config", "user.email", "user@example.com"])
+        call(["git", "add", "."])
+        call(["git", "commit", "-m", "Initial Commit"])
+
+        result = runner.invoke(_main, ["--date", "01-01-2001", "--yes", "--keep"])
+        self.assertEqual(1, result.exit_code)
+
+        result = runner.invoke(_main, ["--date", "01-01-2001", "--keep", "--yes"])
+        self.assertEqual(1, result.exit_code)
+
     def test_confirmation_says_no(self):
         """
         If the user says "no" to removing the newsfragements, we end up with
@@ -429,7 +489,7 @@ class TestCli(TestCase):
             call(["git", "add", "."])
             call(["git", "commit", "-m", "Initial Commit"])
 
-            with patch("towncrier._git.click.confirm") as m:
+            with patch("towncrier.build.click.confirm") as m:
                 m.return_value = False
                 result = runner.invoke(_main, [])
 

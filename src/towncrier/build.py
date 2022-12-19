@@ -15,8 +15,11 @@ from datetime import date
 
 import click
 
+from click import Context, Option
+
+from towncrier import _git
+
 from ._builder import find_fragments, render_fragments, split_fragments
-from ._git import remove_files, stage_newsfile
 from ._project import get_project_name, get_version
 from ._settings import ConfigError, config_option_help, load_config_from_options
 from ._writer import append_to_newsfile
@@ -24,6 +27,18 @@ from ._writer import append_to_newsfile
 
 def _get_date() -> str:
     return date.today().isoformat()
+
+
+def _validate_answer(ctx: Context, param: Option, value: bool) -> bool:
+    value_check = (
+        ctx.params.get("answer_yes")
+        if param.name == "answer_keep"
+        else ctx.params.get("answer_keep")
+    )
+    if value_check and value:
+        click.echo("You can not choose both --yes and --keep at the same time")
+        ctx.abort()
+    return value
 
 
 @click.command(name="build")
@@ -67,9 +82,18 @@ def _get_date() -> str:
 @click.option(
     "--yes",
     "answer_yes",
-    default=False,
+    default=None,
     flag_value=True,
     help="Do not ask for confirmation to remove news fragments.",
+    callback=_validate_answer,
+)
+@click.option(
+    "--keep",
+    "answer_keep",
+    default=None,
+    flag_value=True,
+    help="Do not ask for confirmations. But keep news fragments.",
+    callback=_validate_answer,
 )
 def _main(
     draft: bool,
@@ -79,6 +103,7 @@ def _main(
     project_version: str | None,
     project_date: str | None,
     answer_yes: bool,
+    answer_keep: bool,
 ) -> None:
     """
     Build a combined news file from news fragment.
@@ -92,6 +117,7 @@ def _main(
             project_version,
             project_date,
             answer_yes,
+            answer_keep,
         )
     except ConfigError as e:
         print(e, file=sys.stderr)
@@ -106,6 +132,7 @@ def __main(
     project_version: str | None,
     project_date: str | None,
     answer_yes: bool,
+    answer_keep: bool,
 ) -> None:
     """
     The main entry point.
@@ -234,12 +261,42 @@ def __main(
         )
 
         click.echo("Staging newsfile...", err=to_err)
-        stage_newsfile(base_directory, news_file)
+        _git.stage_newsfile(base_directory, news_file)
 
         click.echo("Removing news fragments...", err=to_err)
-        remove_files(fragment_filenames, answer_yes)
+        if should_remove_fragment_files(
+            fragment_filenames,
+            answer_yes,
+            answer_keep,
+        ):
+            _git.remove_files(fragment_filenames)
 
         click.echo("Done!", err=to_err)
+
+
+def should_remove_fragment_files(
+    fragment_filenames: list[str],
+    answer_yes: bool,
+    answer_keep: bool,
+) -> bool:
+    try:
+        if answer_keep:
+            click.echo("Keeping the following files:")
+            # Not proceeding with the removal of the files.
+            return False
+
+        if answer_yes:
+            click.echo("Removing the following files:")
+        else:
+            click.echo("I want to remove the following files:")
+    finally:
+        # Will always be printed, even for answer_keep to help with possible troubleshooting
+        for filename in fragment_filenames:
+            click.echo(filename)
+
+    if answer_yes or click.confirm("Is it okay if I remove those files?", default=True):
+        return True
+    return False
 
 
 if __name__ == "__main__":  # pragma: no cover
