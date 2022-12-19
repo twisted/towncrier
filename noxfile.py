@@ -36,8 +36,9 @@ def tests(session: nox.Session) -> None:
     session.run("coverage", "run", "--module", "twisted.trial", *posargs)
 
     if os.environ.get("CI") != "true":
-        # When running the test locally, show the coverage report.
         session.notify("coverage_report")
+    else:
+        session.run("coverage", "combine")
 
 
 @nox.session
