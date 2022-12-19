@@ -7,22 +7,9 @@ import os
 
 from subprocess import STDOUT, call, check_output
 
-import click
 
-
-def remove_files(fragment_filenames: list[str], answer_yes: bool) -> None:
-    if not fragment_filenames:
-        return
-
-    if answer_yes:
-        click.echo("Removing the following files:")
-    else:
-        click.echo("I want to remove the following files:")
-
-    for filename in fragment_filenames:
-        click.echo(filename)
-
-    if answer_yes or click.confirm("Is it okay if I remove those files?", default=True):
+def remove_files(fragment_filenames: list[str]) -> None:
+    if fragment_filenames:
         call(["git", "rm", "--quiet"] + fragment_filenames)
 
 
