@@ -13,7 +13,7 @@ import sys
 from importlib import import_module
 from types import ModuleType
 
-from incremental import Version
+from incremental import Version as IncrementalVersion
 
 
 def _get_package(package_dir: str, package: str) -> ModuleType:
@@ -50,8 +50,12 @@ def get_version(package_dir: str, package: str) -> str:
     if isinstance(version, str):
         return version.strip()
 
-    if isinstance(version, Version):
-        return version.base().strip()
+    if isinstance(version, IncrementalVersion):
+        # FIXME:https://github.com/twisted/incremental/issues/81
+        # Incremental uses `.rcN`.
+        # importlib uses `rcN` (without a dot separation).
+        # Here we make incremental work like importlib.
+        return version.base().strip().replace(".rc", "rc")
 
     if isinstance(version, tuple):
         return ".".join(map(str, version)).strip()
@@ -76,7 +80,7 @@ def get_project_name(package_dir: str, package: str) -> str:
     if isinstance(version, str):
         return package.title()
 
-    if isinstance(version, Version):
+    if isinstance(version, IncrementalVersion):
         # Incremental has support for package names
         return version.package
 

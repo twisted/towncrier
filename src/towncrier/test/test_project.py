@@ -14,9 +14,9 @@ from .helpers import write
 
 
 try:
-    from importlib.metadata import version
+    from importlib.metadata import version as metadata_version
 except ImportError:
-    version = None
+    metadata_version = None
 
 
 class VersionFetchingTests(TestCase):
@@ -48,14 +48,14 @@ class VersionFetchingTests(TestCase):
         version = get_version(temp, "mytestproja")
         self.assertEqual(version, "1.3.12")
 
-    @skipIf(version is None, "Needs importlib.metadata.")
+    @skipIf(metadata_version is None, "Needs importlib.metadata.")
     def test_incremental(self):
         """
         An incremental Version __version__  is picked up.
         """
         pkg = "../src"
 
-        self.assertEqual(version("towncrier"), get_version(pkg, "towncrier"))
+        self.assertEqual(metadata_version("towncrier"), get_version(pkg, "towncrier"))
         self.assertEqual("towncrier", get_project_name(pkg, "towncrier"))
 
     def _setup_missing(self):
