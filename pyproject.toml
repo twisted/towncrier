@@ -81,7 +81,7 @@ ignore_missing_imports = true
 requires = [
     "setuptools ~= 44.1.1",
     "wheel ~= 0.36.2",
-    "incremental == 17.5.0",
+    "incremental == 22.10.0",
 ]
 build-backend = "setuptools.build_meta"
 
