@@ -4,7 +4,7 @@
 
 
 towncrier 22.12.0 (2022-12-21)
-=============================
+==============================
 
 No changes since the previous release candidate.
 
