@@ -2,6 +2,51 @@
 
 .. towncrier release notes start
 
+
+towncrier 22.12.0 (2022-12-21)
+==============================
+
+No changes since the previous release candidate.
+
+
+towncrier 22.12.0rc1 (2022-12-20)
+=================================
+
+Features
+--------
+
+- Added ``--keep`` option to the ``build`` command that allows generating a newsfile, but keeps the newsfragments in place.
+  This option can not be used together with ``--yes``. (`#129 <https://github.com/hawkowl/towncrier/issues/129>`_)
+- Python 3.11 is now officially supported. (`#427 <https://github.com/hawkowl/towncrier/issues/427>`_)
+- You can now create fragments that are not associated with issues. Start the name of the fragment with ``+`` (e.g. ``+anything.feature``).
+  The content of these orphan news fragments will be included in the release notes, at the end of the category corresponding to the file extension.
+
+  To help quickly create a unique orphan news fragment, ``towncrier create +.feature`` will append a random string to the base name of the file, to avoid name collisions. (`#428 <https://github.com/hawkowl/towncrier/issues/428>`_)
+
+
+Improved Documentation
+----------------------
+
+- Improved contribution documentation. (`#415 <https://github.com/hawkowl/towncrier/issues/415>`_)
+- Correct a typo in the readme that incorrectly documented custom fragments in a format that does not work. (`#424 <https://github.com/hawkowl/towncrier/issues/424>`_)
+- The documentation has been restructured and (hopefully) improved. (`#435 <https://github.com/hawkowl/towncrier/issues/435>`_)
+- Added a Markdown-based how-to guide. (`#436 <https://github.com/hawkowl/towncrier/issues/436>`_)
+- Defining custom fragments using a TOML array is not deprecated anymore. (`#438 <https://github.com/hawkowl/towncrier/issues/438>`_)
+
+
+Deprecations and Removals
+-------------------------
+
+- Default branch for `towncrier check` is now "origin/main" instead of "origin/master".
+  If "origin/main" does not exist, fallback to "origin/master" with a deprecation warning. (`#400 <https://github.com/hawkowl/towncrier/issues/400>`_)
+
+
+Misc
+----
+
+- `#406 <https://github.com/hawkowl/towncrier/issues/406>`_, `#408 <https://github.com/hawkowl/towncrier/issues/408>`_, `#411 <https://github.com/hawkowl/towncrier/issues/411>`_, `#412 <https://github.com/hawkowl/towncrier/issues/412>`_, `#413 <https://github.com/hawkowl/towncrier/issues/413>`_, `#414 <https://github.com/hawkowl/towncrier/issues/414>`_, `#416 <https://github.com/hawkowl/towncrier/issues/416>`_, `#418 <https://github.com/hawkowl/towncrier/issues/418>`_, `#419 <https://github.com/hawkowl/towncrier/issues/419>`_, `#421 <https://github.com/hawkowl/towncrier/issues/421>`_, `#429 <https://github.com/hawkowl/towncrier/issues/429>`_, `#430 <https://github.com/hawkowl/towncrier/issues/430>`_, `#431 <https://github.com/hawkowl/towncrier/issues/431>`_, `#434 <https://github.com/hawkowl/towncrier/issues/434>`_, `#446 <https://github.com/hawkowl/towncrier/issues/446>`_, `#447 <https://github.com/hawkowl/towncrier/issues/447>`_
+
+
 towncrier 22.8.0 (2022-08-29)
 =============================
 

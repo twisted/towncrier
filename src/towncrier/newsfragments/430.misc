@@ -1,2 +1,0 @@
-We now use `Nox <https://nox.thea.codes/>`_ instead of Tox.
-You may have to adjust a few command lines, but overall contributing should now be more comfortable.
