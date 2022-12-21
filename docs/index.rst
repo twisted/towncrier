@@ -34,6 +34,7 @@ Development
 
    contributing
    release
+   GitHub Repository <https://github.com/twisted/towncrier>
 
 .. include:: ../README.rst
    :start-after: .. links
