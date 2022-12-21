@@ -1,4 +1,4 @@
-Thank you for contributing to towncrier! The project's future depends on contributors like you, so we greatly appreciate it.  Please use the following checklist as you are preparing this pull request:
+Thank you for contributing to towncrier! The project's future depends on contributors like you, so we greatly appreciate it. 🔔 Please use the following checklist as you are preparing this pull request:
 
 * [ ] Make sure changes are covered by existing or new tests.
 * [ ] For at least one Python version, make sure local test run is green.
