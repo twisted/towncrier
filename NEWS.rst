@@ -2,6 +2,13 @@
 
 .. towncrier release notes start
 
+
+towncrier 22.22.0 (2022-12-21)
+=============================
+
+No changes since the previous release candidate.
+
+
 towncrier 22.12.0rc1 (2022-12-20)
 ==================================
 
