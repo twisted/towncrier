@@ -1,0 +1,3 @@
+Added a GitHub Action to comment on each pull request with the pull
+request checklist, and removed the checklist from the pull request
+template.
