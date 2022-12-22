@@ -8,8 +8,8 @@ jobs:
     name: Checklist
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - uses: harupy/comment-on-pr@master
+    - uses: actions/checkout@v0.1.0
+    - uses: harupy/comment-on-pr@v0.1.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
