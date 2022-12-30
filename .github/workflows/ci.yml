@@ -68,7 +68,7 @@ jobs:
           - name: CPython 3.10
             action: '3.10'
           - name: CPython 3.11
-            action: '3.11.0-beta - 3.11'
+            action: '3.11'
           - name: PyPy 3.7
             action: pypy3.7
           - name: PyPy 3.8
