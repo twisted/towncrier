@@ -61,5 +61,6 @@ setup(
     include_package_data=True,
     description="Building newsfiles for your project.",
     long_description=open("README.rst").read(),
+    long_description_content_type="text/x-rst",
     entry_points={"console_scripts": ["towncrier = towncrier._shell:cli"]},
 )
