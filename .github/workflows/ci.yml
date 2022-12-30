@@ -30,6 +30,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - uses: hynek/build-and-inspect-python-package@v1
+
     - name: Set up ${{ matrix.python.name }}
       uses: actions/setup-python@v4
       with:
@@ -189,14 +191,6 @@ jobs:
     - run: nox -e ${{ matrix.task.nox }}
       if: ${{ matrix.task.run-if }}
 
-  package:
-    name: Build & verify package
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: hynek/build-and-inspect-python-package@v1
-
   pypi-publish:
     # https://github.community/t/is-it-possible-to-require-all-github-actions-tasks-to-pass-without-enumerating-them/117957/4?u=graingert
     name: Check tag and publish
@@ -256,7 +250,6 @@ jobs:
       - test-linux
       - test-windows
       - check
-      - package
       - pypi-publish
     steps:
       - name: Require all successes
