@@ -41,5 +41,5 @@ Project Links
 
 - **PyPI**: https://pypi.org/project/towncrier/
 - **Documentation**: https://towncrier.readthedocs.io/
-- **News**: https://github.com/twisted/towncrier/blob/trunk/NEWS.rst
+- **Release Notes**: https://github.com/twisted/towncrier/blob/trunk/NEWS.rst
 - **License**: `MIT <https://github.com/twisted/towncrier/blob/trunk/LICENSE>`_
