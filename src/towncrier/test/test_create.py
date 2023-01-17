@@ -172,17 +172,39 @@ class TestCli(TestCase):
         """
         runner = CliRunner()
 
+        fragments = []
         with runner.isolated_filesystem():
             setup_simple_project()
 
             self.assertEqual([], os.listdir("foo/newsfragments"))
+            os.mkdir("foo/newsfragments/subsection")
 
-            runner.invoke(_main, ["+.feature"])
-            fragments = os.listdir("foo/newsfragments")
+            result = runner.invoke(_main, ["+.feature"])
+            self.assertEqual(0, result.exit_code)
+            result = runner.invoke(
+                _main, ["subsection/+.feature"], catch_exceptions=False
+            )
+            self.assertEqual(0, result.exit_code, result.output)
 
-        self.assertEqual(1, len(fragments))
-        filename = fragments[0]
-        self.assertTrue(filename.endswith(".feature"))
+            for _, dirs, files in os.walk("foo/newsfragments", topdown=False):
+                for file in files:
+                    fragments.append("/".join(dirs + [file]))
+                    print(dirs)
+
+        self.assertEqual(2, len(fragments))
+
+        filename, ext = os.path.splitext(fragments[0])
+        self.assertEqual(ext, ".feature")
         self.assertTrue(filename.startswith("+"))
         # Length should be '+' character and 8 random hex characters.
-        self.assertEqual(len(filename.split(".")[0]), 9)
+        self.assertEqual(len(filename), 9)
+
+        subsection_dir = os.path.dirname(fragments[1])
+        subsection_filename, subsection_ext = os.path.splitext(
+            os.path.basename(fragments[1])
+        )
+        self.assertEqual(subsection_ext, ".feature")
+        self.assertTrue(subsection_filename.startswith("+"))
+        self.assertEqual(subsection_dir, "subsection")
+        # Length should be '+' character and 8 random hex characters.
+        self.assertEqual(len(subsection_filename), 9)
