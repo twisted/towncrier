@@ -133,7 +133,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "towncrier", "Towncrier Documentation", [author], 1)]
+man_pages = [(master_doc, "towncrier", "Towncrier Documentation", [author], 7)]
 
 
 # -- Options for Texinfo output -------------------------------------------
