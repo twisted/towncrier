@@ -9,4 +9,6 @@ from incremental import Version
 
 
 __version__ = Version("towncrier", 22, 12, 1, dev=0)
-__all__ = ["__version__"]
+_hatchling_version = __version__.short()
+
+__all__ = ["__version__", "_hatchling_version"]
