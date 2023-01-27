@@ -128,7 +128,7 @@ The following list contains some ways how to run the test suite:
 * To run some quality checks before you create the pull request,
   we recommend using this call::
 
-    $ nox -e pre_commit check_manifest check_newsfragment
+    $ nox -e pre_commit check_newsfragment
 
 * Or enable `pre-commit` as a git hook::
 

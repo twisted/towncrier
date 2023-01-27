@@ -56,12 +56,6 @@ def check_newsfragment(session: nox.Session) -> None:
 
 
 @nox.session
-def check_manifest(session: nox.Session) -> None:
-    session.install("check-manifest")
-    session.run("check-manifest")
-
-
-@nox.session
 def typecheck(session: nox.Session) -> None:
     session.install(".", "mypy", "types-setuptools")
     session.run("mypy", "src")

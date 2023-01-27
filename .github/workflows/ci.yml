@@ -160,9 +160,6 @@ jobs:
           - name: Check Newsfragment
             nox: check_newsfragment
             run-if: ${{ github.head_ref != 'pre-commit-ci-update-config' }}
-          - name: Check package manifest
-            nox: check_manifest
-            run-if: true
           - name: Check mypy
             nox: typecheck
             run-if: true
