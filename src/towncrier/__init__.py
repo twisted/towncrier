@@ -7,11 +7,13 @@ towncrier, a builder for your news files.
 
 from __future__ import annotations
 
+from incremental import Version
+
 
 __all__ = ["__version__"]
 
 
-def __getattr__(name: str) -> str:
+def __getattr__(name: str) -> Version:
 
     if name != "__version__":
         raise AttributeError(f"module {__name__} has no attribute {name}")
