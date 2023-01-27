@@ -6,6 +6,7 @@ requires = [
 ]
 build-backend = "hatchling.build"
 
+
 [project]
 dynamic = ["version"]
 name = "towncrier"
