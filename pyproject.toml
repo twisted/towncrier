@@ -64,6 +64,15 @@ source = "code"
 path = "src/towncrier/_version.py"
 expression = "_hatchling_version"
 
+[tool.hatch.build]
+exclude = [
+    "admin",
+    "bin",
+    "docs",
+    ".readthedocs.yaml",
+    "src/towncrier/newsfragments",
+]
+
 
 [tool.towncrier]
     package = "towncrier"
