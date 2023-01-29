@@ -56,12 +56,6 @@ def check_newsfragment(session: nox.Session) -> None:
 
 
 @nox.session
-def check_manifest(session: nox.Session) -> None:
-    session.install("check-manifest")
-    session.run("check-manifest")
-
-
-@nox.session
 def typecheck(session: nox.Session) -> None:
     session.install(".", "mypy", "types-setuptools")
     session.run("mypy", "src")
@@ -87,11 +81,10 @@ def docs(session: nox.Session) -> None:
 
 @nox.session
 def build(session: nox.Session) -> None:
-    session.install("build", "check-manifest>=0.44", "twine")
+    session.install("build", "twine")
 
-    session.run("check-manifest", "--verbose")
     # If no argument is passed, build builds an sdist and then a wheel from
     # that sdist.
     session.run("python", "-m", "build")
 
-    session.run("twine", "check", "dist/*")
+    session.run("twine", "check", "--strict", "dist/*")

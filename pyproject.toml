@@ -1,3 +1,80 @@
+[build-system]
+requires = [
+    "hatchling ~= 1.12.2",
+    "wheel ~= 0.38.4",
+    "incremental == 22.10.0",
+]
+build-backend = "hatchling.build"
+
+
+[project]
+dynamic = ["version"]
+name = "towncrier"
+description = "Building newsfiles for your project."
+readme = "README.rst"
+license = "MIT"
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+requires-python = ">=3.7"
+dependencies = [
+    "click",
+    "click-default-group",
+    "incremental",
+    "jinja2",
+    "setuptools",
+    "tomli; python_version<'3.11'",
+]
+
+[project.optional-dependencies]
+dev = [
+    "packaging",
+    "sphinx >= 5",
+    "furo",
+    "twisted",
+]
+
+[project.scripts]
+towncrier = "towncrier._shell:cli"
+
+[project.urls]
+Documentation = "https://towncrier.readthedocs.io/"
+Chat = "https://web.libera.chat/?channels=%23twisted"
+"Mailing list" = "https://mail.python.org/mailman3/lists/twisted.python.org/"
+Issues = "https://github.com/twisted/towncrier/issues"
+Repository = "https://github.com/twisted/towncrier"
+Tests = "https://github.com/twisted/towncrier/actions?query=branch%3Atrunk"
+Coverage = "https://codecov.io/gh/twisted/towncrier"
+Distribution = "https://pypi.org/project/towncrier"
+
+
+[tool.hatch.version]
+source = "code"
+path = "src/towncrier/_version.py"
+expression = "_hatchling_version"
+
+[tool.hatch.build]
+exclude = [
+    "admin",
+    "bin",
+    "docs",
+    ".readthedocs.yaml",
+    "src/towncrier/newsfragments",
+]
+
+
 [tool.towncrier]
     package = "towncrier"
     package_dir = "src"
@@ -76,14 +153,6 @@ module = 'incremental'
 # No released version with type hints.
 ignore_missing_imports = true
 
-
-[build-system]
-requires = [
-    "setuptools ~= 44.1.1",
-    "wheel ~= 0.36.2",
-    "incremental == 22.10.0",
-]
-build-backend = "setuptools.build_meta"
 
 [tool.coverage.run]
 parallel = true
