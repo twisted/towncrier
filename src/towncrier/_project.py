@@ -17,7 +17,6 @@ from incremental import Version as IncrementalVersion
 
 
 def _get_package(package_dir: str, package: str) -> ModuleType:
-
     try:
         module = import_module(package)
     except ImportError:
@@ -39,7 +38,6 @@ def _get_package(package_dir: str, package: str) -> ModuleType:
 
 
 def get_version(package_dir: str, package: str) -> str:
-
     module = _get_package(package_dir, package)
 
     version = getattr(module, "__version__", None)
@@ -68,7 +66,6 @@ def get_version(package_dir: str, package: str) -> str:
 
 
 def get_project_name(package_dir: str, package: str) -> str:
-
     module = _get_package(package_dir, package)
 
     version = getattr(module, "__version__", None)

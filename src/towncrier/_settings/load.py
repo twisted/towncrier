@@ -86,7 +86,6 @@ def load_config_from_options(
 
 
 def load_config(directory: str) -> Config | None:
-
     towncrier_toml = os.path.join(directory, "towncrier.toml")
     pyproject_toml = os.path.join(directory, "pyproject.toml")
 
