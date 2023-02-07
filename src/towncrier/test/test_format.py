@@ -13,7 +13,6 @@ from .._builder import render_fragments, split_fragments
 
 class FormatterTests(TestCase):
     def test_split(self):
-
         fragments = {
             "": {
                 ("1", "misc", 0): "",

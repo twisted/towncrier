@@ -67,7 +67,6 @@ def _main(compare_with: str | None, directory: str | None, config: str | None) -
 def __main(
     comparewith: str | None, directory: str | None, config_path: str | None
 ) -> None:
-
     base_directory, config = load_config_from_options(directory, config_path)
 
     if comparewith is None:

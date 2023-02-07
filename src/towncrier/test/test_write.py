@@ -21,7 +21,6 @@ class WritingTests(TestCase):
     maxDiff = None
 
     def test_append_at_top(self):
-
         fragments = OrderedDict(
             [
                 (
