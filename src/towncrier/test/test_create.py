@@ -2,7 +2,9 @@
 # See LICENSE for details.
 
 import os
+import string
 
+from pathlib import Path
 from textwrap import dedent
 from unittest import mock
 
@@ -10,7 +12,7 @@ from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from ..create import _main
-from .helpers import setup_simple_project
+from .helpers import setup_simple_project, with_isolated_runner
 
 
 class TestCli(TestCase):
@@ -164,25 +166,58 @@ class TestCli(TestCase):
         self.assertEqual(type(result.exception), SystemExit)
         self.assertIn("123.feature.rst already exists", result.output)
 
-    def test_create_orphan_fragment(self):
+    @with_isolated_runner
+    def test_create_orphan_fragment(self, runner: CliRunner):
         """
         When a fragment starts with the only the orphan prefix (``+`` by default), the
         create CLI automatically extends the new file's base name to contain a random
         value to avoid commit collisions.
         """
-        runner = CliRunner()
+        setup_simple_project()
 
-        with runner.isolated_filesystem():
-            setup_simple_project()
+        frag_path = Path("foo", "newsfragments")
+        sub_frag_path = frag_path / "subsection"
+        sub_frag_path.mkdir()
 
-            self.assertEqual([], os.listdir("foo/newsfragments"))
+        result = runner.invoke(_main, ["+.feature"])
+        self.assertEqual(0, result.exit_code)
+        result = runner.invoke(
+            _main, [str(Path("subsection", "+.feature"))], catch_exceptions=False
+        )
+        self.assertEqual(0, result.exit_code, result.output)
 
-            runner.invoke(_main, ["+.feature"])
-            fragments = os.listdir("foo/newsfragments")
+        fragments = [p for p in frag_path.rglob("*") if p.is_file()]
+        self.assertEqual(2, len(fragments))
+        change1, change2 = fragments
 
-        self.assertEqual(1, len(fragments))
-        filename = fragments[0]
-        self.assertTrue(filename.endswith(".feature"))
-        self.assertTrue(filename.startswith("+"))
+        self.assertEqual(change1.suffix, ".feature")
+        self.assertTrue(change1.stem.startswith("+"))
         # Length should be '+' character and 8 random hex characters.
-        self.assertEqual(len(filename.split(".")[0]), 9)
+        self.assertEqual(len(change1.stem), 9)
+
+        self.assertEqual(change2.suffix, ".feature")
+        self.assertTrue(change2.stem.startswith("+"))
+        self.assertEqual(change2.parent, sub_frag_path)
+        # Length should be '+' character and 8 random hex characters.
+        self.assertEqual(len(change2.stem), 9)
+
+    @with_isolated_runner
+    def test_create_orphan_fragment_custom_prefix(self, runner: CliRunner):
+        """
+        Check that the orphan prefix can be customized.
+        """
+        setup_simple_project(extra_config='orphan_prefix = "$$$"')
+
+        frag_path = Path("foo", "newsfragments")
+
+        result = runner.invoke(_main, ["$$$.feature"])
+        self.assertEqual(0, result.exit_code, result.output)
+
+        fragments = list(frag_path.rglob("*"))
+        self.assertEqual(len(fragments), 1)
+        change = fragments[0]
+        self.assertTrue(change.stem.startswith("$$$"))
+        # Length should be '$$$' characters and 8 random hex characters.
+        self.assertEqual(len(change.stem), 11)
+        # Check the remainder are all hex characters.
+        self.assertTrue(all(c in string.hexdigits for c in change.stem[3:]))

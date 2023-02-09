@@ -81,9 +81,16 @@ def __main(
     """
     base_directory, config = load_config_from_options(directory, config_path)
 
-    if config.orphan_prefix and filename.startswith(f"{config.orphan_prefix}."):
+    file_dir, file_basename = os.path.split(filename)
+    if config.orphan_prefix and file_basename.startswith(f"{config.orphan_prefix}."):
         # Append a random hex string to the orphan news fragment base name.
-        filename = f"{config.orphan_prefix}{os.urandom(4).hex()}{filename[1:]}"
+        filename = os.path.join(
+            file_dir,
+            (
+                f"{config.orphan_prefix}{os.urandom(4).hex()}"
+                f"{file_basename[len(config.orphan_prefix):]}"
+            ),
+        )
     if len(filename.split(".")) < 2 or (
         filename.split(".")[-1] not in config.types
         and filename.split(".")[-2] not in config.types
