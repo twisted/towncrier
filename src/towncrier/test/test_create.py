@@ -3,6 +3,7 @@
 
 import os
 
+from pathlib import Path
 from textwrap import dedent
 from unittest import mock
 
@@ -10,7 +11,7 @@ from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from ..create import _main
-from .helpers import setup_simple_project
+from .helpers import setup_simple_project, with_isolated_runner
 
 
 class TestCli(TestCase):
@@ -164,47 +165,37 @@ class TestCli(TestCase):
         self.assertEqual(type(result.exception), SystemExit)
         self.assertIn("123.feature.rst already exists", result.output)
 
-    def test_create_orphan_fragment(self):
+    @with_isolated_runner
+    def test_create_orphan_fragment(self, runner: CliRunner):
         """
         When a fragment starts with the only the orphan prefix (``+`` by default), the
         create CLI automatically extends the new file's base name to contain a random
         value to avoid commit collisions.
         """
-        runner = CliRunner()
+        setup_simple_project()
 
-        fragments = []
-        with runner.isolated_filesystem():
-            setup_simple_project()
+        frag_path = Path("foo", "newsfragments")
+        sub_frag_path = frag_path / "subsection"
+        sub_frag_path.mkdir()
 
-            self.assertEqual([], os.listdir("foo/newsfragments"))
-            os.mkdir("foo/newsfragments/subsection")
-
-            result = runner.invoke(_main, ["+.feature"])
-            self.assertEqual(0, result.exit_code)
-            result = runner.invoke(
-                _main, ["subsection/+.feature"], catch_exceptions=False
-            )
-            self.assertEqual(0, result.exit_code, result.output)
-
-            for _, dirs, files in os.walk("foo/newsfragments", topdown=False):
-                for file in files:
-                    fragments.append("/".join(dirs + [file]))
-                    print(dirs)
-
-        self.assertEqual(2, len(fragments))
-
-        filename, ext = os.path.splitext(fragments[0])
-        self.assertEqual(ext, ".feature")
-        self.assertTrue(filename.startswith("+"))
-        # Length should be '+' character and 8 random hex characters.
-        self.assertEqual(len(filename), 9)
-
-        subsection_dir = os.path.dirname(fragments[1])
-        subsection_filename, subsection_ext = os.path.splitext(
-            os.path.basename(fragments[1])
+        result = runner.invoke(_main, ["+.feature"])
+        self.assertEqual(0, result.exit_code)
+        result = runner.invoke(
+            _main, [str(Path("subsection", "+.feature"))], catch_exceptions=False
         )
-        self.assertEqual(subsection_ext, ".feature")
-        self.assertTrue(subsection_filename.startswith("+"))
-        self.assertEqual(subsection_dir, "subsection")
+        self.assertEqual(0, result.exit_code, result.output)
+
+        fragments = [p for p in frag_path.rglob("*") if p.is_file()]
+        self.assertEqual(2, len(fragments))
+        change1, change2 = fragments
+
+        self.assertEqual(change1.suffix, ".feature")
+        self.assertTrue(change1.stem.startswith("+"))
         # Length should be '+' character and 8 random hex characters.
-        self.assertEqual(len(subsection_filename), 9)
+        self.assertEqual(len(change1.stem), 9)
+
+        self.assertEqual(change2.suffix, ".feature")
+        self.assertTrue(change2.stem.startswith("+"))
+        self.assertEqual(change2.parent, sub_frag_path)
+        # Length should be '+' character and 8 random hex characters.
+        self.assertEqual(len(change2.stem), 9)
