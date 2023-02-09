@@ -112,8 +112,17 @@ def __main(
         os.makedirs(fragments_directory)
 
     segment_file = os.path.join(fragments_directory, filename)
-    if os.path.exists(segment_file):
-        raise click.ClickException(f"{segment_file} already exists")
+
+    retry = 0
+    if filename.split(".")[-1] not in config.types:
+        filename, extra_ext = os.path.splitext(filename)
+    else:
+        extra_ext = ""
+    while os.path.exists(segment_file):
+        retry += 1
+        segment_file = os.path.join(
+            fragments_directory, f"{filename}.{retry}{extra_ext}"
+        )
 
     if edit:
         edited_content = _get_news_content_from_user(content)

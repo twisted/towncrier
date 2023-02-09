@@ -3,6 +3,7 @@
 
 import os
 
+from pathlib import Path
 from textwrap import dedent
 from unittest import mock
 
@@ -10,7 +11,7 @@ from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from ..create import _main
-from .helpers import setup_simple_project
+from .helpers import setup_simple_project, with_isolated_runner
 
 
 class TestCli(TestCase):
@@ -149,20 +150,45 @@ class TestCli(TestCase):
             "Expected filename '123.foobar.rst' to be of format", result.output
         )
 
-    def test_file_exists(self):
+    @with_isolated_runner
+    def test_file_exists(self, runner: CliRunner):
         """Ensure we don't overwrite existing files."""
-        runner = CliRunner()
+        setup_simple_project()
+        frag_path = Path("foo", "newsfragments")
 
-        with runner.isolated_filesystem():
-            setup_simple_project()
+        for _ in range(3):
+            result = runner.invoke(_main, ["123.feature"])
+            self.assertEqual(result.exit_code, 0, result.output)
 
-            self.assertEqual([], os.listdir("foo/newsfragments"))
+        fragments = [f.name for f in frag_path.iterdir()]
+        self.assertEqual(
+            sorted(fragments),
+            [
+                "123.feature",
+                "123.feature.1",
+                "123.feature.2",
+            ],
+        )
 
-            runner.invoke(_main, ["123.feature.rst"])
+    @with_isolated_runner
+    def test_file_exists_with_ext(self, runner: CliRunner):
+        """Ensure we don't overwrite existing files."""
+        setup_simple_project()
+        frag_path = Path("foo", "newsfragments")
+
+        for _ in range(3):
             result = runner.invoke(_main, ["123.feature.rst"])
+            self.assertEqual(result.exit_code, 0, result.output)
 
-        self.assertEqual(type(result.exception), SystemExit)
-        self.assertIn("123.feature.rst already exists", result.output)
+        fragments = [f.name for f in frag_path.iterdir()]
+        self.assertEqual(
+            sorted(fragments),
+            [
+                "123.feature.1.rst",
+                "123.feature.2.rst",
+                "123.feature.rst",
+            ],
+        )
 
     def test_create_orphan_fragment(self):
         """
