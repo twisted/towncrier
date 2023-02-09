@@ -96,7 +96,6 @@ def find_fragments(
     orphan_fragment_counter: DefaultDict[str | None, int] = defaultdict(int)
 
     for key, val in sections.items():
-
         if fragment_directory is not None:
             section_dir = os.path.join(base_directory, val, fragment_directory)
         else:
@@ -113,7 +112,6 @@ def find_fragments(
         file_content = {}
 
         for basename in files:
-
             ticket, category, counter = parse_newfragment_basename(
                 basename, frag_type_names
             )
@@ -149,6 +147,7 @@ def indent(text: str, prefix: str) -> str:
     """
     Adds `prefix` to the beginning of non-empty lines in `text`.
     """
+
     # Based on Python 3's textwrap.indent
     def prefixed_lines() -> Iterator[str]:
         for line in text.splitlines(True):
@@ -165,14 +164,12 @@ def split_fragments(
     definitions: Mapping[str, Mapping[str, Any]],
     all_bullets: bool = True,
 ) -> Mapping[str, Mapping[str, Mapping[str, Sequence[str]]]]:
-
     output = OrderedDict()
 
     for section_name, section_fragments in fragments.items():
         section: dict[str, dict[str, list[str]]] = {}
 
         for (ticket, category, counter), content in section_fragments.items():
-
             if all_bullets:
                 # By default all fragmetns are append by "-" automatically,
                 # and need to be indented because of that.
@@ -261,7 +258,6 @@ def render_fragments(
     data: dict[str, dict[str, dict[str, list[str]]]] = OrderedDict()
 
     for section_name, section_value in fragments.items():
-
         data[section_name] = OrderedDict()
 
         for category_name, category_value in section_value.items():

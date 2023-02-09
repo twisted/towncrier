@@ -55,8 +55,18 @@ class VersionFetchingTests(TestCase):
         """
         pkg = "../src"
 
-        self.assertEqual(metadata_version("towncrier"), get_version(pkg, "towncrier"))
-        self.assertEqual("towncrier", get_project_name(pkg, "towncrier"))
+        with self.assertWarnsRegex(
+            DeprecationWarning, "Accessing towncrier.__version__ is deprecated.*"
+        ):
+            version = get_version(pkg, "towncrier")
+
+        with self.assertWarnsRegex(
+            DeprecationWarning, "Accessing towncrier.__version__ is deprecated.*"
+        ):
+            name = get_project_name(pkg, "towncrier")
+
+        self.assertEqual(metadata_version("towncrier"), version)
+        self.assertEqual("towncrier", name)
 
     def _setup_missing(self):
         """

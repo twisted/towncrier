@@ -14,7 +14,6 @@ def remove_files(fragment_filenames: list[str]) -> None:
 
 
 def stage_newsfile(directory: str, filename: str) -> None:
-
     call(["git", "add", os.path.join(directory, filename)])
 
 
