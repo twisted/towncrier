@@ -2,6 +2,7 @@
 # See LICENSE for details.
 
 import os
+import string
 
 from pathlib import Path
 from textwrap import dedent
@@ -199,3 +200,24 @@ class TestCli(TestCase):
         self.assertEqual(change2.parent, sub_frag_path)
         # Length should be '+' character and 8 random hex characters.
         self.assertEqual(len(change2.stem), 9)
+
+    @with_isolated_runner
+    def test_create_orphan_fragment_custom_prefix(self, runner: CliRunner):
+        """
+        Check that the orphan prefix can be customized.
+        """
+        setup_simple_project(extra_config='orphan_prefix = "$$$"')
+
+        frag_path = Path("foo", "newsfragments")
+
+        result = runner.invoke(_main, ["$$$.feature"])
+        self.assertEqual(0, result.exit_code, result.output)
+
+        fragments = list(frag_path.rglob("*"))
+        self.assertEqual(len(fragments), 1)
+        change = fragments[0]
+        self.assertEqual(0, change.stem.startswith("---"))
+        # Length should be '---' characters and 8 random hex characters.
+        self.assertEqual(len(change.stem), 11)
+        # Check the remainder are all hex characters.
+        self.assertTrue(all(c in string.hexdigits for c in change.stem[3:]))
