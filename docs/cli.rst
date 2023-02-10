@@ -66,7 +66,9 @@ Create a news fragment in the directory that ``towncrier`` is configured to look
 
 .. option:: --content, -c CONTENT
 
-   A string to use for content.
+   A string to use for content.  
+   Use single quotes to wrap the argument of this option
+   to leverage RST or Markdown syntax.  
    Default: an instructive placeholder.
 
 .. option:: --edit

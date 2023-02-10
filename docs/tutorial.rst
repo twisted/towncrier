@@ -98,6 +98,11 @@ Let's create some example news fragments to demonstrate::
    $ towncrier create --edit 2.misc.rst  # starts an editor
    $ towncrier create -c "Orphan fragments have no ticket ID." +random.bugfix.rst
 
+.. note::
+
+   Due to how Unix shells work, if you want to use the ``-c`` option and also retain RST or
+   Markdown syntax you should use *single quotes* to wrap the news fragment content.
+
 For orphan news fragments (those that don't need to be linked to any ticket ID or other identifier), start the file name with ``+``.
 The content will still be included in the release notes, at the end of the category corresponding to the file extension::
 
