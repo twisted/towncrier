@@ -13,6 +13,7 @@ from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from towncrier import check
+from towncrier.build import _main as towncrier_build
 from towncrier.check import _main as towncrier_check
 
 from .helpers import setup_simple_project, with_isolated_runner, write
@@ -207,7 +208,7 @@ class TestChecker(TestCase):
             # Before any release, the NEWS file might no exist.
             self.assertNotIn("NEWS.rst", os.listdir("."))
 
-            call(["towncrier", "build", "--yes", "--version", "1.0"])
+            runner.invoke(towncrier_build, ["--yes", "--version", "1.0"])
             commit("Prepare a release")
             # When missing,
             # the news file is automatically created with a new release.
@@ -235,7 +236,7 @@ class TestChecker(TestCase):
 
             # Do a first release without any checks.
             # And merge the release branch back into the main branch.
-            call(["towncrier", "build", "--yes", "--version", "1.0"])
+            runner.invoke(towncrier_build, ["--yes", "--version", "1.0"])
             commit("First release")
             # The news file is now created.
             self.assertIn("NEWS.rst", os.listdir("."))
@@ -260,7 +261,7 @@ class TestChecker(TestCase):
 
             # We now have the new release branch.
             call(["git", "checkout", "-b", "next-release"])
-            call(["towncrier", "build", "--yes", "--version", "2.0"])
+            runner.invoke(towncrier_build, ["--yes", "--version", "2.0"])
             commit("Second release")
 
             # Act
