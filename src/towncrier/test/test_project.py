@@ -179,6 +179,7 @@ class InvocationTests(TestCase):
         """
         `python -m towncrier` invokes the main entrypoint.
         """
+        runner = CliRunner()
         temp = self.mktemp()
         new_dir = os.path.join(temp, "dashm")
         os.makedirs(new_dir)
@@ -188,9 +189,10 @@ class InvocationTests(TestCase):
             with open("pyproject.toml", "w") as f:
                 f.write("[tool.towncrier]\n" 'directory = "news"\n')
             os.makedirs("news")
-            out = check_output([sys.executable, "-m", "towncrier", "--help"])
-            self.assertIn(b"[OPTIONS] COMMAND [ARGS]...", out)
-            self.assertRegex(out, rb".*--help\s+Show this message and exit.")
+            result = runner.invoke(towncrier_cli, ["--help"])
+            self.assertIn("[OPTIONS] COMMAND [ARGS]...", result.stdout)
+            self.assertRegex(
+                result.stdout, r".*--help\s+Show this message and exit.")
         finally:
             os.chdir(orig_dir)
 
