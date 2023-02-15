@@ -4,7 +4,6 @@
 import os
 import sys
 
-from subprocess import check_output
 from unittest import skipIf
 
 from click.testing import CliRunner

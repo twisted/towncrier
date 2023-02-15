@@ -3,11 +3,10 @@
 
 import os
 import os.path
-import sys
 import warnings
 
 from pathlib import Path
-from subprocess import PIPE, Popen, call
+from subprocess import call
 
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
