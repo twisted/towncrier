@@ -183,15 +183,12 @@ class TestChecker(TestCase):
             call(["git", "add", fragment_path])
             call(["git", "commit", "-m", "add a newsfragment"])
 
-            proc = Popen(
-                [sys.executable, "-m", "towncrier.check", "--compare-with", "master"],
-                stdout=PIPE,
-                stderr=PIPE,
-            )
-            stdout, stderr = proc.communicate()
+            runner = CliRunner(mix_stderr=False)
+            result = runner.invoke(
+                towncrier_check, ["--compare-with", "master"])
 
-        self.assertEqual(0, proc.returncode)
-        self.assertEqual(b"", stderr)
+        self.assertEqual(0, result.exit_code)
+        self.assertEqual(0, len(result.stderr))
 
     def test_first_release(self):
         """
