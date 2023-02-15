@@ -1,0 +1,4 @@
+Use ‘click.testing.CliRunner’ consistently for testing CLI behaviour.
+
+This invokes the command behaviour consistently, without assuming any
+particular installed command name.
