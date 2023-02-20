@@ -173,7 +173,10 @@ class TestCli(TestCase):
 
     @with_isolated_runner
     def test_file_exists_with_ext(self, runner: CliRunner):
-        """Ensure we don't overwrite existing files."""
+        """
+        Ensure we don't overwrite existing files when using an extension after the
+        fragment type.
+        """
         setup_simple_project()
         frag_path = Path("foo", "newsfragments")
 
