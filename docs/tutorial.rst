@@ -90,7 +90,6 @@ You can create those fragments either by hand, or using the ``towncrier create``
 Let's create some example news fragments to demonstrate::
 
    $ echo 'Fixed a thing!' > src/myproject/newsfragments/1234.bugfix
-   $ towncrier create --content 'Fixed thing again!' 1234.bugfix  # since the file existed, this will create a 1234.bugfix.1
    $ towncrier create --content 'Can also be ``rst`` as well!' 3456.doc.rst
    # You can associate multiple ticket numbers with a news fragment by giving them the same contents.
    $ towncrier create --content 'Can also be ``rst`` as well!' 7890.doc.rst
@@ -125,7 +124,6 @@ You should get an output similar to this::
    --------
 
    - Fixed a thing! (#1234)
-   - Fixed thing again! (#1234)
    - Orphan fragments have no ticket ID.
 
 
