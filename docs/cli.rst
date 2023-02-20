@@ -64,6 +64,9 @@ Create a news fragment in the directory that ``towncrier`` is configured to look
 
 ``towncrier create`` will enforce that the passed type (e.g. ``bugfix``) is valid.
 
+If the filename exists already, ``towncrier create`` will add (and then increment) a number after the fragment type until it finds a filename that does not exist yet.
+In the above example, it will generate ``123.bugfix.1.rst`` if ``123.bugfix.rst`` already exists.
+
 .. option:: --content, -c CONTENT
 
    A string to use for content.
