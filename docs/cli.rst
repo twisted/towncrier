@@ -74,8 +74,9 @@ In the above example, it will generate ``123.bugfix.1.rst`` if ``123.bugfix.rst`
 
 .. option:: --edit
 
-   Create file and start `$EDITOR` to edit it right away.`
+   Create file and start ``$EDITOR`` to edit the news fragment right away.
 
+If you don't provide a file name, ``towncrier`` will prompt you for one, and unless you provided content, it'll also open an editor for you to write the news fragment.
 
 ``towncrier check``
 -------------------

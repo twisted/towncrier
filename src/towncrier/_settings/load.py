@@ -48,6 +48,7 @@ class Config:
     wrap: bool
     all_bullets: bool
     orphan_prefix: str
+    create_add_extension: bool = True
 
 
 class ConfigError(Exception):
@@ -181,4 +182,5 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
         wrap=wrap,
         all_bullets=all_bullets,
         orphan_prefix=config.get("orphan_prefix", "+"),
+        create_add_extension=config.get("create_add_extension", True),
     )
