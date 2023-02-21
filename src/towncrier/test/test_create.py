@@ -187,6 +187,45 @@ class TestCli(TestCase):
         )
 
     @with_isolated_runner
+    def test_custom_extension(self, runner: CliRunner):
+        """Ensure we can still create fragments with custom extensions."""
+        setup_simple_project()
+        frag_path = Path("foo", "newsfragments")
+
+        result = runner.invoke(_main, ["123.feature.txt"])
+        self.assertEqual(result.exit_code, 0, result.output)
+
+        fragments = [f.name for f in frag_path.iterdir()]
+        # No '.rst' extension added.
+        self.assertEqual(fragments, ["123.feature.txt"])
+
+    @with_isolated_runner
+    def test_md_filename_extension(self, runner: CliRunner):
+        """Ensure changelog filename extension is used if .md"""
+        setup_simple_project(extra_config='filename = "changes.md"')
+        frag_path = Path("foo", "newsfragments")
+
+        result = runner.invoke(_main, ["123.feature"])
+        self.assertEqual(result.exit_code, 0, result.output)
+
+        fragments = [f.name for f in frag_path.iterdir()]
+        # No '.rst' extension added.
+        self.assertEqual(fragments, ["123.feature.md"])
+
+    @with_isolated_runner
+    def test_odd_filename_extension(self, runner: CliRunner):
+        """Ensure changelog filename extension is not used if not .rst or .md"""
+        setup_simple_project(extra_config='filename = "the.changes"')
+        frag_path = Path("foo", "newsfragments")
+
+        result = runner.invoke(_main, ["123.feature"])
+        self.assertEqual(result.exit_code, 0, result.output)
+
+        fragments = [f.name for f in frag_path.iterdir()]
+        # No '.rst' extension added.
+        self.assertEqual(fragments, ["123.feature"])
+
+    @with_isolated_runner
     def test_file_exists(self, runner: CliRunner):
         """Ensure we don't overwrite existing files."""
         setup_simple_project()
