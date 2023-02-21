@@ -18,7 +18,12 @@ class TestCli(TestCase):
     maxDiff = None
 
     def _test_success(
-        self, content=None, config=None, mkdir=True, additional_args=None
+        self,
+        content=None,
+        config=None,
+        mkdir=True,
+        additional_args=None,
+        eof_newline=True,
     ):
         runner = CliRunner()
 
@@ -34,6 +39,8 @@ class TestCli(TestCase):
 
             self.assertEqual(["123.feature.rst"], os.listdir("foo/newsfragments"))
 
+            if eof_newline:
+                content.append("")
             with open("foo/newsfragments/123.feature.rst") as fh:
                 self.assertEqual("\n".join(content), fh.read())
 
@@ -87,6 +94,40 @@ class TestCli(TestCase):
         """
         content_line = "This is a content"
         self._test_success(content=[content_line], additional_args=["-c", content_line])
+
+    def test_content_without_eof_newline(self):
+        """
+        When creating a new fragment the content can be passed as a command line
+        argument. The text editor is not invoked, and no eof newline is added if the
+        config option is set.
+        """
+        config = dedent(
+            """\
+            [tool.towncrier]
+            package = "foo"
+            create_eof_newline = false
+            """
+        )
+        content_line = "This is a content"
+        self._test_success(
+            content=[content_line],
+            additional_args=["-c", content_line],
+            config=config,
+            eof_newline=False,
+        )
+
+    def test_content_no_eof_newline_arg(self):
+        """
+        When creating a new fragment the content can be passed as a command line
+        argument. The text editor is not invoked, and no eof newline is added if the
+        --no-eof-newline argument is passed.
+        """
+        content_line = "This is a content"
+        self._test_success(
+            content=[content_line],
+            additional_args=["-c", content_line, "--no-eof-newline"],
+            eof_newline=False,
+        )
 
     def test_message_and_edit(self):
         """
@@ -229,7 +270,7 @@ Created news fragment at {expected}
 """,
         )
         with open(expected, "r") as f:
-            self.assertEqual(f.read(), "Edited content")
+            self.assertEqual(f.read(), "Edited content\n")
 
     @with_isolated_runner
     def test_without_filename_with_message(self, runner: CliRunner):
@@ -252,7 +293,7 @@ Created news fragment at {expected}
 """,
         )
         with open(expected, "r") as f:
-            self.assertEqual(f.read(), "Fixed this")
+            self.assertEqual(f.read(), "Fixed this\n")
 
     @with_isolated_runner
     def test_create_orphan_fragment(self, runner: CliRunner):

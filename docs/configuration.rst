@@ -129,6 +129,7 @@ All Options
    wrap = false  # Wrap text to 79 characters
    all_bullets = true  # make all fragments bullet points
    orphan_prefix = "+"   # Prefix for orphan news fragment files, set to "" to disable.
+   create_eof_newline = true  # Ensure the content of a news fragment file created with ``towncrier create`` ends with an empty line.
    create_add_extension = true  # Add the ``filename`` option extension to news fragment files created with ``towncrier create`` (if extension not explicitly provided).
 
 If ``single_file`` is set to ``true`` or unspecified, all changes will be written to a single fixed newsfile, whose name is literally fixed as the ``filename`` option.

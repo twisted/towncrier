@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import os
 import sys
-
 from collections import OrderedDict
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Mapping
@@ -13,7 +12,6 @@ from typing import TYPE_CHECKING, Any, Mapping
 import pkg_resources
 
 from .._settings import fragment_types as ft
-
 
 if TYPE_CHECKING:
     # We only use Literal for type-checking and Mypy always brings its own
@@ -48,6 +46,7 @@ class Config:
     wrap: bool
     all_bullets: bool
     orphan_prefix: str
+    create_eof_newline: bool = True
     create_add_extension: bool = True
 
 
@@ -182,5 +181,6 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
         wrap=wrap,
         all_bullets=all_bullets,
         orphan_prefix=config.get("orphan_prefix", "+"),
+        create_eof_newline=config.get("create_eof_newline", True),
         create_add_extension=config.get("create_add_extension", True),
     )

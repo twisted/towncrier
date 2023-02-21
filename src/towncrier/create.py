@@ -45,6 +45,11 @@ DEFAULT_CONTENT = "Add your info here"
     default=DEFAULT_CONTENT,
     help="Sets the content of the new fragment.",
 )
+@click.option(
+    "--eof-newline/--no-eof-newline",
+    default=None,
+    help="Ensure the content ends with an empty line.",
+)
 @click.argument("filename", default="")
 def _main(
     ctx: click.Context,
@@ -53,6 +58,7 @@ def _main(
     filename: str,
     edit: bool | None,
     content: str,
+    eof_newline: bool | None,
 ) -> None:
     """
     Create a new news fragment.
@@ -70,7 +76,7 @@ def _main(
     * .removal - a deprecation or removal of public API,
     * .misc - a ticket has been closed, but it is not of interest to users.
     """
-    __main(ctx, directory, config, filename, edit, content)
+    __main(ctx, directory, config, filename, edit, content, eof_newline)
 
 
 def __main(
@@ -80,11 +86,14 @@ def __main(
     filename: str,
     edit: bool | None,
     content: str,
+    eof_newline: bool | None,
 ) -> None:
     """
     The main entry point.
     """
     base_directory, config = load_config_from_options(directory, config_path)
+    if eof_newline is None:
+        eof_newline = config.create_eof_newline
 
     filename_ext = ""
     if config.create_add_extension:
@@ -165,6 +174,8 @@ def __main(
 
     with open(segment_file, "w") as f:
         f.write(content)
+        if eof_newline and content and not content.endswith("\n"):
+            f.write("\n")
 
     click.echo(f"Created news fragment at {segment_file}")
 
