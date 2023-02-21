@@ -3,6 +3,7 @@
 
 import os
 import string
+
 from pathlib import Path
 from textwrap import dedent
 from unittest import mock
@@ -269,7 +270,7 @@ Fragment type (feature, bugfix, doc, removal, misc): feature
 Created news fragment at {expected}
 """,
         )
-        with open(expected, "r") as f:
+        with open(expected) as f:
             self.assertEqual(f.read(), "Edited content\n")
 
     @with_isolated_runner
@@ -292,7 +293,7 @@ Fragment type (feature, bugfix, doc, removal, misc): feature
 Created news fragment at {expected}
 """,
         )
-        with open(expected, "r") as f:
+        with open(expected) as f:
             self.assertEqual(f.read(), "Fixed this\n")
 
     @with_isolated_runner

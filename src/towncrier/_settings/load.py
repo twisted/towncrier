@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import os
 import sys
+
 from collections import OrderedDict
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Mapping
@@ -12,6 +13,7 @@ from typing import TYPE_CHECKING, Any, Mapping
 import pkg_resources
 
 from .._settings import fragment_types as ft
+
 
 if TYPE_CHECKING:
     # We only use Literal for type-checking and Mypy always brings its own
