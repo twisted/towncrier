@@ -255,12 +255,15 @@ def render_fragments(
 
     jinja_template = Template(template, trim_blocks=True)
 
-    data: dict[str, dict[str, dict[str, list[str]]]] = OrderedDict()
+    data: dict[str, dict[str, dict[str, list[str]]]] = {}
+    issues_by_category: dict[str, dict[str, list[str]]] = {}
 
     for section_name, section_value in fragments.items():
-        data[section_name] = OrderedDict()
+        data[section_name] = {}
+        issues_by_category[section_name] = {}
 
         for category_name, category_value in section_value.items():
+            category_issues = set()
             # Suppose we start with an ordering like this:
             #
             # - Fix the thing (#7, #123, #2)
@@ -273,6 +276,7 @@ def render_fragments(
             entries = []
             for text, issues in category_value.items():
                 entries.append((text, sorted(issues, key=issue_key)))
+                category_issues.update(issues)
 
             # Then we sort the lines:
             #
@@ -290,6 +294,10 @@ def render_fragments(
                 categories[text] = rendered
 
             data[section_name][category_name] = categories
+            issues_by_category[section_name][category_name] = [
+                render_issue(issue_format, i)
+                for i in sorted(category_issues, key=issue_key)
+            ]
 
     done = []
 
@@ -311,6 +319,7 @@ def render_fragments(
         versiondata=versiondata,
         top_underline=top_underline,
         get_indent=get_indent,  # simplify indentation in the jinja template.
+        issues_by_category=issues_by_category,
     )
 
     for line in res.split("\n"):

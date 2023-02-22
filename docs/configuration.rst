@@ -2,57 +2,116 @@ Configuration Reference
 =======================
 
 ``towncrier`` has many knobs and switches you can use, to customize it to your project's needs.
-The setup in the `Quick Start <quickstart.html>`_ doesn't touch on many, but this document will detail each of these options for you!
+The setup in the `Tutorial <tutorial.html>`_ doesn't touch on many, but this document will detail each of these options for you!
 
 For how to perform common customization tasks, see `Customization <customization/index.html>`_.
 
 ``[tool.towncrier]``
 --------------------
 
-All configuration for ``towncrier`` sits inside ``pyproject.toml``, under the ``tool.towncrier`` namespace.
+All configuration for ``towncrier`` sits inside ``towncrier.toml`` or ``pyproject.toml``, under the ``tool.towncrier`` namespace.
 Please see https://toml.io/ for how to write TOML.
 
+A minimal configuration for a Python project looks like this:
+
+.. code-block:: toml
+
+   # pyproject.toml
+
+   [tool.towncrier]
+   package = "myproject"
+
+A minimal configuration for a non-Python project looks like this:
+
+.. code-block:: toml
+
+   # towncrier.toml
+
+   [tool.towncrier]
+   name = "My Project"
+   version = "1.0.0"
+   directory = "newsfragments" 
 
 Top level keys
 ~~~~~~~~~~~~~~
 
-- ``directory`` -- If you are not storing your news fragments in your Python package, or aren't using Python, this is the path to where your newsfragments will be put.
-- ``filename`` -- The filename of your news file.
-  ``NEWS.rst`` by default.
-- ``package`` -- The package name of your project.
-  (Python projects only)
-- ``package_dir`` -- The folder your package lives. ``./`` by default, some projects might need to use ``src``.
-  (Python projects only)
-- ``template`` -- Path to an alternate template for generating the news file, if you have one.
-- ``start_string`` -- The magic string that ``towncrier`` looks for when considering where the release notes should start.
-  ``.. towncrier release notes start`` by default.
-- ``title_format`` -- A format string for the title of your project.
-  ``{name} {version} ({project_date})`` by default.
-- ``issue_format`` -- A format string for rendering the issue/ticket number in newsfiles.
-  ``#{issue}`` by default.
-- ``underlines`` -- The characters used for underlining headers.
+- **``name``** -- The name of your project. If empty and the ``package`` key is provided, the name will be automatically determined.
+  ``""`` by default.
+- **``version``** -- The version of your project. Mandatory except for Python projects that provide the ``package`` key and want the version to be automatically determined from a ``__version__`` variable in the package's module.
+- **``directory``** -- The directory storing you news fragments. Mandatory except for Python projects (where the default is a ``newsfragments`` directory within the package).
+- **``filename``** -- The filename of your news file.
+  ``"NEWS.rst"`` by default.
+- **``template``** -- Path to the template for generating the news file. If the path starts with ``towncrier:``, it is interpreted as a template bundled with ``towncrier``.
+  ``"towncrier:default.rst"`` by default (unless ``filename`` ends with ``.md``, in which case the default is ``"towncrier:default.md"``).
+- **``start_string``** -- The magic string that ``towncrier`` looks for when considering where the release notes should start.
+  ``".. towncrier release notes start"`` by default.
+- **``title_format``** -- A format string for the title of your project. The explicit value of ``False`` will disable the title entirely. Any other empty value means the template should render the title (the bundled templates use ``<name> <version> (<date>)``). Strings should use the following keys to render the title dynamically: ``{name}``, ``{version}``, and ``{project_date}``.
+  ``""`` by default.
+- **``issue_format``** -- A format string for rendering the issue/ticket number in newsfiles. If none, the issues are rendered as ``#<issue>`` if for issues that are integers, or just ``<issue>`` otherwise. Use the ``{issue}`` key in your string render the issue number, for example Markdown projects may want to use ``"[{issue}]: https://<your bug tracker>/{issue}"``.
+  ``None`` by default.
+- **``underlines``** -- The characters used for underlining headers. Not used in the bundled Markdown template.
   ``["=", "-", "~"]`` by default.
+- **``wrap``** -- Boolean value indicating whether to wrap news fragments to a width of 79.
+  ``false`` by default.
+- **``all_bullets``** -- Boolean value indicating whether the template uses bullets for each news fragment.
+  ``true`` by default.
+- **``single_file``** -- Boolean value indicating whether to write all news fragments to a single file. If false, the ``filename`` should use the following keys to render the filenames dynamically: ``{name}``, ``{version}``, and ``{project_date}``.
+  ``true`` by default.
+- **``orphan_prefix``** -- The prefix used for orphaned news fragments.
+  ``"+"`` by default.
+
+Extra top level keys for Python projects
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- **``package``** -- The package name of your project.
+- **``package_dir``** -- The folder your package lives.
+  ``"."`` by default, some projects might need to use ``"src"``.
+
+
+Sections
+--------
+
+``towncrier`` supports splitting fragments into multiple sections, each with its own news of fragment types.
+
+Add an array of tables your ``.toml`` configuration file named **``[[tool.towncrier.section]]``**.
+
+Each table within this array has the following mandatory keys:
+
+- **``name``** -- The name of the section.
+- **``path``** -- The path to the directory containing the news fragments for this section, relative to the configured ``directory``. Use ``""`` for the root directory.
+
+For example:
+
+.. code-block:: toml
+
+   [[tool.towncrier.section]]
+   name = "Main Platform"
+   path = ""
+
+   [[tool.towncrier.section]]
+   name = "Secondary"
+   path = "secondary"
 
 
 Custom fragment types
 ---------------------
-``towncrier`` allows defining custom fragment types.
-Custom fragment types will be used instead ``towncrier`` default ones, they are not combined.
 
-There are two ways to add custom fragment types.
+``towncrier`` hase the following default fragment types: ``feature``, ``bugfix``, ``doc``, ``removal``, and ``misc``.
+
+You can use either of the two following method to define custom types instead (you will need to redefine any of the default types you want to use).
 
 
-Defining Custom Fragment Types With a TOML Mapping
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Use TOML tables (alphabetical order)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Users can configure each of their own custom fragment types by adding tables to
-the pyproject.toml named ``[tool.towncrier.fragment.<a custom fragment type>]``.
+Adding tables to your ``.toml`` configuration file named **``[tool.towncrier.fragment.<a custom fragment type>]``**.
 
-These tables may include the following optional keys:
+These may include the following optional keys:
 
- * ``name``: The description of the fragment type, as it must be included in the news file.
-   If omitted, it defaults to  its  fragment type, but capitalized.
- * ``showcontent``: Whether if the fragment contents should be included in the news file. If omitted, it defaults to ``true``
+- **``name``** -- The description of the fragment type, as it must be included in the news file.
+  Defaults to its fragment type, but capitalized.
+- **``showcontent``** -- A boolean value indicating whether the fragment contents should be included in the news file.
+  ``true`` by default.
 
 For example, if you want your custom fragment types to be ``["feat", "fix", "chore",]`` and you want all of them to use the default configuration except ``"chore"`` you can do it as follows:
 
@@ -70,25 +129,23 @@ For example, if you want your custom fragment types to be ``["feat", "fix", "cho
 
 .. warning::
 
-   Since TOML mappings aren't ordered, the sections are always rendered alphabetically.
+   Since TOML mappings aren't ordered, types defined using this method are always rendered alphabetically.
 
 
-Defining Custom Fragment Types With an Array of TOML Tables
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Use a TOML Array (defined order)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Users can create their own custom fragment types by adding an array of
-tables to the pyproject.toml named ``[[tool.towncrier.type]]``.
+Add an array of tables to your ``.toml`` configuration file named **``[[tool.towncrier.type]]``**.
 
-If you use this way to configure custom fragment types, please note that ``fragment_types`` must be empty or not provided.
+If you use this way to configure custom fragment types, ensure there is no ``tool.towncrier.fragment`` table.
 
-Each custom type (``[[tool.towncrier.type]]``) has the following
-mandatory keys:
+Each table within this array has the following mandatory keys:
 
-* ``directory``: The type / category of the fragment.
-* ``name``: The description of the fragment type, as it must be included
+- **``directory``** -- The type / category of the fragment.
+- **``name``** -- The description of the fragment type, as it must be included
   in the news file.
-* ``showcontent``: Whether if the fragment contents should be included in the
-  news file.
+- **``showcontent``** -- A boolean value indicating whether the fragment contents should be included in the news file.
+  ``true`` by default.
 
 For example:
 
@@ -104,40 +161,3 @@ For example:
    directory = "chore"
    name = "Other Tasks"
    showcontent = false
-
-
-All Options
------------
-
-``towncrier`` has the following global options, which can be specified in the toml file:
-
-.. code-block:: toml
-
-   [tool.towncrier]
-   package = ""
-   package_dir = "."
-   single_file = true  # if false, filename is formatted like `title_format`.
-   filename = "NEWS.rst"
-   directory = "directory/of/news/fragments"
-   version = "1.2.3"  # project version if maintained separately
-   name = "arbitrary project name"
-   template = "path/to/template.rst"
-   start_string = "Text used to detect where to add the generated content in the middle of a file. Generated content added after this text. Newline auto added."
-   title_format = "{name} {version} ({project_date})"  # or false if template includes title
-   issue_format = "format string for {issue} (issue is the first part of fragment name)"
-   underlines = "=-~"
-   wrap = false  # Wrap text to 79 characters
-   all_bullets = true  # make all fragments bullet points
-   orphan_prefix = "+"   # Prefix for orphan news fragment files, set to "" to disable.
-
-If ``single_file`` is set to ``true`` or unspecified, all changes will be written to a single fixed newsfile, whose name is literally fixed as the ``filename`` option.
-In each run of ``towncrier build``, content of new changes will append at the top of old content, and after ``start_string`` if the ``start_string`` already appears in the newsfile.
-If the corresponding ``top_line``, which is formatted as the option 'title_format', already exists in newsfile, ``ValueError`` will be raised to remind you "already produced newsfiles for this version".
-
-If ``single_file`` is set to ``false`` instead, each versioned ``towncrier build`` will generate a separate newsfile, whose name is formatted as the pattern given by option ``filename``.
-For example, if ``filename="{version}-notes.rst"``, then the release note with version "7.8.9" will be written to the file "7.8.9-notes.rst".
-If the newsfile already exists, its content will be overwritten with new release note, without throwing a ``ValueError`` warning.
-
-If ``title_format`` is unspecified or an empty string, the default format will be used.
-If set to ``false``, no title will be created.
-This can be useful if the specified template creates the title itself.
