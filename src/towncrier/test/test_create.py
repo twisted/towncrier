@@ -304,7 +304,62 @@ class TestCli(TestCase):
         expected = os.path.join(os.getcwd(), "foo", "newsfragments", "123.feature.rst")
         self.assertEqual(
             result.output,
-            f"""Issue number: 123
+            f"""Issue number (`+` if none): 123
+Fragment type (feature, bugfix, doc, removal, misc): feature
+Created news fragment at {expected}
+""",
+        )
+        with open(expected) as f:
+            self.assertEqual(f.read(), "Edited content\n")
+
+    @with_isolated_runner
+    def test_without_filename_orphan(self, runner: CliRunner):
+        """
+        The user can create an orphan fragment from the interactive prompt.
+        """
+        setup_simple_project()
+
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = "Orphan content"
+            result = runner.invoke(_main, input="+\nfeature\n")
+            self.assertFalse(result.exception, result.output)
+            mock_edit.assert_called_once()
+        expected = os.path.join(os.getcwd(), "foo", "newsfragments", "+")
+        self.assertTrue(
+            result.output.startswith(
+                f"""Issue number (`+` if none): +
+Fragment type (feature, bugfix, doc, removal, misc): feature
+Created news fragment at {expected}"""
+            ),
+            result.output,
+        )
+        # Check that the file was created with a random name
+        created_line = result.output.strip().rsplit("\n", 1)[-1]
+        # Get file names in the newsfragments directory.
+        files = os.listdir(os.path.join(os.getcwd(), "foo", "newsfragments"))
+        # Check that the file name is in the created line.
+        created_fragment = created_line.split(" ")[-1]
+        self.assertIn(Path(created_fragment).name, files)
+        with open(created_fragment) as f:
+            self.assertEqual(f.read(), "Orphan content\n")
+
+    @with_isolated_runner
+    def test_without_filename_no_orphan_config(self, runner: CliRunner):
+        """
+        If an empty orphan prefix is set, orphan creation is turned off from interactive
+        prompt.
+        """
+        setup_simple_project(extra_config='orphan_prefix = ""')
+
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = "Edited content"
+            result = runner.invoke(_main, input="+\nfeature\n")
+            self.assertFalse(result.exception, result.output)
+            mock_edit.assert_called_once()
+        expected = os.path.join(os.getcwd(), "foo", "newsfragments", "+.feature.rst")
+        self.assertEqual(
+            result.output,
+            f"""Issue number: +
 Fragment type (feature, bugfix, doc, removal, misc): feature
 Created news fragment at {expected}
 """,
@@ -327,7 +382,7 @@ Created news fragment at {expected}
         expected = os.path.join(os.getcwd(), "foo", "newsfragments", "123.feature.rst")
         self.assertEqual(
             result.output,
-            f"""Issue number: 123
+            f"""Issue number (`+` if none): 123
 Fragment type (feature, bugfix, doc, removal, misc): feature
 Created news fragment at {expected}
 """,

@@ -102,7 +102,11 @@ def __main(
             filename_ext = ext
 
     if not filename:
-        issue = click.prompt("Issue number")
+        prompt = "Issue number"
+        # Add info about adding orphan if config is set.
+        if config.orphan_prefix:
+            prompt += f" (`{config.orphan_prefix}` if none)"
+        issue = click.prompt(prompt)
         fragment_type = click.prompt(
             "Fragment type",
             type=click.Choice(list(config.types)),
