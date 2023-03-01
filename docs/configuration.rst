@@ -30,7 +30,7 @@ A minimal configuration for a non-Python project looks like this:
    [tool.towncrier]
    name = "My Project"
    version = "1.0.0"
-   directory = "newsfragments" 
+   directory = "newsfragments"
 
 Top level keys
 ~~~~~~~~~~~~~~
