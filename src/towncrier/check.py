@@ -38,7 +38,7 @@ def _get_default_compare_branch(branches: Container[str]) -> str | None:
     default=None,
     metavar="BRANCH",
     help=(
-        "Checks files changed running git diff --name-ony BRANCH... "
+        "Checks files changed running git diff --name-only BRANCH... "
         "BRANCH is the branch to be compared with. "
         "Default to origin/main"
     ),
