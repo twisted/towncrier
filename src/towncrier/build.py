@@ -245,38 +245,39 @@ def __main(
             err=to_err,
         )
         click.echo(content)
-    else:
-        click.echo("Writing to newsfile...", err=to_err)
-        news_file = config.filename
+        return
 
-        if config.single_file is False:
-            # The release notes for each version are stored in a separate file.
-            # The name of that file is generated based on the current version and project.
-            news_file = news_file.format(
-                name=project_name, version=project_version, project_date=project_date
-            )
+    click.echo("Writing to newsfile...", err=to_err)
+    news_file = config.filename
 
-        append_to_newsfile(
-            base_directory,
-            news_file,
-            config.start_string,
-            top_line,
-            content,
-            single_file=config.single_file,
+    if config.single_file is False:
+        # The release notes for each version are stored in a separate file.
+        # The name of that file is generated based on the current version and project.
+        news_file = news_file.format(
+            name=project_name, version=project_version, project_date=project_date
         )
 
-        click.echo("Staging newsfile...", err=to_err)
-        _git.stage_newsfile(base_directory, news_file)
+    append_to_newsfile(
+        base_directory,
+        news_file,
+        config.start_string,
+        top_line,
+        content,
+        single_file=config.single_file,
+    )
 
-        if should_remove_fragment_files(
-            fragment_filenames,
-            answer_yes,
-            answer_keep,
-        ):
-            click.echo("Removing news fragments...", err=to_err)
-            _git.remove_files(fragment_filenames)
+    click.echo("Staging newsfile...", err=to_err)
+    _git.stage_newsfile(base_directory, news_file)
 
-        click.echo("Done!", err=to_err)
+    if should_remove_fragment_files(
+        fragment_filenames,
+        answer_yes,
+        answer_keep,
+    ):
+        click.echo("Removing news fragments...", err=to_err)
+        _git.remove_files(fragment_filenames)
+
+    click.echo("Done!", err=to_err)
 
 
 def should_remove_fragment_files(
