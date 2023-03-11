@@ -78,7 +78,12 @@ def _validate_answer(ctx: Context, param: Option, value: bool) -> bool:
     default=None,
     help="Render the news fragments using given version.",
 )
-@click.option("--date", "project_date", default=None)
+@click.option(
+    "--date",
+    "project_date",
+    default=None,
+    help="Render the news fragments using the given date.",
+)
 @click.option(
     "--yes",
     "answer_yes",
