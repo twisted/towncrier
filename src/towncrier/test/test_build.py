@@ -60,7 +60,7 @@ class TestCli(TestCase):
                 Loading template...
                 Finding news fragments...
                 Rendering news fragments...
-                Draft only -- nothing has been written.
+                Print draft to stdout only -- nothing has been written.
                 What is seen below is what would be written.
 
                 Foo 1.2.3 (01-01-2001)
@@ -273,7 +273,7 @@ class TestCli(TestCase):
         self.assertEqual(
             result.output,
             "Loading template...\nFinding news fragments...\nRendering news "
-            "fragments...\nDraft only -- nothing has been written.\nWhat is "
+            "fragments...\nPrint draft to stdout only -- nothing has been written.\nWhat is "
             "seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
             "\n======================"
             + dedent(
@@ -316,7 +316,7 @@ class TestCli(TestCase):
         self.assertEqual(
             result.output,
             "Loading template...\nFinding news fragments...\nRendering news "
-            "fragments...\nDraft only -- nothing has been written.\nWhat is "
+            "fragments...\nPrint draft to stdout only -- nothing has been written.\nWhat is "
             "seen below is what would be written.\n\nFoo 1.2.3 (01-01-2001)"
             "\n======================"
             + dedent(
@@ -551,7 +551,7 @@ class TestCli(TestCase):
             Loading template...
             Finding news fragments...
             Rendering news fragments...
-            Draft only -- nothing has been written.
+            Print draft to stdout only -- nothing has been written.
             What is seen below is what would be written.
 
             FooBarBaz 7.8.9 (01-01-2001)
@@ -592,7 +592,7 @@ class TestCli(TestCase):
             Loading template...
             Finding news fragments...
             Rendering news fragments...
-            Draft only -- nothing has been written.
+            Print draft to stdout only -- nothing has been written.
             What is seen below is what would be written.
 
             7.8.9 (01-01-2001)
@@ -634,7 +634,7 @@ class TestCli(TestCase):
             Loading template...
             Finding news fragments...
             Rendering news fragments...
-            Draft only -- nothing has been written.
+            Print draft to stdout only -- nothing has been written.
             What is seen below is what would be written.
 
             ImGoProject 7.8.9 (01-01-2001)
@@ -679,7 +679,7 @@ class TestCli(TestCase):
             Loading template...
             Finding news fragments...
             Rendering news fragments...
-            Draft only -- nothing has been written.
+            Print draft to stdout only -- nothing has been written.
             What is seen below is what would be written.
 
             7.8.9 (01-01-2001)
@@ -1010,7 +1010,7 @@ Deprecations and Removals
             Loading template...
             Finding news fragments...
             Rendering news fragments...
-            Draft only -- nothing has been written.
+            Print draft to stdout only -- nothing has been written.
             What is seen below is what would be written.
 
             [20-01-2001] CUSTOM RELEASE for FooBarBaz version 7.8.9
@@ -1087,7 +1087,7 @@ Deprecations and Removals
             Loading template...
             Finding news fragments...
             Rendering news fragments...
-            Draft only -- nothing has been written.
+            Print draft to stdout only -- nothing has been written.
             What is seen below is what would be written.
 
             Here's a hardcoded title added by the template
@@ -1220,7 +1220,7 @@ Deprecations and Removals
             Loading template...
             Finding news fragments...
             Rendering news fragments...
-            Draft only -- nothing has been written.
+            Print draft to stdout only -- nothing has been written.
             What is seen below is what would be written.
 
             7.8.9 - 20-01-2001

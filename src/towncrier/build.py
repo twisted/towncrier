@@ -85,6 +85,12 @@ def _validate_answer(ctx: Context, param: Option, value: bool) -> bool:
     help="Render the news fragments using the given date.",
 )
 @click.option(
+    "--filename",
+    "filename",
+    default=None,
+    help="Write the output to the given filename pattern.",
+)
+@click.option(
     "--yes",
     "answer_yes",
     default=None,
@@ -107,6 +113,7 @@ def _main(
     project_name: str | None,
     project_version: str | None,
     project_date: str | None,
+    filename: str | None,
     answer_yes: bool,
     answer_keep: bool,
 ) -> None:
@@ -115,14 +122,15 @@ def _main(
     """
     try:
         return __main(
-            draft,
-            directory,
-            config_file,
-            project_name,
-            project_version,
-            project_date,
-            answer_yes,
-            answer_keep,
+            draft=draft,
+            directory=directory,
+            config_file=config_file,
+            project_name=project_name,
+            project_version=project_version,
+            project_date=project_date,
+            filename=filename,
+            answer_yes=answer_yes,
+            answer_keep=answer_keep,
         )
     except ConfigError as e:
         print(e, file=sys.stderr)
@@ -136,6 +144,7 @@ def __main(
     project_name: str | None,
     project_version: str | None,
     project_date: str | None,
+    filename: str | None,
     answer_yes: bool,
     answer_keep: bool,
 ) -> None:
@@ -238,9 +247,9 @@ def __main(
     else:
         content = rendered
 
-    if draft:
+    if draft and filename is None:
         click.echo(
-            "Draft only -- nothing has been written.\n"
+            "Print draft to stdout only -- nothing has been written.\n"
             "What is seen below is what would be written.\n",
             err=to_err,
         )
@@ -248,34 +257,41 @@ def __main(
         return
 
     click.echo("Writing to newsfile...", err=to_err)
-    news_file = config.filename
 
-    if config.single_file is False:
+    if filename is None:
+        filename = config.filename
+
+    single_file = config.single_file
+
+    if not single_file:
         # The release notes for each version are stored in a separate file.
         # The name of that file is generated based on the current version and project.
-        news_file = news_file.format(
-            name=project_name, version=project_version, project_date=project_date
+        filename = filename.format(
+            name=project_name,
+            version=project_version,
+            project_date=project_date,
         )
 
     append_to_newsfile(
         base_directory,
-        news_file,
+        filename,
         config.start_string,
         top_line,
         content,
-        single_file=config.single_file,
+        single_file=single_file,
     )
 
-    click.echo("Staging newsfile...", err=to_err)
-    _git.stage_newsfile(base_directory, news_file)
+    if not draft:
+        click.echo("Staging newsfile...", err=to_err)
+        _git.stage_newsfile(base_directory, filename)
 
-    if should_remove_fragment_files(
-        fragment_filenames,
-        answer_yes,
-        answer_keep,
-    ):
-        click.echo("Removing news fragments...", err=to_err)
-        _git.remove_files(fragment_filenames)
+        if should_remove_fragment_files(
+            fragment_filenames,
+            answer_yes,
+            answer_keep,
+        ):
+            click.echo("Removing news fragments...", err=to_err)
+            _git.remove_files(fragment_filenames)
 
     click.echo("Done!", err=to_err)
 
