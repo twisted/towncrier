@@ -279,6 +279,9 @@ def should_remove_fragment_files(
     answer_yes: bool,
     answer_keep: bool,
 ) -> bool:
+    if not fragment_filenames:
+        click.echo("No news fragments to remove. Skipping!")
+        return False
     try:
         if answer_keep:
             click.echo("Keeping the following files:")
