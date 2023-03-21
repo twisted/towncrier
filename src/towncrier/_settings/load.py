@@ -122,7 +122,8 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
             # Skip these options, they are processed later.
             continue
         if field.name in config:
-            if field.type == "bool":
+            #  Interestingly, the __future__ annotation turns the type into a string.
+            if field.type in ("bool", bool):
                 if not isinstance(config[field.name], bool):
                     raise ConfigError(
                         f"`{field.name}` option must be boolean: false or true.",
@@ -146,21 +147,21 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
     # Process 'template'.
     template = config.get("template", "towncrier:default")
     if template.startswith("towncrier:"):
-        resource_filename = template.split(":", 1)[1]
-        if not os.path.splitext(resource_filename)[1]:
+        resource_name = "templates/" + template.split(":", 1)[1]
+        if not os.path.splitext(resource_name)[1]:
             # Choose the default template based on the filename extension.
             if os.path.splitext(config.get("filename", ""))[
                 1
             ] == ".md" and pkg_resources.resource_exists(
-                "towncrier", f"{resource_filename}.md"
+                "towncrier", f"{resource_name}.md"
             ):
-                resource_filename += ".md"
+                resource_name += ".md"
             else:
-                resource_filename += ".rst"
-        resource_name = "templates/" + resource_filename
+                resource_name += ".rst"
         if not pkg_resources.resource_exists("towncrier", resource_name):
             raise ConfigError(
-                f"Towncrier does not have a template named '{resource_filename}'.",
+                "Towncrier does not have a template named "
+                f"'{os.path.basename(resource_name)}'.",
                 failing_option="template",
             )
         template = pkg_resources.resource_filename("towncrier", resource_name)

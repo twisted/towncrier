@@ -7,6 +7,8 @@ import textwrap
 
 from textwrap import dedent
 
+import pkg_resources
+
 from twisted.trial.unittest import TestCase
 
 from .._settings import ConfigError, load_config
@@ -34,6 +36,53 @@ orphan_prefix = "~"
         self.assertEqual(config.filename, "NEWS.rst")
         self.assertEqual(config.underlines, ["=", "-", "~"])
         self.assertEqual(config.orphan_prefix, "~")
+
+    def test_markdown(self):
+        """
+        If the filename references an .md file and the builtin template doesn't have an
+        extension, add .md rather than .rst.
+        """
+        temp = self.mktemp()
+        os.makedirs(temp)
+
+        with open(os.path.join(temp, "pyproject.toml"), "w") as f:
+            f.write(
+                """[tool.towncrier]
+package = "foobar"
+filename = "NEWS.md"
+"""
+            )
+
+        config = load_config(temp)
+        self.assertEqual(config.filename, "NEWS.md")
+        expected_template = pkg_resources.resource_filename(
+            "towncrier", "templates/default.md"
+        )
+        self.assertEqual(config.template, expected_template)
+
+    def test_explicit_template_extension(self):
+        """
+        If the filename references an .md file and the builtin template has an
+        extension, don't change it.
+        """
+        temp = self.mktemp()
+        os.makedirs(temp)
+
+        with open(os.path.join(temp, "pyproject.toml"), "w") as f:
+            f.write(
+                """[tool.towncrier]
+package = "foobar"
+filename = "NEWS.md"
+template = "towncrier:default.rst"
+"""
+            )
+
+        config = load_config(temp)
+        self.assertEqual(config.filename, "NEWS.md")
+        expected_template = pkg_resources.resource_filename(
+            "towncrier", "templates/default.rst"
+        )
+        self.assertEqual(config.template, expected_template)
 
     def test_missing(self):
         """

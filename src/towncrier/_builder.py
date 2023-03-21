@@ -263,7 +263,7 @@ def render_fragments(
         issues_by_category[section_name] = {}
 
         for category_name, category_value in section_value.items():
-            category_issues = set()
+            category_issues: set[str] = set()
             # Suppose we start with an ordering like this:
             #
             # - Fix the thing (#7, #123, #2)
