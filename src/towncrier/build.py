@@ -263,12 +263,12 @@ def __main(
         click.echo("Staging newsfile...", err=to_err)
         _git.stage_newsfile(base_directory, news_file)
 
-        click.echo("Removing news fragments...", err=to_err)
         if should_remove_fragment_files(
             fragment_filenames,
             answer_yes,
             answer_keep,
         ):
+            click.echo("Removing news fragments...", err=to_err)
             _git.remove_files(fragment_filenames)
 
         click.echo("Done!", err=to_err)
@@ -279,6 +279,9 @@ def should_remove_fragment_files(
     answer_yes: bool,
     answer_keep: bool,
 ) -> bool:
+    if not fragment_filenames:
+        click.echo("No news fragments to remove. Skipping!")
+        return False
     try:
         if answer_keep:
             click.echo("Keeping the following files:")
