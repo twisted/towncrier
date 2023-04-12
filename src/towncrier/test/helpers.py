@@ -32,7 +32,7 @@ def read_pkg_resource(path: str) -> str:
     """
     Read *path* from the towncrier package.
     """
-    return (resources.files("towncrier") / path).read_text()
+    return (resources.files("towncrier") / path).read_text("utf8")
 
 
 def with_isolated_runner(fn: Callable[..., Any]) -> Callable[..., Any]:
