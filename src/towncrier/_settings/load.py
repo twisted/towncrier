@@ -3,10 +3,12 @@
 
 from __future__ import annotations
 
+import atexit
 import os
 import sys
 
 from collections import OrderedDict
+from contextlib import ExitStack
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Mapping
 
@@ -150,15 +152,20 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
 
     template = config.get("template", _template_fname)
     if template.startswith("towncrier:"):
-        resource_name = "templates/" + template.split("towncrier:", 1)[1] + ".rst"
+        file_manager = ExitStack()
+        atexit.register(file_manager.close)
+
+        resource_name = f"templates/{template.split('towncrier:', 1)[1]}.rst"
         resource_path = resources.files("towncrier") / resource_name
-        if not resource_path.exists():
+        file_manager.enter_context(resources.as_file(resource_path))
+
+        if not resource_path.is_file():
             raise ConfigError(
                 "Towncrier does not have a template named '%s'."
                 % (template.split("towncrier:", 1)[1],)
             )
 
-        template = str(resource_path.resolve())
+        template = str(resource_path)
     else:
         template = os.path.join(base_path, template)
 
