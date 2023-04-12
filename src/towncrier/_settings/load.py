@@ -10,8 +10,6 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Mapping
 
-import pkg_resources
-
 from .._settings import fragment_types as ft
 
 
@@ -22,6 +20,12 @@ if TYPE_CHECKING:
         from typing_extensions import Literal
     else:
         from typing import Literal
+
+if sys.version_info < (3, 9):
+    import importlib_resources as resources
+else:
+    from importlib import resources
+
 
 if sys.version_info < (3, 11):
     import tomli as tomllib
@@ -147,13 +151,14 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
     template = config.get("template", _template_fname)
     if template.startswith("towncrier:"):
         resource_name = "templates/" + template.split("towncrier:", 1)[1] + ".rst"
-        if not pkg_resources.resource_exists("towncrier", resource_name):
+        resource_path = resources.files("towncrier") / resource_name
+        if not resource_path.exists():
             raise ConfigError(
                 "Towncrier does not have a template named '%s'."
                 % (template.split("towncrier:", 1)[1],)
             )
 
-        template = pkg_resources.resource_filename("towncrier", resource_name)
+        template = str(resource_path.resolve())
     else:
         template = os.path.join(base_path, template)
 
