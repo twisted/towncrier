@@ -37,8 +37,6 @@ def tests(session: nox.Session) -> None:
 
     if os.environ.get("CI") != "true":
         session.notify("coverage_report")
-    else:
-        session.run("coverage", "combine")
 
 
 @nox.session
