@@ -112,6 +112,11 @@ def load_config_from_file(directory: str, config_file: str) -> Config:
     return parse_toml(directory, config)
 
 
+# Clean up possible temporary files on exit.
+_file_manager = ExitStack()
+atexit.register(_file_manager.close)
+
+
 def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
     if "tool" not in config:
         raise ConfigError("No [tool.towncrier] section.", failing_option="all")
@@ -152,12 +157,10 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
 
     template = config.get("template", _template_fname)
     if template.startswith("towncrier:"):
-        file_manager = ExitStack()
-        atexit.register(file_manager.close)
-
         resource_name = f"templates/{template.split('towncrier:', 1)[1]}.rst"
-        resource_path = resources.files("towncrier") / resource_name
-        file_manager.enter_context(resources.as_file(resource_path))
+        resource_path = _file_manager.enter_context(
+            resources.as_file(resources.files("towncrier") / resource_name)
+        )
 
         if not resource_path.is_file():
             raise ConfigError(
