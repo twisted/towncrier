@@ -331,6 +331,7 @@ No significant changes.
             wrap=True,
             versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
         )
+
         self.assertEqual(output, expected_output)
 
     def test_issue_format(self):

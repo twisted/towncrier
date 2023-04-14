@@ -54,10 +54,12 @@ filename = "NEWS.md"
             )
 
         config = load_config(temp)
+
         self.assertEqual(config.filename, "NEWS.md")
         expected_template = pkg_resources.resource_filename(
             "towncrier", "templates/default.md"
         )
+
         self.assertEqual(config.template, expected_template)
 
     def test_explicit_template_extension(self):
@@ -78,6 +80,7 @@ template = "towncrier:default.rst"
             )
 
         config = load_config(temp)
+
         self.assertEqual(config.filename, "NEWS.md")
         expected_template = pkg_resources.resource_filename(
             "towncrier", "templates/default.rst"
