@@ -23,6 +23,7 @@ Reference
 
    cli
    configuration
+   pre-commit
    customization/index
 
 
