@@ -145,5 +145,5 @@ fails with our dummy test commits.
 .. _issues:  https://github.com/twisted/towncrier/issues
 .. _pull request: https://github.com/twisted/towncrier/pulls
 .. _nox: https://nox.thea.codes/
-.. _`one sentence per line`_: https://rhodesmill.org/brandon/2012/one-sentence-per-line/
+.. _`one sentence per line`: https://rhodesmill.org/brandon/2012/one-sentence-per-line/
 .. _twisted.trial: https://github.com/twisted/trac-wiki-archive/blob/trunk/TwistedTrial.mediawiki
