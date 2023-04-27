@@ -32,9 +32,9 @@ requires-python = ">=3.7"
 dependencies = [
     "click",
     "click-default-group",
+    "importlib-resources>1.3; python_version<'3.9'",
     "incremental",
     "jinja2",
-    "setuptools",
     "tomli; python_version<'3.11'",
 ]
 
@@ -111,7 +111,6 @@ exclude = [
 
 
 [tool.black]
-target-version = ['py37']
 exclude = '''
 
 (

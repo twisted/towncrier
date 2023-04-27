@@ -3,14 +3,14 @@
 
 from __future__ import annotations
 
+import atexit
 import os
 import sys
 
 from collections import OrderedDict
+from contextlib import ExitStack
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Mapping
-
-import pkg_resources
 
 from .._settings import fragment_types as ft
 
@@ -22,6 +22,12 @@ if TYPE_CHECKING:
         from typing_extensions import Literal
     else:
         from typing import Literal
+
+if sys.version_info < (3, 9):
+    import importlib_resources as resources
+else:
+    from importlib import resources
+
 
 if sys.version_info < (3, 11):
     import tomli as tomllib
@@ -106,6 +112,11 @@ def load_config_from_file(directory: str, config_file: str) -> Config:
     return parse_toml(directory, config)
 
 
+# Clean up possible temporary files on exit.
+_file_manager = ExitStack()
+atexit.register(_file_manager.close)
+
+
 def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
     if "tool" not in config:
         raise ConfigError("No [tool.towncrier] section.", failing_option="all")
@@ -146,14 +157,18 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
 
     template = config.get("template", _template_fname)
     if template.startswith("towncrier:"):
-        resource_name = "templates/" + template.split("towncrier:", 1)[1] + ".rst"
-        if not pkg_resources.resource_exists("towncrier", resource_name):
+        resource_name = f"templates/{template.split('towncrier:', 1)[1]}.rst"
+        resource_path = _file_manager.enter_context(
+            resources.as_file(resources.files("towncrier") / resource_name)
+        )
+
+        if not resource_path.is_file():
             raise ConfigError(
                 "Towncrier does not have a template named '%s'."
                 % (template.split("towncrier:", 1)[1],)
             )
 
-        template = pkg_resources.resource_filename("towncrier", resource_name)
+        template = str(resource_path)
     else:
         template = os.path.join(base_path, template)
 
