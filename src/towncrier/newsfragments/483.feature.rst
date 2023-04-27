@@ -1,3 +1,0 @@
-Provide a default Markdown template if the configured filename ends with `.md`.
-
-The Markdown template uses the same rendered format as the default _reStructuredText_ template, but with a Markdown syntax.
