@@ -2,9 +2,9 @@ Configuration Reference
 =======================
 
 ``towncrier`` has many knobs and switches you can use, to customize it to your project's needs.
-The setup in the `Tutorial <tutorial.html>`_ doesn't touch on many, but this document will detail each of these options for you!
+The setup in the :doc:`tutorial` doesn't touch on many, but this document will detail each of these options for you!
 
-For how to perform common customization tasks, see `Customization <customization/index.html>`_.
+For how to perform common customization tasks, see :doc:`customization`.
 
 ``[tool.towncrier]``
 --------------------
@@ -37,28 +37,54 @@ Top level keys
 
 - **``name``** -- The name of your project. If empty and the ``package`` key is provided, the name will be automatically determined.
   ``""`` by default.
-- **``version``** -- The version of your project. Mandatory except for Python projects that provide the ``package`` key and want the version to be automatically determined from a ``__version__`` variable in the package's module.
-- **``directory``** -- The directory storing you news fragments. Mandatory except for Python projects (where the default is a ``newsfragments`` directory within the package).
+- **``version``** -- The version of your project.
+- **``directory``** -- The directory storing you news fragments.
+  Mandatory except for Python projects (where the default is a ``newsfragments`` directory within the package).
+  The version can also be passed explicitly by command line argument ``--version``.
+- **``directory``** -- The directory storing you news fragments.
+  Mandatory except for Python projects (where the default is a ``newsfragments`` directory within the package).
 - **``filename``** -- The filename of your news file.
   ``"NEWS.rst"`` by default.
-- **``template``** -- Path to the template for generating the news file. If the path starts with ``towncrier:``, it is interpreted as a template bundled with ``towncrier``.
-  ``"towncrier:default.rst"`` by default (unless ``filename`` ends with ``.md``, in which case the default is ``"towncrier:default.md"``).
+- **``title_format``** -- A format string for the title of your project.
+  The explicit value of ``False`` will disable the title entirely.
+  Any other empty value means the template should render the title (the bundled templates use ``<name> <version> (<date>)``).
+  Strings should use the following keys to render the title dynamically: ``{name}``, ``{version}``, and ``{project_date}``.
+  The explicit value of ``False`` will disable the title entirely.
+  Any other empty value means the template should render the title (the bundled templates use ``<name> <version> (<date>)``).
+- **``wrap``** -- Boolean value indicating whether to wrap news fragments to a line length of 79.
+- **``underlines``** -- The characters used for underlining headers.
+  Not used in the bundled Markdown template.
+- **``issue_format``** -- A format string for rendering the issue/ticket number in newsfiles.
+- **``single_file``** -- Boolean value indicating whether to write all news fragments to a single file.
+  If false, the ``filename`` should use the following keys to render the filenames dynamically:
+  ``{name}``, ``{version}``, and ``{project_date}``.
+- **``underlines``** -- The characters used for underlining headers.
+  Not used in the bundled Markdown template.
 - **``start_string``** -- The magic string that ``towncrier`` looks for when considering where the release notes should start.
   ``".. towncrier release notes start"`` by default.
-- **``title_format``** -- A format string for the title of your project. The explicit value of ``False`` will disable the title entirely. Any other empty value means the template should render the title (the bundled templates use ``<name> <version> (<date>)``). Strings should use the following keys to render the title dynamically: ``{name}``, ``{version}``, and ``{project_date}``.
+- **``title_format``** -- A format string for the title of your project.
+  The explicit value of ``False`` will disable the title entirely.
+  Any other empty value means the template should render the title (the bundled templates use ``<name> <version> (<date>)``).
+  Strings should use the following keys to render the title dynamically: ``{name}``, ``{version}``, and ``{project_date}``.
   ``""`` by default.
-- **``issue_format``** -- A format string for rendering the issue/ticket number in newsfiles. If none, the issues are rendered as ``#<issue>`` if for issues that are integers, or just ``<issue>`` otherwise. Use the ``{issue}`` key in your string render the issue number, for example Markdown projects may want to use ``"[{issue}]: https://<your bug tracker>/{issue}"``.
+- **``issue_format``** -- A format string for rendering the issue/ticket number in newsfiles.
+  If none, the issues are rendered as ``#<issue>`` if for issues that are integers, or just ``<issue>`` otherwise.
+  Use the ``{issue}`` key in your string render the issue number, for example Markdown projects may want to use ``"[{issue}]: https://<your bug tracker>/{issue}"``.
   ``None`` by default.
 - **``underlines``** -- The characters used for underlining headers. Not used in the bundled Markdown template.
   ``["=", "-", "~"]`` by default.
-- **``wrap``** -- Boolean value indicating whether to wrap news fragments to a width of 79.
+- **``wrap``** -- Boolean value indicating whether to wrap news fragments to a line length of 79.
   ``false`` by default.
 - **``all_bullets``** -- Boolean value indicating whether the template uses bullets for each news fragment.
   ``true`` by default.
-- **``single_file``** -- Boolean value indicating whether to write all news fragments to a single file. If false, the ``filename`` should use the following keys to render the filenames dynamically: ``{name}``, ``{version}``, and ``{project_date}``.
+- **``single_file``** -- Boolean value indicating whether to write all news fragments to a single file.
+  If false, the ``filename`` should use the following keys to render the filenames dynamically:
+  ``{name}``, ``{version}``, and ``{project_date}``.
   ``true`` by default.
 - **``orphan_prefix``** -- The prefix used for orphaned news fragments.
   ``"+"`` by default.
+- **``path``** -- The path to the directory containing the news fragments for this section, relative to the configured ``directory``.
+  Use ``""`` for the root directory.
 
 Extra top level keys for Python projects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -78,7 +104,8 @@ Add an array of tables your ``.toml`` configuration file named **``[[tool.towncr
 Each table within this array has the following mandatory keys:
 
 - **``name``** -- The name of the section.
-- **``path``** -- The path to the directory containing the news fragments for this section, relative to the configured ``directory``. Use ``""`` for the root directory.
+- **``path``** -- The path to the directory containing the news fragments for this section, relative to the configured ``directory``.
+  Use ``""`` for the root directory.
 
 For example:
 
