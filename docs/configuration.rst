@@ -96,7 +96,7 @@ For example:
 Custom fragment types
 ---------------------
 
-``towncrier`` hase the following default fragment types: ``feature``, ``bugfix``, ``doc``, ``removal``, and ``misc``.
+``towncrier`` has the following default fragment types: ``feature``, ``bugfix``, ``doc``, ``removal``, and ``misc``.
 
 You can use either of the two following method to define custom types instead (you will need to redefine any of the default types you want to use).
 
