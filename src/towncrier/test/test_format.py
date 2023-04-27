@@ -2,8 +2,6 @@
 # See LICENSE for details.
 
 
-from collections import OrderedDict
-
 import pkg_resources
 
 from twisted.trial.unittest import TestCase
@@ -41,13 +39,13 @@ class FormatterTests(TestCase):
             },
         }
 
-        definitions = OrderedDict(
+        definitions = {
             [
                 ("feature", {"name": "Features", "showcontent": True}),
                 ("bugfix", {"name": "Bugfixes", "showcontent": True}),
                 ("misc", {"name": "Misc", "showcontent": False}),
             ]
-        )
+        }
 
         output = split_fragments(fragments, definitions)
 
@@ -58,7 +56,7 @@ class FormatterTests(TestCase):
         Basic functionality -- getting a bunch of news fragments and formatting
         them into a rST file -- works.
         """
-        fragments = OrderedDict(
+        fragments = {
             [
                 (
                     "",
@@ -79,15 +77,15 @@ class FormatterTests(TestCase):
                 ("Names", {}),
                 ("Web", {("3", "bugfix", 0): "Web fixed."}),
             ]
-        )
+        }
 
-        definitions = OrderedDict(
+        definitions = {
             [
                 ("feature", {"name": "Features", "showcontent": True}),
                 ("bugfix", {"name": "Bugfixes", "showcontent": True}),
                 ("misc", {"name": "Misc", "showcontent": False}),
             ]
-        )
+        }
 
         expected_output = """MyProject 1.0 (never)
 =====================
@@ -185,7 +183,7 @@ Bugfixes
         """
         Check formating of default markdown template.
         """
-        fragments = OrderedDict(
+        fragments = {
             [
                 (
                     "",
@@ -216,15 +214,15 @@ Bugfixes
                     },
                 ),
             ]
-        )
+        }
 
-        definitions = OrderedDict(
+        definitions = {
             [
                 ("feature", {"name": "Features", "showcontent": True}),
                 ("bugfix", {"name": "Bugfixes", "showcontent": True}),
                 ("misc", {"name": "Misc", "showcontent": False}),
             ]
-        )
+        }
 
         expected_output = """# MyProject 1.0 (never)
 
@@ -352,7 +350,7 @@ No significant changes.
             }
         }
 
-        definitions = OrderedDict([("misc", {"name": "Misc", "showcontent": False})])
+        definitions = {[("misc", {"name": "Misc", "showcontent": False})]}
 
         expected_output = """MyProject 1.0 (never)
 =====================
@@ -400,9 +398,7 @@ Misc
             }
         }
 
-        definitions = OrderedDict(
-            [("feature", {"name": "Features", "showcontent": True})]
-        )
+        definitions = {[("feature", {"name": "Features", "showcontent": True})]}
 
         expected_output = """MyProject 1.0 (never)
 =====================
@@ -457,9 +453,7 @@ Features
             }
         }
 
-        definitions = OrderedDict(
-            [("feature", {"name": "Features", "showcontent": True})]
-        )
+        definitions = {[("feature", {"name": "Features", "showcontent": True})]}
 
         expected_output = """MyProject 1.0 (never)
 =====================

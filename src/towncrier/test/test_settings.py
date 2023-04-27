@@ -1,7 +1,6 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
-import collections as clt
 import os
 import textwrap
 
@@ -20,7 +19,6 @@ class TomlSettingsTests(TestCase):
         Test a "base config".
         """
         temp = self.mktemp()
-        os.makedirs(temp)
 
         with open(os.path.join(temp, "pyproject.toml"), "w") as f:
             f.write(
@@ -43,7 +41,6 @@ orphan_prefix = "~"
         extension, add .md rather than .rst.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
 
         with open(os.path.join(temp, "pyproject.toml"), "w") as f:
             f.write(
@@ -68,7 +65,6 @@ filename = "NEWS.md"
         extension, don't change it.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
 
         with open(os.path.join(temp, "pyproject.toml"), "w") as f:
             f.write(
@@ -92,7 +88,6 @@ template = "towncrier:default.rst"
         If the config file doesn't have the correct toml key, we error.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
 
         with open(os.path.join(temp, "pyproject.toml"), "w") as f:
             f.write(
@@ -114,7 +109,6 @@ template = "towncrier:default.rst"
         single_file must be a bool.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
 
         with open(os.path.join(temp, "pyproject.toml"), "w") as f:
             f.write(
@@ -136,7 +130,6 @@ template = "towncrier:default.rst"
         all_bullets must be a bool.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
 
         with open(os.path.join(temp, "pyproject.toml"), "w") as f:
             f.write(
@@ -158,7 +151,6 @@ template = "towncrier:default.rst"
         singlefile is not accepted, single_file is.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
 
         with open(os.path.join(temp, "pyproject.toml"), "w") as f:
             f.write(
@@ -180,7 +172,6 @@ template = "towncrier:default.rst"
         Towncrier prefers the towncrier.toml for autodetect over pyproject.toml.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
 
         with open(os.path.join(temp, "towncrier.toml"), "w") as f:
             f.write(
@@ -210,7 +201,6 @@ template = "towncrier:default.rst"
         Towncrier will raise an exception saying when it can't find a template.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
 
         with open(os.path.join(temp, "towncrier.toml"), "w") as f:
             f.write(
@@ -238,7 +228,6 @@ template = "towncrier:default.rst"
         from the Towncrier templates.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
 
         with open(os.path.join(temp, "towncrier.toml"), "w") as f:
             f.write(
@@ -296,7 +285,7 @@ template = "towncrier:default.rst"
                 },
             ),
         ]
-        expected = clt.OrderedDict(expected)
+        expected = dict(expected)
         config = self.load_config_from_string(
             toml_content,
         )
@@ -308,8 +297,7 @@ template = "towncrier:default.rst"
         Custom fragment categories can be defined inside
         the toml config file using tables.
         """
-        test_project_path = self.mktemp()
-        os.makedirs(test_project_path)
+        self.mktemp()
         toml_content = """
         [tool.towncrier]
         package = "foobar"
@@ -321,31 +309,32 @@ template = "towncrier:default.rst"
         showcontent = false
         """
         toml_content = textwrap.dedent(toml_content)
-        expected = [
-            (
-                "chore",
-                {
-                    "name": "Other Tasks",
-                    "showcontent": False,
-                },
-            ),
-            (
-                "feat",
-                {
-                    "name": "Feat",
-                    "showcontent": True,
-                },
-            ),
-            (
-                "fix",
-                {
-                    "name": "Fix",
-                    "showcontent": True,
-                },
-            ),
-        ]
+        expected = {
+            [
+                (
+                    "chore",
+                    {
+                        "name": "Other Tasks",
+                        "showcontent": False,
+                    },
+                ),
+                (
+                    "feat",
+                    {
+                        "name": "Feat",
+                        "showcontent": True,
+                    },
+                ),
+                (
+                    "fix",
+                    {
+                        "name": "Fix",
+                        "showcontent": True,
+                    },
+                ),
+            ]
+        }
 
-        expected = clt.OrderedDict(expected)
         config = self.load_config_from_string(
             toml_content,
         )
@@ -359,7 +348,6 @@ template = "towncrier:default.rst"
         obtain the towncrier configuration.
         """
         test_project_path = self.mktemp()
-        os.makedirs(test_project_path)
         toml_path = os.path.join(test_project_path, "pyproject.toml")
         with open(toml_path, "w") as f:
             f.write(toml_content)

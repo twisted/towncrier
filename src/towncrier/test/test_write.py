@@ -3,7 +3,6 @@
 
 import os
 
-from collections import OrderedDict
 from pathlib import Path
 from textwrap import dedent
 
@@ -21,11 +20,11 @@ class WritingTests(TestCase):
     maxDiff = None
 
     def test_append_at_top(self):
-        fragments = OrderedDict(
+        fragments = {
             [
                 (
                     "",
-                    OrderedDict(
+                    {
                         [
                             (("142", "misc", 0), ""),
                             (("1", "misc", 0), ""),
@@ -34,20 +33,20 @@ class WritingTests(TestCase):
                             (("2", "feature", 0), "Foo added."),
                             (("72", "feature", 0), "Foo added."),
                         ]
-                    ),
+                    },
                 ),
                 ("Names", {}),
                 ("Web", {("3", "bugfix", 0): "Web fixed."}),
             ]
-        )
+        }
 
-        definitions = OrderedDict(
+        definitions = {
             [
                 ("feature", {"name": "Features", "showcontent": True}),
                 ("bugfix", {"name": "Bugfixes", "showcontent": True}),
                 ("misc", {"name": "Misc", "showcontent": False}),
             ]
-        )
+        }
 
         expected_output = """MyProject 1.0 (never)
 =====================
@@ -85,7 +84,6 @@ Old text.
 """
 
         tempdir = self.mktemp()
-        os.mkdir(tempdir)
 
         with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
             f.write("Old text.\n")
@@ -123,7 +121,7 @@ Old text.
         If there is a comment with C{.. towncrier release notes start},
         towncrier will add the version notes after it.
         """
-        fragments = OrderedDict(
+        fragments = {
             [
                 (
                     "",
@@ -139,15 +137,15 @@ Old text.
                 ("Names", {}),
                 ("Web", {("3", "bugfix", 0): "Web fixed."}),
             ]
-        )
+        }
 
-        definitions = OrderedDict(
+        definitions = {
             [
                 ("feature", {"name": "Features", "showcontent": True}),
                 ("bugfix", {"name": "Bugfixes", "showcontent": True}),
                 ("misc", {"name": "Misc", "showcontent": False}),
             ]
-        )
+        }
 
         expected_output = """Hello there! Here is some info.
 
@@ -195,7 +193,6 @@ Old text.
 """
 
         tempdir = self.mktemp()
-        os.mkdir(tempdir)
 
         with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
             f.write(
@@ -237,7 +234,6 @@ Old text.
         the start of the file.
         """
         tempdir = self.mktemp()
-        os.mkdir(tempdir)
 
         definitions = {}
         fragments = split_fragments(fragments={}, definitions=definitions)

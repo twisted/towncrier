@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import abc
-import collections as clt
 
 from typing import Any, Iterable, Mapping
 
@@ -36,7 +35,7 @@ class BaseFragmentTypesLoader:
 class DefaultFragmentTypesLoader(BaseFragmentTypesLoader):
     """Default towncrier's fragment types."""
 
-    _default_types = clt.OrderedDict(
+    _default_types = {
         [
             # Keep in-sync with docs/tutorial.rst.
             ("feature", {"name": "Features", "showcontent": True}),
@@ -45,7 +44,7 @@ class DefaultFragmentTypesLoader(BaseFragmentTypesLoader):
             ("removal", {"name": "Deprecations and Removals", "showcontent": True}),
             ("misc", {"name": "Misc", "showcontent": False}),
         ]
-    )
+    }
 
     def load(self) -> Mapping[str, Mapping[str, Any]]:
         """Load default types."""
@@ -72,7 +71,7 @@ class ArrayFragmentTypesLoader(BaseFragmentTypesLoader):
     def load(self) -> Mapping[str, Mapping[str, Any]]:
         """Load types from toml array of mappings."""
 
-        types = clt.OrderedDict()
+        types = {}
         types_config = self.config["type"]
         for type_config in types_config:
             directory = type_config["directory"]
@@ -123,7 +122,7 @@ class TableFragmentTypesLoader(BaseFragmentTypesLoader):
             (fragment_type, self._load_options(fragment_type))
             for fragment_type in fragment_types
         ]
-        types = clt.OrderedDict(custom_types_sequence)
+        types = dict(custom_types_sequence)
         return types
 
     def _load_options(self, fragment_type: str) -> Mapping[str, Any]:

@@ -8,7 +8,7 @@ import os
 import textwrap
 import traceback
 
-from collections import OrderedDict, defaultdict
+from collections import defaultdict
 from typing import Any, DefaultDict, Iterable, Iterator, Mapping, Sequence
 
 from jinja2 import Template
@@ -66,7 +66,7 @@ def parse_newfragment_basename(
 
 # Returns a structure like:
 #
-# OrderedDict([
+# {[
 #   ("",
 #    {
 #      ("142", "misc"): u"",
@@ -74,7 +74,7 @@ def parse_newfragment_basename(
 #    }),
 #   ("Names", {}),
 #   ("Web", {("3", "bugfix"): u"Fixed a thing"}),
-# ])
+# ]}
 #
 # We should really use attrs.
 #
@@ -89,7 +89,7 @@ def find_fragments(
     """
     Sections are a dictonary of section names to paths.
     """
-    content = OrderedDict()
+    content = {}
     fragment_filenames = []
     # Multiple orphan news fragments are allowed per section, so initialize a counter
     # that can be incremented automatically.
@@ -164,7 +164,7 @@ def split_fragments(
     definitions: Mapping[str, Mapping[str, Any]],
     all_bullets: bool = True,
 ) -> Mapping[str, Mapping[str, Mapping[str, Sequence[str]]]]:
-    output = OrderedDict()
+    output = {}
 
     for section_name, section_fragments in fragments.items():
         section: dict[str, dict[str, list[str]]] = {}
@@ -182,7 +182,7 @@ def split_fragments(
             if definitions[category]["showcontent"] is False:
                 content = ""
 
-            texts = section.setdefault(category, OrderedDict())
+            texts = section.setdefault(category, {})
 
             tickets = texts.setdefault(content, [])
             if ticket:
@@ -288,7 +288,7 @@ def render_fragments(
 
             # Then we put these nicely sorted entries back in an ordered dict
             # for the template, after formatting each issue number
-            categories = OrderedDict()
+            categories = {}
             for text, issues in entries:
                 rendered = [render_issue(issue_format, i) for i in issues]
                 categories[text] = rendered
