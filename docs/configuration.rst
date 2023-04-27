@@ -39,28 +39,10 @@ Top level keys
 - **``version``** -- The version of your project.
   Python projects that provide the ``package`` key can have the version to be automatically determined from a ``__version__`` variable in the package's module.
   The version can also be passed explicitly by command line argument ``--version``.
-- **``directory``** -- The directory storing you news fragments.
-  Mandatory except for Python projects (where the default is a ``newsfragments`` directory within the package).
-  The version can also be passed explicitly by command line argument ``--version``.
-- **``directory``** -- The directory storing you news fragments.
+- **``directory``** -- The directory storing your news fragments.
   Mandatory except for Python projects (where the default is a ``newsfragments`` directory within the package).
 - **``filename``** -- The filename of your news file.
   ``"NEWS.rst"`` by default.
-- **``title_format``** -- A format string for the title of your project.
-  The explicit value of ``False`` will disable the title entirely.
-  Any other empty value means the template should render the title (the bundled templates use ``<name> <version> (<date>)``).
-  Strings should use the following keys to render the title dynamically: ``{name}``, ``{version}``, and ``{project_date}``.
-  The explicit value of ``False`` will disable the title entirely.
-  Any other empty value means the template should render the title (the bundled templates use ``<name> <version> (<date>)``).
-- **``wrap``** -- Boolean value indicating whether to wrap news fragments to a line length of 79.
-- **``underlines``** -- The characters used for underlining headers.
-  Not used in the bundled Markdown template.
-- **``issue_format``** -- A format string for rendering the issue/ticket number in newsfiles.
-- **``single_file``** -- Boolean value indicating whether to write all news fragments to a single file.
-  If false, the ``filename`` should use the following keys to render the filenames dynamically:
-  ``{name}``, ``{version}``, and ``{project_date}``.
-- **``underlines``** -- The characters used for underlining headers.
-  Not used in the bundled Markdown template.
 - **``start_string``** -- The magic string that ``towncrier`` looks for when considering where the release notes should start.
   ``".. towncrier release notes start"`` by default.
 - **``title_format``** -- A format string for the title of your project.
