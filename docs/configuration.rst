@@ -72,7 +72,8 @@ Top level keys
   If none, the issues are rendered as ``#<issue>`` if for issues that are integers, or just ``<issue>`` otherwise.
   Use the ``{issue}`` key in your string render the issue number, for example Markdown projects may want to use ``"[{issue}]: https://<your bug tracker>/{issue}"``.
   ``None`` by default.
-- **``underlines``** -- The characters used for underlining headers. Not used in the bundled Markdown template.
+- **``underlines``** -- The characters used for underlining headers.
+  Not used in the bundled Markdown template.
   ``["=", "-", "~"]`` by default.
 - **``wrap``** -- Boolean value indicating whether to wrap news fragments to a line length of 79.
   ``false`` by default.
