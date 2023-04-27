@@ -7,7 +7,7 @@ import dataclasses
 import os
 import sys
 
-from typing import TYPE_CHECKING, Any, Mapping
+from typing import TYPE_CHECKING, Any, Mapping, Sequence
 
 import pkg_resources
 
@@ -43,7 +43,7 @@ class Config:
     start_string: str = ".. towncrier release notes start\n"
     title_format: str | Literal[False] = ""
     issue_format: str | None = None
-    underlines: list[str] = dataclasses.field(default_factory=lambda: ["=", "-", "~"])
+    underlines: Sequence[str] = ("=", "-", "~")
     wrap: bool = False
     all_bullets: bool = True
     orphan_prefix: str = "+"

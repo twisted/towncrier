@@ -32,7 +32,7 @@ orphan_prefix = "~"
         self.assertEqual(config.package, "foobar")
         self.assertEqual(config.package_dir, ".")
         self.assertEqual(config.filename, "NEWS.rst")
-        self.assertEqual(config.underlines, ["=", "-", "~"])
+        self.assertEqual(config.underlines, ("=", "-", "~"))
         self.assertEqual(config.orphan_prefix, "~")
 
     def test_markdown(self):
