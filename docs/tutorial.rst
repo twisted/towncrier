@@ -144,7 +144,7 @@ You should get an output similar to this::
 
    - #1, #2
 
-Note: if you configure a Markdown file (for example, ``filename = "CHANGES.md"``) in your configuration file, the titles will be output in markdown format instead.
+Note: if you configure a Markdown file (for example, ``filename = "CHANGES.md"``) in your configuration file, the titles will be output in Markdown format instead.
 
 
 Producing News Files In Production
