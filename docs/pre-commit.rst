@@ -38,4 +38,3 @@ running ``update``:
           - id: towncrier-update
             files: $changelog\.d/
             args: ['--keep']
-
