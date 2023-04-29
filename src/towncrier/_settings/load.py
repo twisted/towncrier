@@ -86,7 +86,7 @@ def load_config_from_options(
         config = load_config_from_file(os.path.dirname(config_path), config_path)
 
     if config is None:
-        raise ConfigError(f"No configuration file found.\nLooked in: {base_directory}")
+        sys.exit(f"No configuration file found.\nLooked in: {base_directory}")
 
     return base_directory, config
 

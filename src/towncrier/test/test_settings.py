@@ -7,9 +7,11 @@ import textwrap
 
 from textwrap import dedent
 
+from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from .._settings import ConfigError, load_config
+from .._shell import cli
 
 
 class TomlSettingsTests(TestCase):
@@ -152,6 +154,21 @@ orphan_prefix = "~"
 
         config = load_config(temp)
         self.assertEqual(config.package, "a")
+
+    def test_load_no_config(self):
+        """
+        Check that no exception is raised if no config is found in the base directory.
+        """
+        temp = self.mktemp()
+        os.makedirs(temp)
+
+        runner = CliRunner()
+        result = runner.invoke(cli, ["--dir", temp])
+        self.assertEqual(
+            result.output,
+            f"No configuration file found.\nLooked in: {os.path.abspath(temp)}\n",
+        )
+        self.assertEqual(result.exit_code, 1)
 
     def test_missing_template(self):
         """
