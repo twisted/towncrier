@@ -11,6 +11,8 @@ from __future__ import annotations
 import sys
 
 from importlib import import_module
+from importlib.metadata import version as metadata_version
+from importlib.metadata import PackageNotFoundError
 from types import ModuleType
 
 from incremental import Version as IncrementalVersion
@@ -39,8 +41,10 @@ def _get_package(package_dir: str, package: str) -> ModuleType:
 
 def get_version(package_dir: str, package: str) -> str:
     module = _get_package(package_dir, package)
-
-    version = getattr(module, "__version__", None)
+    try:
+        version = metadata_version(f"{module}")
+    except PackageNotFoundError:
+        version = getattr(module, "__version__", None)
 
     if not version:
         raise Exception("No __version__, I don't know how else to look")
