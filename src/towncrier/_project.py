@@ -11,8 +11,8 @@ from __future__ import annotations
 import sys
 
 from importlib import import_module
-from importlib.metadata import version as metadata_version
 from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as metadata_version
 from types import ModuleType
 
 from incremental import Version as IncrementalVersion
