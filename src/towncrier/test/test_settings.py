@@ -157,7 +157,9 @@ orphan_prefix = "~"
 
     def test_load_no_config(self):
         """
-        Check that no exception is raised if no config is found in the base directory.
+        Calling the root CLI without an existing configuration file in the base directory,
+        will exit with code 1 and an info message is sent to stdout.
+        No tracebeback is generated.
         """
         temp = self.mktemp()
         os.makedirs(temp)
