@@ -21,31 +21,22 @@ class WritingTests(TestCase):
 
     def test_append_at_top(self):
         fragments = {
-            [
-                (
-                    "",
-                    {
-                        [
-                            (("142", "misc", 0), ""),
-                            (("1", "misc", 0), ""),
-                            (("4", "feature", 0), "Stuff!"),
-                            (("4", "feature", 1), "Second Stuff!"),
-                            (("2", "feature", 0), "Foo added."),
-                            (("72", "feature", 0), "Foo added."),
-                        ]
-                    },
-                ),
-                ("Names", {}),
-                ("Web", {("3", "bugfix", 0): "Web fixed."}),
-            ]
+            "": {
+                ("142", "misc", 0): "",
+                ("1", "misc", 0): "",
+                ("4", "feature", 0): "Stuff!",
+                ("4", "feature", 1): "Second Stuff!",
+                ("2", "feature", 0): "Foo added.",
+                ("72", "feature", 0): "Foo added.",
+            },
+            "Names": {},
+            "Web": {("3", "bugfix", 0): "Web fixed."},
         }
 
         definitions = {
-            [
-                ("feature", {"name": "Features", "showcontent": True}),
-                ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-                ("misc", {"name": "Misc", "showcontent": False}),
-            ]
+            "feature": {"name": "Features", "showcontent": True},
+            "bugfix": {"name": "Bugfixes", "showcontent": True},
+            "misc": {"name": "Misc", "showcontent": False},
         }
 
         expected_output = """MyProject 1.0 (never)
@@ -122,29 +113,22 @@ Old text.
         towncrier will add the version notes after it.
         """
         fragments = {
-            [
-                (
-                    "",
-                    {
-                        ("142", "misc", 0): "",
-                        ("1", "misc", 0): "",
-                        ("4", "feature", 0): "Stuff!",
-                        ("2", "feature", 0): "Foo added.",
-                        ("72", "feature", 0): "Foo added.",
-                        ("99", "feature", 0): "Foo! " * 100,
-                    },
-                ),
-                ("Names", {}),
-                ("Web", {("3", "bugfix", 0): "Web fixed."}),
-            ]
+            "": {
+                ("142", "misc", 0): "",
+                ("1", "misc", 0): "",
+                ("4", "feature", 0): "Stuff!",
+                ("2", "feature", 0): "Foo added.",
+                ("72", "feature", 0): "Foo added.",
+                ("99", "feature", 0): "Foo! " * 100,
+            },
+            "Names": {},
+            "Web": {("3", "bugfix", 0): "Web fixed."},
         }
 
         definitions = {
-            [
-                ("feature", {"name": "Features", "showcontent": True}),
-                ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-                ("misc", {"name": "Misc", "showcontent": False}),
-            ]
+            "feature": {"name": "Features", "showcontent": True},
+            "bugfix": {"name": "Bugfixes", "showcontent": True},
+            "misc": {"name": "Misc", "showcontent": False},
         }
 
         expected_output = """Hello there! Here is some info.

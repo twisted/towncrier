@@ -310,29 +310,18 @@ template = "towncrier:default.rst"
         """
         toml_content = textwrap.dedent(toml_content)
         expected = {
-            [
-                (
-                    "chore",
-                    {
-                        "name": "Other Tasks",
-                        "showcontent": False,
-                    },
-                ),
-                (
-                    "feat",
-                    {
-                        "name": "Feat",
-                        "showcontent": True,
-                    },
-                ),
-                (
-                    "fix",
-                    {
-                        "name": "Fix",
-                        "showcontent": True,
-                    },
-                ),
-            ]
+            "chore": {
+                "name": "Other Tasks",
+                "showcontent": False,
+            },
+            "feat": {
+                "name": "Feat",
+                "showcontent": True,
+            },
+            "fix": {
+                "name": "Fix",
+                "showcontent": True,
+            },
         }
 
         config = self.load_config_from_string(

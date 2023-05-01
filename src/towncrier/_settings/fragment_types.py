@@ -36,14 +36,12 @@ class DefaultFragmentTypesLoader(BaseFragmentTypesLoader):
     """Default towncrier's fragment types."""
 
     _default_types = {
-        [
-            # Keep in-sync with docs/tutorial.rst.
-            ("feature", {"name": "Features", "showcontent": True}),
-            ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-            ("doc", {"name": "Improved Documentation", "showcontent": True}),
-            ("removal", {"name": "Deprecations and Removals", "showcontent": True}),
-            ("misc", {"name": "Misc", "showcontent": False}),
-        ]
+        # Keep in-sync with docs/tutorial.rst.
+        "feature": {"name": "Features", "showcontent": True},
+        "bugfix": {"name": "Bugfixes", "showcontent": True},
+        "doc": {"name": "Improved Documentation", "showcontent": True},
+        "removal": {"name": "Deprecations and Removals", "showcontent": True},
+        "misc": {"name": "Misc", "showcontent": False},
     }
 
     def load(self) -> Mapping[str, Mapping[str, Any]]:

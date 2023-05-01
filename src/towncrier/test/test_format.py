@@ -40,11 +40,9 @@ class FormatterTests(TestCase):
         }
 
         definitions = {
-            [
-                ("feature", {"name": "Features", "showcontent": True}),
-                ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-                ("misc", {"name": "Misc", "showcontent": False}),
-            ]
+            "feature": {"name": "Features", "showcontent": True},
+            "bugfix": {"name": "Bugfixes", "showcontent": True},
+            "misc": {"name": "Misc", "showcontent": False},
         }
 
         output = split_fragments(fragments, definitions)
@@ -57,34 +55,27 @@ class FormatterTests(TestCase):
         them into a rST file -- works.
         """
         fragments = {
-            [
-                (
-                    "",
-                    {
-                        # asciibetical sorting will do 1, 142, 9
-                        # we want 1, 9, 142 instead
-                        ("142", "misc", 0): "",
-                        ("1", "misc", 0): "",
-                        ("9", "misc", 0): "",
-                        ("bar", "misc", 0): "",
-                        ("4", "feature", 0): "Stuff!",
-                        ("2", "feature", 0): "Foo added.",
-                        ("72", "feature", 0): "Foo added.",
-                        ("9", "feature", 0): "Foo added.",
-                        ("baz", "feature", 0): "Fun!",
-                    },
-                ),
-                ("Names", {}),
-                ("Web", {("3", "bugfix", 0): "Web fixed."}),
-            ]
+            "": {
+                # asciibetical sorting will do 1, 142, 9
+                # we want 1, 9, 142 instead
+                ("142", "misc", 0): "",
+                ("1", "misc", 0): "",
+                ("9", "misc", 0): "",
+                ("bar", "misc", 0): "",
+                ("4", "feature", 0): "Stuff!",
+                ("2", "feature", 0): "Foo added.",
+                ("72", "feature", 0): "Foo added.",
+                ("9", "feature", 0): "Foo added.",
+                ("baz", "feature", 0): "Fun!",
+            },
+            "Names": {},
+            "Web": {("3", "bugfix", 0): "Web fixed."},
         }
 
         definitions = {
-            [
-                ("feature", {"name": "Features", "showcontent": True}),
-                ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-                ("misc", {"name": "Misc", "showcontent": False}),
-            ]
+            "feature": {"name": "Features", "showcontent": True},
+            "bugfix": {"name": "Bugfixes", "showcontent": True},
+            "misc": {"name": "Misc", "showcontent": False},
         }
 
         expected_output = """MyProject 1.0 (never)
@@ -184,44 +175,31 @@ Bugfixes
         Check formating of default markdown template.
         """
         fragments = {
-            [
-                (
-                    "",
-                    {
-                        # asciibetical sorting will do 1, 142, 9
-                        # we want 1, 9, 142 instead
-                        ("142", "misc", 0): "",
-                        ("1", "misc", 0): "",
-                        ("9", "misc", 0): "",
-                        ("bar", "misc", 0): "",
-                        ("4", "feature", 0): "Stuff!",
-                        ("2", "feature", 0): "Foo added.",
-                        ("72", "feature", 0): "Foo added.",
-                        ("9", "feature", 0): "Foo added.",
-                        ("3", "feature", 0): "Multi-line\nhere",
-                        ("baz", "feature", 0): "Fun!",
-                    },
-                ),
-                (
-                    "Names",
-                    {},
-                ),
-                (
-                    "Web",
-                    {
-                        ("3", "bugfix", 0): "Web fixed.",
-                        ("2", "bugfix", 0): "Multi-line bulleted\n- fix\n- here",
-                    },
-                ),
-            ]
+            "": {
+                # asciibetical sorting will do 1, 142, 9
+                # we want 1, 9, 142 instead
+                ("142", "misc", 0): "",
+                ("1", "misc", 0): "",
+                ("9", "misc", 0): "",
+                ("bar", "misc", 0): "",
+                ("4", "feature", 0): "Stuff!",
+                ("2", "feature", 0): "Foo added.",
+                ("72", "feature", 0): "Foo added.",
+                ("9", "feature", 0): "Foo added.",
+                ("3", "feature", 0): "Multi-line\nhere",
+                ("baz", "feature", 0): "Fun!",
+            },
+            "Names": {},
+            "Web": {
+                ("3", "bugfix", 0): "Web fixed.",
+                ("2", "bugfix", 0): "Multi-line bulleted\n- fix\n- here",
+            },
         }
 
         definitions = {
-            [
-                ("feature", {"name": "Features", "showcontent": True}),
-                ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-                ("misc", {"name": "Misc", "showcontent": False}),
-            ]
+            "feature": {"name": "Features", "showcontent": True},
+            "bugfix": {"name": "Bugfixes", "showcontent": True},
+            "misc": {"name": "Misc", "showcontent": False},
         }
 
         expected_output = """# MyProject 1.0 (never)
@@ -350,7 +328,7 @@ No significant changes.
             }
         }
 
-        definitions = {[("misc", {"name": "Misc", "showcontent": False})]}
+        definitions = {"misc": {"name": "Misc", "showcontent": False}}
 
         expected_output = """MyProject 1.0 (never)
 =====================
@@ -398,7 +376,7 @@ Misc
             }
         }
 
-        definitions = {[("feature", {"name": "Features", "showcontent": True})]}
+        definitions = {"feature": {"name": "Features", "showcontent": True}}
 
         expected_output = """MyProject 1.0 (never)
 =====================
@@ -453,7 +431,7 @@ Features
             }
         }
 
-        definitions = {[("feature", {"name": "Features", "showcontent": True})]}
+        definitions = {"feature": {"name": "Features", "showcontent": True}}
 
         expected_output = """MyProject 1.0 (never)
 =====================
