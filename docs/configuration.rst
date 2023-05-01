@@ -4,7 +4,7 @@ Configuration Reference
 ``towncrier`` has many knobs and switches you can use, to customize it to your project's needs.
 The setup in the :doc:`tutorial` doesn't touch on many, but this document will detail each of these options for you!
 
-For how to perform common customization tasks, see :doc:`customization`.
+For how to perform common customization tasks, see :doc:`customization/index`.
 
 ``[tool.towncrier]``
 --------------------
