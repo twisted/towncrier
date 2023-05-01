@@ -75,6 +75,7 @@ Old text.
 """
 
         tempdir = self.mktemp()
+        os.makedirs(tempdir)
 
         with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
             f.write("Old text.\n")
@@ -177,6 +178,7 @@ Old text.
 """
 
         tempdir = self.mktemp()
+        os.makedirs(tempdir)
 
         with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
             f.write(
@@ -218,6 +220,7 @@ Old text.
         the start of the file.
         """
         tempdir = self.mktemp()
+        os.makedirs(tempdir)
 
         definitions = {}
         fragments = split_fragments(fragments={}, definitions=definitions)
