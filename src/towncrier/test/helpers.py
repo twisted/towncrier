@@ -1,10 +1,18 @@
 from __future__ import annotations
 
+import sys
+
 from functools import wraps
 from pathlib import Path
 from typing import Any, Callable
 
 from click.testing import CliRunner
+
+
+if sys.version_info < (3, 9):
+    import importlib_resources as resources
+else:
+    from importlib import resources
 
 
 def read(filename: str | Path) -> str:
@@ -18,6 +26,13 @@ def write(path: str | Path, contents: str) -> None:
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(contents)
+
+
+def read_pkg_resource(path: str) -> str:
+    """
+    Read *path* from the towncrier package.
+    """
+    return (resources.files("towncrier") / path).read_text("utf8")
 
 
 def with_isolated_runner(fn: Callable[..., Any]) -> Callable[..., Any]:

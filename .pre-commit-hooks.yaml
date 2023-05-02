@@ -1,0 +1,16 @@
+- id: towncrier-check
+  name: towncrier-check
+  description: Check towncrier changelog updates
+  entry: towncrier --draft
+  pass_filenames: false
+  types: [text]
+  files: newsfragments/
+  language: python
+- id: towncrier-update
+  name: towncrier-update
+  description: Update changelog with towncrier
+  entry: towncrier
+  pass_filenames: false
+  args: ["--yes"]
+  files: newsfragments/
+  language: python

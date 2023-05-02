@@ -6,14 +6,13 @@ import os
 from pathlib import Path
 from textwrap import dedent
 
-import pkg_resources
-
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from .._builder import render_fragments, split_fragments
 from .._writer import append_to_newsfile
 from ..build import _main
+from .helpers import read_pkg_resource
 
 
 class WritingTests(TestCase):
@@ -82,9 +81,7 @@ Old text.
 
         fragments = split_fragments(fragments, definitions)
 
-        template = pkg_resources.resource_string(
-            "towncrier", "templates/default.rst"
-        ).decode("utf8")
+        template = read_pkg_resource("templates/default.rst")
 
         append_to_newsfile(
             tempdir,
@@ -188,9 +185,7 @@ Old text.
 
         fragments = split_fragments(fragments, definitions)
 
-        template = pkg_resources.resource_string(
-            "towncrier", "templates/default.rst"
-        ).decode("utf8")
+        template = read_pkg_resource("templates/default.rst")
 
         append_to_newsfile(
             tempdir,
@@ -225,9 +220,7 @@ Old text.
         definitions = {}
         fragments = split_fragments(fragments={}, definitions=definitions)
 
-        template = pkg_resources.resource_string(
-            "towncrier", "templates/default.rst"
-        ).decode("utf8")
+        template = read_pkg_resource("templates/default.rst")
 
         content = render_fragments(
             template=template,

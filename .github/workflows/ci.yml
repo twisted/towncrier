@@ -5,6 +5,7 @@ on:
     branches: [ trunk ]
     tags: [ "**" ]
   pull_request:
+  workflow_dispatch:
 
 defaults:
   run:
@@ -92,15 +93,18 @@ jobs:
         python-version: ${{ matrix.python.action }}
 
     - name: Install dependencies
-      run: python -m pip install --upgrade pip nox codecov coverage[toml]
+      run: python -m pip install --upgrade pip nox
 
     - uses: twisted/python-info-action@v1
 
     - run: nox --python ${{ matrix.python.action }} -e ${{ matrix.task.nox }} -- --use-wheel dist/*.whl
 
-    - name: Codecov
-      run: |
-        codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}"
+    - name: Upload coverage data
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-data
+        path: .coverage.*
+        if-no-files-found: ignore
 
 
   test-windows:
@@ -133,15 +137,12 @@ jobs:
         python-version: ${{ matrix.python.action }}
 
     - name: Install dependencies
-      run: python -m pip install --upgrade pip nox codecov coverage[toml]
+      run: python -m pip install --upgrade pip nox
 
     - uses: twisted/python-info-action@v1
 
     - run: nox --python ${{ matrix.python.action }} -e ${{ matrix.task.nox }} -- --use-wheel dist/*.whl
 
-    - name: Codecov
-      run: |
-        codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}"
 
   check:
     name: ${{ matrix.task.name}} - ${{ matrix.python.name }}
@@ -231,6 +232,42 @@ jobs:
         password: ${{ secrets.PYPI_TOKEN }}
         verbose: true
 
+  coverage:
+    name: Combine & check coverage.
+    needs: test-linux
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        # Use latest Python, so it understands all syntax.
+        python-version: 3.11
+
+    - run: python -Im pip install --upgrade coverage[toml]
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: coverage-data
+
+    - name: Combine coverage & fail if it's <100%.
+      run: |
+        python -Im coverage combine
+        python -Im coverage html --skip-covered --skip-empty
+
+        # Report and write to summary.
+        python -Im coverage report | sed 's/^/    /' >> $GITHUB_STEP_SUMMARY
+
+        # Report again and fail if under 100%.
+        python -Im coverage report --fail-under=100
+
+    - name: Upload HTML report if check failed.
+      uses: actions/upload-artifact@v3
+      with:
+        name: html-report
+        path: htmlcov
+      if: ${{ failure() }}
+
   # This is a meta-job to simplify PR CI enforcement configuration in GitHub.
   # Inside the GitHub config UI you only configure this job as required.
   # All the extra requirements are defined "as code" as part of the `needs`
@@ -247,6 +284,7 @@ jobs:
       - build
       - test-linux
       - test-windows
+      - coverage
       - check
       - pypi-publish
     steps:

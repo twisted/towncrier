@@ -2,11 +2,10 @@
 # See LICENSE for details.
 
 
-import pkg_resources
-
 from twisted.trial.unittest import TestCase
 
 from .._builder import render_fragments, split_fragments
+from .helpers import read_pkg_resource
 
 
 class FormatterTests(TestCase):
@@ -110,9 +109,7 @@ Bugfixes
 - Web fixed. (#3)
 """
 
-        template = pkg_resources.resource_string(
-            "towncrier", "templates/default.rst"
-        ).decode("utf8")
+        template = read_pkg_resource("templates/default.rst")
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
@@ -234,9 +231,7 @@ No significant changes.
 - Web fixed. (#3)
 """
 
-        template = pkg_resources.resource_string(
-            "towncrier", "templates/default.md"
-        ).decode("utf8")
+        template = read_pkg_resource("templates/default.md")
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
@@ -339,9 +334,7 @@ Misc
 - xxbar, xx1, xx9, xx142
 """
 
-        template = pkg_resources.resource_string(
-            "towncrier", "templates/default.rst"
-        ).decode("utf8")
+        template = read_pkg_resource("templates/default.rst")
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
@@ -395,9 +388,7 @@ Features
   a a (#3)
 """
 
-        template = pkg_resources.resource_string(
-            "towncrier", "templates/default.rst"
-        ).decode("utf8")
+        template = read_pkg_resource("templates/default.rst")
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(
@@ -444,9 +435,7 @@ Features
 - a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a (#3)
 """  # NOQA
 
-        template = pkg_resources.resource_string(
-            "towncrier", "templates/default.rst"
-        ).decode("utf8")
+        template = read_pkg_resource("templates/default.rst")
 
         fragments = split_fragments(fragments, definitions)
         output = render_fragments(

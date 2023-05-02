@@ -5,8 +5,6 @@ import os
 
 from textwrap import dedent
 
-import pkg_resources
-
 from twisted.trial.unittest import TestCase
 
 from .._settings import ConfigError, load_config
@@ -67,11 +65,8 @@ class TomlSettingsTests(TestCase):
         config = load_config(project_dir)
 
         self.assertEqual(config.filename, "NEWS.md")
-        expected_template = pkg_resources.resource_filename(
-            "towncrier", "templates/default.md"
-        )
 
-        self.assertEqual(config.template, expected_template)
+        self.assertEqual(config.template, "towncrier.templates:default.md")
 
     def test_explicit_template_extension(self):
         """
@@ -90,10 +85,25 @@ class TomlSettingsTests(TestCase):
         config = load_config(project_dir)
 
         self.assertEqual(config.filename, "NEWS.md")
-        expected_template = pkg_resources.resource_filename(
-            "towncrier", "templates/default.rst"
+        self.assertEqual(config.template, "towncrier.templates:default.rst")
+
+    def test_template_extended(self):
+        """
+        The template can be any package and resource, and although we look for a
+        resource's 'templates' package, it could also be in the specified resource
+        directly.
+        """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [tool.towncrier]
+                package = "foobar"
+                template = "towncrier.templates:default.rst"
+            """
         )
-        self.assertEqual(config.template, expected_template)
+
+        config = load_config(project_dir)
+
+        self.assertEqual(config.template, "towncrier.templates:default.rst")
 
     def test_missing(self):
         """
@@ -214,7 +224,7 @@ class TomlSettingsTests(TestCase):
             load_config(project_dir)
 
         self.assertEqual(
-            str(e.exception), "Towncrier does not have a template named 'foo.rst'."
+            str(e.exception), "'towncrier' does not have a template named 'foo.rst'."
         )
 
     def test_custom_types_as_tables_array_deprecated(self):

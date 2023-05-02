@@ -3,13 +3,14 @@
 
 from __future__ import annotations
 
+import atexit
 import dataclasses
 import os
 import sys
 
+from contextlib import ExitStack
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Mapping, Sequence
-
-import pkg_resources
 
 from .._settings import fragment_types as ft
 
@@ -21,6 +22,12 @@ if TYPE_CHECKING:
         from typing_extensions import Literal
     else:
         from typing import Literal
+
+if sys.version_info < (3, 9):
+    import importlib_resources as resources
+else:
+    from importlib import resources
+
 
 if sys.version_info < (3, 11):
     import tomli as tomllib
@@ -99,6 +106,11 @@ def load_config_from_file(directory: str, config_file: str) -> Config:
     return parse_toml(directory, config)
 
 
+# Clean up possible temporary files on exit.
+_file_manager = ExitStack()
+atexit.register(_file_manager.close)
+
+
 def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
     if "towncrier" not in (config.get("tool") or {}):
         raise ConfigError("No [tool.towncrier] section.", failing_option="all")
@@ -146,33 +158,31 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
 
     # Process 'template'.
     template = config.get("template", "towncrier:default")
-    if template.startswith("towncrier:"):
-        resource_name = "templates/" + template.split(":", 1)[1]
-        if not os.path.splitext(resource_name)[1]:
+    if ":" in template:
+        package, resource = template.split(":", 1)
+        if not Path(resource).suffix:
             # Choose the default template based on the filename extension.
-            if os.path.splitext(config.get("filename", ""))[
-                1
-            ] == ".md" and pkg_resources.resource_exists(
-                "towncrier", f"{resource_name}.md"
-            ):
-                resource_name += ".md"
+            if Path(config.get("filename", "")).suffix == ".md":
+                resource += ".md"
             else:
-                resource_name += ".rst"
-        if not pkg_resources.resource_exists("towncrier", resource_name):
-            raise ConfigError(
-                "Towncrier does not have a template named "
-                f"'{os.path.basename(resource_name)}'.",
-                failing_option="template",
-            )
-        template = pkg_resources.resource_filename("towncrier", resource_name)
+                resource += ".rst"
+        if not resources.is_resource(package, resource):
+            if resources.is_resource(package + ".templates", resource):
+                package += ".templates"
+            else:
+                raise ConfigError(
+                    f"'{package}' does not have a template named '{resource}'.",
+                    failing_option="template",
+                )
+        template = ":".join((package, resource))
     else:
         template = os.path.join(base_path, template)
+        if not os.path.isfile(template):
+            raise ConfigError(
+                f"The template file '{template}' does not exist.",
+                failing_option="template",
+            )
 
-    if not os.path.exists(template):
-        raise ConfigError(
-            f"The template file '{template}' does not exist.",
-            failing_option="template",
-        )
     parsed_data["template"] = template
 
     # Return the parsed config.
