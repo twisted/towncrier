@@ -9,7 +9,7 @@ from typing import Any, Callable
 from click.testing import CliRunner
 
 
-if sys.version_info < (3, 10):
+if sys.version_info < (3, 9):
     import importlib_resources as resources
 else:
     from importlib import resources
