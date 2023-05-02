@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     else:
         from typing import Literal
 
-if sys.version_info < (3, 9):
+if sys.version_info < (3, 10):
     import importlib_resources as resources
 else:
     from importlib import resources

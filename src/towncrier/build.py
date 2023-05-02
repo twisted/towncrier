@@ -25,7 +25,7 @@ from ._settings import ConfigError, config_option_help, load_config_from_options
 from ._writer import append_to_newsfile
 
 
-if sys.version_info < (3, 9):
+if sys.version_info < (3, 10):
     import importlib_resources as resources
 else:
     from importlib import resources
