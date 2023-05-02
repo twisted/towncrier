@@ -6,6 +6,7 @@ from __future__ import annotations
 import atexit
 import dataclasses
 import os
+import re
 import sys
 
 from contextlib import ExitStack
@@ -35,11 +36,14 @@ else:
     import tomllib
 
 
+re_resource_template = re.compile(r"[-\w.]+:[-\w.]+$")
+
+
 @dataclasses.dataclass
 class Config:
     sections: Mapping[str, str]
     types: Mapping[str, Mapping[str, Any]]
-    template: str
+    template: str | tuple[str, str]
     package: str = ""
     package_dir: str = "."
     single_file: bool = True
@@ -158,7 +162,7 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
 
     # Process 'template'.
     template = config.get("template", "towncrier:default")
-    if ":" in template:
+    if re_resource_template.match(template):
         package, resource = template.split(":", 1)
         if not Path(resource).suffix:
             # Choose the default template based on the filename extension.
@@ -174,7 +178,7 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
                     f"'{package}' does not have a template named '{resource}'.",
                     failing_option="template",
                 )
-        template = ":".join((package, resource))
+        template = (package, resource)
     else:
         template = os.path.join(base_path, template)
         if not os.path.isfile(template):

@@ -152,12 +152,11 @@ def __main(
     to_err = draft
 
     click.echo("Loading template...", err=to_err)
-    if ":" in config.template:
-        package, resource = config.template.split(":", 1)
-        template = resources.read_text(package, resource)
+    if isinstance(config.template, tuple):
+        template = resources.read_text(*config.template)
     else:
-        with open(config.template, "rb") as tmpl:
-            template = tmpl.read().decode("utf8")
+        with open(config.template, encoding="utf-8") as tmpl:
+            template = tmpl.read()
 
     click.echo("Finding news fragments...", err=to_err)
 

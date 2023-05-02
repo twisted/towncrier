@@ -66,7 +66,7 @@ class TomlSettingsTests(TestCase):
 
         self.assertEqual(config.filename, "NEWS.md")
 
-        self.assertEqual(config.template, "towncrier.templates:default.md")
+        self.assertEqual(config.template, ("towncrier.templates", "default.md"))
 
     def test_explicit_template_extension(self):
         """
@@ -85,7 +85,7 @@ class TomlSettingsTests(TestCase):
         config = load_config(project_dir)
 
         self.assertEqual(config.filename, "NEWS.md")
-        self.assertEqual(config.template, "towncrier.templates:default.rst")
+        self.assertEqual(config.template, ("towncrier.templates", "default.rst"))
 
     def test_template_extended(self):
         """
@@ -103,7 +103,7 @@ class TomlSettingsTests(TestCase):
 
         config = load_config(project_dir)
 
-        self.assertEqual(config.template, "towncrier.templates:default.rst")
+        self.assertEqual(config.template, ("towncrier.templates", "default.rst"))
 
     def test_missing(self):
         """

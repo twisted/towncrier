@@ -1080,6 +1080,7 @@ Deprecations and Removals
                     "20-01-2001",
                     "--draft",
                 ],
+                catch_exceptions=False,
             )
 
         expected_output = dedent(
