@@ -66,15 +66,14 @@ def parse_newfragment_basename(
 
 # Returns a structure like:
 #
-# {[
-#   ("",
-#    {
-#      ("142", "misc"): u"",
-#      ("1", "feature"): u"some cool description",
-#    }),
-#   ("Names", {}),
-#   ("Web", {("3", "bugfix"): u"Fixed a thing"}),
-# ]}
+# {
+#     "": {
+#         ("142", "misc"): "",
+#         ("1", "feature"): "some cool description",
+#     },
+#     "Names": {},
+#     "Web": {("3", "bugfix"): "Fixed a thing"},
+# }
 #
 # We should really use attrs.
 #
