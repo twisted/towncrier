@@ -136,6 +136,12 @@ profile = "attrs"
 line_length = 88
 
 
+[tool.ruff.isort]
+# Match isort's "attrs" profile
+lines-after-imports = 2
+lines-between-types = 1
+
+
 [tool.mypy]
 strict = true
 # 2022-09-04: Trial's API isn't annotated yet, which limits the usefulness of type-checking
