@@ -2,7 +2,7 @@ Configuration Reference
 =======================
 
 ``towncrier`` has many knobs and switches you can use, to customize it to your project's needs.
-The setup in the `Quick Start <quickstart.html>`_ doesn't touch on many, but this document will detail each of these options for you!
+The setup in the `Tutorial <tutorial.html>`_ doesn't touch on many, but this document will detail each of these options for you!
 
 For how to perform common customization tasks, see `Customization <customization/index.html>`_.
 
