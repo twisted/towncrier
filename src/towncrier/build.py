@@ -156,8 +156,8 @@ def __main(
         package, resource = config.template.split(":", 1)
         template = resources.read_text(package, resource)
     else:
-        with open(config.template, encoding="utf-8") as tmpl:
-            template = tmpl.read()
+        with open(config.template, "rb") as tmpl:
+            template = tmpl.read().decode("utf8")
 
     click.echo("Finding news fragments...", err=to_err)
 
