@@ -17,7 +17,7 @@ Top level keys
 ~~~~~~~~~~~~~~
 
 - ``directory`` -- If you are not storing your news fragments in your Python package, or aren't using Python, this is the path to where your newsfragments will be put.
-- ``filename`` -- The filename of your news file.
+- ``filename`` -- The filename (or pattern) of your news file.
   ``NEWS.rst`` by default.
 - ``package`` -- The package name of your project.
   (Python projects only)

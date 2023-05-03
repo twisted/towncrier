@@ -25,9 +25,9 @@ Build the combined news file from news fragments.
 
 .. option:: --draft
 
-   Only render news fragments to standard output.
-   Don't write to files, don't check versions.
-   Only renders the news fragments **without** the surrounding template.
+   Don't stage changes nor remove fragments.
+   If option ``--filename`` is provided, write the news there;
+   otherwise, render the fragments **without** the surrounding template to ``stdout``.
 
 .. option:: --name NAME
 
@@ -44,6 +44,11 @@ Build the combined news file from news fragments.
    The date in `ISO format <https://xkcd.com/1179/>`_ to use in the news file.
 
    Default: today's date
+
+.. option:: --filename FILENAME
+
+   Use `FILENAME` to override field ``filename`` from the configuration.
+   If used together with ``--draft``, write to ``FILENAME`` instead of ``stdout``.
 
 .. option:: --yes
 
