@@ -29,7 +29,6 @@ A minimal configuration for a non-Python project looks like this:
 
    [tool.towncrier]
    name = "My Project"
-   directory = "newsfragments"
 
 Top level keys
 ~~~~~~~~~~~~~~
@@ -40,7 +39,8 @@ Top level keys
   Python projects that provide the ``package`` key can have the version to be automatically determined from a ``__version__`` variable in the package's module.
   The version can also be passed explicitly by command line argument ``--version``.
 - **``directory``** -- The directory storing your news fragments.
-  Mandatory except for Python projects (where the default is a ``newsfragments`` directory within the package).
+  For Python projects, the default is a ``newsfragments`` directory within the package.
+  For non-Python projects, the default is a ``newsfragments`` directory relative to the configuration file.
 - **``filename``** -- The filename of your news file.
   ``"NEWS.rst"`` by default.
 - **``start_string``** -- The magic string that ``towncrier`` looks for when considering where the release notes should start.
