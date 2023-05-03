@@ -11,17 +11,16 @@ from __future__ import annotations
 
 import click
 
-from click_default_group import DefaultGroup
-
 from ._version import __version__
 from .build import _main as _build_cmd
 from .check import _main as _check_cmd
 from .create import _main as _create_cmd
 
 
-@click.group(cls=DefaultGroup, default="build", default_if_no_args=True)
+@click.group(invoke_without_command=True, params=_build_cmd.params)
 @click.version_option(__version__.public())
-def cli() -> None:
+@click.pass_context
+def cli(ctx, *args, **kwargs) -> None:
     """
     Towncrier is a utility to produce useful, summarised news files for your project.
     Rather than reading the Git history as some newer tools to produce it, or having
@@ -38,7 +37,8 @@ def cli() -> None:
     a collection of these fragments, towncrier can produce a digest of the changes
     which is valuable to those who may wish to use the software.
     """
-    pass
+    if not ctx.invoked_subcommand:
+        ctx.invoke(_build_cmd, *args, **kwargs)
 
 
 cli.add_command(_build_cmd)

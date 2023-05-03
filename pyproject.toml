@@ -31,7 +31,6 @@ classifiers = [
 requires-python = ">=3.7"
 dependencies = [
     "click",
-    "click-default-group",
     "importlib-resources>1.3; python_version<'3.9'",
     "incremental",
     "jinja2",
@@ -141,11 +140,6 @@ strict = true
 # 2022-09-04: Trial's API isn't annotated yet, which limits the usefulness of type-checking
 #             the unit tests. Therefore they have not been annotated yet.
 exclude = '^src/towncrier/test/test_.*\.py$'
-
-[[tool.mypy.overrides]]
-module = 'click_default_group'
-# 2022-09-04: This library has no type annotations.
-ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = 'incremental'
