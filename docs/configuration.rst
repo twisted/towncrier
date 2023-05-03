@@ -47,7 +47,7 @@ Top level keys
   If the path looks like ``<some.package>:<filename.ext>``, it is interpreted as a template bundled with an installed Python package.
   ``"towncrier:default.rst"`` by default unless ``filename`` ends with ``.md``, in which case the default is ``"towncrier:default.md"``.
 - **``start_string``** -- The magic string that ``towncrier`` looks for when considering where the release notes should start.
-  ``".. towncrier release notes start"`` by default.
+  ``".. towncrier release notes start\n"`` by default unless ``filename`` ends with ``.md``, in which case the default is ``"<!-- towncrier release notes start -->\n"``.
 - **``title_format``** -- A format string for the title of your project.
   The explicit value of ``False`` will disable the title entirely.
   Any other empty value means the template should render the title (the bundled templates use ``<name> <version> (<date>)``).

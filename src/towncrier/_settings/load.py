@@ -44,6 +44,7 @@ class Config:
     sections: Mapping[str, str]
     types: Mapping[str, Mapping[str, Any]]
     template: str | tuple[str, str]
+    start_string: str
     package: str = ""
     package_dir: str = "."
     single_file: bool = True
@@ -51,7 +52,6 @@ class Config:
     directory: str | None = None
     version: str | None = None
     name: str = ""
-    start_string: str = ".. towncrier release notes start\n"
     title_format: str | Literal[False] = ""
     issue_format: str | None = None
     underlines: Sequence[str] = ("=", "-", "~")
@@ -161,15 +161,12 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
     parsed_data["types"] = fragment_types_loader.load()
 
     # Process 'template'.
+    markdown_file = Path(config.get("filename", "")).suffix == ".md"
     template = config.get("template", "towncrier:default")
     if re_resource_template.match(template):
         package, resource = template.split(":", 1)
         if not Path(resource).suffix:
-            # Choose the default template based on the filename extension.
-            if Path(config.get("filename", "")).suffix == ".md":
-                resource += ".md"
-            else:
-                resource += ".rst"
+            resource += ".md" if markdown_file else ".rst"
         if not resources.is_resource(package, resource):
             if resources.is_resource(package + ".templates", resource):
                 package += ".templates"
@@ -188,6 +185,14 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
             )
 
     parsed_data["template"] = template
+
+    # Process 'start_string'.
+
+    start_string = config.get("start_string", "")
+    if not start_string:
+        start_string_template = "<!-- {} -->\n" if markdown_file else ".. {}\n"
+        start_string = start_string_template.format("towncrier release notes start")
+    parsed_data["start_string"] = start_string
 
     # Return the parsed config.
     return Config(**parsed_data)

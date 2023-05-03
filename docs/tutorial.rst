@@ -163,6 +163,8 @@ If you wish to have content at the top of the news file (for example, to say whe
 
 ``towncrier`` will then put the version notes after this comment, and leave your existing content that was above it where it is.
 
+Note: if you configure a Markdown file (for example, ``filename = "CHANGES.md"``) in your configuration file, the comment should be ``<!-- towncrier release notes start -->`` instead.
+
 
 Finale
 ------

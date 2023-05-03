@@ -25,3 +25,10 @@ In an existing news file, it'll look something like this::
   - Fixed, etc...
 
 ``towncrier`` will not alter content above the comment.
+
+Markdown
+~~~~~~~~
+
+If your news file is in Markdown (e.g. ``NEWS.md``), use the following comment instead::
+
+  <!--- towncrier release notes start -->

@@ -1163,6 +1163,107 @@ Deprecations and Removals
 
         self.assertEqual(expected_output, output)
 
+    @with_isolated_runner
+    def test_default_start_string(self, runner):
+        """
+        The default start string is ``.. towncrier release notes start``.
+        """
+        setup_simple_project()
+
+        with open("foo/newsfragments/123.feature", "w") as f:
+            f.write("Adds levitation")
+        with open("NEWS.rst", "w") as f:
+            f.write(
+                dedent(
+                    """
+                    a line
+
+                    another
+
+                    .. towncrier release notes start
+
+                    a footer!
+                    """
+                )
+            )
+
+        result = runner.invoke(_main, ["--date", "01-01-2001"], catch_exceptions=False)
+        self.assertEqual(0, result.exit_code, result.output)
+        output = read("NEWS.rst")
+
+        expected_output = dedent(
+            """
+            a line
+
+            another
+
+            .. towncrier release notes start
+
+            Foo 1.2.3 (01-01-2001)
+            ======================
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+
+
+            a footer!
+            """
+        )
+
+        self.assertEqual(expected_output, output)
+
+    @with_isolated_runner
+    def test_default_start_string_markdown(self, runner):
+        """
+        The default start string is ``<!-- towncrier release notes start -->`` for
+        Markdown.
+        """
+        setup_simple_project(extra_config='filename = "NEWS.md"')
+
+        with open("foo/newsfragments/123.feature", "w") as f:
+            f.write("Adds levitation")
+        with open("NEWS.md", "w") as f:
+            f.write(
+                dedent(
+                    """
+                    a line
+
+                    another
+
+                    <!-- towncrier release notes start -->
+
+                    a footer!
+                    """
+                )
+            )
+
+        result = runner.invoke(_main, ["--date", "01-01-2001"], catch_exceptions=False)
+        self.assertEqual(0, result.exit_code, result.output)
+        output = read("NEWS.md")
+
+        expected_output = dedent(
+            """
+            a line
+
+            another
+
+            <!-- towncrier release notes start -->
+
+            # Foo 1.2.3 (01-01-2001)
+
+            ### Features
+
+            - Adds levitation (#123)
+
+
+            a footer!
+            """
+        )
+
+        self.assertEqual(expected_output, output)
+
     def test_with_topline_and_template_and_draft(self):
         """
         Spacing is proper when drafting with a topline and a template.
