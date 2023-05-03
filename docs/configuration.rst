@@ -43,6 +43,9 @@ Top level keys
   For non-Python projects, the default is a ``newsfragments`` directory relative to the configuration file.
 - **``filename``** -- The filename of your news file.
   ``"NEWS.rst"`` by default.
+- **``template``** -- Path to the template for generating the news file.
+  If the path looks like ``<some.package>:<filename.ext>``, it is interpreted as a template bundled with an installed Python package.
+  ``"towncrier:default.rst"`` by default unless ``filename`` ends with ``.md``, in which case the default is ``"towncrier:default.md"``.
 - **``start_string``** -- The magic string that ``towncrier`` looks for when considering where the release notes should start.
   ``".. towncrier release notes start"`` by default.
 - **``title_format``** -- A format string for the title of your project.
