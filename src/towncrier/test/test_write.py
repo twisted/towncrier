@@ -177,7 +177,7 @@ Old text.
         tempdir = self.mktemp()
         write(
             os.path.join(tempdir, "NEWS.rst"),
-            contents="""
+            contents="""\
                 Hello there! Here is some info.
 
                 .. towncrier release notes start
