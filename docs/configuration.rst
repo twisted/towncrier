@@ -34,22 +34,24 @@ Top level keys
 ~~~~~~~~~~~~~~
 
 ``name``
-    The name of your project. If empty and the ``package`` key is provided, the name will be automatically determined.
+    The name of your project.
+
+    For Python projects that provide a ``package`` key, if left empty then the name will be automatically determined.
 
     ``""`` by default.
 
 ``version``
     The version of your project.
 
-    Python projects that provide the ``package`` key can have the version to be automatically determined from a ``__version__`` variable in the package's module (or the version if the package is installed).
+    Python projects that provide the ``package`` key can have the version to be automatically determined from a ``__version__`` variable in the package's module.
 
     If not provided or able to be determined, the version must be passed explicitly by the command line argument ``--version``.
 
 ``directory``
     The directory storing your news fragments.
 
-    For Python projects, the default is a ``newsfragments`` directory within the package.
-    For non-Python projects, the default is a ``newsfragments`` directory relative to the configuration file.
+    For Python projects that provide a ``package`` key, the default is a ``newsfragments`` directory within the package.
+    Otherwise the default is a ``newsfragments`` directory relative to the configuration file.
 
 ``filename``
     The filename of your news file.
@@ -121,7 +123,7 @@ Extra top level keys for Python projects
 ``package``
     The Python package name of your project.
 
-    Allows ``version`` to be automatically determined from the Python package version.
+    Allows ``name`` and ``version`` to be automatically determined from the Python package.
     Changes the default ``directory`` to be a ``newsfragments`` directory within this package.
 
 ``package_dir``
