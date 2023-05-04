@@ -33,52 +33,101 @@ A minimal configuration for a non-Python project looks like this:
 Top level keys
 ~~~~~~~~~~~~~~
 
-- **``name``** -- The name of your project. If empty and the ``package`` key is provided, the name will be automatically determined.
-  ``""`` by default.
-- **``version``** -- The version of your project.
-  Python projects that provide the ``package`` key can have the version to be automatically determined from a ``__version__`` variable in the package's module.
-  The version can also be passed explicitly by command line argument ``--version``.
-- **``directory``** -- The directory storing your news fragments.
-  For Python projects, the default is a ``newsfragments`` directory within the package.
-  For non-Python projects, the default is a ``newsfragments`` directory relative to the configuration file.
-- **``filename``** -- The filename of your news file.
-  ``"NEWS.rst"`` by default.
-- **``template``** -- Path to the template for generating the news file.
-  If the path looks like ``<some.package>:<filename.ext>``, it is interpreted as a template bundled with an installed Python package.
-  ``"towncrier:default.rst"`` by default unless ``filename`` ends with ``.md``, in which case the default is ``"towncrier:default.md"``.
-- **``start_string``** -- The magic string that ``towncrier`` looks for when considering where the release notes should start.
-  ``".. towncrier release notes start\n"`` by default unless ``filename`` ends with ``.md``, in which case the default is ``"<!-- towncrier release notes start -->\n"``.
-- **``title_format``** -- A format string for the title of your project.
-  The explicit value of ``False`` will disable the title entirely.
-  Any other empty value means the template should render the title (the bundled templates use ``<name> <version> (<date>)``).
-  Strings should use the following keys to render the title dynamically: ``{name}``, ``{version}``, and ``{project_date}``.
-  ``""`` by default.
-- **``issue_format``** -- A format string for rendering the issue/ticket number in newsfiles.
-  If none, the issues are rendered as ``#<issue>`` if for issues that are integers, or just ``<issue>`` otherwise.
-  Use the ``{issue}`` key in your string render the issue number, for example Markdown projects may want to use ``"[{issue}]: https://<your bug tracker>/{issue}"``.
-  ``None`` by default.
-- **``underlines``** -- The characters used for underlining headers.
-  Not used in the bundled Markdown template.
-  ``["=", "-", "~"]`` by default.
-- **``wrap``** -- Boolean value indicating whether to wrap news fragments to a line length of 79.
-  ``false`` by default.
-- **``all_bullets``** -- Boolean value indicating whether the template uses bullets for each news fragment.
-  ``true`` by default.
-- **``single_file``** -- Boolean value indicating whether to write all news fragments to a single file.
-  If false, the ``filename`` should use the following keys to render the filenames dynamically:
-  ``{name}``, ``{version}``, and ``{project_date}``.
-  ``true`` by default.
-- **``orphan_prefix``** -- The prefix used for orphaned news fragments.
-  ``"+"`` by default.
-- **``path``** -- The path to the directory containing the news fragments for this section, relative to the configured ``directory``.
-  Use ``""`` for the root directory.
+``name``
+    The name of your project. If empty and the ``package`` key is provided, the name will be automatically determined.
+
+    ``""`` by default.
+
+``version``
+    The version of your project.
+
+    Python projects that provide the ``package`` key can have the version to be automatically determined from a ``__version__`` variable in the package's module (or the version if the package is installed).
+
+    If not provided or able to be determined, the version must be passed explicitly by the command line argument ``--version``.
+
+``directory``
+    The directory storing your news fragments.
+
+    For Python projects, the default is a ``newsfragments`` directory within the package.
+    For non-Python projects, the default is a ``newsfragments`` directory relative to the configuration file.
+
+``filename``
+    The filename of your news file.
+
+    ``"NEWS.rst"`` by default.
+
+``template``
+    Path to the template for generating the news file.
+
+    If the path looks like ``<some.package>:<filename.ext>``, it is interpreted as a template bundled with an installed Python package.
+
+    ``"towncrier:default.rst"`` by default unless ``filename`` ends with ``.md``, in which case the default is ``"towncrier:default.md"``.
+
+``start_string``
+    The magic string that ``towncrier`` looks for when considering where the release notes should start.
+
+    ``".. towncrier release notes start\n"`` by default unless ``filename`` ends with ``.md``, in which case the default is ``"<!-- towncrier release notes start -->\n"``.
+
+``title_format``
+    A format string for the title of your project.
+
+    The explicit value of ``False`` will disable the title entirely.
+    Any other empty value means the template should render the title (the bundled templates use ``<name> <version> (<date>)``).
+    Strings should use the following keys to render the title dynamically: ``{name}``, ``{version}``, and ``{project_date}``.
+
+    ``""`` by default.
+
+``issue_format``
+    A format string for rendering the issue/ticket number in newsfiles.
+
+    If none, the issues are rendered as ``#<issue>`` if for issues that are integers, or just ``<issue>`` otherwise.
+    Use the ``{issue}`` key in your string render the issue number, for example Markdown projects may want to use ``"[{issue}]: https://<your bug tracker>/{issue}"``.
+
+    ``None`` by default.
+
+``underlines``
+    The characters used for underlining headers.
+
+    Not used in the bundled Markdown template.
+
+    ``["=", "-", "~"]`` by default.
+
+``wrap``
+    Boolean value indicating whether to wrap news fragments to a line length of 79.
+
+    ``false`` by default.
+
+``all_bullets``
+    Boolean value indicating whether the template uses bullets for each news fragment.
+
+    ``true`` by default.
+
+``single_file``
+    Boolean value indicating whether to write all news fragments to a single file.
+
+    If ``false``, the ``filename`` should use the following keys to render the filenames dynamically:
+    ``{name}``, ``{version}``, and ``{project_date}``.
+
+    ``true`` by default.
+
+``orphan_prefix``
+    The prefix used for orphaned news fragments.
+
+    ``"+"`` by default.
 
 Extra top level keys for Python projects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **``package``** -- The package name of your project.
-- **``package_dir``** -- The folder your package lives.
-  ``"."`` by default, some projects might need to use ``"src"``.
+``package``
+    The Python package name of your project.
+
+    Allows ``version`` to be automatically determined from the Python package version.
+    Changes the default ``directory`` to be a ``newsfragments`` directory within this package.
+
+``package_dir``
+    The folder your package lives.
+
+    ``"."`` by default, some projects might need to use ``"src"``.
 
 
 Sections
@@ -86,13 +135,17 @@ Sections
 
 ``towncrier`` supports splitting fragments into multiple sections, each with its own news of fragment types.
 
-Add an array of tables your ``.toml`` configuration file named **``[[tool.towncrier.section]]``**.
+Add an array of tables your ``.toml`` configuration file named ``[[tool.towncrier.section]]``.
 
 Each table within this array has the following mandatory keys:
 
-- **``name``** -- The name of the section.
-- **``path``** -- The path to the directory containing the news fragments for this section, relative to the configured ``directory``.
-  Use ``""`` for the root directory.
+
+``name``
+    The name of the section.
+
+``path``
+    The path to the directory containing the news fragments for this section, relative to the configured ``directory``.
+    Use ``""`` for the root directory.
 
 For example:
 
@@ -118,14 +171,20 @@ You can use either of the two following method to define custom types instead (y
 Use TOML tables (alphabetical order)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Adding tables to your ``.toml`` configuration file named **``[tool.towncrier.fragment.<a custom fragment type>]``**.
+Adding tables to your ``.toml`` configuration file named ``[tool.towncrier.fragment.<a custom fragment type>]``.
 
 These may include the following optional keys:
 
-- **``name``** -- The description of the fragment type, as it must be included in the news file.
-  Defaults to its fragment type, but capitalized.
-- **``showcontent``** -- A boolean value indicating whether the fragment contents should be included in the news file.
-  ``true`` by default.
+
+``name``
+    The description of the fragment type, as it must be included in the news file.
+
+    Defaults to its fragment type, but capitalized.
+
+``showcontent``
+    A boolean value indicating whether the fragment contents should be included in the news file.
+
+    ``true`` by default.
 
 For example, if you want your custom fragment types to be ``["feat", "fix", "chore",]`` and you want all of them to use the default configuration except ``"chore"`` you can do it as follows:
 
@@ -149,17 +208,24 @@ For example, if you want your custom fragment types to be ``["feat", "fix", "cho
 Use a TOML Array (defined order)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Add an array of tables to your ``.toml`` configuration file named **``[[tool.towncrier.type]]``**.
+Add an array of tables to your ``.toml`` configuration file named ``[[tool.towncrier.type]]``.
 
 If you use this way to configure custom fragment types, ensure there is no ``tool.towncrier.fragment`` table.
 
 Each table within this array has the following mandatory keys:
 
-- **``directory``** -- The type / category of the fragment.
-- **``name``** -- The description of the fragment type, as it must be included
-  in the news file.
-- **``showcontent``** -- A boolean value indicating whether the fragment contents should be included in the news file.
-  ``true`` by default.
+
+``directory``
+    The type / category of the fragment.
+
+``name``
+    The description of the fragment type, as it must be included
+    in the news file.
+
+``showcontent``
+    A boolean value indicating whether the fragment contents should be included in the news file.
+
+    ``true`` by default.
 
 For example:
 
