@@ -159,6 +159,21 @@ For example:
    name = "Secondary"
    path = "secondary"
 
+Section Path Behaviour
+~~~~~~~~~~~~~~~~~~~~~~
+
+The path behaviour is slightly different depending on whether ``directory`` is explicitly set.
+
+If ``directory`` is not set, "newsfragments" is added to the end of each path. For example, with the above sections, the paths would be:
+
+:Main Platform:  ./newsfragments
+:Secondary:      ./secondary/newsfragments
+
+If ``directory`` *is* set, the section paths are appended to this path. For example, with ``directory = "changes"`` and the above sections, the paths would be:
+
+:Main Platform:  ./changes
+:Secondary:      ./changes/secondary
+
 
 Custom fragment types
 ---------------------
