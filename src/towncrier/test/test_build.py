@@ -15,7 +15,7 @@ from twisted.trial.unittest import TestCase
 
 from .._shell import cli
 from ..build import _main
-from .helpers import read, setup_simple_project, with_isolated_runner
+from .helpers import read, setup_simple_project, with_isolated_runner, write
 
 
 class TestCli(TestCase):
@@ -1170,22 +1170,20 @@ Deprecations and Removals
         """
         setup_simple_project()
 
-        with open("foo/newsfragments/123.feature", "w") as f:
-            f.write("Adds levitation")
-        with open("NEWS.rst", "w") as f:
-            f.write(
-                dedent(
-                    """
-                    a line
+        write("foo/newsfragments/123.feature", "Adds levitation")
+        write(
+            "NEWS.rst",
+            contents="""
+                a line
 
-                    another
+                another
 
-                    .. towncrier release notes start
+                .. towncrier release notes start
 
-                    a footer!
-                    """
-                )
-            )
+                a footer!
+            """,
+            dedent=True,
+        )
 
         result = runner.invoke(_main, ["--date", "01-01-2001"], catch_exceptions=False)
         self.assertEqual(0, result.exit_code, result.output)
@@ -1222,22 +1220,20 @@ Deprecations and Removals
         """
         setup_simple_project(extra_config='filename = "NEWS.md"')
 
-        with open("foo/newsfragments/123.feature", "w") as f:
-            f.write("Adds levitation")
-        with open("NEWS.md", "w") as f:
-            f.write(
-                dedent(
-                    """
-                    a line
+        write("foo/newsfragments/123.feature", "Adds levitation")
+        write(
+            "NEWS.md",
+            contents="""
+                a line
 
-                    another
+                another
 
-                    <!-- towncrier release notes start -->
+                <!-- towncrier release notes start -->
 
-                    a footer!
-                    """
-                )
-            )
+                a footer!
+            """,
+            dedent=True,
+        )
 
         result = runner.invoke(_main, ["--date", "01-01-2001"], catch_exceptions=False)
         self.assertEqual(0, result.exit_code, result.output)

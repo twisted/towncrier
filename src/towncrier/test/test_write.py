@@ -12,7 +12,7 @@ from twisted.trial.unittest import TestCase
 from .._builder import render_fragments, split_fragments
 from .._writer import append_to_newsfile
 from ..build import _main
-from .helpers import read_pkg_resource
+from .helpers import read_pkg_resource, write
 
 
 class WritingTests(TestCase):
@@ -175,13 +175,16 @@ Old text.
 """
 
         tempdir = self.mktemp()
-        os.makedirs(tempdir)
-
-        with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
-            f.write(
-                "Hello there! Here is some info.\n\n"
-                ".. towncrier release notes start\nOld text.\n"
-            )
+        write(
+            os.path.join(tempdir, "NEWS.rst"),
+            contents="""
+                Hello there! Here is some info.
+                
+                .. towncrier release notes start
+                Old text.
+            """,
+            dedent=True,
+        )
 
         fragments = split_fragments(fragments, definitions)
 

@@ -3,11 +3,10 @@
 
 import os
 
-from textwrap import dedent
-
 from twisted.trial.unittest import TestCase
 
 from .._settings import ConfigError, load_config
+from .helpers import write
 
 
 class TomlSettingsTests(TestCase):
@@ -21,12 +20,18 @@ class TomlSettingsTests(TestCase):
         os.makedirs(project_dir)
 
         if pyproject_toml:
-            with open(os.path.join(project_dir, "pyproject.toml"), "w") as f:
-                f.write(dedent(pyproject_toml))
+            write(
+                os.path.join(project_dir, "pyproject.toml"),
+                pyproject_toml,
+                dedent=True,
+            )
 
         if towncrier_toml:
-            with open(os.path.join(project_dir, "towncrier.toml"), "w") as f:
-                f.write(dedent(towncrier_toml))
+            write(
+                os.path.join(project_dir, "towncrier.toml"),
+                towncrier_toml,
+                dedent=True,
+            )
 
         return project_dir
 
