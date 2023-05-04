@@ -25,7 +25,6 @@ class VersionFetchingTests(TestCase):
         A str __version__ will be picked up.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
         os.makedirs(os.path.join(temp, "mytestproj"))
 
         with open(os.path.join(temp, "mytestproj", "__init__.py"), "w") as f:
@@ -39,7 +38,6 @@ class VersionFetchingTests(TestCase):
         A tuple __version__ will be picked up.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
         os.makedirs(os.path.join(temp, "mytestproja"))
 
         with open(os.path.join(temp, "mytestproja", "__init__.py"), "w") as f:
@@ -109,7 +107,6 @@ class VersionFetchingTests(TestCase):
         A __version__ of unknown type will lead to an exception.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
         os.makedirs(os.path.join(temp, "mytestprojb"))
 
         with open(os.path.join(temp, "mytestprojb", "__init__.py"), "w") as f:
@@ -133,14 +130,12 @@ class VersionFetchingTests(TestCase):
         project_name = "mytestproj_already_installed_import"
 
         temp = self.mktemp()
-        os.makedirs(temp)
         os.makedirs(os.path.join(temp, project_name))
 
         with open(os.path.join(temp, project_name, "__init__.py"), "w") as f:
             f.write("__version__ = (1, 3, 12)")
 
         sys_path_temp = self.mktemp()
-        os.makedirs(sys_path_temp)
         os.makedirs(os.path.join(sys_path_temp, project_name))
 
         with open(os.path.join(sys_path_temp, project_name, "__init__.py"), "w") as f:
@@ -161,7 +156,6 @@ class VersionFetchingTests(TestCase):
         project_name = "mytestproj_only_installed"
 
         sys_path_temp = self.mktemp()
-        os.makedirs(sys_path_temp)
         os.makedirs(os.path.join(sys_path_temp, project_name))
 
         with open(os.path.join(sys_path_temp, project_name, "__init__.py"), "w") as f:
