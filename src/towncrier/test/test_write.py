@@ -179,7 +179,7 @@ Old text.
             os.path.join(tempdir, "NEWS.rst"),
             contents="""
                 Hello there! Here is some info.
-                
+
                 .. towncrier release notes start
                 Old text.
             """,
