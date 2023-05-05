@@ -7,9 +7,8 @@ from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from .._settings import ConfigError, load_config
-
-from .helpers import write
 from .._shell import cli
+from .helpers import write
 
 
 class TomlSettingsTests(TestCase):
