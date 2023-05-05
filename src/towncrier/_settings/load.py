@@ -12,6 +12,8 @@ from contextlib import ExitStack
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Mapping
 
+from click import ClickException
+
 from .._settings import fragment_types as ft
 
 
@@ -56,7 +58,7 @@ class Config:
     orphan_prefix: str
 
 
-class ConfigError(Exception):
+class ConfigError(ClickException):
     def __init__(self, *args: str, **kwargs: str):
         self.failing_option = kwargs.get("failing_option")
         super().__init__(*args)
@@ -86,7 +88,7 @@ def load_config_from_options(
         config = load_config_from_file(os.path.dirname(config_path), config_path)
 
     if config is None:
-        sys.exit(f"No configuration file found.\nLooked in: {base_directory}")
+        raise ConfigError(f"No configuration file found.\nLooked in: {base_directory}")
 
     return base_directory, config
 

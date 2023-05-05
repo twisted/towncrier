@@ -158,8 +158,7 @@ orphan_prefix = "~"
     def test_load_no_config(self):
         """
         Calling the root CLI without an existing configuration file in the base directory,
-        will exit with code 1 and an info message is sent to stdout.
-        No tracebeback is generated.
+        will exit with ConfigError.
         """
         temp = self.mktemp()
         os.makedirs(temp)
