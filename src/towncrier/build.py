@@ -25,6 +25,12 @@ from ._settings import ConfigError, config_option_help, load_config_from_options
 from ._writer import append_to_newsfile
 
 
+if sys.version_info < (3, 10):
+    import importlib_resources as resources
+else:
+    from importlib import resources
+
+
 def _get_date() -> str:
     return date.today().isoformat()
 
@@ -146,8 +152,11 @@ def __main(
     to_err = draft
 
     click.echo("Loading template...", err=to_err)
-    with open(config.template, "rb") as tmpl:
-        template = tmpl.read().decode("utf8")
+    if isinstance(config.template, tuple):
+        template = resources.read_text(*config.template)
+    else:
+        with open(config.template, encoding="utf-8") as tmpl:
+            template = tmpl.read()
 
     click.echo("Finding news fragments...", err=to_err)
 

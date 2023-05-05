@@ -1,61 +1,131 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
-import collections as clt
 import os
-import textwrap
-
-from textwrap import dedent
 
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from .._settings import ConfigError, load_config
+
+from .helpers import write
 from .._shell import cli
 
 
 class TomlSettingsTests(TestCase):
+    def mktemp_project(
+        self, *, pyproject_toml: str = "", towncrier_toml: str = ""
+    ) -> str:
+        """
+        Create a temporary directory with a pyproject.toml file in it.
+        """
+        project_dir = self.mktemp()
+        os.makedirs(project_dir)
+
+        if pyproject_toml:
+            write(
+                os.path.join(project_dir, "pyproject.toml"),
+                pyproject_toml,
+                dedent=True,
+            )
+
+        if towncrier_toml:
+            write(
+                os.path.join(project_dir, "towncrier.toml"),
+                towncrier_toml,
+                dedent=True,
+            )
+
+        return project_dir
+
     def test_base(self):
         """
         Test a "base config".
         """
-        temp = self.mktemp()
-        os.makedirs(temp)
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [tool.towncrier]
+                package = "foobar"
+                orphan_prefix = "~"
+            """
+        )
 
-        with open(os.path.join(temp, "pyproject.toml"), "w") as f:
-            f.write(
-                """[tool.towncrier]
-package = "foobar"
-orphan_prefix = "~"
-"""
-            )
-
-        config = load_config(temp)
+        config = load_config(project_dir)
         self.assertEqual(config.package, "foobar")
         self.assertEqual(config.package_dir, ".")
         self.assertEqual(config.filename, "NEWS.rst")
-        self.assertEqual(config.underlines, ["=", "-", "~"])
+        self.assertEqual(config.underlines, ("=", "-", "~"))
         self.assertEqual(config.orphan_prefix, "~")
+
+    def test_markdown(self):
+        """
+        If the filename references an .md file and the builtin template doesn't have an
+        extension, add .md rather than .rst.
+        """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [tool.towncrier]
+                package = "foobar"
+                filename = "NEWS.md"
+            """
+        )
+
+        config = load_config(project_dir)
+
+        self.assertEqual(config.filename, "NEWS.md")
+
+        self.assertEqual(config.template, ("towncrier.templates", "default.md"))
+
+    def test_explicit_template_extension(self):
+        """
+        If the filename references an .md file and the builtin template has an
+        extension, don't change it.
+        """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [tool.towncrier]
+                package = "foobar"
+                filename = "NEWS.md"
+                template = "towncrier:default.rst"
+            """
+        )
+
+        config = load_config(project_dir)
+
+        self.assertEqual(config.filename, "NEWS.md")
+        self.assertEqual(config.template, ("towncrier.templates", "default.rst"))
+
+    def test_template_extended(self):
+        """
+        The template can be any package and resource, and although we look for a
+        resource's 'templates' package, it could also be in the specified resource
+        directly.
+        """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [tool.towncrier]
+                package = "foobar"
+                template = "towncrier.templates:default.rst"
+            """
+        )
+
+        config = load_config(project_dir)
+
+        self.assertEqual(config.template, ("towncrier.templates", "default.rst"))
 
     def test_missing(self):
         """
         If the config file doesn't have the correct toml key, we error.
         """
-        temp = self.mktemp()
-        os.makedirs(temp)
-
-        with open(os.path.join(temp, "pyproject.toml"), "w") as f:
-            f.write(
-                dedent(
-                    """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
                 [something.else]
                 blah='baz'
-                """
-                )
-            )
+            """
+        )
 
         with self.assertRaises(ConfigError) as e:
-            load_config(temp)
+            load_config(project_dir)
 
         self.assertEqual(e.exception.failing_option, "all")
 
@@ -63,21 +133,15 @@ orphan_prefix = "~"
         """
         single_file must be a bool.
         """
-        temp = self.mktemp()
-        os.makedirs(temp)
-
-        with open(os.path.join(temp, "pyproject.toml"), "w") as f:
-            f.write(
-                dedent(
-                    """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
                 [tool.towncrier]
                 single_file = "a"
-                """
-                )
-            )
+            """
+        )
 
         with self.assertRaises(ConfigError) as e:
-            load_config(temp)
+            load_config(project_dir)
 
         self.assertEqual(e.exception.failing_option, "single_file")
 
@@ -85,21 +149,15 @@ orphan_prefix = "~"
         """
         all_bullets must be a bool.
         """
-        temp = self.mktemp()
-        os.makedirs(temp)
-
-        with open(os.path.join(temp, "pyproject.toml"), "w") as f:
-            f.write(
-                dedent(
-                    """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
                 [tool.towncrier]
                 all_bullets = "a"
-                """
-                )
-            )
+            """
+        )
 
         with self.assertRaises(ConfigError) as e:
-            load_config(temp)
+            load_config(project_dir)
 
         self.assertEqual(e.exception.failing_option, "all_bullets")
 
@@ -107,21 +165,15 @@ orphan_prefix = "~"
         """
         singlefile is not accepted, single_file is.
         """
-        temp = self.mktemp()
-        os.makedirs(temp)
-
-        with open(os.path.join(temp, "pyproject.toml"), "w") as f:
-            f.write(
-                dedent(
-                    """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
                 [tool.towncrier]
                 singlefile = "a"
-                """
-                )
-            )
+            """
+        )
 
         with self.assertRaises(ConfigError) as e:
-            load_config(temp)
+            load_config(project_dir)
 
         self.assertEqual(e.exception.failing_option, "singlefile")
 
@@ -129,30 +181,18 @@ orphan_prefix = "~"
         """
         Towncrier prefers the towncrier.toml for autodetect over pyproject.toml.
         """
-        temp = self.mktemp()
-        os.makedirs(temp)
-
-        with open(os.path.join(temp, "towncrier.toml"), "w") as f:
-            f.write(
-                dedent(
-                    """
+        project_dir = self.mktemp_project(
+            towncrier_toml="""
                 [tool.towncrier]
                 package = "a"
-                """
-                )
-            )
-
-        with open(os.path.join(temp, "pyproject.toml"), "w") as f:
-            f.write(
-                dedent(
-                    """
+            """,
+            pyproject_toml="""
                 [tool.towncrier]
                 package = "b"
-                """
-                )
-            )
+            """,
+        )
 
-        config = load_config(temp)
+        config = load_config(project_dir)
         self.assertEqual(config.package, "a")
 
     def test_load_no_config(self):
@@ -175,26 +215,20 @@ orphan_prefix = "~"
         """
         Towncrier will raise an exception saying when it can't find a template.
         """
-        temp = self.mktemp()
-        os.makedirs(temp)
-
-        with open(os.path.join(temp, "towncrier.toml"), "w") as f:
-            f.write(
-                dedent(
-                    """
+        project_dir = self.mktemp_project(
+            towncrier_toml="""
                 [tool.towncrier]
                 template = "foo.rst"
-                """
-                )
-            )
+            """
+        )
 
         with self.assertRaises(ConfigError) as e:
-            load_config(temp)
+            load_config(project_dir)
 
         self.assertEqual(
             str(e.exception),
             "The template file '{}' does not exist.".format(
-                os.path.normpath(os.path.join(temp, "foo.rst")),
+                os.path.normpath(os.path.join(project_dir, "foo.rst")),
             ),
         )
 
@@ -203,24 +237,18 @@ orphan_prefix = "~"
         Towncrier will raise an exception saying when it can't find a template
         from the Towncrier templates.
         """
-        temp = self.mktemp()
-        os.makedirs(temp)
-
-        with open(os.path.join(temp, "towncrier.toml"), "w") as f:
-            f.write(
-                dedent(
-                    """
+        project_dir = self.mktemp_project(
+            towncrier_toml="""
                 [tool.towncrier]
                 template = "towncrier:foo"
-                """
-                )
-            )
+            """
+        )
 
         with self.assertRaises(ConfigError) as e:
-            load_config(temp)
+            load_config(project_dir)
 
         self.assertEqual(
-            str(e.exception), "Towncrier does not have a template named 'foo'."
+            str(e.exception), "'towncrier' does not have a template named 'foo.rst'."
         )
 
     def test_custom_types_as_tables_array_deprecated(self):
@@ -232,20 +260,22 @@ orphan_prefix = "~"
         This functionality is considered deprecated, but we continue
         to support it to keep backward compatibility.
         """
-        toml_content = """
-        [tool.towncrier]
-        package = "foobar"
-        [[tool.towncrier.type]]
-        directory="foo"
-        name="Foo"
-        showcontent=false
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [tool.towncrier]
+                package = "foobar"
+                [[tool.towncrier.type]]
+                directory="foo"
+                name="Foo"
+                showcontent=false
 
-        [[tool.towncrier.type]]
-        directory="spam"
-        name="Spam"
-        showcontent=true
-        """
-        toml_content = textwrap.dedent(toml_content)
+                [[tool.towncrier.type]]
+                directory="spam"
+                name="Spam"
+                showcontent=true
+            """
+        )
+        config = load_config(project_dir)
         expected = [
             (
                 "foo",
@@ -262,10 +292,7 @@ orphan_prefix = "~"
                 },
             ),
         ]
-        expected = clt.OrderedDict(expected)
-        config = self.load_config_from_string(
-            toml_content,
-        )
+        expected = dict(expected)
         actual = config.types
         self.assertDictEqual(expected, actual)
 
@@ -274,60 +301,32 @@ orphan_prefix = "~"
         Custom fragment categories can be defined inside
         the toml config file using tables.
         """
-        test_project_path = self.mktemp()
-        os.makedirs(test_project_path)
-        toml_content = """
-        [tool.towncrier]
-        package = "foobar"
-        [tool.towncrier.fragment.feat]
-        ignored_field="Bazz"
-        [tool.towncrier.fragment.fix]
-        [tool.towncrier.fragment.chore]
-        name = "Other Tasks"
-        showcontent = false
-        """
-        toml_content = textwrap.dedent(toml_content)
-        expected = [
-            (
-                "chore",
-                {
-                    "name": "Other Tasks",
-                    "showcontent": False,
-                },
-            ),
-            (
-                "feat",
-                {
-                    "name": "Feat",
-                    "showcontent": True,
-                },
-            ),
-            (
-                "fix",
-                {
-                    "name": "Fix",
-                    "showcontent": True,
-                },
-            ),
-        ]
-
-        expected = clt.OrderedDict(expected)
-        config = self.load_config_from_string(
-            toml_content,
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [tool.towncrier]
+                package = "foobar"
+                [tool.towncrier.fragment.feat]
+                ignored_field="Bazz"
+                [tool.towncrier.fragment.fix]
+                [tool.towncrier.fragment.chore]
+                name = "Other Tasks"
+                showcontent = false
+            """
         )
+        config = load_config(project_dir)
+        expected = {
+            "chore": {
+                "name": "Other Tasks",
+                "showcontent": False,
+            },
+            "feat": {
+                "name": "Feat",
+                "showcontent": True,
+            },
+            "fix": {
+                "name": "Fix",
+                "showcontent": True,
+            },
+        }
         actual = config.types
         self.assertDictEqual(expected, actual)
-
-    def load_config_from_string(self, toml_content):
-        """Load configuration from a string.
-
-        Given a string following toml syntax,
-        obtain the towncrier configuration.
-        """
-        test_project_path = self.mktemp()
-        os.makedirs(test_project_path)
-        toml_path = os.path.join(test_project_path, "pyproject.toml")
-        with open(toml_path, "w") as f:
-            f.write(toml_content)
-        config = load_config(test_project_path)
-        return config

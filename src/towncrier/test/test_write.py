@@ -3,7 +3,6 @@
 
 import os
 
-from collections import OrderedDict
 from pathlib import Path
 from textwrap import dedent
 
@@ -13,40 +12,31 @@ from twisted.trial.unittest import TestCase
 from .._builder import render_fragments, split_fragments
 from .._writer import append_to_newsfile
 from ..build import _main
-from .helpers import read_pkg_resource
+from .helpers import read_pkg_resource, write
 
 
 class WritingTests(TestCase):
     maxDiff = None
 
     def test_append_at_top(self):
-        fragments = OrderedDict(
-            [
-                (
-                    "",
-                    OrderedDict(
-                        [
-                            (("142", "misc", 0), ""),
-                            (("1", "misc", 0), ""),
-                            (("4", "feature", 0), "Stuff!"),
-                            (("4", "feature", 1), "Second Stuff!"),
-                            (("2", "feature", 0), "Foo added."),
-                            (("72", "feature", 0), "Foo added."),
-                        ]
-                    ),
-                ),
-                ("Names", {}),
-                ("Web", {("3", "bugfix", 0): "Web fixed."}),
-            ]
-        )
+        fragments = {
+            "": {
+                ("142", "misc", 0): "",
+                ("1", "misc", 0): "",
+                ("4", "feature", 0): "Stuff!",
+                ("4", "feature", 1): "Second Stuff!",
+                ("2", "feature", 0): "Foo added.",
+                ("72", "feature", 0): "Foo added.",
+            },
+            "Names": {},
+            "Web": {("3", "bugfix", 0): "Web fixed."},
+        }
 
-        definitions = OrderedDict(
-            [
-                ("feature", {"name": "Features", "showcontent": True}),
-                ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-                ("misc", {"name": "Misc", "showcontent": False}),
-            ]
-        )
+        definitions = {
+            "feature": {"name": "Features", "showcontent": True},
+            "bugfix": {"name": "Bugfixes", "showcontent": True},
+            "misc": {"name": "Misc", "showcontent": False},
+        }
 
         expected_output = """MyProject 1.0 (never)
 =====================
@@ -84,7 +74,7 @@ Old text.
 """
 
         tempdir = self.mktemp()
-        os.mkdir(tempdir)
+        os.makedirs(tempdir)
 
         with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
             f.write("Old text.\n")
@@ -120,31 +110,24 @@ Old text.
         If there is a comment with C{.. towncrier release notes start},
         towncrier will add the version notes after it.
         """
-        fragments = OrderedDict(
-            [
-                (
-                    "",
-                    {
-                        ("142", "misc", 0): "",
-                        ("1", "misc", 0): "",
-                        ("4", "feature", 0): "Stuff!",
-                        ("2", "feature", 0): "Foo added.",
-                        ("72", "feature", 0): "Foo added.",
-                        ("99", "feature", 0): "Foo! " * 100,
-                    },
-                ),
-                ("Names", {}),
-                ("Web", {("3", "bugfix", 0): "Web fixed."}),
-            ]
-        )
+        fragments = {
+            "": {
+                ("142", "misc", 0): "",
+                ("1", "misc", 0): "",
+                ("4", "feature", 0): "Stuff!",
+                ("2", "feature", 0): "Foo added.",
+                ("72", "feature", 0): "Foo added.",
+                ("99", "feature", 0): "Foo! " * 100,
+            },
+            "Names": {},
+            "Web": {("3", "bugfix", 0): "Web fixed."},
+        }
 
-        definitions = OrderedDict(
-            [
-                ("feature", {"name": "Features", "showcontent": True}),
-                ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-                ("misc", {"name": "Misc", "showcontent": False}),
-            ]
-        )
+        definitions = {
+            "feature": {"name": "Features", "showcontent": True},
+            "bugfix": {"name": "Bugfixes", "showcontent": True},
+            "misc": {"name": "Misc", "showcontent": False},
+        }
 
         expected_output = """Hello there! Here is some info.
 
@@ -192,13 +175,16 @@ Old text.
 """
 
         tempdir = self.mktemp()
-        os.mkdir(tempdir)
+        write(
+            os.path.join(tempdir, "NEWS.rst"),
+            contents="""\
+                Hello there! Here is some info.
 
-        with open(os.path.join(tempdir, "NEWS.rst"), "w") as f:
-            f.write(
-                "Hello there! Here is some info.\n\n"
-                ".. towncrier release notes start\nOld text.\n"
-            )
+                .. towncrier release notes start
+                Old text.
+            """,
+            dedent=True,
+        )
 
         fragments = split_fragments(fragments, definitions)
 
@@ -232,7 +218,7 @@ Old text.
         the start of the file.
         """
         tempdir = self.mktemp()
-        os.mkdir(tempdir)
+        os.makedirs(tempdir)
 
         definitions = {}
         fragments = split_fragments(fragments={}, definitions=definitions)
