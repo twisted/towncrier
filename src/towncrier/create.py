@@ -105,7 +105,7 @@ def __main(
         issue = click.prompt("Issue number")
         fragment_type = click.prompt(
             "Fragment type",
-            type=click.Choice(config.types),
+            type=click.Choice(list(config.types)),
         )
         filename = f"{issue}.{fragment_type}"
         if edit is None and content == DEFAULT_CONTENT:
