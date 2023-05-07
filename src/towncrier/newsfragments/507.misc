@@ -1,1 +1,1 @@
-Provide a friendly message if --version option is required (for non-Python projects that don't explicitly provide the version in the config)
+A friendly message is now provided, when it's necessary to pass the ``--version`` option explicitly.

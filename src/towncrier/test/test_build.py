@@ -517,9 +517,10 @@ class TestCli(TestCase):
         If the configuration file doesn't specify a version or a package, the version
         option is required.
         """
-        with open("towncrier.toml", "w") as f:
-            f.write("[tool.towncrier]")
+        write("towncrier.toml", "[tool.towncrier]")
+
         result = runner.invoke(_main, ["--draft"], catch_exceptions=False)
+
         self.assertEqual(2, result.exit_code)
         self.assertIn("Error: '--version' is required", result.output)
 
