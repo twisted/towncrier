@@ -1,0 +1,1 @@
+Provide a friendly message if --version option is required (for non-Python projects that don't explicitly provide the version in the config)
