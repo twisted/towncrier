@@ -117,6 +117,12 @@ Top level keys
 
     ``"+"`` by default.
 
+``create_add_extension``
+    Add the ``filename`` option's extension to news fragment files created with ``towncrier create`` (if extension not explicitly provided).
+
+    ``true`` by default.
+
+
 Extra top level keys for Python projects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

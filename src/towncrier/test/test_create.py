@@ -3,7 +3,6 @@
 
 import os
 import string
-
 from pathlib import Path
 from textwrap import dedent
 from unittest import mock
@@ -11,7 +10,7 @@ from unittest import mock
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
-from ..create import _main
+from ..create import DEFAULT_CONTENT, _main
 from .helpers import setup_simple_project, with_isolated_runner
 
 
@@ -28,7 +27,7 @@ class TestCli(TestCase):
 
             args = ["123.feature.rst"]
             if content is None:
-                content = ["Add your info here"]
+                content = [DEFAULT_CONTENT]
             if additional_args is not None:
                 args.extend(additional_args)
             result = runner.invoke(_main, args)
@@ -36,7 +35,7 @@ class TestCli(TestCase):
             self.assertEqual(["123.feature.rst"], os.listdir("foo/newsfragments"))
 
             with open("foo/newsfragments/123.feature.rst") as fh:
-                self.assertEqual(content, fh.readlines())
+                self.assertEqual("\n".join(content), fh.read())
 
         self.assertEqual(0, result.exit_code)
 
@@ -50,24 +49,21 @@ class TestCli(TestCase):
 
     def test_edit_without_comments(self):
         """Create file with dynamic content."""
-        content = ["This is line 1\n", "This is line 2"]
+        content = ["This is line 1", "This is line 2"]
         with mock.patch("click.edit") as mock_edit:
-            mock_edit.return_value = "".join(content)
+            mock_edit.return_value = "\n".join(content)
             self._test_success(content=content, additional_args=["--edit"])
             mock_edit.assert_called_once_with(
-                "# Please write your news content. When finished, save the file.\n"
-                "# In order to abort, exit without saving.\n"
-                '# Lines starting with "#" are ignored.\n'
-                "\n"
-                "Add your info here\n"
+                "\n# Please write your news content. Lines starting "
+                "with '#' will be ignored, and\n# an empty message aborts.\n"
             )
 
     def test_edit_with_comment(self):
         """Create file editly with ignored line."""
-        content = ["This is line 1\n", "This is line 2"]
-        comment = "# I am ignored\n"
+        content = ["This is line 1", "This is line 2"]
+        comment = "# I am ignored"
         with mock.patch("click.edit") as mock_edit:
-            mock_edit.return_value = "".join(content[:1] + [comment] + content[1:])
+            mock_edit.return_value = "\n".join(content[:1] + [comment] + content[1:])
             self._test_success(content=content, additional_args=["--edit"])
 
     def test_edit_abort(self):
@@ -99,18 +95,15 @@ class TestCli(TestCase):
         text editor.
         """
         content_line = "This is a content line"
-        edit_content = ["This is line 1\n", "This is line 2"]
+        edit_content = ["This is line 1", "This is line 2"]
         with mock.patch("click.edit") as mock_edit:
-            mock_edit.return_value = "".join(edit_content)
+            mock_edit.return_value = "\n".join(edit_content)
             self._test_success(
                 content=edit_content, additional_args=["-c", content_line, "--edit"]
             )
             mock_edit.assert_called_once_with(
-                "# Please write your news content. When finished, save the file.\n"
-                "# In order to abort, exit without saving.\n"
-                '# Lines starting with "#" are ignored.\n'
-                "\n"
-                "{content_line}\n".format(content_line=content_line)
+                f"{content_line}\n\n# Please write your news content. Lines starting "
+                "with '#' will be ignored, and\n# an empty message aborts.\n"
             )
 
     def test_different_directory(self):
@@ -165,6 +158,27 @@ class TestCli(TestCase):
         self.assertEqual(
             sorted(fragments),
             [
+                "123.feature.1.rst",
+                "123.feature.2.rst",
+                "123.feature.rst",
+            ],
+        )
+
+    @with_isolated_runner
+    def test_file_exists_no_ext(self, runner: CliRunner):
+        """Ensure we don't overwrite existing files."""
+
+        setup_simple_project(extra_config="create_add_extension = false")
+        frag_path = Path("foo", "newsfragments")
+
+        for _ in range(3):
+            result = runner.invoke(_main, ["123.feature"])
+            self.assertEqual(result.exit_code, 0, result.output)
+
+        fragments = [f.name for f in frag_path.iterdir()]
+        self.assertEqual(
+            sorted(fragments),
+            [
                 "123.feature",
                 "123.feature.1",
                 "123.feature.2",
@@ -195,6 +209,52 @@ class TestCli(TestCase):
         )
 
     @with_isolated_runner
+    def test_without_filename(self, runner: CliRunner):
+        """
+        When no filename is provided, the user is prompted for one.
+        """
+        setup_simple_project()
+
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = "Edited content"
+            result = runner.invoke(_main, input="123\nfeature\n")
+            self.assertFalse(result.exception, result.output)
+            mock_edit.assert_called_once()
+        expected = os.path.join(os.getcwd(), "foo", "newsfragments", "123.feature.rst")
+        self.assertEqual(
+            result.output,
+            f"""Issue number: 123
+Fragment type (feature, bugfix, doc, removal, misc): feature
+Created news fragment at {expected}
+""",
+        )
+        with open(expected, "r") as f:
+            self.assertEqual(f.read(), "Edited content")
+
+    @with_isolated_runner
+    def test_without_filename_with_message(self, runner: CliRunner):
+        """
+        When no filename is provided, the user is prompted for one. If a message is
+        provided, the editor isn't opened and the message is used.
+        """
+        setup_simple_project()
+
+        with mock.patch("click.edit") as mock_edit:
+            result = runner.invoke(_main, ["-c", "Fixed this"], input="123\nfeature\n")
+            self.assertFalse(result.exception, result.output)
+            mock_edit.assert_not_called()
+        expected = os.path.join(os.getcwd(), "foo", "newsfragments", "123.feature.rst")
+        self.assertEqual(
+            result.output,
+            f"""Issue number: 123
+Fragment type (feature, bugfix, doc, removal, misc): feature
+Created news fragment at {expected}
+""",
+        )
+        with open(expected, "r") as f:
+            self.assertEqual(f.read(), "Fixed this")
+
+    @with_isolated_runner
     def test_create_orphan_fragment(self, runner: CliRunner):
         """
         When a fragment starts with the only the orphan prefix (``+`` by default), the
@@ -218,16 +278,18 @@ class TestCli(TestCase):
         self.assertEqual(2, len(fragments))
         change1, change2 = fragments
 
-        self.assertEqual(change1.suffix, ".feature")
+        self.assertEqual(change1.suffix, ".rst")
         self.assertTrue(change1.stem.startswith("+"))
-        # Length should be '+' character and 8 random hex characters.
-        self.assertEqual(len(change1.stem), 9)
+        self.assertTrue(change1.stem.endswith(".feature"))
+        # Length should be '+' character, 8 random hex characters, and ".feature".
+        self.assertEqual(len(change1.stem), 1 + 8 + len(".feature"))
 
-        self.assertEqual(change2.suffix, ".feature")
+        self.assertEqual(change2.suffix, ".rst")
         self.assertTrue(change2.stem.startswith("+"))
+        self.assertTrue(change2.stem.endswith(".feature"))
         self.assertEqual(change2.parent, sub_frag_path)
-        # Length should be '+' character and 8 random hex characters.
-        self.assertEqual(len(change2.stem), 9)
+        # Length should be '+' character, 8 random hex characters, and ".feature".
+        self.assertEqual(len(change2.stem), 1 + 8 + len(".feature"))
 
     @with_isolated_runner
     def test_create_orphan_fragment_custom_prefix(self, runner: CliRunner):
@@ -245,7 +307,9 @@ class TestCli(TestCase):
         self.assertEqual(len(fragments), 1)
         change = fragments[0]
         self.assertTrue(change.stem.startswith("$$$"))
-        # Length should be '$$$' characters and 8 random hex characters.
-        self.assertEqual(len(change.stem), 11)
+        # Length should be '$$$' characters, 8 random hex characters, and ".feature".
+        self.assertEqual(len(change.stem), 3 + 8 + len(".feature"))
         # Check the remainder are all hex characters.
-        self.assertTrue(all(c in string.hexdigits for c in change.stem[3:]))
+        self.assertTrue(
+            all(c in string.hexdigits for c in change.stem[3 : -len(".feature")])
+        )

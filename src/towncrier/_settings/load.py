@@ -58,6 +58,7 @@ class Config:
     wrap: bool = False
     all_bullets: bool = True
     orphan_prefix: str = "+"
+    create_add_extension: bool = True
 
 
 class ConfigError(Exception):
