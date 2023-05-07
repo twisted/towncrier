@@ -197,7 +197,7 @@ class TomlSettingsTests(TestCase):
     def test_load_no_config(self):
         """
         Calling the root CLI without an existing configuration file in the base directory,
-        will exit with ConfigError.
+        will exit with code 1 and an informative message is sent to standard output.
         """
         temp = self.mktemp()
         os.makedirs(temp)
