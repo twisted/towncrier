@@ -8,7 +8,8 @@ from twisted.trial.unittest import TestCase
 
 from .._settings import ConfigError, load_config
 from .._shell import cli
-from .helpers import write
+from .helpers import write, with_isolated_runner
+
 
 
 class TomlSettingsTests(TestCase):
@@ -194,7 +195,8 @@ class TomlSettingsTests(TestCase):
         config = load_config(project_dir)
         self.assertEqual(config.package, "a")
 
-    def test_load_no_config(self):
+    @with_isolated_runner
+    def test_load_no_config(self, runner: CliRunner):
         """
         Calling the root CLI without an existing configuration file in the base directory,
         will exit with code 1 and an informative message is sent to standard output.
@@ -202,8 +204,8 @@ class TomlSettingsTests(TestCase):
         temp = self.mktemp()
         os.makedirs(temp)
 
-        runner = CliRunner()
-        result = runner.invoke(cli, ["--dir", temp])
+        result = runner.invoke(cli, ("--dir", temp))
+
         self.assertEqual(
             result.output,
             f"No configuration file found.\nLooked in: {os.path.abspath(temp)}\n",
