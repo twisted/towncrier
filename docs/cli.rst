@@ -39,6 +39,8 @@ Build the combined news file from news fragments.
    Use ``VERSION`` in the rendered news file.
    Can be configured or guessed (default).
 
+   This option requires the ``build`` command to be explicitly passed.
+
 .. option:: --date DATE
 
    The date in `ISO format <https://xkcd.com/1179/>`_ to use in the news file.
