@@ -13,6 +13,8 @@ from contextlib import ExitStack
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Mapping, Sequence
 
+from click import ClickException
+
 from .._settings import fragment_types as ft
 
 
@@ -60,7 +62,7 @@ class Config:
     orphan_prefix: str = "+"
 
 
-class ConfigError(Exception):
+class ConfigError(ClickException):
     def __init__(self, *args: str, **kwargs: str):
         self.failing_option = kwargs.get("failing_option")
         super().__init__(*args)
