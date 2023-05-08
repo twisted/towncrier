@@ -8,8 +8,7 @@ from twisted.trial.unittest import TestCase
 
 from .._settings import ConfigError, load_config
 from .._shell import cli
-from .helpers import write, with_isolated_runner
-
+from .helpers import with_isolated_runner, write
 
 
 class TomlSettingsTests(TestCase):
