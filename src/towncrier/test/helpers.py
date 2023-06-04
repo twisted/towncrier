@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+import textwrap
 
 from functools import wraps
 from pathlib import Path
@@ -19,12 +20,14 @@ def read(filename: str | Path) -> str:
     return Path(filename).read_text()
 
 
-def write(path: str | Path, contents: str) -> None:
+def write(path: str | Path, contents: str, dedent: bool = False) -> None:
     """
     Create a file with given contents including any missing parent directories
     """
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
+    if dedent:
+        contents = textwrap.dedent(contents)
     p.write_text(contents)
 
 

@@ -15,7 +15,7 @@ from datetime import date
 
 import click
 
-from click import Context, Option
+from click import Context, Option, UsageError
 
 from towncrier import _git
 
@@ -23,6 +23,12 @@ from ._builder import find_fragments, render_fragments, split_fragments
 from ._project import get_project_name, get_version
 from ._settings import ConfigError, config_option_help, load_config_from_options
 from ._writer import append_to_newsfile
+
+
+if sys.version_info < (3, 10):
+    import importlib_resources as resources
+else:
+    from importlib import resources
 
 
 def _get_date() -> str:
@@ -145,9 +151,24 @@ def __main(
     base_directory, config = load_config_from_options(directory, config_file)
     to_err = draft
 
+    if project_version is None:
+        project_version = config.version
+    if project_version is None:
+        if not config.package:
+            raise UsageError(
+                "'--version' is required since the config file does "
+                "not contain 'version' or 'package'."
+            )
+        project_version = get_version(
+            os.path.join(base_directory, config.package_dir), config.package
+        ).strip()
+
     click.echo("Loading template...", err=to_err)
-    with open(config.template, "rb") as tmpl:
-        template = tmpl.read().decode("utf8")
+    if isinstance(config.template, tuple):
+        template = resources.read_text(*config.template)
+    else:
+        with open(config.template, encoding="utf-8") as tmpl:
+            template = tmpl.read()
 
     click.echo("Finding news fragments...", err=to_err)
 
@@ -172,13 +193,6 @@ def __main(
     fragments = split_fragments(
         fragment_contents, config.types, all_bullets=config.all_bullets
     )
-
-    if project_version is None:
-        project_version = config.version
-        if project_version is None:
-            project_version = get_version(
-                os.path.join(base_directory, config.package_dir), config.package
-            ).strip()
 
     if project_name is None:
         project_name = config.name

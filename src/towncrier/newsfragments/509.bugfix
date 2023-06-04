@@ -1,0 +1,1 @@
+Fix the ReadTheDocs build for ``towncrier`` which was broken due to the python version in use being 3.8. Upgrade to 3.11.

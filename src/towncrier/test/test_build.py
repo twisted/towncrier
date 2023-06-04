@@ -15,7 +15,7 @@ from twisted.trial.unittest import TestCase
 
 from .._shell import cli
 from ..build import _main
-from .helpers import read, setup_simple_project, with_isolated_runner
+from .helpers import read, setup_simple_project, with_isolated_runner, write
 
 
 class TestCli(TestCase):
@@ -510,6 +510,19 @@ class TestCli(TestCase):
 
         self.assertEqual(1, result.exit_code, result.output)
         self.assertTrue(result.output.startswith("No configuration file found."))
+
+    @with_isolated_runner
+    def test_needs_version(self, runner: CliRunner):
+        """
+        If the configuration file doesn't specify a version or a package, the version
+        option is required.
+        """
+        write("towncrier.toml", "[tool.towncrier]")
+
+        result = runner.invoke(_main, ["--draft"], catch_exceptions=False)
+
+        self.assertEqual(2, result.exit_code)
+        self.assertIn("Error: '--version' is required", result.output)
 
     def test_projectless_changelog(self):
         """In which a directory containing news files is built into a changelog
@@ -1080,6 +1093,7 @@ Deprecations and Removals
                     "20-01-2001",
                     "--draft",
                 ],
+                catch_exceptions=False,
             )
 
         expected_output = dedent(
@@ -1158,6 +1172,103 @@ Deprecations and Removals
 
             a footer!
         """
+        )
+
+        self.assertEqual(expected_output, output)
+
+    @with_isolated_runner
+    def test_default_start_string(self, runner):
+        """
+        The default start string is ``.. towncrier release notes start``.
+        """
+        setup_simple_project()
+
+        write("foo/newsfragments/123.feature", "Adds levitation")
+        write(
+            "NEWS.rst",
+            contents="""
+                a line
+
+                another
+
+                .. towncrier release notes start
+
+                a footer!
+            """,
+            dedent=True,
+        )
+
+        result = runner.invoke(_main, ["--date", "01-01-2001"], catch_exceptions=False)
+        self.assertEqual(0, result.exit_code, result.output)
+        output = read("NEWS.rst")
+
+        expected_output = dedent(
+            """
+            a line
+
+            another
+
+            .. towncrier release notes start
+
+            Foo 1.2.3 (01-01-2001)
+            ======================
+
+            Features
+            --------
+
+            - Adds levitation (#123)
+
+
+            a footer!
+            """
+        )
+
+        self.assertEqual(expected_output, output)
+
+    @with_isolated_runner
+    def test_default_start_string_markdown(self, runner):
+        """
+        The default start string is ``<!-- towncrier release notes start -->`` for
+        Markdown.
+        """
+        setup_simple_project(extra_config='filename = "NEWS.md"')
+
+        write("foo/newsfragments/123.feature", "Adds levitation")
+        write(
+            "NEWS.md",
+            contents="""
+                a line
+
+                another
+
+                <!-- towncrier release notes start -->
+
+                a footer!
+            """,
+            dedent=True,
+        )
+
+        result = runner.invoke(_main, ["--date", "01-01-2001"], catch_exceptions=False)
+        self.assertEqual(0, result.exit_code, result.output)
+        output = read("NEWS.md")
+
+        expected_output = dedent(
+            """
+            a line
+
+            another
+
+            <!-- towncrier release notes start -->
+
+            # Foo 1.2.3 (01-01-2001)
+
+            ### Features
+
+            - Adds levitation (#123)
+
+
+            a footer!
+            """
         )
 
         self.assertEqual(expected_output, output)

@@ -2,8 +2,6 @@
 # See LICENSE for details.
 
 
-from collections import OrderedDict
-
 from twisted.trial.unittest import TestCase
 
 from .._builder import render_fragments, split_fragments
@@ -11,6 +9,8 @@ from .helpers import read_pkg_resource
 
 
 class FormatterTests(TestCase):
+    maxDiff = None
+
     def test_split(self):
         fragments = {
             "": {
@@ -38,13 +38,11 @@ class FormatterTests(TestCase):
             },
         }
 
-        definitions = OrderedDict(
-            [
-                ("feature", {"name": "Features", "showcontent": True}),
-                ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-                ("misc", {"name": "Misc", "showcontent": False}),
-            ]
-        )
+        definitions = {
+            "feature": {"name": "Features", "showcontent": True},
+            "bugfix": {"name": "Bugfixes", "showcontent": True},
+            "misc": {"name": "Misc", "showcontent": False},
+        }
 
         output = split_fragments(fragments, definitions)
 
@@ -55,36 +53,29 @@ class FormatterTests(TestCase):
         Basic functionality -- getting a bunch of news fragments and formatting
         them into a rST file -- works.
         """
-        fragments = OrderedDict(
-            [
-                (
-                    "",
-                    {
-                        # asciibetical sorting will do 1, 142, 9
-                        # we want 1, 9, 142 instead
-                        ("142", "misc", 0): "",
-                        ("1", "misc", 0): "",
-                        ("9", "misc", 0): "",
-                        ("bar", "misc", 0): "",
-                        ("4", "feature", 0): "Stuff!",
-                        ("2", "feature", 0): "Foo added.",
-                        ("72", "feature", 0): "Foo added.",
-                        ("9", "feature", 0): "Foo added.",
-                        ("baz", "feature", 0): "Fun!",
-                    },
-                ),
-                ("Names", {}),
-                ("Web", {("3", "bugfix", 0): "Web fixed."}),
-            ]
-        )
+        fragments = {
+            "": {
+                # asciibetical sorting will do 1, 142, 9
+                # we want 1, 9, 142 instead
+                ("142", "misc", 0): "",
+                ("1", "misc", 0): "",
+                ("9", "misc", 0): "",
+                ("bar", "misc", 0): "",
+                ("4", "feature", 0): "Stuff!",
+                ("2", "feature", 0): "Foo added.",
+                ("72", "feature", 0): "Foo added.",
+                ("9", "feature", 0): "Foo added.",
+                ("baz", "feature", 0): "Fun!",
+            },
+            "Names": {},
+            "Web": {("3", "bugfix", 0): "Web fixed."},
+        }
 
-        definitions = OrderedDict(
-            [
-                ("feature", {"name": "Features", "showcontent": True}),
-                ("bugfix", {"name": "Bugfixes", "showcontent": True}),
-                ("misc", {"name": "Misc", "showcontent": False}),
-            ]
-        )
+        definitions = {
+            "feature": {"name": "Features", "showcontent": True},
+            "bugfix": {"name": "Bugfixes", "showcontent": True},
+            "misc": {"name": "Misc", "showcontent": False},
+        }
 
         expected_output = """MyProject 1.0 (never)
 =====================
@@ -176,6 +167,144 @@ Bugfixes
         )
         self.assertEqual(output, expected_output_weird_underlines)
 
+    def test_markdown(self):
+        """
+        Check formating of default markdown template.
+        """
+        fragments = {
+            "": {
+                # asciibetical sorting will do 1, 142, 9
+                # we want 1, 9, 142 instead
+                ("142", "misc", 0): "",
+                ("1", "misc", 0): "",
+                ("9", "misc", 0): "",
+                ("bar", "misc", 0): "",
+                ("4", "feature", 0): "Stuff!",
+                ("2", "feature", 0): "Foo added.",
+                ("72", "feature", 0): "Foo added.",
+                ("9", "feature", 0): "Foo added.",
+                ("3", "feature", 0): "Multi-line\nhere",
+                ("baz", "feature", 0): "Fun!",
+            },
+            "Names": {},
+            "Web": {
+                ("3", "bugfix", 0): "Web fixed.",
+                ("2", "bugfix", 0): "Multi-line bulleted\n- fix\n- here",
+            },
+        }
+
+        definitions = {
+            "feature": {"name": "Features", "showcontent": True},
+            "bugfix": {"name": "Bugfixes", "showcontent": True},
+            "misc": {"name": "Misc", "showcontent": False},
+        }
+
+        expected_output = """# MyProject 1.0 (never)
+
+### Features
+
+- Fun! (baz)
+- Foo added. (#2, #9, #72)
+- Multi-line
+  here (#3)
+- Stuff! (#4)
+
+### Misc
+
+- bar, #1, #9, #142
+
+
+## Names
+
+No significant changes.
+
+
+## Web
+
+### Bugfixes
+
+- Multi-line bulleted
+  - fix
+  - here
+
+  (#2)
+- Web fixed. (#3)
+"""
+
+        template = read_pkg_resource("templates/default.md")
+
+        fragments = split_fragments(fragments, definitions)
+        output = render_fragments(
+            template,
+            None,
+            fragments,
+            definitions,
+            ["-", "~"],
+            wrap=True,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
+        )
+        self.assertEqual(output, expected_output)
+
+        # Also test with custom issue format
+        expected_output = """# MyProject 1.0 (never)
+
+### Features
+
+- Fun! ([baz])
+- Foo added. ([2], [9], [72])
+- Multi-line
+  here ([3])
+- Stuff! ([4])
+
+[baz]: https://github.com/twisted/towncrier/issues/baz
+[2]: https://github.com/twisted/towncrier/issues/2
+[3]: https://github.com/twisted/towncrier/issues/3
+[4]: https://github.com/twisted/towncrier/issues/4
+[9]: https://github.com/twisted/towncrier/issues/9
+[72]: https://github.com/twisted/towncrier/issues/72
+
+### Misc
+
+- [bar], [1], [9], [142]
+
+[bar]: https://github.com/twisted/towncrier/issues/bar
+[1]: https://github.com/twisted/towncrier/issues/1
+[9]: https://github.com/twisted/towncrier/issues/9
+[142]: https://github.com/twisted/towncrier/issues/142
+
+
+## Names
+
+No significant changes.
+
+
+## Web
+
+### Bugfixes
+
+- Multi-line bulleted
+  - fix
+  - here
+
+  ([2])
+- Web fixed. ([3])
+
+[2]: https://github.com/twisted/towncrier/issues/2
+[3]: https://github.com/twisted/towncrier/issues/3
+"""
+
+        output = render_fragments(
+            template,
+            "[{issue}]: https://github.com/twisted/towncrier/issues/{issue}",
+            fragments,
+            definitions,
+            ["-", "~"],
+            wrap=True,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
+        )
+
+        self.assertEqual(output, expected_output)
+
     def test_issue_format(self):
         """
         issue_format option can be used to format issue text.
@@ -194,7 +323,7 @@ Bugfixes
             }
         }
 
-        definitions = OrderedDict([("misc", {"name": "Misc", "showcontent": False})])
+        definitions = {"misc": {"name": "Misc", "showcontent": False}}
 
         expected_output = """MyProject 1.0 (never)
 =====================
@@ -240,9 +369,7 @@ Misc
             }
         }
 
-        definitions = OrderedDict(
-            [("feature", {"name": "Features", "showcontent": True})]
-        )
+        definitions = {"feature": {"name": "Features", "showcontent": True}}
 
         expected_output = """MyProject 1.0 (never)
 =====================
@@ -295,9 +422,7 @@ Features
             }
         }
 
-        definitions = OrderedDict(
-            [("feature", {"name": "Features", "showcontent": True})]
-        )
+        definitions = {"feature": {"name": "Features", "showcontent": True}}
 
         expected_output = """MyProject 1.0 (never)
 =====================
