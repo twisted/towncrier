@@ -195,7 +195,6 @@ jobs:
     # Only trigger this for tag changes.
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
-    environment: release-pypi
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
@@ -282,12 +281,12 @@ jobs:
     needs:
       # This is the list of CI job that we are interested to be green before
       # a merge.
+      # pypi-publish is skipped since this is only executed for a tag.
       - build
       - test-linux
       - test-windows
       - coverage
       - check
-      - pypi-publish
     steps:
       - name: Require all successes
         uses: re-actors/alls-green@3a2de129f0713010a71314c74e33c0e3ef90e696
