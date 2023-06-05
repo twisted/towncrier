@@ -4,7 +4,7 @@ How to Keep a Changelog in Markdown
 `Keep a Changelog <https://keepachangelog.com/>`_ is a standardized way to format a news file in `Markdown <https://en.wikipedia.org/wiki/Markdown>`_.
 
 This guide shows you how to configure ``towncrier`` for keeping a Markdown-based news file of a project without using any Python-specific features.
-Everything used here can be use with any other language or platform.
+Everything used here can be used with any other language or platform.
 
 This guide makes the following assumptions:
 
