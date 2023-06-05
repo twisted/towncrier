@@ -8,7 +8,7 @@ Provides towncrier version information.
 from incremental import Version
 
 
-__version__ = Version("towncrier", 22, 12, 1, dev=0)
+__version__ = Version("towncrier", 23, 6, 0, release_candidate=1)
 # The version is exposed in string format to be
 # available for the hatching build tools.
 _hatchling_version = __version__.short()

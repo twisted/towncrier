@@ -2,6 +2,52 @@
 
 .. towncrier release notes start
 
+towncrier 23.6.0rc1 (2023-06-05)
+================================
+
+Features
+--------
+
+- Make ``towncrier create`` use the fragment counter rather than failing
+  on existing fragment names.
+
+  For example, if there is an existing fragment named ``123.feature``,
+  then ``towncrier create 123.feature`` will now create a fragment
+  named ``123.feature.1``. (`#475 <https://github.com/twisted/towncrier/issues/475>`_)
+- Provide a default Markdown template if the configured filename ends with ``.md``.
+
+  The Markdown template uses the same rendered format as the default *reStructuredText* template, but with a Markdown syntax. (`#483 <https://github.com/twisted/towncrier/issues/483>`_)
+- Towncrier no longer depends on setuptools & uses importlib.resources (or its backport) instead. (`#496 <https://github.com/twisted/towncrier/issues/496>`_)
+- Added pre-commit hooks for checking and updating news in projects using pre-commit. (`#498 <https://github.com/twisted/towncrier/issues/498>`_)
+- Calling ``towncrier check`` without an existing configuration, will just show only an error message.
+
+  In previous versions, a traceback was generated instead of the error message. (`#501 <https://github.com/twisted/towncrier/issues/501>`_)
+
+
+Bugfixes
+--------
+
+- Fix creating fragment in a section not adding random characters.
+
+  For example, ``towncrier create some_section/+.feature`` should end up as a fragment named something like ``news/some_section/+a4e22da1.feature``. (`#468 <https://github.com/twisted/towncrier/issues/468>`_)
+- Fix the ReadTheDocs build for ``towncrier`` which was broken due to the python version in use being 3.8. Upgrade to 3.11. (`#509 <https://github.com/twisted/towncrier/issues/509>`_)
+
+
+Improved Documentation
+----------------------
+
+- Moved man page to correct section (`#470 <https://github.com/twisted/towncrier/issues/470>`_)
+- Update link to Quick Start in configuration.html to point to Tutorial instead. (`#504 <https://github.com/twisted/towncrier/issues/504>`_)
+- Add a note about the build command's ``--version`` requiring the command to be explicitly passed. (`#511 <https://github.com/twisted/towncrier/issues/511>`_)
+- Fix typos in the Pre-Commit docs. (`#512 <https://github.com/twisted/towncrier/issues/512>`_)
+-  (`#513 <https://github.com/twisted/towncrier/issues/513>`_)
+
+
+Misc
+----
+
+- `#459 <https://github.com/twisted/towncrier/issues/459>`_, `#462 <https://github.com/twisted/towncrier/issues/462>`_, `#472 <https://github.com/twisted/towncrier/issues/472>`_, `#485 <https://github.com/twisted/towncrier/issues/485>`_, `#486 <https://github.com/twisted/towncrier/issues/486>`_, `#487 <https://github.com/twisted/towncrier/issues/487>`_, `#488 <https://github.com/twisted/towncrier/issues/488>`_, `#495 <https://github.com/twisted/towncrier/issues/495>`_, `#497 <https://github.com/twisted/towncrier/issues/497>`_, `#507 <https://github.com/twisted/towncrier/issues/507>`_, `#1117 <https://github.com/twisted/towncrier/issues/1117>`_
+
 
 towncrier 22.12.0 (2022-12-21)
 ==============================
