@@ -5,6 +5,9 @@
 towncrier 23.6.0rc1 (2023-06-05)
 ================================
 
+This is the last release to support Python 3.7.
+
+
 Features
 --------
 
