@@ -194,6 +194,7 @@ jobs:
     # https://github.community/t/is-it-possible-to-require-all-github-actions-tasks-to-pass-without-enumerating-them/117957/4?u=graingert
     name: Check tag and publish
     runs-on: ubuntu-latest
+    environment: release-pypi
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
