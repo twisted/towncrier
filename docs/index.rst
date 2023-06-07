@@ -33,6 +33,7 @@ Development
 .. toctree::
    :maxdepth: 1
 
+   release-notes
    contributing
    release
    GitHub Repository <https://github.com/twisted/towncrier>
