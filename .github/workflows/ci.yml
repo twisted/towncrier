@@ -191,9 +191,13 @@ jobs:
 
 
   pypi-publish:
-    # https://github.community/t/is-it-possible-to-require-all-github-actions-tasks-to-pass-without-enumerating-them/117957/4?u=graingert
     name: Check tag and publish
+    # Only trigger this for tag changes.
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
 
     needs:
       - build
@@ -211,7 +215,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: 3.11
 
     - name: Install dependencies
       run: |
@@ -222,15 +226,11 @@ jobs:
       run: ls --recursive dist/
 
     - name: Check matched tag version and branch version - on tag
-      if: startsWith(github.ref, 'refs/tags/')
       run: python admin/check_tag_version_match.py "${{ github.ref }}"
 
     - name: Publish to PyPI - on tag
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: pypa/gh-action-pypi-publish@37f50c210e3d2f9450da2cd423303d6a14a6e29f
-      with:
-        password: ${{ secrets.PYPI_TOKEN }}
-        verbose: true
+      uses: pypa/gh-action-pypi-publish@a56da0b891b3dc519c7ee3284aff1fad93cc8598
+
 
   coverage:
     name: Combine & check coverage.
@@ -281,12 +281,12 @@ jobs:
     needs:
       # This is the list of CI job that we are interested to be green before
       # a merge.
+      # pypi-publish is skipped since this is only executed for a tag.
       - build
       - test-linux
       - test-windows
       - coverage
       - check
-      - pypi-publish
     steps:
       - name: Require all successes
         uses: re-actors/alls-green@3a2de129f0713010a71314c74e33c0e3ef90e696
