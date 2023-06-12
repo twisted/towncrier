@@ -11,20 +11,12 @@ import sys
 
 from contextlib import ExitStack
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Mapping, Sequence
+from typing import Any, Literal, Mapping, Sequence
 
 from click import ClickException
 
 from .._settings import fragment_types as ft
 
-
-if TYPE_CHECKING:
-    # We only use Literal for type-checking and Mypy always brings its own
-    # typing_extensions so this is safe without further dependencies.
-    if sys.version_info < (3, 8):
-        from typing_extensions import Literal
-    else:
-        from typing import Literal
 
 if sys.version_info < (3, 10):
     import importlib_resources as resources
