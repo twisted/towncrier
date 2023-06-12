@@ -60,8 +60,6 @@ jobs:
       fail-fast: false
       matrix:
         python:
-          - name: CPython 3.7
-            action: 3.7
           - name: CPython 3.8
             action: 3.8
           - name: CPython 3.9
@@ -70,8 +68,6 @@ jobs:
             action: '3.10'
           - name: CPython 3.11
             action: '3.11'
-          - name: PyPy 3.7
-            action: pypy3.7
           - name: PyPy 3.8
             action: pypy3.8
         task:
