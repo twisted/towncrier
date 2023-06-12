@@ -79,7 +79,7 @@ We recommend the following workflow:
       - ``doc`` for improvements to documentation
       - ``removal`` for deprecations and removals
       - ``misc`` for everything else that is linked but not shown in our ``NEWS.rst`` file.
-        Use this for PRs that don't affect end-users and leave them empty.
+        Use this for pull requests that don't affect end-users and leave them empty.
 
    e. Create a `pull request`_.
       Describe in the pull request what you did and why.
