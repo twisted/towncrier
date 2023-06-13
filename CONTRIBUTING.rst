@@ -66,7 +66,7 @@ We recommend the following workflow:
       *Running the test suite* for details.
 
    c. Document any user-facing changes in one of the ``/docs/`` files.
-      Please use `one sentence per line`_.
+      Use `one sentence per line`_.
 
    d. Create a news fragment in ``src/towncrier/newsfragments/`` describing the changes and containing information that is of interest to end-users.
       Use `one sentence per line`_ here, too.
