@@ -69,7 +69,7 @@ We recommend the following workflow:
       Please use `one sentence per line`_.
 
    d. Create a news fragment in ``src/towncrier/newsfragments/`` describing the changes and containing information that is of interest to end-users.
-      Please use `one sentence per line`_ here, too.
+      Use `one sentence per line`_ here, too.
       You can use the ``towncrier`` CLI to create them; for example ``towncrier create 1234.bugfix``
 
       Use one of the following types:
