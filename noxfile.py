@@ -55,7 +55,7 @@ def check_newsfragment(session: nox.Session) -> None:
 
 @nox.session
 def typecheck(session: nox.Session) -> None:
-    session.install(".", "mypy", "types-setuptools")
+    session.install(".", "mypy")
     session.run("mypy", "src")
 
 
