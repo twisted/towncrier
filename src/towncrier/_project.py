@@ -8,12 +8,12 @@ Responsible for getting the version and name from a project.
 
 from __future__ import annotations
 
+import importlib.metadata as importlib_metadata
 import sys
 
 from importlib import import_module
 from types import ModuleType
-
-from incremental import Version as IncrementalVersion
+from typing import Any
 
 
 def _get_package(package_dir: str, package: str) -> ModuleType:
@@ -38,47 +38,45 @@ def _get_package(package_dir: str, package: str) -> ModuleType:
 
 
 def get_version(package_dir: str, package: str) -> str:
+    version: Any
+
     module = _get_package(package_dir, package)
-
     version = getattr(module, "__version__", None)
-
     if not version:
-        raise Exception("No __version__, I don't know how else to look")
+        try:
+            version = importlib_metadata.version(package)
+        except importlib_metadata.PackageNotFoundError:
+            raise Exception(f"Package not installed and no {package}.__version__ found")
 
     if isinstance(version, str):
         return version.strip()
 
-    if isinstance(version, IncrementalVersion):
-        # FIXME:https://github.com/twisted/incremental/issues/81
-        # Incremental uses `.rcN`.
-        # importlib uses `rcN` (without a dot separation).
-        # Here we make incremental work like importlib.
-        return version.base().strip().replace(".rc", "rc")
-
     if isinstance(version, tuple):
         return ".".join(map(str, version)).strip()
 
+    # Try duck-typing as an Incremental version.
+    if hasattr(version, "base"):
+        try:
+            version = str(version.base()).strip()
+            # Incremental uses `X.Y.rcN`.
+            # Standardize on importlib (and PEP440) use of `X.YrcN`:
+            return version.replace(".rc", "rc")  # type: ignore
+        except TypeError:
+            pass
+
     raise Exception(
-        "I only know how to look at a __version__ that is a str, "
-        "an Increment Version, or a tuple. If you can't provide "
-        "that, use the --version argument and specify one."
+        "Version must be a string, tuple, or an Incremental Version."
+        " If you can't provide that, use the --version argument and specify one."
     )
 
 
 def get_project_name(package_dir: str, package: str) -> str:
     module = _get_package(package_dir, package)
-
     version = getattr(module, "__version__", None)
+    # Incremental has support for package names, try duck-typing it.
+    try:
+        return str(version.package)  # type: ignore
+    except AttributeError:
+        pass
 
-    if not version:
-        # welp idk
-        return package.title()
-
-    if isinstance(version, str):
-        return package.title()
-
-    if isinstance(version, IncrementalVersion):
-        # Incremental has support for package names
-        return version.package
-
-    raise TypeError(f"Unsupported type for __version__: {type(version)}")
+    return package.title()
