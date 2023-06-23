@@ -258,7 +258,8 @@ def __main(
             "What is seen below is what would be written.\n",
             err=to_err,
         )
-        click.echo(content)
+        # output as bytes to prevent universal_newlines modifying content #453
+        click.echo(content.encode("utf8"))
         return
 
     click.echo("Writing to newsfile...", err=to_err)
