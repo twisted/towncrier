@@ -5,18 +5,11 @@ import os
 import sys
 
 from subprocess import check_output
-from unittest import skipIf
 
 from twisted.trial.unittest import TestCase
 
 from .._project import get_project_name, get_version
 from .helpers import write
-
-
-try:
-    from importlib.metadata import version as metadata_version
-except ImportError:
-    metadata_version = None
 
 
 class VersionFetchingTests(TestCase):
@@ -46,25 +39,65 @@ class VersionFetchingTests(TestCase):
         version = get_version(temp, "mytestproja")
         self.assertEqual(version, "1.3.12")
 
-    @skipIf(metadata_version is None, "Needs importlib.metadata.")
     def test_incremental(self):
         """
-        An incremental Version __version__  is picked up.
+        An incremental-like Version __version__  is picked up.
         """
-        pkg = "../src"
+        temp = self.mktemp()
+        os.makedirs(temp)
+        os.makedirs(os.path.join(temp, "mytestprojinc"))
 
-        with self.assertWarnsRegex(
-            DeprecationWarning, "Accessing towncrier.__version__ is deprecated.*"
-        ):
-            version = get_version(pkg, "towncrier")
+        with open(os.path.join(temp, "mytestprojinc", "__init__.py"), "w") as f:
+            f.write(
+                """
+class Version:
+    '''
+    This is emulating a Version object from incremental.
+    '''
 
-        with self.assertWarnsRegex(
-            DeprecationWarning, "Accessing towncrier.__version__ is deprecated.*"
-        ):
-            name = get_project_name(pkg, "towncrier")
+    def __init__(self, *version_parts):
+        self.version = version_parts
 
-        self.assertEqual(metadata_version("towncrier"), version)
-        self.assertEqual("towncrier", name)
+    def base(self):
+        return '.'.join(map(str, self.version))
+
+
+__version__ = Version(1, 3, 12, "rc1")
+"""
+            )
+        version = get_version(temp, "mytestprojinc")
+        self.assertEqual(version, "1.3.12rc1")
+
+    def test_not_incremental(self):
+        """
+        An incremental-like Version __version__  is picked up, base takes unexpected
+        arguments.
+        """
+        temp = self.mktemp()
+        os.makedirs(os.path.join(temp, "mytestprojnotinc"))
+
+        with open(os.path.join(temp, "mytestprojnotinc", "__init__.py"), "w") as f:
+            f.write(
+                """
+class WeirdVersion:
+    def base(self, some_arg):
+        return "shouldn't get here"
+
+
+__version__ = WeirdVersion()
+"""
+            )
+        with self.assertRaises(Exception) as e:
+            get_version(temp, "mytestprojnotinc")
+
+        self.assertEqual(
+            (
+                "Version must be a string, tuple, or an Incremental Version. "
+                "If you can't provide that, use the --version argument and "
+                "specify one.",
+            ),
+            e.exception.args,
+        )
 
     def _setup_missing(self):
         """
@@ -90,7 +123,8 @@ class VersionFetchingTests(TestCase):
             get_version(tmp_dir, "missing")
 
         self.assertEqual(
-            ("No __version__, I don't know how else to look",), e.exception.args
+            ("Package not installed and no missing.__version__ found",),
+            e.exception.args,
         )
 
     def test_missing_version_project_name(self):
@@ -114,7 +148,7 @@ class VersionFetchingTests(TestCase):
 
         self.assertRaises(Exception, get_version, temp, "mytestprojb")
 
-        self.assertRaises(TypeError, get_project_name, temp, "mytestprojb")
+        self.assertEqual("Mytestprojb", get_project_name(temp, "mytestprojb"))
 
     def test_import_fails(self):
         """

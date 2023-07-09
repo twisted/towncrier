@@ -19,9 +19,9 @@ The same branch is used for the release candidated and the final release.
 In the end, the release branch is merged into the main branch.
 
 Update the version to the release candidate with the first being ``rc1`` (as opposed to 0).
-In ``src/towncrier/_version.py`` the version is set using ``incremental`` such as::
+In ``pyproject.toml`` the version is set like::
 
-    __version__ = Version('towncrier', 19, 9, 0, release_candidate=1)
+    version = "19.9.0.rc1"
 
 Run ``venv/bin/towncrier build --yes`` to generate the news release NEWS file.
 Commit and push to the primary repository, not a fork.
@@ -59,9 +59,9 @@ Final release
 Once the PR is approved, you can trigger the final release.
 
 Update the version to the final version.
-In ``src/towncrier/_version.py`` the version is set using ``incremental`` such as::
+In ``pyproject.toml`` the version is set like::
 
-    __version__ = Version('towncrier', 19, 9, 0)
+    version = "19.9.0"
 
 Manually update the `NEWS.rst` file to include the final release version and date.
 Usually it will look like this::
@@ -88,10 +88,9 @@ Similar to the release candidate, with the difference:
 No need for another review request.
 
 Update the version to the development version.
-In ``src/towncrier/_version.py`` the version is set using ``incremental`` such as::
+In ``pyproject.toml`` the version is set like::
 
-    __version__ = Version('towncrier', 19, 9, 1, dev=0)
-
+    version = "19.9.1.dev0"
 
 Commit and push the changes.
 
