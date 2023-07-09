@@ -165,7 +165,9 @@ def __main(
 
     click.echo("Loading template...", err=to_err)
     if isinstance(config.template, tuple):
-        template = resources.read_text(*config.template)
+        template = (
+            resources.files(config.template[0]).joinpath(config.template[1]).read_text()
+        )
     else:
         with open(config.template, encoding="utf-8") as tmpl:
             template = tmpl.read()
