@@ -207,9 +207,24 @@ class TomlSettingsTests(TestCase):
 
         self.assertEqual(
             result.output,
-            f"No configuration file found.\nLooked in: {os.path.abspath(temp)}\n",
+            f"No configuration file found.\nLooked back from: {os.path.abspath(temp)}\n",
         )
         self.assertEqual(result.exit_code, 1)
+
+    @with_isolated_runner
+    def test_load_explicit_missing_config(self, runner: CliRunner):
+        """
+        Calling the CLI with an incorrect explicit configuration file will exit with
+        code 1 and an informative message is sent to standard output.
+        """
+        config = "not-there.toml"
+        result = runner.invoke(cli, ("--config", config))
+
+        self.assertEqual(result.exit_code, 1)
+        self.assertEqual(
+            result.output,
+            f"Configuration file '{os.path.abspath(config)}' not found.\n",
+        )
 
     def test_missing_template(self):
         """
@@ -273,6 +288,12 @@ class TomlSettingsTests(TestCase):
                 directory="spam"
                 name="Spam"
                 showcontent=true
+
+                [[tool.towncrier.type]]
+                directory="auto"
+                name="Automatic"
+                showcontent=true
+                check=false
             """
         )
         config = load_config(project_dir)
@@ -282,6 +303,7 @@ class TomlSettingsTests(TestCase):
                 {
                     "name": "Foo",
                     "showcontent": False,
+                    "check": True,
                 },
             ),
             (
@@ -289,6 +311,15 @@ class TomlSettingsTests(TestCase):
                 {
                     "name": "Spam",
                     "showcontent": True,
+                    "check": True,
+                },
+            ),
+            (
+                "auto",
+                {
+                    "name": "Automatic",
+                    "showcontent": True,
+                    "check": False,
                 },
             ),
         ]
@@ -311,6 +342,9 @@ class TomlSettingsTests(TestCase):
                 [tool.towncrier.fragment.chore]
                 name = "Other Tasks"
                 showcontent = false
+                [tool.towncrier.fragment.auto]
+                name = "Automatic"
+                check = false
             """
         )
         config = load_config(project_dir)
@@ -318,14 +352,22 @@ class TomlSettingsTests(TestCase):
             "chore": {
                 "name": "Other Tasks",
                 "showcontent": False,
+                "check": True,
             },
             "feat": {
                 "name": "Feat",
                 "showcontent": True,
+                "check": True,
             },
             "fix": {
                 "name": "Fix",
                 "showcontent": True,
+                "check": True,
+            },
+            "auto": {
+                "name": "Automatic",
+                "showcontent": True,
+                "check": False,
             },
         }
         actual = config.types

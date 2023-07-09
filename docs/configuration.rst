@@ -43,7 +43,7 @@ Top level keys
 ``version``
     The version of your project.
 
-    Python projects that provide the ``package`` key can have the version to be automatically determined from a ``__version__`` variable in the package's module.
+    Python projects that provide the ``package`` key, if left empty then the version will be automatically determined from the installed package's version metadata or a ``__version__`` variable in the package's module.
 
     If not provided or able to be determined, the version must be passed explicitly by the command line argument ``--version``.
 
@@ -51,12 +51,13 @@ Top level keys
     The directory storing your news fragments.
 
     For Python projects that provide a ``package`` key, the default is a ``newsfragments`` directory within the package.
-    Otherwise the default is a ``newsfragments`` directory relative to the configuration file.
+    Otherwise the default is a ``newsfragments`` directory relative to either the directory passed as ``--dir`` or (by default) the configuration file.
 
 ``filename``
     The filename of your news file.
 
     ``"NEWS.rst"`` by default.
+    Its location is determined the same way as the location of the directory storing the news fragments.
 
 ``template``
     Path to the template for generating the news file.
@@ -78,6 +79,8 @@ Top level keys
     Strings should use the following keys to render the title dynamically: ``{name}``, ``{version}``, and ``{project_date}``.
 
     ``""`` by default.
+
+    Formatted titles are appended a line of ``=`` on the following line (reStructuredText title format) unless the template has an ``.md`` suffix, in which case the title will instead be prefixed with ``#`` (markdown title format).
 
 ``issue_format``
     A format string for rendering the issue/ticket number in newsfiles.
@@ -116,6 +119,16 @@ Top level keys
     The prefix used for orphaned news fragments.
 
     ``"+"`` by default.
+
+``create_eof_newline``
+    Ensure the content of a news fragment file created with ``towncrier create`` ends with an empty line.
+
+    ``true`` by default.
+
+``create_add_extension``
+    Add the ``filename`` option extension to news fragment files created with ``towncrier create`` if an extension is not explicitly provided.
+
+    ``true`` by default.
 
 Extra top level keys for Python projects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -203,6 +216,16 @@ These may include the following optional keys:
 
     ``true`` by default.
 
+    .. note::
+
+        Orphan fragments (those without an issue number) always have their content included.
+        If a fragment was created, it means that information is important for end users.
+
+``check``
+    A boolean value indicating whether the fragment should be considered by the ``towncrier check`` command.
+
+    ``true`` by default.
+
 For example, if you want your custom fragment types to be ``["feat", "fix", "chore",]`` and you want all of them to use the default configuration except ``"chore"`` you can do it as follows:
 
 .. code-block:: toml
@@ -215,6 +238,10 @@ For example, if you want your custom fragment types to be ``["feat", "fix", "cho
    [tool.towncrier.fragment.chore]
    name = "Other Tasks"
    showcontent = false
+
+   [tool.towncrier.fragment.deps]
+   name = "Dependency Changes"
+   check = false
 
 
 .. warning::
@@ -244,6 +271,16 @@ Each table within this array has the following mandatory keys:
 
     ``true`` by default.
 
+    .. note::
+
+        Orphan fragments (those without an issue number) always have their content included.
+        If a fragment was created, it means that information is important for end users.
+
+``check``
+    A boolean value indicating whether the fragment should be considered by the ``towncrier check`` command.
+
+    ``true`` by default.
+
 For example:
 
 .. code-block:: toml
@@ -258,3 +295,9 @@ For example:
    directory = "chore"
    name = "Other Tasks"
    showcontent = false
+
+   [[tool.towncrier.type]]
+   directory = "deps"
+   name = "Dependency Changes"
+   showcontent = true
+   check = false

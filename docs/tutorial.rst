@@ -15,10 +15,13 @@ Configuration
 ``towncrier`` keeps its config in the `PEP-518 <https://www.python.org/dev/peps/pep-0518/>`_ ``pyproject.toml`` or a ``towncrier.toml`` file.
 If the latter exists, it takes precedence.
 
-The most basic configuration is just telling ``towncrier`` where to look for news fragments::
+The most basic configuration is just telling ``towncrier`` where to look for news fragments and what file to generate::
 
    [tool.towncrier]
    directory = "changes"
+   # Where you want your news files to come out, `NEWS.rst` is the default.
+   # This can be .rst or .md, towncrier's default template works with both.
+   # filename = "NEWS.rst"
 
 Which will look into "./changes" for news fragments and write them into "./NEWS.rst".
 
@@ -32,9 +35,6 @@ If you're working on a Python project, you can also specify a package::
    # but if you don't keep your code in a 'src' dir, remove the
    # config option
    package_dir = "src"
-   # Where you want your news files to come out. This can be .rst
-   # or .md, towncrier's default template works with both.
-   filename = "NEWS.rst"
 
 By default, ``towncrier`` will look for news fragments inside your Python package, in a directory named ``newsfragments``.
 With this example project, it will look in ``src/myproject/newsfragments/`` for them.
@@ -48,17 +48,17 @@ Create this folder::
 The ``.gitignore`` will remain and keep Git from not tracking the directory.
 
 
-Detecting Dates & Versions
---------------------------
+Detecting Version
+-----------------
 
-``towncrier`` needs to know what version your project is.
+``towncrier`` needs to know what version your project is when generating news files.
 
 For Python projects, the version can be automatically determined in one of the following ways:
 
 - if the project is installed, the version can be read from the package's metadata
 - the version can be provided in a ``__version__`` attribute of the top level package (as a string literal, a tuple, or an `Incremental <https://github.com/twisted/incremental>`_ version)
 
-For other projects, you can store the version in the ``towncrier.toml`` file::
+For non-Python projects, you can store the version in the ``towncrier.toml`` file::
 
    [tool.towncrier]
    version = "1.0.0"
@@ -66,6 +66,10 @@ For other projects, you can store the version in the ``towncrier.toml`` file::
 If you don't want to store the version, you can manually pass ``--version=<myversionhere>`` whenever interacting with ``towncrier``. For example::
 
    $ towncrier build --version=1.2.3post4
+
+
+Setting Date
+------------
 
 ``towncrier`` will also include the current date (in ``YYYY-MM-DD`` format) when generating news files.
 You can change this with the ``--date`` flag::
@@ -87,9 +91,9 @@ The five default types are:
 - ``bugfix``: Signifying a bug fix.
 - ``doc``: Signifying a documentation improvement.
 - ``removal``: Signifying a deprecation or removal of public API.
-- ``misc``: A ticket has been closed, but it is not of interest to users.
+- ``misc``: An issue has been closed, but it is not of interest to users.
 
-When you create a news fragment, the filename consists of the ticket ID (or some other unique identifier) as well as the 'type'.
+When you create a news fragment, the filename consists of the issue/ticket ID (or some other unique identifier) as well as the 'type'.
 ``towncrier`` does not care about the fragment's suffix.
 
 You can create those fragments either by hand, or using the ``towncrier create`` command.
@@ -97,14 +101,14 @@ Let's create some example news fragments to demonstrate::
 
    $ echo 'Fixed a thing!' > src/myproject/newsfragments/1234.bugfix
    $ towncrier create --content 'Can also be ``rst`` as well!' 3456.doc.rst
-   # You can associate multiple ticket numbers with a news fragment by giving them the same contents.
+   # You can associate multiple issue numbers with a news fragment by giving them the same contents.
    $ towncrier create --content 'Can also be ``rst`` as well!' 7890.doc.rst
    $ echo 'The final part is ignored, so set it to whatever you want.' > src/myproject/newsfragments/8765.removal.txt
    $ echo 'misc is special, and does not put the contents of the file in the newsfile.' > src/myproject/newsfragments/1.misc
    $ towncrier create --edit 2.misc.rst  # starts an editor
-   $ towncrier create -c "Orphan fragments have no ticket ID." +random.bugfix.rst
+   $ towncrier create -c "Orphan fragments have no issue ID." +random.bugfix.rst
 
-For orphan news fragments (those that don't need to be linked to any ticket ID or other identifier), start the file name with ``+``.
+For orphan news fragments (those that don't need to be linked to any issue ID or other identifier), start the file name with ``+``.
 The content will still be included in the release notes, at the end of the category corresponding to the file extension::
 
    $ echo 'Fixed an unreported thing!' > src/myproject/newsfragments/+anything.bugfix
@@ -130,13 +134,13 @@ You should get an output similar to this::
    --------
 
    - Fixed a thing! (#1234)
-   - Orphan fragments have no ticket ID.
+   - Orphan fragments have no issue ID.
 
 
    Improved Documentation
    ----------------------
 
-   - Can also be ``rst``` as well! (#3456, #7890)
+   - Can also be ``rst`` as well! (#3456, #7890)
 
 
    Deprecations and Removals
@@ -152,6 +156,8 @@ You should get an output similar to this::
 
 Note: if you configure a Markdown file (for example, ``filename = "CHANGES.md"``) in your configuration file, the titles will be output in Markdown format instead.
 
+Note: all files (news fragments, the news file, the configuration file, and templates) are encoded and are expected to be encoded as UTF-8.
+
 
 Producing News Files In Production
 ----------------------------------
@@ -163,7 +169,7 @@ To produce the news file for real, run::
 This command will remove the news files (with ``git rm``) and append the built news to the filename specified in ``pyproject.toml``, and then stage the news file changes (with ``git add``).
 It leaves committing the changes up to the user.
 
-If you wish to have content at the top of the news file (for example, to say where you can find the tickets), put your text above a rST comment that says::
+If you wish to have content at the top of the news file (for example, to say where you can find the issues), put your text above a rST comment that says::
 
   .. towncrier release notes start
 

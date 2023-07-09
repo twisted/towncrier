@@ -5,13 +5,13 @@
 Build a combined news file from news fragments.
 """
 
-
 from __future__ import annotations
 
 import os
 import sys
 
 from datetime import date
+from pathlib import Path
 
 import click
 
@@ -165,29 +165,21 @@ def __main(
 
     click.echo("Loading template...", err=to_err)
     if isinstance(config.template, tuple):
-        template = resources.read_text(*config.template)
+        template = (
+            resources.files(config.template[0])
+            .joinpath(config.template[1])
+            .read_text(encoding="utf-8")
+        )
+        template_extension = os.path.splitext(config.template[1])[1]
     else:
-        with open(config.template, encoding="utf-8") as tmpl:
-            template = tmpl.read()
+        template = Path(config.template).read_text(encoding="utf-8")
+        template_extension = os.path.splitext(config.template)[1]
+    is_markdown = template_extension.lower() == ".md"
 
     click.echo("Finding news fragments...", err=to_err)
 
-    if config.directory is not None:
-        fragment_base_directory = os.path.abspath(config.directory)
-        fragment_directory = None
-    else:
-        fragment_base_directory = os.path.abspath(
-            os.path.join(base_directory, config.package_dir, config.package)
-        )
-        fragment_directory = "newsfragments"
-
-    fragment_contents, fragment_filenames = find_fragments(
-        fragment_base_directory,
-        config.sections,
-        fragment_directory,
-        config.types,
-        config.orphan_prefix,
-    )
+    fragment_contents, fragment_files = find_fragments(base_directory, config)
+    fragment_filenames = [filename for (filename, _category) in fragment_files]
 
     click.echo("Rendering news fragments...", err=to_err)
     fragments = split_fragments(
@@ -210,22 +202,10 @@ def __main(
     if project_date is None:
         project_date = _get_date().strip()
 
-    if config.title_format:
-        top_line = config.title_format.format(
-            name=project_name, version=project_version, project_date=project_date
-        )
-        render_title_with_fragments = False
-        render_title_separately = True
-    elif config.title_format is False:
-        # This is an odd check but since we support both "" and False with
-        # different effects we have to do something a bit abnormal here.
-        top_line = ""
-        render_title_separately = False
-        render_title_with_fragments = False
-    else:
-        top_line = ""
-        render_title_separately = False
-        render_title_with_fragments = True
+    # Render the title in the template if the title format is set to "". It can
+    # alternatively be set to False or a string, in either case it shouldn't be rendered
+    # in the template.
+    render_title = config.title_format == ""
 
     rendered = render_fragments(
         # The 0th underline is used for the top line
@@ -238,18 +218,21 @@ def __main(
         {"name": project_name, "version": project_version, "date": project_date},
         top_underline=config.underlines[0],
         all_bullets=config.all_bullets,
-        render_title=render_title_with_fragments,
+        render_title=render_title,
     )
 
-    if render_title_separately:
-        content = "\n".join(
-            [
-                top_line,
-                config.underlines[0] * len(top_line),
-                rendered,
-            ]
+    if config.title_format:
+        top_line = config.title_format.format(
+            name=project_name, version=project_version, project_date=project_date
         )
+        if is_markdown:
+            parts = [f"# {top_line}"]
+        else:
+            parts = [top_line, config.underlines[0] * len(top_line)]
+        parts.append(rendered)
+        content = "\n".join(parts)
     else:
+        top_line = ""
         content = rendered
 
     if draft:

@@ -31,7 +31,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: hynek/build-and-inspect-python-package@f336040a31ea03a2551adcc994d3ddb2f3ea3f7f
+    - uses: hynek/build-and-inspect-python-package@f51d0e79a34e62af977fcfe458b41fa8490e6e65
 
     - name: Set up ${{ matrix.python.name }}
       uses: actions/setup-python@v4
@@ -59,6 +59,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Keep list in-sync with noxfile/tests & pyproject.toml.
         python:
           - name: CPython 3.8
             action: 3.8
@@ -68,6 +69,8 @@ jobs:
             action: '3.10'
           - name: CPython 3.11
             action: '3.11'
+          - name: CPython 3.12
+            action: '3.12'
           - name: PyPy 3.8
             action: pypy3.8
         task:
@@ -87,6 +90,8 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python.action }}
+        allow-prereleases: true
+        cache: pip
 
     - name: Install dependencies
       run: python -m pip install --upgrade pip nox
@@ -149,16 +154,18 @@ jobs:
       fail-fast: false
       matrix:
         python:
-          # Using second most recent minor release for whatever little
-          # increase in stability over using the latest minor.
-          - name: CPython 3.9
-            python-version: '3.9'
+          # Use a recent version to avoid having common disconnects between
+          # local development setups and CI.
+          - name: CPython 3.11
+            python-version: '3.11'
         task:
           - name: Check Newsfragment
-            nox: check_newsfragment
+            run: |
+              nox -e check_newsfragment
+              nox -e draft_newsfragment >> $GITHUB_STEP_SUMMARY
             run-if: ${{ github.head_ref != 'pre-commit-ci-update-config' }}
           - name: Check mypy
-            nox: typecheck
+            run: nox -e typecheck
             run-if: true
 
     steps:
@@ -182,8 +189,40 @@ jobs:
 
     - uses: twisted/python-info-action@v1
 
-    - run: nox -e ${{ matrix.task.nox }}
+    - name: Check
+      run: |
+        ${{ matrix.task.run }}
       if: ${{ matrix.task.run-if }}
+
+
+  pre-commit:
+    name: Check pre-commit integration
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.12
+
+    - name: Install dependencies
+      run: python -m pip install pre-commit
+
+    - name: Install pre-commit
+      run: |
+        pre-commit install
+
+    - name: Update pre-commit
+      run: |
+        pre-commit autoupdate
+
+    - name: Run pre-commit
+      run: |
+        pre-commit run -a
 
 
   pypi-publish:
@@ -252,7 +291,7 @@ jobs:
         python -Im coverage html --skip-covered --skip-empty
 
         # Report and write to summary.
-        python -Im coverage report | sed 's/^/    /' >> $GITHUB_STEP_SUMMARY
+        python -Im coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
 
         # Report again and fail if under 100%.
         python -Im coverage report --fail-under=100
@@ -283,6 +322,7 @@ jobs:
       - test-windows
       - coverage
       - check
+      - pre-commit
     steps:
       - name: Require all successes
         uses: re-actors/alls-green@3a2de129f0713010a71314c74e33c0e3ef90e696

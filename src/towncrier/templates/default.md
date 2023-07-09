@@ -2,7 +2,7 @@
 {% if versiondata.name %}
 # {{ versiondata.name }} {{ versiondata.version }} ({{ versiondata.date }})
 {% else %}
-{{ versiondata.version }} ({{ versiondata.date }})
+# {{ versiondata.version }} ({{ versiondata.date }})
 {% endif %}
 {% endif %}
 {% for section, _ in sections.items() %}
@@ -15,7 +15,6 @@
 {% for category, val in definitions.items() if category in sections[section] %}
 ### {{ definitions[category]['name'] }}
 
-{% if definitions[category]['showcontent'] %}
 {% for text, values in sections[section][category].items() %}
 - {{ text }}
 {%- if values %}
@@ -24,24 +23,18 @@
 
   (
 {%- else %}
- (
+{% if text %} ({% endif %}
 {%- endif -%}
 {%- for issue in values %}
 {{ issue.split(": ", 1)[0] }}{% if not loop.last %}, {% endif %}
 {%- endfor %}
-)
+{% if text %}){% endif %}
+
 {% else %}
 
 {% endif %}
 {% endfor %}
 
-{% else %}
-- {% for issue in sections[section][category][''] %}
-{{ issue.split(": ", 1)[0] }}{% if not loop.last %}, {% endif %}
-{% endfor %}
-
-
-{% endif %}
 {% if issues_by_category[section][category] and "]: " in issues_by_category[section][category][0] %}
 {% for issue in issues_by_category[section][category] %}
 {{ issue }}
@@ -58,4 +51,8 @@ No significant changes.
 No significant changes.
 
 {% endif %}
-{% endfor %}
+{% endfor +%}
+{#
+This comment adds one more newline at the end of the rendered newsfile content.
+In this way the there are 2 newlines between the latest release and the previous release content.
+#}

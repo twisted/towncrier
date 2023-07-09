@@ -4,12 +4,17 @@
 import os
 import sys
 
-from subprocess import check_output
+from importlib.metadata import version as metadata_version
 
+from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from .._project import get_project_name, get_version
+from .._shell import cli as towncrier_cli
 from .helpers import write
+
+
+towncrier_cli.name = "towncrier"
 
 
 class VersionFetchingTests(TestCase):
@@ -39,34 +44,34 @@ class VersionFetchingTests(TestCase):
         version = get_version(temp, "mytestproja")
         self.assertEqual(version, "1.3.12")
 
-    def test_incremental(self):
-        """
-        An incremental-like Version __version__  is picked up.
-        """
-        temp = self.mktemp()
-        os.makedirs(temp)
-        os.makedirs(os.path.join(temp, "mytestprojinc"))
+        def test_incremental(self):
+            """
+            An incremental-like Version __version__  is picked up.
+            """
+            temp = self.mktemp()
+            os.makedirs(temp)
+            os.makedirs(os.path.join(temp, "mytestprojinc"))
 
-        with open(os.path.join(temp, "mytestprojinc", "__init__.py"), "w") as f:
-            f.write(
-                """
-class Version:
-    '''
-    This is emulating a Version object from incremental.
-    '''
+            with open(os.path.join(temp, "mytestprojinc", "__init__.py"), "w") as f:
+                f.write(
+                    """
+    class Version:
+        '''
+        This is emulating a Version object from incremental.
+        '''
 
-    def __init__(self, *version_parts):
-        self.version = version_parts
+        def __init__(self, *version_parts):
+            self.version = version_parts
 
-    def base(self):
-        return '.'.join(map(str, self.version))
+        def base(self):
+            return '.'.join(map(str, self.version))
 
 
-__version__ = Version(1, 3, 12, "rc1")
-"""
-            )
-        version = get_version(temp, "mytestprojinc")
-        self.assertEqual(version, "1.3.12rc1")
+    __version__ = Version(1, 3, 12, "rc1")
+    """
+                )
+            version = get_version(temp, "mytestprojinc")
+            self.assertEqual(version, "1.3.12rc1")
 
     def test_not_incremental(self):
         """
@@ -99,6 +104,13 @@ __version__ = WeirdVersion()
             e.exception.args,
         )
 
+    def test_version_from_metadata(self):
+        """
+        A version from package metadata is picked up.
+        """
+        version = get_version(".", "towncrier")
+        self.assertEqual(metadata_version("towncrier"), version)
+
     def _setup_missing(self):
         """
         Create a minimalistic project with missing metadata in a temporary
@@ -120,6 +132,7 @@ __version__ = WeirdVersion()
         tmp_dir = self._setup_missing()
 
         with self.assertRaises(Exception) as e:
+            # The 'missing' package has no __version__ string.
             get_version(tmp_dir, "missing")
 
         self.assertEqual(
@@ -208,6 +221,7 @@ class InvocationTests(TestCase):
         """
         `python -m towncrier` invokes the main entrypoint.
         """
+        runner = CliRunner()
         temp = self.mktemp()
         new_dir = os.path.join(temp, "dashm")
         os.makedirs(new_dir)
@@ -217,9 +231,9 @@ class InvocationTests(TestCase):
             with open("pyproject.toml", "w") as f:
                 f.write("[tool.towncrier]\n" 'directory = "news"\n')
             os.makedirs("news")
-            out = check_output([sys.executable, "-m", "towncrier", "--help"])
-            self.assertIn(b"[OPTIONS] COMMAND [ARGS]...", out)
-            self.assertRegex(out, rb".*--help\s+Show this message and exit.")
+            result = runner.invoke(towncrier_cli, ["--help"])
+            self.assertIn("[OPTIONS] COMMAND [ARGS]...", result.stdout)
+            self.assertRegex(result.stdout, r".*--help\s+Show this message and exit.")
         finally:
             os.chdir(orig_dir)
 
@@ -227,5 +241,6 @@ class InvocationTests(TestCase):
         """
         `--version` command line option is available to show the current production version.
         """
-        out = check_output(["towncrier", "--version"])
-        self.assertTrue(out.startswith(b"towncrier, version 2"))
+        runner = CliRunner()
+        result = runner.invoke(towncrier_cli, ["--version"])
+        self.assertTrue(result.output.startswith("towncrier, version 2"))

@@ -30,6 +30,7 @@
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 import importlib.metadata as importlib_metadata
+import os
 
 from datetime import date
 
@@ -71,9 +72,6 @@ release = towncrier_version
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-# The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "sphinx"
-
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
@@ -89,7 +87,9 @@ html_theme = "furo"
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+if os.environ.get("READTHEDOCS_VERSION_NAME", "trunk") not in ("trunk", "latest"):
+    # Remove the "Edit on GitHub" link for non-trunk versions of the docs
+    html_theme_options = {"top_of_page_buttons": []}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

@@ -1,0 +1,1 @@
+``towncrier build`` now handles removing news fragments which are not part of the git repository. For example, uncommitted or unstaged files.

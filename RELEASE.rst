@@ -38,8 +38,8 @@ Create a new release candidate using `GitHub New release UI <https://github.com/
 * *Choose a tag*: Type `19.9.0rc1` and select `Create new tag on publish.`
 * *Target*: Search for the release branch and select it.
 * *Title*: "Towncrier 19.9.0rc1".
-* Set the content based on the NEWS file.
-* Make sure to mark **This is a pre-release**.
+* Set the content based on the NEWS file (for now in RST format).
+* Make sure to check **This is a pre-release**.
 * Click `Publish release`
 
 This will trigger the PyPI release candidate.
@@ -51,6 +51,12 @@ The documentation link is also available as part of the standard Read The Docs P
 
 Notify the release candidate over IRC or Gitter to gain more attention.
 In the PR comments, you can also mention anyone who has asked for a release.
+
+We don't create discussion for pre-releases.
+Any discussions before the final release, can go on the PR itself.
+
+For now, the GitHub release text is reStructuredText as it's easy to copy and paste.
+In the future we might create a separate Markdown version.
 
 
 Final release
@@ -64,7 +70,8 @@ In ``pyproject.toml`` the version is set like::
     version = "19.9.0"
 
 Manually update the `NEWS.rst` file to include the final release version and date.
-Usually it will look like this::
+Usually it will look like this.
+This will replace the release candidate section::
 
     towncrier 19.9.0 (2019-09-29)
     =============================
@@ -81,8 +88,9 @@ Similar to the release candidate, with the difference:
 * tag will be named `19.9.0`
 * the target is the same branch
 * Title will be `towncrier 19.0.0`
-* Content can be the content of the final release and the release candidates.
-* Don't mark **This is a pre-release**.
+* Content can be the content of the final release (RST format).
+* Check **Set as the latest release**.
+* Check **Create a discussion for this release**.
 * Click `Publish release`
 
 No need for another review request.
@@ -94,7 +102,14 @@ In ``pyproject.toml`` the version is set like::
 
 Commit and push the changes.
 
-Merge the commit in the main branch.
+Merge the commit in the main branch, **without using squash**.
+
+We tag the release based on a commit from the release branch.
+If we merge with squash,
+the release tag commit will no longer be found in the main branch history.
+With a squash merge, the whole branch history is lost.
+This causes the `pre-commit autoupdate` to fail.
+See `PR590 <https://github.com/twisted/towncrier/pull/590>`_ for more details.
 
 You can announce the release over IRC or Gitter.
 

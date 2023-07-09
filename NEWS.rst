@@ -5,6 +5,70 @@ Release notes
 
 .. towncrier release notes start
 
+towncrier 23.11.0 (2023-11-08)
+==============================
+
+No significant changes since the previous release candidate.
+
+
+Bugfixes
+--------
+
+- ``build`` now treats a missing fragments directory the same as an empty one, consistent with other operations. (`#538 <https://github.com/twisted/towncrier/issues/538>`_)
+- Fragments with filenames like `fix-1.2.3.feature` are now associated with the issue `fix-1.2.3`.
+  In previous versions they were incorrectly associated to issue `3`. (`#562 <https://github.com/twisted/towncrier/issues/562>`_)
+- Orphan newsfragments containing numeric values are no longer accidentally associated to issues. In previous versions the orphan marker was ignored and the newsfragment was associated to an issue having the last numerical value from the filename. (`#562 <https://github.com/twisted/towncrier/issues/562>`_)
+
+
+Misc
+----
+
+- `#558 <https://github.com/twisted/towncrier/issues/558>`_, `#559 <https://github.com/twisted/towncrier/issues/559>`_
+
+
+towncrier 23.10.0 (2023-10-24)
+==============================
+
+No significant changes since the previous release candidate.
+
+
+Features
+--------
+
+- Python 3.12 is now officially supported. (`#541 <https://github.com/twisted/towncrier/issues/541>`_)
+- Initial support was added for monorepo-style setup.
+  One project with multiple independent news files stored in separate sub-directories, that share the same towncrier config. (`#548 <https://github.com/twisted/towncrier/issues/548>`_)
+- Two newlines are no longer always added between the current release notes and the previous content.
+  The newlines are now defined only inside the template.
+
+  **Important! If you're using a custom template and want to keep the same whitespace between releases, you may have to modify your template.** (`#552 <https://github.com/twisted/towncrier/issues/552>`_)
+
+
+Bugfixes
+--------
+
+- Towncrier now vendors the click-default-group package that prevented installations on modern Pips. (`#540 <https://github.com/twisted/towncrier/issues/540>`_)
+
+
+Improved Documentation
+----------------------
+
+- The markdown docs now use the default markdown template rather than a simpler custom one. (`#545 <https://github.com/twisted/towncrier/issues/545>`_)
+- Cleanup a duplicate backtick in the tutorial. (`#551 <https://github.com/twisted/towncrier/issues/551>`_)
+
+
+Deprecations and Removals
+-------------------------
+
+- The support for Python 3.7 has been dropped. (`#521 <https://github.com/twisted/towncrier/issues/521>`_)
+
+
+Misc
+----
+
+- `#481 <https://github.com/twisted/towncrier/issues/481>`_, `#520 <https://github.com/twisted/towncrier/issues/520>`_, `#522 <https://github.com/twisted/towncrier/issues/522>`_, `#523 <https://github.com/twisted/towncrier/issues/523>`_, `#529 <https://github.com/twisted/towncrier/issues/529>`_, `#536 <https://github.com/twisted/towncrier/issues/536>`_
+
+
 towncrier 23.6.0 (2023-06-06)
 =============================
 
@@ -184,7 +248,7 @@ towncrier 21.3.0.rc1 (2021-03-21)
 Features
 --------
 
-- Ticket number from file names will be stripped down to avoid ticket links such as ``#007``. (`#126 <https://github.com/twisted/towncrier/issues/126>`_)
+- Issue number from file names will be stripped down to avoid issue links such as ``#007``. (`#126 <https://github.com/twisted/towncrier/issues/126>`_)
 - Allow definition of the project ``version`` and ``name`` in the configuration file.
   This allows use of towncrier seamlessly with non-Python projects. (`#165 <https://github.com/twisted/towncrier/issues/165>`_)
 - Improve news fragment file name parsing to allow using file names like
