@@ -183,8 +183,7 @@ class TestChecker(TestCase):
             call(["git", "commit", "-m", "add a newsfragment"])
 
             runner = CliRunner(mix_stderr=False)
-            result = runner.invoke(
-                towncrier_check, ["--compare-with", "master"])
+            result = runner.invoke(towncrier_check, ["--compare-with", "master"])
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(0, len(result.stderr))

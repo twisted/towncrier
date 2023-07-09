@@ -190,8 +190,7 @@ class InvocationTests(TestCase):
             os.makedirs("news")
             result = runner.invoke(towncrier_cli, ["--help"])
             self.assertIn("[OPTIONS] COMMAND [ARGS]...", result.stdout)
-            self.assertRegex(
-                result.stdout, r".*--help\s+Show this message and exit.")
+            self.assertRegex(result.stdout, r".*--help\s+Show this message and exit.")
         finally:
             os.chdir(orig_dir)
 
