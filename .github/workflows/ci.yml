@@ -149,10 +149,10 @@ jobs:
       fail-fast: false
       matrix:
         python:
-          # Using second most recent minor release for whatever little
-          # increase in stability over using the latest minor.
-          - name: CPython 3.9
-            python-version: '3.9'
+          # Use a recent version to avoid having common disconnects between
+          # local development setups and CI.
+          - name: CPython 3.11
+            python-version: '3.11'
         task:
           - name: Check Newsfragment
             nox: check_newsfragment

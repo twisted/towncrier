@@ -161,8 +161,9 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
         package, resource = template.split(":", 1)
         if not Path(resource).suffix:
             resource += ".md" if markdown_file else ".rst"
-        if not resources.is_resource(package, resource):
-            if resources.is_resource(package + ".templates", resource):
+
+        if not _pkg_file_exists(package, resource):
+            if _pkg_file_exists(package + ".templates", resource):
                 package += ".templates"
             else:
                 raise ConfigError(
@@ -190,3 +191,10 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
 
     # Return the parsed config.
     return Config(**parsed_data)
+
+
+def _pkg_file_exists(pkg: str, file: str) -> bool:
+    """
+    Check whether *file* exists within *pkg*.
+    """
+    return resources.files(pkg).joinpath(file).is_file()
