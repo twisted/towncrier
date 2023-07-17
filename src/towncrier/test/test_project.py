@@ -4,12 +4,13 @@
 import os
 import sys
 
-from subprocess import check_output
 from unittest import skipIf
 
+from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from .._project import get_project_name, get_version
+from .._shell import cli as towncrier_cli
 from .helpers import write
 
 
@@ -17,6 +18,9 @@ try:
     from importlib.metadata import version as metadata_version
 except ImportError:
     metadata_version = None
+
+
+towncrier_cli.name = "towncrier"
 
 
 class VersionFetchingTests(TestCase):
@@ -174,6 +178,7 @@ class InvocationTests(TestCase):
         """
         `python -m towncrier` invokes the main entrypoint.
         """
+        runner = CliRunner()
         temp = self.mktemp()
         new_dir = os.path.join(temp, "dashm")
         os.makedirs(new_dir)
@@ -183,9 +188,9 @@ class InvocationTests(TestCase):
             with open("pyproject.toml", "w") as f:
                 f.write("[tool.towncrier]\n" 'directory = "news"\n')
             os.makedirs("news")
-            out = check_output([sys.executable, "-m", "towncrier", "--help"])
-            self.assertIn(b"[OPTIONS] COMMAND [ARGS]...", out)
-            self.assertRegex(out, rb".*--help\s+Show this message and exit.")
+            result = runner.invoke(towncrier_cli, ["--help"])
+            self.assertIn("[OPTIONS] COMMAND [ARGS]...", result.stdout)
+            self.assertRegex(result.stdout, r".*--help\s+Show this message and exit.")
         finally:
             os.chdir(orig_dir)
 
@@ -193,5 +198,6 @@ class InvocationTests(TestCase):
         """
         `--version` command line option is available to show the current production version.
         """
-        out = check_output(["towncrier", "--version"])
-        self.assertTrue(out.startswith(b"towncrier, version 2"))
+        runner = CliRunner()
+        result = runner.invoke(towncrier_cli, ["--version"])
+        self.assertTrue(result.output.startswith("towncrier, version 2"))

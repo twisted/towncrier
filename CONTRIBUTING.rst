@@ -66,10 +66,20 @@ We recommend the following workflow:
       *Running the test suite* for details.
 
    c. Document any user-facing changes in one of the ``/docs/`` files.
-      Please use `one sentence per line`_.
+      Use `one sentence per line`_.
 
-   d. Create a newsfragment in ``src/towncrier/newsfragments/`` describing the changes and containing information that is of interest to end-users.
-      Please use `one sentence per line`_ here, too.
+   d. Create a news fragment in ``src/towncrier/newsfragments/`` describing the changes and containing information that is of interest to end-users.
+      Use `one sentence per line`_ here, too.
+      You can use the ``towncrier`` CLI to create them; for example ``towncrier create 1234.bugfix``
+
+      Use one of the following types:
+
+      - ``feature`` for new features
+      - ``bugfix`` for bugfixes
+      - ``doc`` for improvements to documentation
+      - ``removal`` for deprecations and removals
+      - ``misc`` for everything else that is linked but not shown in our ``NEWS.rst`` file.
+        Use this for pull requests that don't affect end-users and leave them empty.
 
    e. Create a `pull request`_.
       Describe in the pull request what you did and why.

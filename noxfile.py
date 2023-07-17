@@ -17,7 +17,7 @@ def pre_commit(session: nox.Session) -> None:
     session.run("pre-commit", "run", "--all-files", "--show-diff-on-failure")
 
 
-@nox.session(python=["pypy3.7", "pypy3.8", "3.7", "3.8", "3.9", "3.10", "3.11"])
+@nox.session(python=["pypy3.8", "3.8", "3.9", "3.10", "3.11"])
 def tests(session: nox.Session) -> None:
     session.install("Twisted", "coverage[toml]")
     posargs = list(session.posargs)
@@ -55,7 +55,9 @@ def check_newsfragment(session: nox.Session) -> None:
 
 @nox.session
 def typecheck(session: nox.Session) -> None:
-    session.install(".", "mypy", "types-setuptools")
+    # Click 8.1.4 is bad type hints -- lets not complicate packaging and only
+    # pin here.
+    session.install(".", "mypy", "click!=8.1.4")
     session.run("mypy", "src")
 
 
