@@ -76,7 +76,7 @@ In the above example, it will generate ``123.bugfix.1.rst`` if ``123.bugfix.rst`
 
 .. option:: --edit
 
-   Create file and start `$EDITOR` to edit it right away.`
+   Create file and start `$EDITOR` to edit it right away.
 
 
 ``towncrier check``
