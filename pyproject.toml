@@ -28,7 +28,6 @@ classifiers = [
 requires-python = ">=3.8"
 dependencies = [
     "click",
-    "click-default-group",
     "importlib-resources>=5; python_version<'3.10'",
     "incremental",
     "jinja2",
@@ -146,9 +145,9 @@ strict = true
 exclude = '^src/towncrier/test/test_.*\.py$'
 
 [[tool.mypy.overrides]]
-module = 'click_default_group'
-# 2022-09-04: This library has no type annotations.
-ignore_missing_imports = true
+module = 'towncrier.click_default_group'
+# Vendored module without type annotations.
+ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = 'incremental'
@@ -174,4 +173,5 @@ exclude_lines = [
 omit = [
     "src/towncrier/__main__.py",
     "src/towncrier/test/*",
+    "src/towncrier/click_default_group.py",
 ]
