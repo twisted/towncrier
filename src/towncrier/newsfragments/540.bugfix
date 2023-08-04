@@ -1,0 +1,1 @@
+Towncrier now vendors the click-default-group package that prevented installations on modern Pips.
