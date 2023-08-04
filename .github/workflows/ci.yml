@@ -68,6 +68,8 @@ jobs:
             action: '3.10'
           - name: CPython 3.11
             action: '3.11'
+          - name: CPython 3.12
+            action: '3.12'
           - name: PyPy 3.8
             action: pypy3.8
         task:
