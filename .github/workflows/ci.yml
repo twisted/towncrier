@@ -59,6 +59,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Keep list in-sync with noxfile/tests & pyproject.toml.
         python:
           - name: CPython 3.8
             action: 3.8

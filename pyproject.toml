@@ -12,6 +12,7 @@ name = "towncrier"
 description = "Building newsfiles for your project."
 readme = "README.rst"
 license = "MIT"
+# Keep version list in-sync with noxfile/tests & ci.yml/test-linux.
 classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
