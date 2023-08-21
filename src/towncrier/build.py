@@ -15,7 +15,7 @@ from datetime import date
 
 import click
 
-from click import Context, Option
+from click import Context, Option, UsageError
 
 from towncrier import _git
 
@@ -151,9 +151,23 @@ def __main(
     base_directory, config = load_config_from_options(directory, config_file)
     to_err = draft
 
+    if project_version is None:
+        project_version = config.version
+    if project_version is None:
+        if not config.package:
+            raise UsageError(
+                "'--version' is required since the config file does "
+                "not contain 'version' or 'package'."
+            )
+        project_version = get_version(
+            os.path.join(base_directory, config.package_dir), config.package
+        ).strip()
+
     click.echo("Loading template...", err=to_err)
     if isinstance(config.template, tuple):
-        template = resources.read_text(*config.template)
+        template = (
+            resources.files(config.template[0]).joinpath(config.template[1]).read_text()
+        )
     else:
         with open(config.template, encoding="utf-8") as tmpl:
             template = tmpl.read()
@@ -181,13 +195,6 @@ def __main(
     fragments = split_fragments(
         fragment_contents, config.types, all_bullets=config.all_bullets
     )
-
-    if project_version is None:
-        project_version = config.version
-        if project_version is None:
-            project_version = get_version(
-                os.path.join(base_directory, config.package_dir), config.package
-            ).strip()
 
     if project_name is None:
         project_name = config.name

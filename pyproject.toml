@@ -1,7 +1,6 @@
 [build-system]
 requires = [
-    "hatchling ~= 1.12.2",
-    "wheel ~= 0.38.4",
+    "hatchling ~= 1.17.1",
     "incremental == 22.10.0",
 ]
 build-backend = "hatchling.build"
@@ -13,25 +12,24 @@ name = "towncrier"
 description = "Building newsfiles for your project."
 readme = "README.rst"
 license = "MIT"
+# Keep version list in-sync with noxfile/tests & ci.yml/test-linux.
 classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: POSIX :: Linux",
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = [
     "click",
-    "click-default-group",
     "importlib-resources>=5; python_version<'3.10'",
     "incremental",
     "jinja2",
@@ -149,9 +147,9 @@ strict = true
 exclude = '^src/towncrier/test/test_.*\.py$'
 
 [[tool.mypy.overrides]]
-module = 'click_default_group'
-# 2022-09-04: This library has no type annotations.
-ignore_missing_imports = true
+module = 'towncrier.click_default_group'
+# Vendored module without type annotations.
+ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = 'incremental'
@@ -177,4 +175,5 @@ exclude_lines = [
 omit = [
     "src/towncrier/__main__.py",
     "src/towncrier/test/*",
+    "src/towncrier/click_default_group.py",
 ]

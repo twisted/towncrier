@@ -39,6 +39,8 @@ Build the combined news file from news fragments.
    Use ``VERSION`` in the rendered news file.
    Can be configured or guessed (default).
 
+   This option requires the ``build`` command to be explicitly passed.
+
 .. option:: --date DATE
 
    The date in `ISO format <https://xkcd.com/1179/>`_ to use in the news file.
@@ -76,7 +78,7 @@ In the above example, it will generate ``123.bugfix.1.rst`` if ``123.bugfix.rst`
 
    Create file and start ``$EDITOR`` to edit the news fragment right away.
 
-If you don't provide a file name, ``towncrier`` will prompt you for one, and unless you provided content, it'll also open an editor for you to write the news fragment.
+   If you don't provide a file name, ``towncrier`` will prompt you for one, and unless you provided content, it'll also open an editor for you to write the news fragment.
 
 
 ``towncrier check``

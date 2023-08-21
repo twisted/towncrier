@@ -11,18 +11,12 @@ import sys
 
 from contextlib import ExitStack
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Mapping, Sequence
+from typing import Any, Literal, Mapping, Sequence
+
+from click import ClickException
 
 from .._settings import fragment_types as ft
 
-
-if TYPE_CHECKING:
-    # We only use Literal for type-checking and Mypy always brings its own
-    # typing_extensions so this is safe without further dependencies.
-    if sys.version_info < (3, 8):
-        from typing_extensions import Literal
-    else:
-        from typing import Literal
 
 if sys.version_info < (3, 10):
     import importlib_resources as resources
@@ -62,7 +56,7 @@ class Config:
     create_add_extension: bool = True
 
 
-class ConfigError(Exception):
+class ConfigError(ClickException):
     def __init__(self, *args: str, **kwargs: str):
         self.failing_option = kwargs.get("failing_option")
         super().__init__(*args)
@@ -169,8 +163,9 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
         package, resource = template.split(":", 1)
         if not Path(resource).suffix:
             resource += ".md" if markdown_file else ".rst"
-        if not resources.is_resource(package, resource):
-            if resources.is_resource(package + ".templates", resource):
+
+        if not _pkg_file_exists(package, resource):
+            if _pkg_file_exists(package + ".templates", resource):
                 package += ".templates"
             else:
                 raise ConfigError(
@@ -198,3 +193,10 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
 
     # Return the parsed config.
     return Config(**parsed_data)
+
+
+def _pkg_file_exists(pkg: str, file: str) -> bool:
+    """
+    Check whether *file* exists within *pkg*.
+    """
+    return resources.files(pkg).joinpath(file).is_file()

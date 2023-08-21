@@ -19,7 +19,7 @@ Rather than reading the Git history, or having one single file which developers 
 
 Used by `Twisted <https://github.com/twisted/twisted>`_, `pytest <https://github.com/pytest-dev/pytest/>`_, `pip <https://github.com/pypa/pip/>`_, `BuildBot <https://github.com/buildbot/buildbot>`_, and `attrs <https://github.com/python-attrs/attrs>`_, among others.
 
-While the command line tool ``towncrier`` works on Python 3.7+ only, as long as you don't use any Python-specific affordances (like auto-detection of the project version), it is usable with **any project type** on **any platform**.
+While the command line tool ``towncrier`` requires Python to run, as long as you don't use any Python-specific affordances (like auto-detection of the project version), it is usable with **any project type** on **any platform**.
 
 
 Philosophy
