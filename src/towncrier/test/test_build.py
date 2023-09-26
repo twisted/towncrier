@@ -1344,3 +1344,39 @@ Deprecations and Removals
 
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected_output, result.output)
+
+    @with_isolated_runner
+    def test_projects_share_one_config_with_nondefault_directory(self, runner):
+        """
+        Multiple projects with independent changelogs share one towncrier
+        configuration.
+
+        For this to work:
+        1. We need to leave `config.package` empty.
+        2. We need to pass `--dir` to `create` and `build` explicitly.
+           It must point to the project folder.
+        3. We need to pass `--config` pointing at the global configuration.
+        4. We need to make sure `config.directory` and `config.filename` are resolved
+           relative to what we passed as `--dir`.
+        """
+        # We don't want to specify the package because we have multiple ones.
+        Path("pyproject.toml").write_text(
+            # Important to customize `config.directory` because the default
+            # already supports this scenario.
+            "[tool.towncrier]\n" + 'directory = "changelog.d"\n'
+        )
+        # Each subproject contains the source code...
+        Path("foo/foo").mkdir(parents=True)
+        Path("foo/foo/__init__.py").write_text("")
+        # ... and the changelog machinery.
+        Path("foo/changelog.d").mkdir()
+        Path("foo/changelog.d/123.feature").write_text("Adds levitation")
+        self.assertFalse(Path("foo/NEWS.rst").exists())
+
+        result = runner.invoke(
+            cli,
+            ("--yes", "--config", "pyproject.toml", "--dir", "foo", "--version", "1.0"),
+        )
+
+        self.assertEqual(0, result.exit_code)
+        self.assertTrue(Path("foo/NEWS.rst").exists())
