@@ -1363,7 +1363,8 @@ Deprecations and Removals
         Path("pyproject.toml").write_text(
             # Important to customize `config.directory` because the default
             # already supports this scenario.
-            "[tool.towncrier]\n" + 'directory = "changelog.d"\n'
+            "[tool.towncrier]\n"
+            + 'directory = "changelog.d"\n'
         )
         # Each subproject contains the source code...
         Path("foo/foo").mkdir(parents=True)
