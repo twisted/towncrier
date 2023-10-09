@@ -249,3 +249,35 @@ class TestCli(TestCase):
         self.assertEqual(len(change.stem), 11)
         # Check the remainder are all hex characters.
         self.assertTrue(all(c in string.hexdigits for c in change.stem[3:]))
+
+    @with_isolated_runner
+    def test_in_different_dir_with_nondefault_newsfragments_directory(self, runner):
+        """
+        Config location differs from the base directory for news file and fragments.
+
+        This is useful when multiple projects share one towncrier configuration.
+        """
+        Path("pyproject.toml").write_text(
+            # Important to customize `config.directory` because the default
+            # already supports this scenario.
+            "[tool.towncrier]\n"
+            + 'directory = "changelog.d"\n'
+        )
+        Path("foo/foo").mkdir(parents=True)
+        Path("foo/foo/__init__.py").write_text("")
+
+        result = runner.invoke(
+            _main,
+            (
+                "--config",
+                "pyproject.toml",
+                "--dir",
+                "foo",
+                "--content",
+                "Adds levitation.",
+                "123.feature",
+            ),
+        )
+
+        self.assertEqual(0, result.exit_code)
+        self.assertTrue(Path("foo/changelog.d/123.feature").exists())
