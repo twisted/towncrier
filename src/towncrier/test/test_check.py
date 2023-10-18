@@ -301,9 +301,8 @@ class TestChecker(TestCase):
     @with_isolated_runner
     def test_in_different_dir_with_nondefault_newsfragments_directory(self, runner):
         """
-        Config location differs from the base directory for news file and fragments.
-
-        This is useful when multiple projects share one towncrier configuration.
+        It can check the fragments located in a sub-directory
+        that is specified using the `--dir` CLI argument.
         """
         main_branch = "main"
         Path("pyproject.toml").write_text(

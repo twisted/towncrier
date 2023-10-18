@@ -146,11 +146,12 @@ class TestCli(TestCase):
     @with_isolated_runner
     def test_in_different_dir_with_nondefault_newsfragments_directory(self, runner):
         """
-        Config location differs from the base directory for news file and fragments.
-
-        This is useful when multiple projects share one towncrier configuration.
-        The default `newsfragments` setting already supports this scenario so here
-        we test that custom settings also do.
+        Using the `--dir` CLI argument, the NEWS file can
+        be generated in a sub-directory from fragments
+        that are relatives to that sub-directory.
+        
+        The path passed to `--dir` becomes the
+        working directory.
         """
         Path("pyproject.toml").write_text(
             "[tool.towncrier]\n" + 'directory = "changelog.d"\n'
