@@ -149,7 +149,7 @@ class TestCli(TestCase):
         Using the `--dir` CLI argument, the NEWS file can
         be generated in a sub-directory from fragments
         that are relatives to that sub-directory.
-        
+
         The path passed to `--dir` becomes the
         working directory.
         """
