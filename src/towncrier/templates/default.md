@@ -58,4 +58,5 @@ No significant changes.
 No significant changes.
 
 {% endif %}
-{% endfor %}
+{% endfor +%}
+{# This comment preserves adds one more newline at the end of the rendered newsfile content. #}

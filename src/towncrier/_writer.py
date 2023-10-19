@@ -44,10 +44,7 @@ def append_to_newsfile(
         if header:
             f.write(header)
 
-        f.write(content)
-
-        if prev_body:
-            f.write(f"\n\n{prev_body}")
+        f.write(content + prev_body if prev_body else content.rstrip() + "\n")
 
 
 def _figure_out_existing_content(
