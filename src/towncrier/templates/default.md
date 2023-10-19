@@ -59,4 +59,4 @@ No significant changes.
 
 {% endif %}
 {% endfor +%}
-{# This comment preserves adds one more newline at the end of the rendered newsfile content. #}
+{# This comment adds one more newline at the end of the rendered newsfile content. #}
