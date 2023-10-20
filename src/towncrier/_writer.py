@@ -43,7 +43,8 @@ def append_to_newsfile(
     with news_file.open("w", encoding="utf8", newline="") as f:
         if header:
             f.write(header)
-
+        # If there is no previous body that means we're writing a brand new news file.
+        # We don't want extra whitespace at the end of this new file.
         f.write(content + prev_body if prev_body else content.rstrip() + "\n")
 
 
