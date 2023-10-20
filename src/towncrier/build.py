@@ -260,7 +260,7 @@ def __main(
             "What is seen below is what would be written.\n",
             err=to_err,
         )
-        click.echo(content.rstrip() + "\n")
+        click.echo(content)
         return
 
     click.echo("Writing to newsfile...", err=to_err)
