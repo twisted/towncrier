@@ -146,6 +146,33 @@ class TestCli(TestCase):
         self.assertTrue((project_dir / "NEWS.rst").exists())
 
     @with_isolated_runner
+    def test_in_different_dir_with_nondefault_newsfragments_directory(self, runner):
+        """
+        Using the `--dir` CLI argument, the NEWS file can
+        be generated in a sub-directory from fragments
+        that are relatives to that sub-directory.
+
+        The path passed to `--dir` becomes the
+        working directory.
+        """
+        Path("pyproject.toml").write_text(
+            "[tool.towncrier]\n" + 'directory = "changelog.d"\n'
+        )
+        Path("foo/foo").mkdir(parents=True)
+        Path("foo/foo/__init__.py").write_text("")
+        Path("foo/changelog.d").mkdir()
+        Path("foo/changelog.d/123.feature").write_text("Adds levitation")
+        self.assertFalse(Path("foo/NEWS.rst").exists())
+
+        result = runner.invoke(
+            cli,
+            ("--yes", "--config", "pyproject.toml", "--dir", "foo", "--version", "1.0"),
+        )
+
+        self.assertEqual(0, result.exit_code)
+        self.assertTrue(Path("foo/NEWS.rst").exists())
+
+    @with_isolated_runner
     def test_no_newsfragment_directory(self, runner):
         """
         A missing newsfragment directory acts as if there are no changes.

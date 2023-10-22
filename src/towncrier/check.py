@@ -93,9 +93,7 @@ def __main(
         )
         sys.exit(0)
 
-    files = {
-        os.path.normpath(os.path.join(base_directory, path)) for path in files_changed
-    }
+    files = {os.path.abspath(path) for path in files_changed}
 
     click.echo("Looking at these files:")
     click.echo("----")
@@ -109,7 +107,9 @@ def __main(
         sys.exit(0)
 
     if config.directory:
-        fragment_base_directory = os.path.abspath(config.directory)
+        fragment_base_directory = os.path.abspath(
+            os.path.join(base_directory, config.directory)
+        )
         fragment_directory = None
     else:
         fragment_base_directory = os.path.abspath(
@@ -118,7 +118,7 @@ def __main(
         fragment_directory = "newsfragments"
 
     fragments = {
-        os.path.normpath(path)
+        os.path.abspath(path)
         for path in find_fragments(
             fragment_base_directory,
             config.sections,
