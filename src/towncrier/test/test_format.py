@@ -107,6 +107,8 @@ Bugfixes
 ~~~~~~~~
 
 - Web fixed. (#3)
+
+
 """
 
         template = read_pkg_resource("templates/default.rst")
@@ -154,6 +156,8 @@ Bugfixes
 ^^^^^^^^
 
 - Web fixed. (#3)
+
+
 """
 
         output = render_fragments(
@@ -229,6 +233,8 @@ No significant changes.
 
   (#2)
 - Web fixed. (#3)
+
+
 """
 
         template = read_pkg_resource("templates/default.md")
@@ -291,6 +297,8 @@ No significant changes.
 
 [2]: https://github.com/twisted/towncrier/issues/2
 [3]: https://github.com/twisted/towncrier/issues/3
+
+
 """
 
         output = render_fragments(
@@ -332,6 +340,8 @@ Misc
 ----
 
 - xxbar, xx1, xx9, xx142
+
+
 """
 
         template = read_pkg_resource("templates/default.rst")
@@ -386,6 +396,8 @@ Features
 - a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
   a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
   a a (#3)
+
+
 """
 
         template = read_pkg_resource("templates/default.rst")
@@ -433,6 +445,8 @@ Features
 - asdf asdf asdf asdf looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong newsfragment. (#1)
 - https://google.com/q=?---------------------------------------------------------------------------------------------------- (#2)
 - a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a (#3)
+
+
 """  # NOQA
 
         template = read_pkg_resource("templates/default.rst")

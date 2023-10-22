@@ -76,6 +76,8 @@ class TestCli(TestCase):
                 - Another orphaned feature
                 - Orphaned feature
 
+
+
                 """
             ),
         )
@@ -334,6 +336,8 @@ class TestCli(TestCase):
 
                   - section-b type-2 (#1)
 
+
+
             """
             ),
         )
@@ -376,6 +380,8 @@ class TestCli(TestCase):
                   ~~~~~~
 
                   - section-a type-1 (#1)
+
+
 
             """
             ),
@@ -603,6 +609,8 @@ class TestCli(TestCase):
             - Adds levitation (#123)
             - Extends levitation (#124)
 
+
+
             """
             ).lstrip(),
         )
@@ -642,6 +650,8 @@ class TestCli(TestCase):
             --------
 
             - Adds levitation (#123)
+
+
 
             """
             ).lstrip(),
@@ -684,6 +694,8 @@ class TestCli(TestCase):
             --------
 
             - Adds levitation (#123)
+
+
 
             """
             ).lstrip(),
@@ -729,6 +741,8 @@ class TestCli(TestCase):
             --------
 
             - Adds levitation (#123)
+
+
 
             """
             ).lstrip(),
@@ -1062,6 +1076,8 @@ Deprecations and Removals
             - Adds levitation (#123)
             - Extends levitation (#124)
 
+
+
         """
         )
 
@@ -1365,6 +1381,7 @@ Deprecations and Removals
             ==================
 
             - Adds levitation
+
 
         """
         )
