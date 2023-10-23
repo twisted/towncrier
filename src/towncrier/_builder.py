@@ -335,4 +335,4 @@ def render_fragments(
         else:
             done.append(line)
 
-    return "\n".join(done).rstrip() + "\n"
+    return "\n".join(done)

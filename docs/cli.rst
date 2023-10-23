@@ -12,7 +12,8 @@ The following options can be passed to all of the commands that explained below:
 
 .. option:: --dir PATH
 
-   Build fragment in ``PATH``.
+   The command is executed relative to ``PATH``.
+   For instance with the default config news fragments are checked and added in ``PATH/newsfragments`` and the news file is built in ``PATH/NEWS.rst``.
 
    Default: current directory.
 

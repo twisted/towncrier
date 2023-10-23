@@ -449,3 +449,37 @@ Created news fragment at {expected}
         self.assertTrue(
             all(c in string.hexdigits for c in change.stem[3 : -len(".feature")])
         )
+
+    @with_isolated_runner
+    def test_in_different_dir_with_nondefault_newsfragments_directory(self, runner):
+        """
+        When the `--dir` CLI argument is passed,
+        it will create a new file in directory that is
+        created by combining the `--dir` value
+        with the `directory` option from the configuration
+        file.
+        """
+        Path("pyproject.toml").write_text(
+            # Important to customize `config.directory` because the default
+            # already supports this scenario.
+            "[tool.towncrier]\n"
+            + 'directory = "changelog.d"\n'
+        )
+        Path("foo/foo").mkdir(parents=True)
+        Path("foo/foo/__init__.py").write_text("")
+
+        result = runner.invoke(
+            _main,
+            (
+                "--config",
+                "pyproject.toml",
+                "--dir",
+                "foo",
+                "--content",
+                "Adds levitation.",
+                "123.feature",
+            ),
+        )
+
+        self.assertEqual(0, result.exit_code)
+        self.assertTrue(Path("foo/changelog.d/123.feature").exists())

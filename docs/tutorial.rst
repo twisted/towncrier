@@ -130,7 +130,7 @@ You should get an output similar to this::
    Improved Documentation
    ----------------------
 
-   - Can also be ``rst``` as well! (#3456, #7890)
+   - Can also be ``rst`` as well! (#3456, #7890)
 
 
    Deprecations and Removals
