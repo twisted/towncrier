@@ -5,6 +5,46 @@ Release notes
 
 .. towncrier release notes start
 
+towncrier 23.10.0rc0 (2023-10-23)
+=================================
+
+Features
+--------
+
+- Python 3.12 is now officially supported. (`#541 <https://github.com/twisted/towncrier/issues/541>`_)
+- Initial support was added for monorepo-style setup.
+  One project with multiple independent news files stored in separate sub-directories, that share the same towncrier config. (`#548 <https://github.com/twisted/towncrier/issues/548>`_)
+- Two newlines are no longer always added between the current release notes and the previous content.
+  The newlines are now defined only inside the template.
+
+  **Important! If you're using a custom template and want to keep the same whitespace between releases, you may have to modify your template.** (`#552 <https://github.com/twisted/towncrier/issues/552>`_)
+
+
+Bugfixes
+--------
+
+- Towncrier now vendors the click-default-group package that prevented installations on modern Pips. (`#540 <https://github.com/twisted/towncrier/issues/540>`_)
+
+
+Improved Documentation
+----------------------
+
+- The markdown docs now use the default markdown template rather than a simpler custom one. (`#545 <https://github.com/twisted/towncrier/issues/545>`_)
+- Cleanup a duplicate backtick in the tutorial. (`#551 <https://github.com/twisted/towncrier/issues/551>`_)
+
+
+Deprecations and Removals
+-------------------------
+
+- The support for Python 3.7 has been dropped. (`#521 <https://github.com/twisted/towncrier/issues/521>`_)
+
+
+Misc
+----
+
+- `#481 <https://github.com/twisted/towncrier/issues/481>`_, `#520 <https://github.com/twisted/towncrier/issues/520>`_, `#522 <https://github.com/twisted/towncrier/issues/522>`_, `#523 <https://github.com/twisted/towncrier/issues/523>`_, `#529 <https://github.com/twisted/towncrier/issues/529>`_, `#536 <https://github.com/twisted/towncrier/issues/536>`_
+
+
 towncrier 23.6.0 (2023-06-06)
 =============================
 
