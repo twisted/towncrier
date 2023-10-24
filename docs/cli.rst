@@ -24,8 +24,9 @@ The following options can be passed to all of the commands that explained below:
 Build the combined news file from news fragments.
 ``build`` is also assumed if no command is passed.
 
-If there are no news fragments (including an empty fragments directory), a
-notice of "no significant changes" will be added to the news file.
+If there are no news fragments (including an empty fragments directory or a
+non-existent directory), a notice of "no significant changes" will be added to
+the news file.
 
 By default, the processed news fragments are removed using ``git``, which will
 also remove the fragments directory if now empty.

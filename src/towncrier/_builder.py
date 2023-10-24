@@ -6,14 +6,11 @@ from __future__ import annotations
 
 import os
 import textwrap
-import traceback
 
 from collections import defaultdict
 from typing import Any, DefaultDict, Iterable, Iterator, Mapping, Sequence
 
 from jinja2 import Template
-
-from ._settings import ConfigError
 
 
 def strip_if_integer_string(s: str) -> str:
@@ -102,11 +99,8 @@ def find_fragments(
 
         try:
             files = os.listdir(section_dir)
-        except FileNotFoundError as e:
-            message = "Failed to list the news fragment files.\n{}".format(
-                "".join(traceback.format_exception_only(type(e), e)),
-            )
-            raise ConfigError(message)
+        except FileNotFoundError:
+            files = []
 
         file_content = {}
 
