@@ -24,6 +24,13 @@ The following options can be passed to all of the commands that explained below:
 Build the combined news file from news fragments.
 ``build`` is also assumed if no command is passed.
 
+If there are no news fragments (including an empty fragments directory or a
+non-existent directory), a notice of "no significant changes" will be added to
+the news file.
+
+By default, the processed news fragments are removed using ``git``, which will
+also remove the fragments directory if now empty.
+
 .. option:: --draft
 
    Only render news fragments to standard output.
@@ -66,6 +73,8 @@ Create a news fragment in the directory that ``towncrier`` is configured to look
    $ towncrier create 123.bugfix.rst
 
 ``towncrier create`` will enforce that the passed type (e.g. ``bugfix``) is valid.
+
+If the fragments directory does not exist, it will be created.
 
 If the filename exists already, ``towncrier create`` will add (and then increment) a number after the fragment type until it finds a filename that does not exist yet.
 In the above example, it will generate ``123.bugfix.1.rst`` if ``123.bugfix.rst`` already exists.
