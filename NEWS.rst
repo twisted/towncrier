@@ -5,8 +5,11 @@ Release notes
 
 .. towncrier release notes start
 
-towncrier 23.10.0rc1 (2023-10-23)
-=================================
+towncrier 23.10.0 (2023-10-24)
+==============================
+
+No significant changes since the previous release candidate.
+
 
 Features
 --------
