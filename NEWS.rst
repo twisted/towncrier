@@ -5,6 +5,24 @@ Release notes
 
 .. towncrier release notes start
 
+towncrier 23.11.0rc1 (2023-11-07)
+=================================
+
+Bugfixes
+--------
+
+- ``build`` now treats a missing fragments directory the same as an empty one, consistent with other operations. (`#538 <https://github.com/twisted/towncrier/issues/538>`_)
+- Fragments with filenames like `fix-1.2.3.feature` are now associated with the ticket `fix-1.2.3`.
+  In previous versions they were incorrectly associated to ticket `3`. (`#562 <https://github.com/twisted/towncrier/issues/562>`_)
+- Orphan newsfragments containing numeric values are no longer accidentally associated to tickets. In previous versions the orphan marker was ignored and the newsfragment was associated to a ticket having the last numerical value from the filename. (`#562 <https://github.com/twisted/towncrier/issues/562>`_)
+
+
+Misc
+----
+
+- `#558 <https://github.com/twisted/towncrier/issues/558>`_, `#559 <https://github.com/twisted/towncrier/issues/559>`_
+
+
 towncrier 23.10.0 (2023-10-24)
 ==============================
 
