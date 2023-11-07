@@ -60,7 +60,7 @@ class TestCli(TestCase):
 
             result = runner.invoke(command, ["--draft", "--date", "01-01-2001"])
 
-        self.assertEqual(0, result.exit_code)
+        self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(
             result.output,
             dedent(
@@ -78,7 +78,7 @@ class TestCli(TestCase):
                 --------
 
                 - Baz levitation (baz)
-                - Baz fix levitation (#2)
+                - Baz fix levitation (fix-1.2)
                 - Adds levitation (#123)
                 - Extends levitation (#124)
                 - An orphaned feature ending with a dotted number
@@ -417,6 +417,7 @@ class TestCli(TestCase):
             call(["git", "init"])
             call(["git", "config", "user.name", "user"])
             call(["git", "config", "user.email", "user@example.com"])
+            call(["git", "config", "commit.gpgSign", "false"])
             call(["git", "add", "."])
             call(["git", "commit", "-m", "Initial Commit"])
 
@@ -441,6 +442,7 @@ class TestCli(TestCase):
             call(["git", "init"])
             call(["git", "config", "user.name", "user"])
             call(["git", "config", "user.email", "user@example.com"])
+            call(["git", "config", "commit.gpgSign", "false"])
             call(["git", "add", "."])
             call(["git", "commit", "-m", "Initial Commit"])
 
@@ -470,6 +472,7 @@ class TestCli(TestCase):
         call(["git", "init"])
         call(["git", "config", "user.name", "user"])
         call(["git", "config", "user.email", "user@example.com"])
+        call(["git", "config", "commit.gpgSign", "false"])
         call(["git", "add", "."])
         call(["git", "commit", "-m", "Initial Commit"])
 
@@ -503,6 +506,7 @@ class TestCli(TestCase):
         call(["git", "init"])
         call(["git", "config", "user.name", "user"])
         call(["git", "config", "user.email", "user@example.com"])
+        call(["git", "config", "commit.gpgSign", "false"])
         call(["git", "add", "."])
         call(["git", "commit", "-m", "Initial Commit"])
 
@@ -531,6 +535,7 @@ class TestCli(TestCase):
             call(["git", "init"])
             call(["git", "config", "user.name", "user"])
             call(["git", "config", "user.email", "user@example.com"])
+            call(["git", "config", "commit.gpgSign", "false"])
             call(["git", "add", "."])
             call(["git", "commit", "-m", "Initial Commit"])
 

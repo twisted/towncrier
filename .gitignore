@@ -18,7 +18,6 @@
 .vscode
 Justfile
 *egg-info/
-towncrier.test.test_*/
 _trial_temp*/
 apidocs/
 dist/
