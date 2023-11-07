@@ -53,6 +53,7 @@ def check_newsfragment(session: nox.Session) -> None:
     session.install(".")
     session.run("python", "-m", "towncrier.check", "--compare-with", "origin/trunk")
 
+
 @nox.session
 def draft_newsfragment(session: nox.Session) -> None:
     session.install(".")
