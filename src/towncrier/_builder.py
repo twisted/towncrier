@@ -32,24 +32,20 @@ def parse_newfragment_basename(
 
     if len(parts) == 1:
         return invalid
-    if len(parts) == 2:
-        ticket, category = parts
-        ticket = strip_if_integer_string(ticket)
-        return (ticket, category, 0) if category in frag_type_names else invalid
 
-    # There are at least 3 parts. Search for a valid category from the second
-    # part onwards.
+    # There are at least 2 parts. Search for a valid category from the second
+    # part onwards starting at the back.
     # The category is used as the reference point in the parts list to later
     # infer the issue number and counter value.
-    for i in range(1, len(parts)):
+    for i in reversed(range(1, len(parts))):
         if parts[i] in frag_type_names:
             # Current part is a valid category according to given definitions.
             category = parts[i]
-            # Use the previous part as the ticket number.
+            # Use all previous parts as the ticket number.
             # NOTE: This allows news fragment names like fix-1.2.3.feature or
             # something-cool.feature.ext for projects that don't use ticket
             # numbers in news fragment names.
-            ticket = strip_if_integer_string(parts[i - 1])
+            ticket = strip_if_integer_string(".".join(parts[0:i]))
             counter = 0
             # Use the following part as the counter if it exists and is a valid
             # digit.

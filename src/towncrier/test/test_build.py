@@ -43,6 +43,14 @@ class TestCli(TestCase):
                 f.write("Orphaned feature")
             with open("foo/newsfragments/+xxx.feature", "w") as f:
                 f.write("Another orphaned feature")
+            with open("foo/newsfragments/+123_orphaned.feature", "w") as f:
+                f.write("An orphaned feature starting with a number")
+            with open("foo/newsfragments/+12.3_orphaned.feature", "w") as f:
+                f.write("An orphaned feature starting with a dotted number")
+            with open("foo/newsfragments/+orphaned_123.feature", "w") as f:
+                f.write("An orphaned feature ending with a number")
+            with open("foo/newsfragments/+orphaned_12.3.feature", "w") as f:
+                f.write("An orphaned feature ending with a dotted number")
             # Towncrier ignores files that don't have a dot
             with open("foo/newsfragments/README", "w") as f:
                 f.write("Blah blah")
@@ -52,7 +60,7 @@ class TestCli(TestCase):
 
             result = runner.invoke(command, ["--draft", "--date", "01-01-2001"])
 
-        self.assertEqual(0, result.exit_code)
+        self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(
             result.output,
             dedent(
@@ -70,9 +78,13 @@ class TestCli(TestCase):
                 --------
 
                 - Baz levitation (baz)
-                - Baz fix levitation (#2)
+                - Baz fix levitation (fix-1.2)
                 - Adds levitation (#123)
                 - Extends levitation (#124)
+                - An orphaned feature ending with a dotted number
+                - An orphaned feature ending with a number
+                - An orphaned feature starting with a dotted number
+                - An orphaned feature starting with a number
                 - Another orphaned feature
                 - Orphaned feature
 
@@ -405,6 +417,7 @@ class TestCli(TestCase):
             call(["git", "init"])
             call(["git", "config", "user.name", "user"])
             call(["git", "config", "user.email", "user@example.com"])
+            call(["git", "config", "commit.gpgSign", "false"])
             call(["git", "add", "."])
             call(["git", "commit", "-m", "Initial Commit"])
 
@@ -429,6 +442,7 @@ class TestCli(TestCase):
             call(["git", "init"])
             call(["git", "config", "user.name", "user"])
             call(["git", "config", "user.email", "user@example.com"])
+            call(["git", "config", "commit.gpgSign", "false"])
             call(["git", "add", "."])
             call(["git", "commit", "-m", "Initial Commit"])
 
@@ -458,6 +472,7 @@ class TestCli(TestCase):
         call(["git", "init"])
         call(["git", "config", "user.name", "user"])
         call(["git", "config", "user.email", "user@example.com"])
+        call(["git", "config", "commit.gpgSign", "false"])
         call(["git", "add", "."])
         call(["git", "commit", "-m", "Initial Commit"])
 
@@ -491,6 +506,7 @@ class TestCli(TestCase):
         call(["git", "init"])
         call(["git", "config", "user.name", "user"])
         call(["git", "config", "user.email", "user@example.com"])
+        call(["git", "config", "commit.gpgSign", "false"])
         call(["git", "add", "."])
         call(["git", "commit", "-m", "Initial Commit"])
 
@@ -519,6 +535,7 @@ class TestCli(TestCase):
             call(["git", "init"])
             call(["git", "config", "user.name", "user"])
             call(["git", "config", "user.email", "user@example.com"])
+            call(["git", "config", "commit.gpgSign", "false"])
             call(["git", "add", "."])
             call(["git", "commit", "-m", "Initial Commit"])
 
