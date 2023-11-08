@@ -1,1 +1,0 @@
-Orphan newsfragments containing numeric values are no longer accidentally associated to tickets. In previous versions the orphan marker was ignored and the newsfragment was associated to a ticket having the last numerical value from the filename.

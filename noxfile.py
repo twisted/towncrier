@@ -55,6 +55,12 @@ def check_newsfragment(session: nox.Session) -> None:
 
 
 @nox.session
+def draft_newsfragment(session: nox.Session) -> None:
+    session.install(".")
+    session.run("python", "-m", "towncrier.build", "--draft")
+
+
+@nox.session
 def typecheck(session: nox.Session) -> None:
     # Click 8.1.4 is bad type hints -- lets not complicate packaging and only
     # pin here.

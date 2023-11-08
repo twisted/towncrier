@@ -160,10 +160,12 @@ jobs:
             python-version: '3.11'
         task:
           - name: Check Newsfragment
-            nox: check_newsfragment
+            run: |
+              nox -e check_newsfragment
+              nox -e draft_newsfragment >> $GITHUB_STEP_SUMMARY
             run-if: ${{ github.head_ref != 'pre-commit-ci-update-config' }}
           - name: Check mypy
-            nox: typecheck
+            run: nox -e typecheck
             run-if: true
 
     steps:
@@ -187,7 +189,9 @@ jobs:
 
     - uses: twisted/python-info-action@v1
 
-    - run: nox -e ${{ matrix.task.nox }}
+    - name: Check
+      run: |
+        ${{ matrix.task.run }}
       if: ${{ matrix.task.run-if }}
 
 

@@ -1,1 +1,0 @@
-``build`` now treats a missing fragments directory the same as an empty one, consistent with other operations.
