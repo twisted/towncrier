@@ -85,7 +85,7 @@ def with_project(
 
     `config` is the content of the config file.
     It will be automatically dedented.
-    
+
     `pyproject_path` is the path where to store the config file.
     """
 
