@@ -42,6 +42,7 @@ dev = [
     "sphinx >= 5",
     "furo",
     "twisted",
+    "nox",
 ]
 
 [project.scripts]
