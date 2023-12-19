@@ -82,6 +82,8 @@ In the above example, it will generate ``123.bugfix.1.rst`` if ``123.bugfix.rst`
 .. option:: --content, -c CONTENT
 
    A string to use for content.
+   Use single quotes to wrap the argument of this option
+   to leverage RST or Markdown syntax.
    Default: an instructive placeholder.
 
 .. option:: --edit
