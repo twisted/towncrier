@@ -33,3 +33,8 @@ repos:
       - id: debug-statements
       - id: check-toml
       - id: check-yaml
+
+  - repo: https://github.com/twisted/towncrier
+    rev: 23.11.0
+    hooks:
+      - id: towncrier-check
