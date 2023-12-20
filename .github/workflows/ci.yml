@@ -194,6 +194,28 @@ jobs:
         ${{ matrix.task.run }}
       if: ${{ matrix.task.run-if }}
 
+  pre-commit:
+    name: pre-commit
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Set up python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.12
+
+    - name: Install dependencies
+      run: python -m pip pre-commit
+
+    - name: Check
+      run: |
+        ${{ matrix.task.run }}
+      if: ${{ matrix.task.run-if }}
+
 
   pypi-publish:
     name: Check tag and publish
@@ -292,6 +314,7 @@ jobs:
       - test-windows
       - coverage
       - check
+      - pre-commit
     steps:
       - name: Require all successes
         uses: re-actors/alls-green@3a2de129f0713010a71314c74e33c0e3ef90e696
