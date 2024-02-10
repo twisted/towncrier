@@ -138,7 +138,7 @@ def __main(
             ctx.exit(1)
         content = edited_content
 
-    with open(segment_file, "w") as f:
+    with open(segment_file, "w", encoding="utf-8") as f:
         f.write(content)
 
     click.echo(f"Created news fragment at {segment_file}")
