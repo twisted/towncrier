@@ -1,0 +1,1 @@
+Enable reporting of EncodingWarnings when running tests.
