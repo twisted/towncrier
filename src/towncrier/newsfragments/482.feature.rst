@@ -1,0 +1,1 @@
+If no filename is given when doing ``towncrier`` create, interactively ask for the issue number and fragment type (and then launch an interactive editor for the fragment content).

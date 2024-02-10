@@ -52,6 +52,8 @@ class Config:
     wrap: bool = False
     all_bullets: bool = True
     orphan_prefix: str = "+"
+    create_eof_newline: bool = True
+    create_add_extension: bool = True
 
 
 class ConfigError(ClickException):
