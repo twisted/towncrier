@@ -16,7 +16,7 @@ Usage with the default configuration
 
     repos:
       - repo: https://github.com/twisted/towncrier
-        rev: 22.13.0  # run 'pre-commit autoupdate' to update
+        rev: 23.11.0  # run 'pre-commit autoupdate' to update
         hooks:
           - id: towncrier-check
 
@@ -30,7 +30,7 @@ News fragments are stored in ``changelog.d/`` in the root of the repository and 
 
     repos:
       - repo: https://github.com/twisted/towncrier
-        rev: 22.13.0  # run 'pre-commit autoupdate' to update
+        rev: 23.11.0  # run 'pre-commit autoupdate' to update
         hooks:
           - id: towncrier-update
             files: $changelog\.d/
