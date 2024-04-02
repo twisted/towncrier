@@ -31,7 +31,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: hynek/build-and-inspect-python-package@54d50a852d960c25f25f7f1874d3d969ecbe4eb0
+    - uses: hynek/build-and-inspect-python-package@f51d0e79a34e62af977fcfe458b41fa8490e6e65
 
     - name: Set up ${{ matrix.python.name }}
       uses: actions/setup-python@v4
