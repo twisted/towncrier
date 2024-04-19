@@ -1251,6 +1251,53 @@ class TestCli(TestCase):
     @with_project(
         config="""
         [tool.towncrier]
+        name = ""
+        directory = "changes"
+        filename = "NEWS.md"
+        version = "1.2.3"
+        """
+    )
+    def test_markdown_no_name_title(self, runner):
+        """
+        When configured with an empty `name` option,
+        the default template used for Markdown
+        renders the title of the release note with just
+        the version number and release date.
+        """
+        write("changes/123.feature", "Adds levitation")
+        write(
+            "NEWS.md",
+            contents="""
+                A line
+
+                <!-- towncrier release notes start -->
+            """,
+            dedent=True,
+        )
+
+        result = runner.invoke(_main, ["--date", "01-01-2001"], catch_exceptions=False)
+        self.assertEqual(0, result.exit_code, result.output)
+        output = read("NEWS.md")
+
+        expected_output = dedent(
+            """
+            A line
+
+            <!-- towncrier release notes start -->
+
+            # 1.2.3 (01-01-2001)
+
+            ### Features
+
+            - Adds levitation (#123)
+            """
+        )
+
+        self.assertEqual(expected_output, output)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
         title_format = "{version} - {project_date}"
         template = "template.rst"
 
