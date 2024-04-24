@@ -213,9 +213,15 @@ class TestCli(TestCase):
         self.assertEqual(fragments, ["123.feature.md"])
 
     @with_isolated_runner
-    def test_odd_filename_extension(self, runner: CliRunner):
-        """Ensure changelog filename extension is not used if not .rst or .md"""
-        setup_simple_project(extra_config='filename = "the.changes"')
+    def test_no_filename_extension(self, runner: CliRunner):
+        """
+        When the NEWS filename has no extension, new fragments are will not have an
+        extension added.
+        """
+        # The name of the file where towncrier will generate
+        # the final release notes is named `RELEASE_NOTES`
+        # for this test (with no file extension).
+        setup_simple_project(extra_config='filename = "RELEASE_NOTES"')
         frag_path = Path("foo", "newsfragments")
 
         result = runner.invoke(_main, ["123.feature"])
@@ -247,7 +253,10 @@ class TestCli(TestCase):
 
     @with_isolated_runner
     def test_file_exists_no_ext(self, runner: CliRunner):
-        """Ensure we don't overwrite existing files."""
+        """
+        Ensure we don't overwrite existing files with when not adding filename
+        extensions.
+        """
 
         setup_simple_project(extra_config="create_add_extension = false")
         frag_path = Path("foo", "newsfragments")
