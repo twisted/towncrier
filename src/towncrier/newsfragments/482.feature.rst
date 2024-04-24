@@ -1,1 +1,5 @@
 If no filename is given when doing ``towncrier`` create, interactively ask for the issue number and fragment type (and then launch an interactive editor for the fragment content).
+
+Now by default, when creating a fragment it will be appended with the ``filename`` option's extension (unless an extension is explicitly provided). For example, ``towncrier create 123.feature`` will create ``news/123.feature.rst``. This can be changed in configuration file by setting `add_extension = false`.
+
+A new line is now added by default to the end of the fragment contents. This can be reverted in the configuration file by setting `add_newline = false` or explicitly set with the ``create`` command line flags ``--eof-newline/--no-eof-newline``.
