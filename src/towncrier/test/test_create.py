@@ -491,4 +491,4 @@ Created news fragment at {expected}
         )
 
         self.assertEqual(0, result.exit_code)
-        self.assertTrue(Path("foo/changelog.d/123.feature").exists())
+        self.assertTrue(Path("foo/changelog.d/123.feature.rst").exists())
