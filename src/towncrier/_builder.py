@@ -6,14 +6,11 @@ from __future__ import annotations
 
 import os
 import textwrap
-import traceback
 
-from collections import OrderedDict, defaultdict
+from collections import defaultdict
 from typing import Any, DefaultDict, Iterable, Iterator, Mapping, Sequence
 
 from jinja2 import Template
-
-from ._settings import ConfigError
 
 
 def strip_if_integer_string(s: str) -> str:
@@ -35,24 +32,20 @@ def parse_newfragment_basename(
 
     if len(parts) == 1:
         return invalid
-    if len(parts) == 2:
-        ticket, category = parts
-        ticket = strip_if_integer_string(ticket)
-        return (ticket, category, 0) if category in frag_type_names else invalid
 
-    # There are at least 3 parts. Search for a valid category from the second
-    # part onwards.
+    # There are at least 2 parts. Search for a valid category from the second
+    # part onwards starting at the back.
     # The category is used as the reference point in the parts list to later
     # infer the issue number and counter value.
-    for i in range(1, len(parts)):
+    for i in reversed(range(1, len(parts))):
         if parts[i] in frag_type_names:
             # Current part is a valid category according to given definitions.
             category = parts[i]
-            # Use the previous part as the ticket number.
+            # Use all previous parts as the ticket number.
             # NOTE: This allows news fragment names like fix-1.2.3.feature or
             # something-cool.feature.ext for projects that don't use ticket
             # numbers in news fragment names.
-            ticket = strip_if_integer_string(parts[i - 1])
+            ticket = strip_if_integer_string(".".join(parts[0:i]))
             counter = 0
             # Use the following part as the counter if it exists and is a valid
             # digit.
@@ -66,15 +59,14 @@ def parse_newfragment_basename(
 
 # Returns a structure like:
 #
-# OrderedDict([
-#   ("",
-#    {
-#      ("142", "misc"): u"",
-#      ("1", "feature"): u"some cool description",
-#    }),
-#   ("Names", {}),
-#   ("Web", {("3", "bugfix"): u"Fixed a thing"}),
-# ])
+# {
+#     "": {
+#         ("142", "misc"): "",
+#         ("1", "feature"): "some cool description",
+#     },
+#     "Names": {},
+#     "Web": {("3", "bugfix"): "Fixed a thing"},
+# }
 #
 # We should really use attrs.
 #
@@ -89,7 +81,7 @@ def find_fragments(
     """
     Sections are a dictonary of section names to paths.
     """
-    content = OrderedDict()
+    content = {}
     fragment_filenames = []
     # Multiple orphan news fragments are allowed per section, so initialize a counter
     # that can be incremented automatically.
@@ -103,11 +95,8 @@ def find_fragments(
 
         try:
             files = os.listdir(section_dir)
-        except FileNotFoundError as e:
-            message = "Failed to list the news fragment files.\n{}".format(
-                "".join(traceback.format_exception_only(type(e), e)),
-            )
-            raise ConfigError(message)
+        except FileNotFoundError:
+            files = []
 
         file_content = {}
 
@@ -164,7 +153,7 @@ def split_fragments(
     definitions: Mapping[str, Mapping[str, Any]],
     all_bullets: bool = True,
 ) -> Mapping[str, Mapping[str, Mapping[str, Sequence[str]]]]:
-    output = OrderedDict()
+    output = {}
 
     for section_name, section_fragments in fragments.items():
         section: dict[str, dict[str, list[str]]] = {}
@@ -182,7 +171,7 @@ def split_fragments(
             if definitions[category]["showcontent"] is False:
                 content = ""
 
-            texts = section.setdefault(category, OrderedDict())
+            texts = section.setdefault(category, {})
 
             tickets = texts.setdefault(content, [])
             if ticket:
@@ -255,12 +244,15 @@ def render_fragments(
 
     jinja_template = Template(template, trim_blocks=True)
 
-    data: dict[str, dict[str, dict[str, list[str]]]] = OrderedDict()
+    data: dict[str, dict[str, dict[str, list[str]]]] = {}
+    issues_by_category: dict[str, dict[str, list[str]]] = {}
 
     for section_name, section_value in fragments.items():
-        data[section_name] = OrderedDict()
+        data[section_name] = {}
+        issues_by_category[section_name] = {}
 
         for category_name, category_value in section_value.items():
+            category_issues: set[str] = set()
             # Suppose we start with an ordering like this:
             #
             # - Fix the thing (#7, #123, #2)
@@ -273,6 +265,7 @@ def render_fragments(
             entries = []
             for text, issues in category_value.items():
                 entries.append((text, sorted(issues, key=issue_key)))
+                category_issues.update(issues)
 
             # Then we sort the lines:
             #
@@ -284,12 +277,16 @@ def render_fragments(
 
             # Then we put these nicely sorted entries back in an ordered dict
             # for the template, after formatting each issue number
-            categories = OrderedDict()
+            categories = {}
             for text, issues in entries:
                 rendered = [render_issue(issue_format, i) for i in issues]
                 categories[text] = rendered
 
             data[section_name][category_name] = categories
+            issues_by_category[section_name][category_name] = [
+                render_issue(issue_format, i)
+                for i in sorted(category_issues, key=issue_key)
+            ]
 
     done = []
 
@@ -311,6 +308,7 @@ def render_fragments(
         versiondata=versiondata,
         top_underline=top_underline,
         get_indent=get_indent,  # simplify indentation in the jinja template.
+        issues_by_category=issues_by_category,
     )
 
     for line in res.split("\n"):
@@ -327,4 +325,4 @@ def render_fragments(
         else:
             done.append(line)
 
-    return "\n".join(done).rstrip() + "\n"
+    return "\n".join(done)

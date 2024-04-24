@@ -4,7 +4,7 @@ How to Keep a Changelog in Markdown
 `Keep a Changelog <https://keepachangelog.com/>`_ is a standardized way to format a news file in `Markdown <https://en.wikipedia.org/wiki/Markdown>`_.
 
 This guide shows you how to configure ``towncrier`` for keeping a Markdown-based news file of a project without using any Python-specific features.
-Everything used here can be use with any other language or platform.
+Everything used here can be used with any other language or platform.
 
 This guide makes the following assumptions:
 
@@ -21,7 +21,6 @@ Put the following into your ``pyproject.toml`` or ``towncrier.toml``:
    filename = "CHANGELOG.md"
    start_string = "<!-- towncrier release notes start -->\n"
    underlines = ["", "", ""]
-   template = "changelog.d/changelog_template.jinja"
    title_format = "## [{version}](https://github.com/twisted/my-project/tree/{version}) - {project_date}"
    issue_format = "[#{issue}](https://github.com/twisted/my-project/issues/{issue})"
 
@@ -57,32 +56,11 @@ Put the following into your ``pyproject.toml`` or ``towncrier.toml``:
 
 
 
-Next create the news fragment directory and the news file template:
+Next create the news fragment directory:
 
 .. code-block:: console
 
    $ mkdir changelog.d
-
-And put the following into ``changelog.d/changelog_template.jinja``:
-
-.. code-block:: jinja
-
-   {% if sections[""] %}
-   {% for category, val in definitions.items() if category in sections[""] %}
-
-   ### {{ definitions[category]['name'] }}
-
-   {% for text, values in sections[""][category].items() %}
-   - {{ text }} {{ values|join(', ') }}
-   {% endfor %}
-
-   {% endfor %}
-   {% else %}
-   No significant changes.
-
-
-   {% endif %}
-
 
 Next, create the news file with an explanatory header::
 
@@ -138,32 +116,32 @@ After running ``towncrier build --yes --version 1.0.0`` (you can ignore the Git 
 
    ### Security
 
-   - Fixed a security issue! [#6](https://github.com/twisted/my-project/issues/6), [#7](https://github.com/twisted/my-project/issues/7)
+   - Fixed a security issue! ([#6](https://github.com/twisted/my-project/issues/6), [#7](https://github.com/twisted/my-project/issues/7))
 
 
    ### Removed
 
-   - Removed a square feature! [#4](https://github.com/twisted/my-project/issues/4)
+   - Removed a square feature! ([#4](https://github.com/twisted/my-project/issues/4))
 
 
    ### Deprecated
 
-   - Deprecated a module! [#3](https://github.com/twisted/my-project/issues/3)
+   - Deprecated a module! ([#3](https://github.com/twisted/my-project/issues/3))
 
 
    ### Added
 
-   - Added a cool feature! [#1](https://github.com/twisted/my-project/issues/1)
+   - Added a cool feature! ([#1](https://github.com/twisted/my-project/issues/1))
 
 
    ### Changed
 
-   - Changed a behavior! [#2](https://github.com/twisted/my-project/issues/2)
+   - Changed a behavior! ([#2](https://github.com/twisted/my-project/issues/2))
 
 
    ### Fixed
 
-   - Fixed a bug! [#5](https://github.com/twisted/my-project/issues/5)
+   - Fixed a bug! ([#5](https://github.com/twisted/my-project/issues/5))
    - A fix without an issue number!
 
 Pretty close, so this concludes this guide!

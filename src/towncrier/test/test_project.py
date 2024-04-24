@@ -4,12 +4,13 @@
 import os
 import sys
 
-from subprocess import check_output
 from unittest import skipIf
 
+from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from .._project import get_project_name, get_version
+from .._shell import cli as towncrier_cli
 from .helpers import write
 
 
@@ -19,13 +20,15 @@ except ImportError:
     metadata_version = None
 
 
+towncrier_cli.name = "towncrier"
+
+
 class VersionFetchingTests(TestCase):
     def test_str(self):
         """
         A str __version__ will be picked up.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
         os.makedirs(os.path.join(temp, "mytestproj"))
 
         with open(os.path.join(temp, "mytestproj", "__init__.py"), "w") as f:
@@ -39,7 +42,6 @@ class VersionFetchingTests(TestCase):
         A tuple __version__ will be picked up.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
         os.makedirs(os.path.join(temp, "mytestproja"))
 
         with open(os.path.join(temp, "mytestproja", "__init__.py"), "w") as f:
@@ -109,7 +111,6 @@ class VersionFetchingTests(TestCase):
         A __version__ of unknown type will lead to an exception.
         """
         temp = self.mktemp()
-        os.makedirs(temp)
         os.makedirs(os.path.join(temp, "mytestprojb"))
 
         with open(os.path.join(temp, "mytestprojb", "__init__.py"), "w") as f:
@@ -133,14 +134,12 @@ class VersionFetchingTests(TestCase):
         project_name = "mytestproj_already_installed_import"
 
         temp = self.mktemp()
-        os.makedirs(temp)
         os.makedirs(os.path.join(temp, project_name))
 
         with open(os.path.join(temp, project_name, "__init__.py"), "w") as f:
             f.write("__version__ = (1, 3, 12)")
 
         sys_path_temp = self.mktemp()
-        os.makedirs(sys_path_temp)
         os.makedirs(os.path.join(sys_path_temp, project_name))
 
         with open(os.path.join(sys_path_temp, project_name, "__init__.py"), "w") as f:
@@ -161,7 +160,6 @@ class VersionFetchingTests(TestCase):
         project_name = "mytestproj_only_installed"
 
         sys_path_temp = self.mktemp()
-        os.makedirs(sys_path_temp)
         os.makedirs(os.path.join(sys_path_temp, project_name))
 
         with open(os.path.join(sys_path_temp, project_name, "__init__.py"), "w") as f:
@@ -180,6 +178,7 @@ class InvocationTests(TestCase):
         """
         `python -m towncrier` invokes the main entrypoint.
         """
+        runner = CliRunner()
         temp = self.mktemp()
         new_dir = os.path.join(temp, "dashm")
         os.makedirs(new_dir)
@@ -189,9 +188,9 @@ class InvocationTests(TestCase):
             with open("pyproject.toml", "w") as f:
                 f.write("[tool.towncrier]\n" 'directory = "news"\n')
             os.makedirs("news")
-            out = check_output([sys.executable, "-m", "towncrier", "--help"])
-            self.assertIn(b"[OPTIONS] COMMAND [ARGS]...", out)
-            self.assertRegex(out, rb".*--help\s+Show this message and exit.")
+            result = runner.invoke(towncrier_cli, ["--help"])
+            self.assertIn("[OPTIONS] COMMAND [ARGS]...", result.stdout)
+            self.assertRegex(result.stdout, r".*--help\s+Show this message and exit.")
         finally:
             os.chdir(orig_dir)
 
@@ -199,5 +198,6 @@ class InvocationTests(TestCase):
         """
         `--version` command line option is available to show the current production version.
         """
-        out = check_output(["towncrier", "--version"])
-        self.assertTrue(out.startswith(b"towncrier, version 2"))
+        runner = CliRunner()
+        result = runner.invoke(towncrier_cli, ["--version"])
+        self.assertTrue(result.output.startswith("towncrier, version 2"))

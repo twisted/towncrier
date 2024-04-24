@@ -15,7 +15,7 @@ from datetime import date
 
 import click
 
-from click import Context, Option
+from click import Context, Option, UsageError
 
 from towncrier import _git
 
@@ -23,6 +23,12 @@ from ._builder import find_fragments, render_fragments, split_fragments
 from ._project import get_project_name, get_version
 from ._settings import ConfigError, config_option_help, load_config_from_options
 from ._writer import append_to_newsfile
+
+
+if sys.version_info < (3, 10):
+    import importlib_resources as resources
+else:
+    from importlib import resources
 
 
 def _get_date() -> str:
@@ -78,7 +84,12 @@ def _validate_answer(ctx: Context, param: Option, value: bool) -> bool:
     default=None,
     help="Render the news fragments using given version.",
 )
-@click.option("--date", "project_date", default=None)
+@click.option(
+    "--date",
+    "project_date",
+    default=None,
+    help="Render the news fragments using the given date.",
+)
 @click.option(
     "--yes",
     "answer_yes",
@@ -140,14 +151,33 @@ def __main(
     base_directory, config = load_config_from_options(directory, config_file)
     to_err = draft
 
+    if project_version is None:
+        project_version = config.version
+    if project_version is None:
+        if not config.package:
+            raise UsageError(
+                "'--version' is required since the config file does "
+                "not contain 'version' or 'package'."
+            )
+        project_version = get_version(
+            os.path.join(base_directory, config.package_dir), config.package
+        ).strip()
+
     click.echo("Loading template...", err=to_err)
-    with open(config.template, "rb") as tmpl:
-        template = tmpl.read().decode("utf8")
+    if isinstance(config.template, tuple):
+        template = (
+            resources.files(config.template[0]).joinpath(config.template[1]).read_text()
+        )
+    else:
+        with open(config.template, encoding="utf-8") as tmpl:
+            template = tmpl.read()
 
     click.echo("Finding news fragments...", err=to_err)
 
     if config.directory is not None:
-        fragment_base_directory = os.path.abspath(config.directory)
+        fragment_base_directory = os.path.abspath(
+            os.path.join(base_directory, config.directory)
+        )
         fragment_directory = None
     else:
         fragment_base_directory = os.path.abspath(
@@ -167,13 +197,6 @@ def __main(
     fragments = split_fragments(
         fragment_contents, config.types, all_bullets=config.all_bullets
     )
-
-    if project_version is None:
-        project_version = config.version
-        if project_version is None:
-            project_version = get_version(
-                os.path.join(base_directory, config.package_dir), config.package
-            ).strip()
 
     if project_name is None:
         project_name = config.name
@@ -240,38 +263,39 @@ def __main(
             err=to_err,
         )
         click.echo(content)
-    else:
-        click.echo("Writing to newsfile...", err=to_err)
-        news_file = config.filename
+        return
 
-        if config.single_file is False:
-            # The release notes for each version are stored in a separate file.
-            # The name of that file is generated based on the current version and project.
-            news_file = news_file.format(
-                name=project_name, version=project_version, project_date=project_date
-            )
+    click.echo("Writing to newsfile...", err=to_err)
+    news_file = config.filename
 
-        append_to_newsfile(
-            base_directory,
-            news_file,
-            config.start_string,
-            top_line,
-            content,
-            single_file=config.single_file,
+    if config.single_file is False:
+        # The release notes for each version are stored in a separate file.
+        # The name of that file is generated based on the current version and project.
+        news_file = news_file.format(
+            name=project_name, version=project_version, project_date=project_date
         )
 
-        click.echo("Staging newsfile...", err=to_err)
-        _git.stage_newsfile(base_directory, news_file)
+    append_to_newsfile(
+        base_directory,
+        news_file,
+        config.start_string,
+        top_line,
+        content,
+        single_file=config.single_file,
+    )
 
+    click.echo("Staging newsfile...", err=to_err)
+    _git.stage_newsfile(base_directory, news_file)
+
+    if should_remove_fragment_files(
+        fragment_filenames,
+        answer_yes,
+        answer_keep,
+    ):
         click.echo("Removing news fragments...", err=to_err)
-        if should_remove_fragment_files(
-            fragment_filenames,
-            answer_yes,
-            answer_keep,
-        ):
-            _git.remove_files(fragment_filenames)
+        _git.remove_files(fragment_filenames)
 
-        click.echo("Done!", err=to_err)
+    click.echo("Done!", err=to_err)
 
 
 def should_remove_fragment_files(
@@ -279,6 +303,9 @@ def should_remove_fragment_files(
     answer_yes: bool,
     answer_keep: bool,
 ) -> bool:
+    if not fragment_filenames:
+        click.echo("No news fragments to remove. Skipping!")
+        return False
     try:
         if answer_keep:
             click.echo("Keeping the following files:")

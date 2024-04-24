@@ -5,6 +5,7 @@ on:
     branches: [ trunk ]
     tags: [ "**" ]
   pull_request:
+  workflow_dispatch:
 
 defaults:
   run:
@@ -30,7 +31,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: hynek/build-and-inspect-python-package@f336040a31ea03a2551adcc994d3ddb2f3ea3f7f
+    - uses: hynek/build-and-inspect-python-package@f51d0e79a34e62af977fcfe458b41fa8490e6e65
 
     - name: Set up ${{ matrix.python.name }}
       uses: actions/setup-python@v4
@@ -58,9 +59,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Keep list in-sync with noxfile/tests & pyproject.toml.
         python:
-          - name: CPython 3.7
-            action: 3.7
           - name: CPython 3.8
             action: 3.8
           - name: CPython 3.9
@@ -69,8 +69,8 @@ jobs:
             action: '3.10'
           - name: CPython 3.11
             action: '3.11'
-          - name: PyPy 3.7
-            action: pypy3.7
+          - name: CPython 3.12
+            action: '3.12'
           - name: PyPy 3.8
             action: pypy3.8
         task:
@@ -90,17 +90,22 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python.action }}
+        allow-prereleases: true
+        cache: pip
 
     - name: Install dependencies
-      run: python -m pip install --upgrade pip nox codecov coverage[toml]
+      run: python -m pip install --upgrade pip nox
 
     - uses: twisted/python-info-action@v1
 
     - run: nox --python ${{ matrix.python.action }} -e ${{ matrix.task.nox }} -- --use-wheel dist/*.whl
 
-    - name: Codecov
-      run: |
-        codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}"
+    - name: Upload coverage data
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-data
+        path: .coverage.*
+        if-no-files-found: ignore
 
 
   test-windows:
@@ -133,15 +138,12 @@ jobs:
         python-version: ${{ matrix.python.action }}
 
     - name: Install dependencies
-      run: python -m pip install --upgrade pip nox codecov coverage[toml]
+      run: python -m pip install --upgrade pip nox
 
     - uses: twisted/python-info-action@v1
 
     - run: nox --python ${{ matrix.python.action }} -e ${{ matrix.task.nox }} -- --use-wheel dist/*.whl
 
-    - name: Codecov
-      run: |
-        codecov -n "GitHub Actions - ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}"
 
   check:
     name: ${{ matrix.task.name}} - ${{ matrix.python.name }}
@@ -152,16 +154,18 @@ jobs:
       fail-fast: false
       matrix:
         python:
-          # Using second most recent minor release for whatever little
-          # increase in stability over using the latest minor.
-          - name: CPython 3.9
-            python-version: '3.9'
+          # Use a recent version to avoid having common disconnects between
+          # local development setups and CI.
+          - name: CPython 3.11
+            python-version: '3.11'
         task:
           - name: Check Newsfragment
-            nox: check_newsfragment
+            run: |
+              nox -e check_newsfragment
+              nox -e draft_newsfragment >> $GITHUB_STEP_SUMMARY
             run-if: ${{ github.head_ref != 'pre-commit-ci-update-config' }}
           - name: Check mypy
-            nox: typecheck
+            run: nox -e typecheck
             run-if: true
 
     steps:
@@ -185,14 +189,20 @@ jobs:
 
     - uses: twisted/python-info-action@v1
 
-    - run: nox -e ${{ matrix.task.nox }}
+    - name: Check
+      run: |
+        ${{ matrix.task.run }}
       if: ${{ matrix.task.run-if }}
 
 
   pypi-publish:
-    # https://github.community/t/is-it-possible-to-require-all-github-actions-tasks-to-pass-without-enumerating-them/117957/4?u=graingert
     name: Check tag and publish
+    # Only trigger this for tag changes.
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
 
     needs:
       - build
@@ -210,7 +220,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: 3.11
 
     - name: Install dependencies
       run: |
@@ -221,15 +231,47 @@ jobs:
       run: ls --recursive dist/
 
     - name: Check matched tag version and branch version - on tag
-      if: startsWith(github.ref, 'refs/tags/')
       run: python admin/check_tag_version_match.py "${{ github.ref }}"
 
     - name: Publish to PyPI - on tag
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: pypa/gh-action-pypi-publish@37f50c210e3d2f9450da2cd423303d6a14a6e29f
+      uses: pypa/gh-action-pypi-publish@a56da0b891b3dc519c7ee3284aff1fad93cc8598
+
+
+  coverage:
+    name: Combine & check coverage.
+    needs: test-linux
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
-        password: ${{ secrets.PYPI_TOKEN }}
-        verbose: true
+        # Use latest Python, so it understands all syntax.
+        python-version: 3.11
+
+    - run: python -Im pip install --upgrade coverage[toml]
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: coverage-data
+
+    - name: Combine coverage & fail if it's <100%.
+      run: |
+        python -Im coverage combine
+        python -Im coverage html --skip-covered --skip-empty
+
+        # Report and write to summary.
+        python -Im coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+
+        # Report again and fail if under 100%.
+        python -Im coverage report --fail-under=100
+
+    - name: Upload HTML report if check failed.
+      uses: actions/upload-artifact@v3
+      with:
+        name: html-report
+        path: htmlcov
+      if: ${{ failure() }}
 
   # This is a meta-job to simplify PR CI enforcement configuration in GitHub.
   # Inside the GitHub config UI you only configure this job as required.
@@ -244,11 +286,12 @@ jobs:
     needs:
       # This is the list of CI job that we are interested to be green before
       # a merge.
+      # pypi-publish is skipped since this is only executed for a tag.
       - build
       - test-linux
       - test-windows
+      - coverage
       - check
-      - pypi-publish
     steps:
       - name: Require all successes
         uses: re-actors/alls-green@3a2de129f0713010a71314c74e33c0e3ef90e696

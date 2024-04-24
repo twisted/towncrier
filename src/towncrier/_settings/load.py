@@ -3,25 +3,26 @@
 
 from __future__ import annotations
 
+import atexit
+import dataclasses
 import os
+import re
 import sys
 
-from collections import OrderedDict
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Mapping
+from contextlib import ExitStack
+from pathlib import Path
+from typing import Any, Literal, Mapping, Sequence
 
-import pkg_resources
+from click import ClickException
 
 from .._settings import fragment_types as ft
 
 
-if TYPE_CHECKING:
-    # We only use Literal for type-checking and Mypy always brings its own
-    # typing_extensions so this is safe without further dependencies.
-    if sys.version_info < (3, 8):
-        from typing_extensions import Literal
-    else:
-        from typing import Literal
+if sys.version_info < (3, 10):
+    import importlib_resources as resources
+else:
+    from importlib import resources
+
 
 if sys.version_info < (3, 11):
     import tomli as tomllib
@@ -29,39 +30,36 @@ else:
     import tomllib
 
 
-@dataclass
+re_resource_template = re.compile(r"[-\w.]+:[-\w.]+$")
+
+
+@dataclasses.dataclass
 class Config:
-    package: str
-    package_dir: str
-    single_file: bool
-    filename: str
-    directory: str | None
-    version: str | None
-    name: str | None
     sections: Mapping[str, str]
     types: Mapping[str, Mapping[str, Any]]
-    template: str
+    template: str | tuple[str, str]
     start_string: str
-    title_format: str | Literal[False]
-    issue_format: str | None
-    underlines: list[str]
-    wrap: bool
-    all_bullets: bool
-    orphan_prefix: str
+    package: str = ""
+    package_dir: str = "."
+    single_file: bool = True
+    filename: str = "NEWS.rst"
+    directory: str | None = None
+    version: str | None = None
+    name: str = ""
+    title_format: str | Literal[False] = ""
+    issue_format: str | None = None
+    underlines: Sequence[str] = ("=", "-", "~")
+    wrap: bool = False
+    all_bullets: bool = True
+    orphan_prefix: str = "+"
     create_eof_newline: bool = True
     create_add_extension: bool = True
 
 
-class ConfigError(Exception):
+class ConfigError(ClickException):
     def __init__(self, *args: str, **kwargs: str):
         self.failing_option = kwargs.get("failing_option")
         super().__init__(*args)
-
-
-_start_string = ".. towncrier release notes start\n"
-_title_format = None
-_template_fname = "towncrier:default"
-_underlines = ["=", "-", "~"]
 
 
 def load_config_from_options(
@@ -108,81 +106,97 @@ def load_config_from_file(directory: str, config_file: str) -> Config:
     return parse_toml(directory, config)
 
 
+# Clean up possible temporary files on exit.
+_file_manager = ExitStack()
+atexit.register(_file_manager.close)
+
+
 def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
-    if "tool" not in config:
+    if "towncrier" not in (config.get("tool") or {}):
         raise ConfigError("No [tool.towncrier] section.", failing_option="all")
 
     config = config["tool"]["towncrier"]
+    parsed_data = {}
 
-    sections = OrderedDict()
+    # Check for misspelt options.
+    for typo, correct in [
+        ("singlefile", "single_file"),
+    ]:
+        if config.get(typo):
+            raise ConfigError(
+                f"`{typo}` is not a valid option. Did you mean `{correct}`?",
+                failing_option=typo,
+            )
+
+    # Process options.
+    for field in dataclasses.fields(Config):
+        if field.name in ("sections", "types", "template"):
+            # Skip these options, they are processed later.
+            continue
+        if field.name in config:
+            #  Interestingly, the __future__ annotation turns the type into a string.
+            if field.type in ("bool", bool):
+                if not isinstance(config[field.name], bool):
+                    raise ConfigError(
+                        f"`{field.name}` option must be boolean: false or true.",
+                        failing_option=field.name,
+                    )
+            parsed_data[field.name] = config[field.name]
+
+    # Process 'section'.
+    sections = {}
     if "section" in config:
         for x in config["section"]:
             sections[x.get("name", "")] = x["path"]
     else:
         sections[""] = ""
+    parsed_data["sections"] = sections
+
+    # Process 'types'.
     fragment_types_loader = ft.BaseFragmentTypesLoader.factory(config)
-    types = fragment_types_loader.load()
+    parsed_data["types"] = fragment_types_loader.load()
 
-    wrap = config.get("wrap", False)
+    # Process 'template'.
+    markdown_file = Path(config.get("filename", "")).suffix == ".md"
+    template = config.get("template", "towncrier:default")
+    if re_resource_template.match(template):
+        package, resource = template.split(":", 1)
+        if not Path(resource).suffix:
+            resource += ".md" if markdown_file else ".rst"
 
-    single_file_wrong = config.get("singlefile")
-    if single_file_wrong:
-        raise ConfigError(
-            "`singlefile` is not a valid option. Did you mean `single_file`?",
-            failing_option="singlefile",
-        )
-
-    single_file = config.get("single_file", True)
-    if not isinstance(single_file, bool):
-        raise ConfigError(
-            "`single_file` option must be a boolean: false or true.",
-            failing_option="single_file",
-        )
-
-    all_bullets = config.get("all_bullets", True)
-    if not isinstance(all_bullets, bool):
-        raise ConfigError(
-            "`all_bullets` option must be boolean: false or true.",
-            failing_option="all_bullets",
-        )
-
-    template = config.get("template", _template_fname)
-    if template.startswith("towncrier:"):
-        resource_name = "templates/" + template.split("towncrier:", 1)[1] + ".rst"
-        if not pkg_resources.resource_exists("towncrier", resource_name):
-            raise ConfigError(
-                "Towncrier does not have a template named '%s'."
-                % (template.split("towncrier:", 1)[1],)
-            )
-
-        template = pkg_resources.resource_filename("towncrier", resource_name)
+        if not _pkg_file_exists(package, resource):
+            if _pkg_file_exists(package + ".templates", resource):
+                package += ".templates"
+            else:
+                raise ConfigError(
+                    f"'{package}' does not have a template named '{resource}'.",
+                    failing_option="template",
+                )
+        template = (package, resource)
     else:
         template = os.path.join(base_path, template)
+        if not os.path.isfile(template):
+            raise ConfigError(
+                f"The template file '{template}' does not exist.",
+                failing_option="template",
+            )
 
-    if not os.path.exists(template):
-        raise ConfigError(
-            f"The template file '{template}' does not exist.",
-            failing_option="template",
-        )
+    parsed_data["template"] = template
 
-    return Config(
-        package=config.get("package", ""),
-        package_dir=config.get("package_dir", "."),
-        single_file=single_file,
-        filename=config.get("filename", "NEWS.rst"),
-        directory=config.get("directory"),
-        version=config.get("version"),
-        name=config.get("name"),
-        sections=sections,
-        types=types,
-        template=template,
-        start_string=config.get("start_string", _start_string),
-        title_format=config.get("title_format", _title_format),
-        issue_format=config.get("issue_format"),
-        underlines=config.get("underlines", _underlines),
-        wrap=wrap,
-        all_bullets=all_bullets,
-        orphan_prefix=config.get("orphan_prefix", "+"),
-        create_eof_newline=config.get("create_eof_newline", True),
-        create_add_extension=config.get("create_add_extension", True),
-    )
+    # Process 'start_string'.
+
+    start_string = config.get("start_string", "")
+    if not start_string:
+        start_string_template = "<!-- {} -->\n" if markdown_file else ".. {}\n"
+        start_string = start_string_template.format("towncrier release notes start")
+    parsed_data["start_string"] = start_string
+
+    # Return the parsed config.
+    return Config(**parsed_data)
+
+
+def _pkg_file_exists(pkg: str, file: str) -> bool:
+    """
+    Check whether *file* exists within *pkg*.
+    """
+    return resources.files(pkg).joinpath(file).is_file()

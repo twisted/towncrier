@@ -3,8 +3,7 @@ Contributing to Towncrier
 
 Want to contribute to this project? Great! We'd love to hear from you!
 
-As a developer and user, you probably have some questions about our
-project and how to contribute.
+As a developer and user, you probably have some questions about our project and how to contribute.
 In this article, we try to answer these and give you some recommendations.
 
 
@@ -36,8 +35,7 @@ There are several options to contribute to this project:
 
 * Modify the code.
 
-  If you would love to see the new feature in the next release, this is
-  probably the best way.
+  If you would love to see the new feature in the next release, this is probably the best way.
 
 
 Modifying the code
@@ -58,7 +56,6 @@ We recommend the following workflow:
 
    $ git clone git@github.com:GITHUB_USER/towncrier.git
 
-
 #. Prepare a pull request:
 
    a. Create a new branch with::
@@ -68,10 +65,21 @@ We recommend the following workflow:
    b. Write your test cases and run the complete test suite, see the section
       *Running the test suite* for details.
 
-
    c. Document any user-facing changes in one of the ``/docs/`` files.
+      Use `one sentence per line`_.
 
-   d. Create a newsfragment in ``src/towncrier/newsfragments/`` describing the changes and containing information that is of interest to end-users.
+   d. Create a news fragment in ``src/towncrier/newsfragments/`` describing the changes and containing information that is of interest to end-users.
+      Use `one sentence per line`_ here, too.
+      You can use the ``towncrier`` CLI to create them; for example ``towncrier create 1234.bugfix``
+
+      Use one of the following types:
+
+      - ``feature`` for new features
+      - ``bugfix`` for bugfixes
+      - ``doc`` for improvements to documentation
+      - ``removal`` for deprecations and removals
+      - ``misc`` for everything else that is linked but not shown in our ``NEWS.rst`` file.
+        Use this for pull requests that don't affect end-users and leave them empty.
 
    e. Create a `pull request`_.
       Describe in the pull request what you did and why.
@@ -147,4 +155,5 @@ fails with our dummy test commits.
 .. _issues:  https://github.com/twisted/towncrier/issues
 .. _pull request: https://github.com/twisted/towncrier/pulls
 .. _nox: https://nox.thea.codes/
+.. _`one sentence per line`: https://rhodesmill.org/brandon/2012/one-sentence-per-line/
 .. _twisted.trial: https://github.com/twisted/trac-wiki-archive/blob/trunk/TwistedTrial.mediawiki

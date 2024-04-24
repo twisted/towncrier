@@ -1,7 +1,7 @@
 Tutorial
 ========
 
-This tutorial assumes you have a Python project with a *reStructuredText* (rst) news file (also known as changelog) file that you wish to use ``towncrier`` on, to generate its news file.
+This tutorial assumes you have a Python project with a *reStructuredText* (rst) or *Markdown* (md) news file (also known as changelog) that you wish to use ``towncrier`` on, to generate its news file.
 It will cover setting up your project with a basic configuration, which you can then feel free to `customize <customization/index.html>`_.
 
 Install from PyPI::
@@ -130,7 +130,7 @@ You should get an output similar to this::
    Improved Documentation
    ----------------------
 
-   - Can also be ``rst``` as well! (#3456, #7890)
+   - Can also be ``rst`` as well! (#3456, #7890)
 
 
    Deprecations and Removals
@@ -143,6 +143,8 @@ You should get an output similar to this::
    ----
 
    - #1, #2
+
+Note: if you configure a Markdown file (for example, ``filename = "CHANGES.md"``) in your configuration file, the titles will be output in Markdown format instead.
 
 
 Producing News Files In Production
@@ -160,6 +162,8 @@ If you wish to have content at the top of the news file (for example, to say whe
   .. towncrier release notes start
 
 ``towncrier`` will then put the version notes after this comment, and leave your existing content that was above it where it is.
+
+Note: if you configure a Markdown file (for example, ``filename = "CHANGES.md"``) in your configuration file, the comment should be ``<!-- towncrier release notes start -->`` instead.
 
 
 Finale

@@ -7,9 +7,12 @@ sphinx:
 # We don't need PDF and epub for the docs.
 formats: []
 
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "3.11"
+
 python:
-  version: "3.8"
-  system_packages: False
   install:
     - method: pip
       path: .

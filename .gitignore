@@ -17,6 +17,7 @@
 .vs/
 .vscode
 Justfile
+*egg-info/
 _trial_temp*/
 apidocs/
 dist/

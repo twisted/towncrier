@@ -13,6 +13,7 @@ Narrative
 
    tutorial
    markdown
+   monorepo
 
 
 Reference
@@ -23,6 +24,7 @@ Reference
 
    cli
    configuration
+   pre-commit
    customization/index
 
 
@@ -32,6 +34,7 @@ Development
 .. toctree::
    :maxdepth: 1
 
+   release-notes
    contributing
    release
    GitHub Repository <https://github.com/twisted/towncrier>
