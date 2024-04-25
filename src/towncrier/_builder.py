@@ -37,7 +37,8 @@ def parse_newfragment_basename(
             # something-cool.feature.ext for projects that don't use ticket
             # numbers in news fragment names.
             ticket = ".".join(parts[0:i]).strip()
-            # If the ticket is an integer, remove any leading zeros.
+            # If the ticket is an integer, remove any leading zeros (to resolve
+            # issue #126).
             if ticket.isdigit():
                 ticket = str(int(ticket))
             counter = 0
