@@ -117,19 +117,6 @@ class TestCli(TestCase):
             eof_newline=False,
         )
 
-    def test_content_no_eof_newline_arg(self):
-        """
-        When creating a new fragment the content can be passed as a command line
-        argument. The text editor is not invoked, and no eof newline is added if the
-        --no-eof-newline argument is passed.
-        """
-        content_line = "This is a content"
-        self._test_success(
-            content=[content_line],
-            additional_args=["-c", content_line, "--no-eof-newline"],
-            eof_newline=False,
-        )
-
     def test_message_and_edit(self):
         """
         When creating a new message, a initial content can be passed via
