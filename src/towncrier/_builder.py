@@ -13,15 +13,6 @@ from typing import Any, DefaultDict, Iterable, Iterator, Mapping, Sequence
 from jinja2 import Template
 
 
-def strip_if_integer_string(s: str) -> str:
-    try:
-        i = int(s)
-    except ValueError:
-        return s
-
-    return str(i)
-
-
 # Returns ticket, category and counter or (None, None, None) if the basename
 # could not be parsed or doesn't contain a valid category.
 def parse_newfragment_basename(
@@ -45,7 +36,11 @@ def parse_newfragment_basename(
             # NOTE: This allows news fragment names like fix-1.2.3.feature or
             # something-cool.feature.ext for projects that don't use ticket
             # numbers in news fragment names.
-            ticket = strip_if_integer_string(".".join(parts[0:i]))
+            ticket = ".".join(parts[0:i]).strip()
+            # If the ticket is an integer, remove any leading zeros (to resolve
+            # issue #126).
+            if ticket.isdigit():
+                ticket = str(int(ticket))
             counter = 0
             # Use the following part as the counter if it exists and is a valid
             # digit.

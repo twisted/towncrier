@@ -125,3 +125,10 @@ class TestParseNewsfragmentBasename(TestCase):
             parse_newfragment_basename("+orphan_12.3.feature", ["feature"]),
             ("+orphan_12.3", "feature", 0),
         )
+
+    def test_orphan_all_digits(self):
+        """Orphaned snippets can consist of only digits."""
+        self.assertEqual(
+            parse_newfragment_basename("+123.feature", ["feature"]),
+            ("+123", "feature", 0),
+        )
