@@ -8,7 +8,22 @@ affecting existing content.
 
 from __future__ import annotations
 
+import sys
+
 from pathlib import Path
+from typing import Any
+
+
+if sys.version_info < (3, 10):
+
+    def _newline_write_text(path: Path, content: str, **kwargs: Any) -> None:
+        with path.open("w", **kwargs) as strm:
+            strm.write(content)
+
+else:
+
+    def _newline_write_text(path: Path, content: str, **kwargs: Any) -> None:
+        path.write_text(content, **kwargs)
 
 
 def append_to_newsfile(
@@ -37,7 +52,8 @@ def append_to_newsfile(
     if top_line and top_line in prev_body:
         raise ValueError("It seems you've already produced newsfiles for this version?")
 
-    news_file.write_text(
+    _newline_write_text(
+        news_file,
         # If there is no previous body that means we're writing a brand new news file.
         # We don't want extra whitespace at the end of this new file.
         header + (content + prev_body if prev_body else content.rstrip() + "\n"),
