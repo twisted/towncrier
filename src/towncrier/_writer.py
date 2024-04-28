@@ -17,7 +17,7 @@ from typing import Any
 if sys.version_info < (3, 10):
 
     def _newline_write_text(path: Path, content: str, **kwargs: Any) -> None:
-        with path.open("w", **kwargs) as strm:  # pragma: no cover
+        with path.open("w", **kwargs) as strm:  # pragma: no branch
             strm.write(content)
 
 else:
