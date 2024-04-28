@@ -35,6 +35,6 @@ repos:
       - id: check-yaml
 
   - repo: https://github.com/twisted/towncrier
-    rev: 23.11.0
+    rev: trunk
     hooks:
       - id: towncrier-check
