@@ -2,7 +2,7 @@
 {% if versiondata.name %}
 # {{ versiondata.name }} {{ versiondata.version }} ({{ versiondata.date }})
 {% else %}
-{{ versiondata.version }} ({{ versiondata.date }})
+# {{ versiondata.version }} ({{ versiondata.date }})
 {% endif %}
 {% endif %}
 {% for section, _ in sections.items() %}

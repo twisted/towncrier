@@ -15,10 +15,13 @@ Configuration
 ``towncrier`` keeps its config in the `PEP-518 <https://www.python.org/dev/peps/pep-0518/>`_ ``pyproject.toml`` or a ``towncrier.toml`` file.
 If the latter exists, it takes precedence.
 
-The most basic configuration is just telling ``towncrier`` where to look for news fragments::
+The most basic configuration is just telling ``towncrier`` where to look for news fragments and what file to generate::
 
    [tool.towncrier]
    directory = "changes"
+   # Where you want your news files to come out, `NEWS.rst` is the default.
+   # This can be .rst or .md, towncrier's default template works with both.
+   # filename = "NEWS.rst"
 
 Which will look into "./changes" for news fragments and write them into "./NEWS.rst".
 
@@ -32,9 +35,6 @@ If you're working on a Python project, you can also specify a package::
    # but if you don't keep your code in a 'src' dir, remove the
    # config option
    package_dir = "src"
-   # Where you want your news files to come out. This can be .rst
-   # or .md, towncrier's default template works with both.
-   filename = "NEWS.rst"
 
 By default, ``towncrier`` will look for news fragments inside your Python package, in a directory named ``newsfragments``.
 With this example project, it will look in ``src/myproject/newsfragments/`` for them.
