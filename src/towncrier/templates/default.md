@@ -2,7 +2,7 @@
 {% if versiondata.name %}
 # {{ versiondata.name }} {{ versiondata.version }} ({{ versiondata.date }})
 {% else %}
-{{ versiondata.version }} ({{ versiondata.date }})
+# {{ versiondata.version }} ({{ versiondata.date }})
 {% endif %}
 {% endif %}
 {% for section, _ in sections.items() %}
@@ -58,4 +58,8 @@ No significant changes.
 No significant changes.
 
 {% endif %}
-{% endfor %}
+{% endfor +%}
+{#
+This comment adds one more newline at the end of the rendered newsfile content.
+In this way the there are 2 newlines between the latest release and the previous release content.
+#}

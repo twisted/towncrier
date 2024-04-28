@@ -165,7 +165,9 @@ def __main(
 
     click.echo("Loading template...", err=to_err)
     if isinstance(config.template, tuple):
-        template = resources.read_text(*config.template)
+        template = (
+            resources.files(config.template[0]).joinpath(config.template[1]).read_text()
+        )
     else:
         with open(config.template, encoding="utf-8") as tmpl:
             template = tmpl.read()
@@ -173,7 +175,9 @@ def __main(
     click.echo("Finding news fragments...", err=to_err)
 
     if config.directory is not None:
-        fragment_base_directory = os.path.abspath(config.directory)
+        fragment_base_directory = os.path.abspath(
+            os.path.join(base_directory, config.directory)
+        )
         fragment_directory = None
     else:
         fragment_base_directory = os.path.abspath(

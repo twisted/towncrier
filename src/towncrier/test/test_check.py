@@ -3,16 +3,16 @@
 
 import os
 import os.path
-import sys
 import warnings
 
 from pathlib import Path
-from subprocess import PIPE, Popen, call
+from subprocess import call
 
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from towncrier import check
+from towncrier.build import _main as towncrier_build
 from towncrier.check import _main as towncrier_check
 
 from .helpers import setup_simple_project, with_isolated_runner, write
@@ -182,15 +182,11 @@ class TestChecker(TestCase):
             call(["git", "add", fragment_path])
             call(["git", "commit", "-m", "add a newsfragment"])
 
-            proc = Popen(
-                [sys.executable, "-m", "towncrier.check", "--compare-with", "master"],
-                stdout=PIPE,
-                stderr=PIPE,
-            )
-            stdout, stderr = proc.communicate()
+            runner = CliRunner(mix_stderr=False)
+            result = runner.invoke(towncrier_check, ["--compare-with", "master"])
 
-        self.assertEqual(0, proc.returncode)
-        self.assertEqual(b"", stderr)
+        self.assertEqual(0, result.exit_code)
+        self.assertEqual(0, len(result.stderr))
 
     def test_first_release(self):
         """
@@ -207,7 +203,7 @@ class TestChecker(TestCase):
             # Before any release, the NEWS file might no exist.
             self.assertNotIn("NEWS.rst", os.listdir("."))
 
-            call(["towncrier", "build", "--yes", "--version", "1.0"])
+            runner.invoke(towncrier_build, ["--yes", "--version", "1.0"])
             commit("Prepare a release")
             # When missing,
             # the news file is automatically created with a new release.
@@ -235,7 +231,7 @@ class TestChecker(TestCase):
 
             # Do a first release without any checks.
             # And merge the release branch back into the main branch.
-            call(["towncrier", "build", "--yes", "--version", "1.0"])
+            runner.invoke(towncrier_build, ["--yes", "--version", "1.0"])
             commit("First release")
             # The news file is now created.
             self.assertIn("NEWS.rst", os.listdir("."))
@@ -260,7 +256,7 @@ class TestChecker(TestCase):
 
             # We now have the new release branch.
             call(["git", "checkout", "-b", "next-release"])
-            call(["towncrier", "build", "--yes", "--version", "2.0"])
+            runner.invoke(towncrier_build, ["--yes", "--version", "2.0"])
             commit("Second release")
 
             # Act
@@ -301,3 +297,101 @@ class TestChecker(TestCase):
 
         self.assertEqual("origin/master", branch)
         self.assertTrue(w[0].message.args[0].startswith('Using "origin/master'))
+
+    @with_isolated_runner
+    def test_in_different_dir_with_nondefault_newsfragments_directory(self, runner):
+        """
+        It can check the fragments located in a sub-directory
+        that is specified using the `--dir` CLI argument.
+        """
+        main_branch = "main"
+        Path("pyproject.toml").write_text(
+            # Important to customize `config.directory` because the default
+            # already supports this scenario.
+            "[tool.towncrier]\n"
+            + 'directory = "changelog.d"\n'
+        )
+        subproject1 = Path("foo")
+        (subproject1 / "foo").mkdir(parents=True)
+        (subproject1 / "foo/__init__.py").write_text("")
+        (subproject1 / "changelog.d").mkdir(parents=True)
+        (subproject1 / "changelog.d/123.feature").write_text("Adds levitation")
+        initial_commit(branch=main_branch)
+        call(["git", "checkout", "-b", "otherbranch"])
+
+        # We add a code change but forget to add a news fragment.
+        write(subproject1 / "foo/somefile.py", "import os")
+        commit("add a file")
+        result = runner.invoke(
+            towncrier_check,
+            (
+                "--config",
+                "pyproject.toml",
+                "--dir",
+                str(subproject1),
+                "--compare-with",
+                "main",
+            ),
+        )
+
+        self.assertEqual(1, result.exit_code)
+        self.assertTrue(
+            result.output.endswith("No new newsfragments found on this branch.\n")
+        )
+
+        # We add the news fragment.
+        fragment_path = (subproject1 / "changelog.d/124.feature").absolute()
+        write(fragment_path, "Adds gravity back")
+        commit("add a newsfragment")
+        result = runner.invoke(
+            towncrier_check,
+            ("--config", "pyproject.toml", "--dir", "foo", "--compare-with", "main"),
+        )
+
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertTrue(
+            result.output.endswith("Found:\n1. " + str(fragment_path) + "\n"),
+            (result.output, str(fragment_path)),
+        )
+
+        # We add a change in a different subproject without a news fragment.
+        # Checking subproject1 should pass.
+        subproject2 = Path("bar")
+        (subproject2 / "bar").mkdir(parents=True)
+        (subproject2 / "changelog.d").mkdir(parents=True)
+        write(subproject2 / "bar/somefile.py", "import os")
+        commit("add a file")
+        result = runner.invoke(
+            towncrier_check,
+            (
+                "--config",
+                "pyproject.toml",
+                "--dir",
+                subproject1,
+                "--compare-with",
+                "main",
+            ),
+        )
+
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertTrue(
+            result.output.endswith("Found:\n1. " + str(fragment_path) + "\n"),
+            (result.output, str(fragment_path)),
+        )
+
+        # Checking subproject2 should result in an error.
+        result = runner.invoke(
+            towncrier_check,
+            (
+                "--config",
+                "pyproject.toml",
+                "--dir",
+                subproject2,
+                "--compare-with",
+                "main",
+            ),
+        )
+        self.assertEqual(1, result.exit_code)
+        self.assertTrue(
+            result.output.endswith("No new newsfragments found on this branch.\n")
+        )
