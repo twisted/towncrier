@@ -6,23 +6,11 @@ from __future__ import annotations
 
 import os
 import textwrap
-import traceback
 
 from collections import defaultdict
 from typing import Any, DefaultDict, Iterable, Iterator, Mapping, Sequence
 
 from jinja2 import Template
-
-from ._settings import ConfigError
-
-
-def strip_if_integer_string(s: str) -> str:
-    try:
-        i = int(s)
-    except ValueError:
-        return s
-
-    return str(i)
 
 
 # Returns ticket, category and counter or (None, None, None) if the basename
@@ -35,24 +23,24 @@ def parse_newfragment_basename(
 
     if len(parts) == 1:
         return invalid
-    if len(parts) == 2:
-        ticket, category = parts
-        ticket = strip_if_integer_string(ticket)
-        return (ticket, category, 0) if category in frag_type_names else invalid
 
-    # There are at least 3 parts. Search for a valid category from the second
-    # part onwards.
+    # There are at least 2 parts. Search for a valid category from the second
+    # part onwards starting at the back.
     # The category is used as the reference point in the parts list to later
     # infer the issue number and counter value.
-    for i in range(1, len(parts)):
+    for i in reversed(range(1, len(parts))):
         if parts[i] in frag_type_names:
             # Current part is a valid category according to given definitions.
             category = parts[i]
-            # Use the previous part as the ticket number.
+            # Use all previous parts as the ticket number.
             # NOTE: This allows news fragment names like fix-1.2.3.feature or
             # something-cool.feature.ext for projects that don't use ticket
             # numbers in news fragment names.
-            ticket = strip_if_integer_string(parts[i - 1])
+            ticket = ".".join(parts[0:i]).strip()
+            # If the ticket is an integer, remove any leading zeros (to resolve
+            # issue #126).
+            if ticket.isdigit():
+                ticket = str(int(ticket))
             counter = 0
             # Use the following part as the counter if it exists and is a valid
             # digit.
@@ -102,11 +90,8 @@ def find_fragments(
 
         try:
             files = os.listdir(section_dir)
-        except FileNotFoundError as e:
-            message = "Failed to list the news fragment files.\n{}".format(
-                "".join(traceback.format_exception_only(type(e), e)),
-            )
-            raise ConfigError(message)
+        except FileNotFoundError:
+            files = []
 
         file_content = {}
 
@@ -335,4 +320,4 @@ def render_fragments(
         else:
             done.append(line)
 
-    return "\n".join(done).rstrip() + "\n"
+    return "\n".join(done)

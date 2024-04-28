@@ -51,12 +51,13 @@ Top level keys
     The directory storing your news fragments.
 
     For Python projects that provide a ``package`` key, the default is a ``newsfragments`` directory within the package.
-    Otherwise the default is a ``newsfragments`` directory relative to the configuration file.
+    Otherwise the default is a ``newsfragments`` directory relative to either the directory passed as ``--dir`` or (by default) the configuration file.
 
 ``filename``
     The filename of your news file.
 
     ``"NEWS.rst"`` by default.
+    Its location is determined the same way as the location of the directory storing the news fragments.
 
 ``template``
     Path to the template for generating the news file.
@@ -116,6 +117,16 @@ Top level keys
     The prefix used for orphaned news fragments.
 
     ``"+"`` by default.
+
+``create_eof_newline``
+    Ensure the content of a news fragment file created with ``towncrier create`` ends with an empty line.
+
+    ``true`` by default.
+
+``create_add_extension``
+    Add the ``filename`` option extension to news fragment files created with ``towncrier create`` if an extension is not explicitly provided.
+
+    ``true`` by default.
 
 Extra top level keys for Python projects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

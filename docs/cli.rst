@@ -12,7 +12,8 @@ The following options can be passed to all of the commands that explained below:
 
 .. option:: --dir PATH
 
-   Build fragment in ``PATH``.
+   The command is executed relative to ``PATH``.
+   For instance with the default config news fragments are checked and added in ``PATH/newsfragments`` and the news file is built in ``PATH/NEWS.rst``.
 
    Default: current directory.
 
@@ -22,6 +23,13 @@ The following options can be passed to all of the commands that explained below:
 
 Build the combined news file from news fragments.
 ``build`` is also assumed if no command is passed.
+
+If there are no news fragments (including an empty fragments directory or a
+non-existent directory), a notice of "no significant changes" will be added to
+the news file.
+
+By default, the processed news fragments are removed using ``git``, which will
+also remove the fragments directory if now empty.
 
 .. option:: --draft
 
@@ -64,19 +72,31 @@ Create a news fragment in the directory that ``towncrier`` is configured to look
 
    $ towncrier create 123.bugfix.rst
 
+If you don't provide a file name, ``towncrier`` will prompt you for one.
+
 ``towncrier create`` will enforce that the passed type (e.g. ``bugfix``) is valid.
+
+If the fragments directory does not exist, it will be created.
 
 If the filename exists already, ``towncrier create`` will add (and then increment) a number after the fragment type until it finds a filename that does not exist yet.
 In the above example, it will generate ``123.bugfix.1.rst`` if ``123.bugfix.rst`` already exists.
+
+To create a news fragment not tied to a specific issue (which towncrier calls an "orphan fragment"), start the fragment name with a ``+``.
+If that is the entire fragment name, a random hash will be added for you::
+
+   $ towncrier create +.feature.rst
+   $ ls newsfragments/
+   +fcc4dc7b.feature.rst
 
 .. option:: --content, -c CONTENT
 
    A string to use for content.
    Default: an instructive placeholder.
 
-.. option:: --edit
+.. option:: --edit / --no-edit
 
-   Create file and start `$EDITOR` to edit it right away.`
+   Whether to start ``$EDITOR`` to edit the news fragment right away.
+   Default: ``$EDITOR`` will be started unless you also provided content.
 
 
 ``towncrier check``

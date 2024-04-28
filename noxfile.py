@@ -17,8 +17,10 @@ def pre_commit(session: nox.Session) -> None:
     session.run("pre-commit", "run", "--all-files", "--show-diff-on-failure")
 
 
-@nox.session(python=["pypy3.8", "3.8", "3.9", "3.10", "3.11"])
+# Keep list in-sync with ci.yml/test-linux & pyproject.toml
+@nox.session(python=["pypy3.8", "3.8", "3.9", "3.10", "3.11", "3.12"])
 def tests(session: nox.Session) -> None:
+    session.env["PYTHONWARNDEFAULTENCODING"] = "1"
     session.install("Twisted", "coverage[toml]")
     posargs = list(session.posargs)
 
@@ -51,6 +53,12 @@ def coverage_report(session: nox.Session) -> None:
 def check_newsfragment(session: nox.Session) -> None:
     session.install(".")
     session.run("python", "-m", "towncrier.check", "--compare-with", "origin/trunk")
+
+
+@nox.session
+def draft_newsfragment(session: nox.Session) -> None:
+    session.install(".")
+    session.run("python", "-m", "towncrier.build", "--draft")
 
 
 @nox.session
