@@ -79,6 +79,13 @@ If the fragments directory does not exist, it will be created.
 If the filename exists already, ``towncrier create`` will add (and then increment) a number after the fragment type until it finds a filename that does not exist yet.
 In the above example, it will generate ``123.bugfix.1.rst`` if ``123.bugfix.rst`` already exists.
 
+To create a news fragment not tied to a specific issue (which towncrier calls an "orphan fragment"), start the fragment name with a ``+``.
+If that is the entire fragment name, a random hash will be added for you::
+
+   $ towncrier create +.feature.rst
+   $ ls newsfragments/
+   +fcc4dc7b.feature.rst
+
 .. option:: --content, -c CONTENT
 
    A string to use for content.
