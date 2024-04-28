@@ -14,6 +14,9 @@ import click
 from ._settings import config_option_help, load_config_from_options
 
 
+DEFAULT_CONTENT = "Add your info here"
+
+
 @click.command(name="create")
 @click.pass_context
 @click.option(
@@ -32,30 +35,32 @@ from ._settings import config_option_help, load_config_from_options
 )
 @click.option(
     "--edit/--no-edit",
-    default=False,
+    default=None,
     help="Open an editor for writing the newsfragment content.",
-)  # TODO: default should be true
+)
 @click.option(
     "-c",
     "--content",
     type=str,
-    default="Add your info here",
+    default=DEFAULT_CONTENT,
     help="Sets the content of the new fragment.",
 )
-@click.argument("filename")
+@click.argument("filename", default="")
 def _main(
     ctx: click.Context,
     directory: str | None,
     config: str | None,
     filename: str,
-    edit: bool,
+    edit: bool | None,
     content: str,
 ) -> None:
     """
     Create a new news fragment.
 
-    Create a new news fragment called FILENAME or pass the full path for a file.
-    Towncrier has a few standard types of news fragments, signified by the file extension.
+    If FILENAME is not provided, you'll be prompted to create it.
+
+    Towncrier has a few standard types of news fragments, signified by the file
+    extension.
 
     \b
     These are:
@@ -76,13 +81,33 @@ def __main(
     directory: str | None,
     config_path: str | None,
     filename: str,
-    edit: bool,
+    edit: bool | None,
     content: str,
 ) -> None:
     """
     The main entry point.
     """
     base_directory, config = load_config_from_options(directory, config_path)
+
+    filename_ext = ""
+    if config.create_add_extension:
+        ext = os.path.splitext(config.filename)[1]
+        if ext.lower() in (".rst", ".md"):
+            filename_ext = ext
+
+    if not filename:
+        prompt = "Issue number"
+        # Add info about adding orphan if config is set.
+        if config.orphan_prefix:
+            prompt += f" (`{config.orphan_prefix}` if none)"
+        issue = click.prompt(prompt)
+        fragment_type = click.prompt(
+            "Fragment type",
+            type=click.Choice(list(config.types)),
+        )
+        filename = f"{issue}.{fragment_type}"
+        if edit is None and content == DEFAULT_CONTENT:
+            edit = True
 
     file_dir, file_basename = os.path.split(filename)
     if config.orphan_prefix and file_basename.startswith(f"{config.orphan_prefix}."):
@@ -94,15 +119,18 @@ def __main(
                 f"{file_basename[len(config.orphan_prefix):]}"
             ),
         )
-    if len(filename.split(".")) < 2 or (
-        filename.split(".")[-1] not in config.types
-        and filename.split(".")[-2] not in config.types
+    filename_parts = filename.split(".")
+    if len(filename_parts) < 2 or (
+        filename_parts[-1] not in config.types
+        and filename_parts[-2] not in config.types
     ):
         raise click.BadParameter(
             "Expected filename '{}' to be of format '{{name}}.{{type}}', "
             "where '{{name}}' is an arbitrary slug and '{{type}}' is "
             "one of: {}".format(filename, ", ".join(config.types))
         )
+    if filename_parts[-1] in config.types and filename_ext:
+        filename += filename_ext
 
     if config.directory:
         fragments_directory = os.path.abspath(
@@ -135,31 +163,34 @@ def __main(
         )
 
     if edit:
-        edited_content = _get_news_content_from_user(content)
-        if edited_content is None:
-            click.echo("Abort creating news fragment.")
+        if content == DEFAULT_CONTENT:
+            content = ""
+        content = _get_news_content_from_user(content)
+        if not content:
+            click.echo("Aborted creating news fragment due to empty message.")
             ctx.exit(1)
-        content = edited_content
 
     with open(segment_file, "w", encoding="utf-8") as f:
         f.write(content)
+        if config.create_eof_newline and content and not content.endswith("\n"):
+            f.write("\n")
 
     click.echo(f"Created news fragment at {segment_file}")
 
 
-def _get_news_content_from_user(message: str) -> str | None:
-    initial_content = (
-        "# Please write your news content. When finished, save the file.\n"
-        "# In order to abort, exit without saving.\n"
-        '# Lines starting with "#" are ignored.\n'
-    )
-    initial_content += f"\n{message}\n"
+def _get_news_content_from_user(message: str) -> str:
+    initial_content = """
+# Please write your news content. Lines starting with '#' will be ignored, and
+# an empty message aborts.
+"""
+    if message:
+        initial_content = f"{message}\n{initial_content}"
     content = click.edit(initial_content)
     if content is None:
-        return None
+        return message
     all_lines = content.split("\n")
     lines = [line.rstrip() for line in all_lines if not line.lstrip().startswith("#")]
-    return "\n".join(lines)
+    return "\n".join(lines).strip()
 
 
 if __name__ == "__main__":  # pragma: no cover
