@@ -65,8 +65,6 @@ def _figure_out_existing_content(
         # Non-existent files have no existing content.
         return "", ""
 
-    # If we didn't use universal newlines here, we wouldn't find *start_string*
-    # which usually contains a `\n`.
     content = Path(news_file).read_text(encoding="utf-8")
 
     t = content.split(start_string, 1)
