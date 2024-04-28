@@ -112,7 +112,7 @@ def find_fragments(
             full_filename = os.path.join(section_dir, basename)
             fragment_filenames.append(full_filename)
             with open(full_filename, "rb") as f:
-                data = f.read().decode("utf8", "replace")
+                data = f.read().decode("utf-8", "replace")
 
             if (ticket, category, counter) in file_content:
                 raise ValueError(

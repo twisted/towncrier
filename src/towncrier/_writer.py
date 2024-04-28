@@ -40,7 +40,7 @@ def append_to_newsfile(
     # Leave newlines alone. This probably leads to inconsistent newlines,
     # because we've loaded existing content with universal newlines, but that's
     # the original behavior.
-    with news_file.open("w", encoding="utf8", newline="") as f:
+    with news_file.open("w", encoding="utf-8", newline="") as f:
         if header:
             f.write(header)
         # If there is no previous body that means we're writing a brand new news file.
@@ -66,7 +66,7 @@ def _figure_out_existing_content(
 
     # If we didn't use universal newlines here, we wouldn't find *start_string*
     # which usually contains a `\n`.
-    with news_file.open(encoding="utf8") as f:
+    with news_file.open(encoding="utf-8") as f:
         content = f.read()
 
     t = content.split(start_string, 1)
