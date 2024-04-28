@@ -37,15 +37,16 @@ def append_to_newsfile(
     if top_line and top_line in prev_body:
         raise ValueError("It seems you've already produced newsfiles for this version?")
 
-    # Leave newlines alone. This probably leads to inconsistent newlines,
-    # because we've loaded existing content with universal newlines, but that's
-    # the original behavior.
-    with news_file.open("w", encoding="utf-8", newline="") as f:
-        if header:
-            f.write(header)
+    news_file.write_text(
         # If there is no previous body that means we're writing a brand new news file.
         # We don't want extra whitespace at the end of this new file.
-        f.write(content + prev_body if prev_body else content.rstrip() + "\n")
+        header + (content + prev_body if prev_body else content.rstrip() + "\n"),
+        encoding="utf-8",
+        # Leave newlines alone. This probably leads to inconsistent newlines,
+        # because we've loaded existing content with universal newlines, but that's
+        # the original behavior.
+        newline="",
+    )
 
 
 def _figure_out_existing_content(
@@ -66,8 +67,7 @@ def _figure_out_existing_content(
 
     # If we didn't use universal newlines here, we wouldn't find *start_string*
     # which usually contains a `\n`.
-    with news_file.open(encoding="utf-8") as f:
-        content = f.read()
+    content = Path(news_file).read_text(encoding="utf-8")
 
     t = content.split(start_string, 1)
     if len(t) == 2:

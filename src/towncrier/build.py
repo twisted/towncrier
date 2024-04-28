@@ -5,13 +5,13 @@
 Build a combined news file from news fragments.
 """
 
-
 from __future__ import annotations
 
 import os
 import sys
 
 from datetime import date
+from pathlib import Path
 
 import click
 
@@ -171,8 +171,7 @@ def __main(
             .read_text(encoding="utf-8")
         )
     else:
-        with open(config.template, encoding="utf-8") as tmpl:
-            template = tmpl.read()
+        template = Path(config.template).read_text(encoding="utf-8")
 
     click.echo("Finding news fragments...", err=to_err)
 
