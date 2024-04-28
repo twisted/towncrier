@@ -118,6 +118,16 @@ Top level keys
 
     ``"+"`` by default.
 
+``create_eof_newline``
+    Ensure the content of a news fragment file created with ``towncrier create`` ends with an empty line.
+
+    ``true`` by default.
+
+``create_add_extension``
+    Add the ``filename`` option extension to news fragment files created with ``towncrier create`` if an extension is not explicitly provided.
+
+    ``true`` by default.
+
 Extra top level keys for Python projects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -72,6 +72,8 @@ Create a news fragment in the directory that ``towncrier`` is configured to look
 
    $ towncrier create 123.bugfix.rst
 
+If you don't provide a file name, ``towncrier`` will prompt you for one.
+
 ``towncrier create`` will enforce that the passed type (e.g. ``bugfix``) is valid.
 
 If the fragments directory does not exist, it will be created.
@@ -91,9 +93,10 @@ If that is the entire fragment name, a random hash will be added for you::
    A string to use for content.
    Default: an instructive placeholder.
 
-.. option:: --edit
+.. option:: --edit / --no-edit
 
-   Create file and start `$EDITOR` to edit it right away.
+   Whether to start ``$EDITOR`` to edit the news fragment right away.
+   Default: ``$EDITOR`` will be started unless you also provided content.
 
 
 ``towncrier check``
