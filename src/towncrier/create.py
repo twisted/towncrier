@@ -170,7 +170,7 @@ def __main(
             click.echo("Aborted creating news fragment due to empty message.")
             ctx.exit(1)
 
-    with open(segment_file, "w") as f:
+    with open(segment_file, "w", encoding="utf-8") as f:
         f.write(content)
         if config.create_eof_newline and content and not content.endswith("\n"):
             f.write("\n")
