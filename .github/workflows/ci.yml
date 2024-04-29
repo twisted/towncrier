@@ -214,7 +214,7 @@ jobs:
 
     - name: Install pre-commit
       run: |
-        pre-commit
+        pre-commit install
 
     - name: Update pre-commit
       run: |
