@@ -63,7 +63,8 @@ class TestCli(TestCase):
             self._test_success(content=content, additional_args=["--edit"])
             mock_edit.assert_called_once_with(
                 "\n# Please write your news content. Lines starting "
-                "with '#' will be ignored, and\n# an empty message aborts.\n"
+                "with '#' will be ignored, and\n# an empty message aborts.\n",
+                extension=".rst",
             )
 
     def test_edit_with_comment(self):
@@ -86,6 +87,56 @@ class TestCli(TestCase):
                 result = runner.invoke(_main, ["123.feature.rst", "--edit"])
                 self.assertEqual([], os.listdir("foo/newsfragments"))
                 self.assertEqual(1, result.exit_code)
+
+    def test_edit_markdown_extension(self):
+        """
+        The temporary file extension used when editing is ``.md`` if the main filename
+        also uses that extension.
+        """
+
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = "This is line 1"
+            self._test_success(
+                content=["This is line 1"],
+                config=dedent(
+                    """\
+                    [tool.towncrier]
+                    package = "foo"
+                    filename = "README.md"
+                    """
+                ),
+                additional_args=["--edit"],
+            )
+            mock_edit.assert_called_once_with(
+                "\n# Please write your news content. Lines starting "
+                "with '#' will be ignored, and\n# an empty message aborts.\n",
+                extension=".md",
+            )
+
+    def test_edit_unknown_extension(self):
+        """
+        The temporary file extension used when editing is ``.txt`` if it the main
+        filename isn't ``.rst`` or ``.md``.
+        """
+
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = "This is line 1"
+            self._test_success(
+                content=["This is line 1"],
+                config=dedent(
+                    """\
+                    [tool.towncrier]
+                    package = "foo"
+                    filename = "README.FIRST"
+                    """
+                ),
+                additional_args=["--edit"],
+            )
+            mock_edit.assert_called_once_with(
+                "\n# Please write your news content. Lines starting "
+                "with '#' will be ignored, and\n# an empty message aborts.\n",
+                extension=".txt",
+            )
 
     def test_content(self):
         """
@@ -132,7 +183,8 @@ class TestCli(TestCase):
             )
             mock_edit.assert_called_once_with(
                 f"{content_line}\n\n# Please write your news content. Lines starting "
-                "with '#' will be ignored, and\n# an empty message aborts.\n"
+                "with '#' will be ignored, and\n# an empty message aborts.\n",
+                extension=".rst",
             )
 
     def test_different_directory(self):

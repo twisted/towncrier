@@ -167,7 +167,7 @@ def __main(
     if edit:
         if content == DEFAULT_CONTENT:
             content = ""
-        content = _get_news_content_from_user(content)
+        content = _get_news_content_from_user(content, extension=filename_ext)
         if not content:
             click.echo("Aborted creating news fragment due to empty message.")
             ctx.exit(1)
@@ -180,14 +180,14 @@ def __main(
     click.echo(f"Created news fragment at {segment_file}")
 
 
-def _get_news_content_from_user(message: str) -> str:
+def _get_news_content_from_user(message: str, extension: str = "") -> str:
     initial_content = """
 # Please write your news content. Lines starting with '#' will be ignored, and
 # an empty message aborts.
 """
     if message:
         initial_content = f"{message}\n{initial_content}"
-    content = click.edit(initial_content)
+    content = click.edit(initial_content, extension=extension or ".txt")
     if content is None:
         return message
     all_lines = content.split("\n")
