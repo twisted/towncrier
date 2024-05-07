@@ -1,0 +1,2 @@
+Issues are now correctly sorted by issue number even if they have non-digit characters.
+For example, "- some issue (gh-2, gh-10)".

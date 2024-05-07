@@ -1,9 +1,11 @@
 # Copyright (c) Povilas Kanapickas, 2019
 # See LICENSE for details.
 
+from textwrap import dedent
+
 from twisted.trial.unittest import TestCase
 
-from .._builder import parse_newfragment_basename
+from .._builder import parse_newfragment_basename, render_fragments
 
 
 class TestParseNewsfragmentBasename(TestCase):
@@ -132,3 +134,55 @@ class TestParseNewsfragmentBasename(TestCase):
             parse_newfragment_basename("+123.feature", ["feature"]),
             ("+123", "feature", 0),
         )
+
+
+class TestIssueOrdering(TestCase):
+    template = dedent("""
+    {% for section_name, category in sections.items() %}
+    {% if section_name %}# {{ section_name }}{% endif %}
+    {%- for category_name, issues in category.items() %}
+    ## {{ category_name }}
+    {% for issue, numbers in issues.items() %}
+    - {{ issue }}{% if numbers %} ({{ numbers|join(', ') }}){% endif %}
+
+    {% endfor %}
+    {% endfor -%}
+    {% endfor -%}
+    """)
+
+    def render(self, fragments):
+        return render_fragments(
+            template=self.template,
+            issue_format=None,
+            fragments=fragments,
+            definitions={},
+            underlines=[],
+            wrap=False,
+            versiondata={},
+        )
+
+    def test_ordering(self):
+        """
+        Issues are ordered by their number, not lexicographically.
+        """
+        output = self.render(
+            {
+                "": {
+                    "feature": {
+                        "Added Cheese": ["10", "gh-3", "4"],
+                        "Added Fish": [],
+                        "Added Bread": [],
+                        "Added Milk": ["gh-1"],
+                        "Added Eggs": ["gh-2", "random"],
+                    }
+                }
+            },
+        )
+        assert output == dedent("""
+            ## feature
+            - Added Eggs (random, gh-2)
+            - Added Milk (gh-1)
+            - Added Cheese (gh-3, #4, #10)
+            - Added Bread
+            - Added Fish
+""")

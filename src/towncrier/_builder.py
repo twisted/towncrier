@@ -5,11 +5,12 @@
 from __future__ import annotations
 
 import os
+import re
 import textwrap
 
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, DefaultDict, Iterable, Iterator, Mapping, Sequence
+from typing import Any, DefaultDict, Iterable, Iterator, Mapping, NamedTuple, Sequence
 
 from jinja2 import Template
 
@@ -180,18 +181,45 @@ def split_fragments(
     return output
 
 
-def issue_key(issue: str) -> tuple[int, str]:
-    # We want integer issues to sort as integers, and we also want string
-    # issues to sort as strings. We arbitrarily put string issues before
-    # integer issues (hopefully no-one uses both at once).
-    try:
-        return (int(issue), "")
-    except Exception:
-        # Maybe we should sniff strings like "gh-10" -> (10, "gh-10")?
-        return (-1, issue)
+class IssueParts(NamedTuple):
+    is_digit: bool
+    has_digit: bool
+    non_digit_part: str
+    number: int
 
 
-def entry_key(entry: tuple[str, Sequence[str]]) -> tuple[str, list[tuple[int, str]]]:
+def issue_key(issue: str) -> IssueParts:
+    """
+    Used to sort issues in a human-friendly way.
+
+    Issues are grouped their non-integer part, then sorted by their integer part.
+
+    For backwards compatible consistency, issues without no number are sorted first and
+    digit only issues are sorted last.
+
+    For example::
+
+    >>> sorted(["2", "#11", "#3", "gh-10", "gh-4", "omega", "alpha"], key=issue_key)
+    ['alpha', 'omega', '#3', '#11', 'gh-4', 'gh-10', '2']
+    """
+    if issue.isdigit():
+        return IssueParts(
+            is_digit=True, has_digit=True, non_digit_part="", number=int(issue)
+        )
+    match = re.search(r"\d+", issue)
+    if not match:
+        return IssueParts(
+            is_digit=False, has_digit=False, non_digit_part=issue, number=-1
+        )
+    return IssueParts(
+        is_digit=False,
+        has_digit=True,
+        non_digit_part=issue[: match.start()] + issue[match.end() :],
+        number=int(match.group()),
+    )
+
+
+def entry_key(entry: tuple[str, Sequence[str]]) -> tuple[str, list[IssueParts]]:
     content, issues = entry
     # Orphan news fragments (those without any issues) should sort last by content.
     return "" if issues else content, [issue_key(issue) for issue in issues]
