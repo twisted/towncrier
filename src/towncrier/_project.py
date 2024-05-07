@@ -5,7 +5,6 @@
 Responsible for getting the version and name from a project.
 """
 
-
 from __future__ import annotations
 
 import sys
@@ -16,6 +15,12 @@ from importlib.metadata import version as metadata_version
 from types import ModuleType
 
 from incremental import Version as IncrementalVersion
+
+
+try:
+    from importlib.metadata import packages_distributions
+except ImportError:
+    from importlib_metadata import packages_distributions
 
 
 def _get_package(package_dir: str, package: str) -> ModuleType:
@@ -39,15 +44,31 @@ def _get_package(package_dir: str, package: str) -> ModuleType:
     return module
 
 
-def get_version(package_dir: str, package: str) -> str:
-    module = _get_package(package_dir, package)
+def _get_metadata_version(package: str) -> str | None:
+    distributions = packages_distributions()
+    distribution_names = distributions.get(package)
+    if not len(distribution_names) == 1:
+        # We can't determine the version if there are multiple distributions.
+        return None
     try:
-        version = metadata_version(f"{module}")
+        return metadata_version(distribution_names[0])
     except PackageNotFoundError:
-        version = getattr(module, "__version__", None)
+        return None
+
+
+def get_version(package_dir: str, package: str) -> str:
+    # First try to get the version from the package metadata.
+    if version := _get_metadata_version(package):
+        return version
+
+    module = _get_package(package_dir, package)
+
+    version = getattr(module, "__version__", None)
 
     if not version:
-        raise Exception("No __version__, I don't know how else to look")
+        raise Exception(
+            f"No __version__ or metadata version info for the {package} package."
+        )
 
     if isinstance(version, str):
         return version.strip()
