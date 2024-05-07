@@ -92,7 +92,7 @@ html_theme = "furo"
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-if os.environ.get("READTHEDOCS_VERSION_NAME", "trunk") != "trunk":
+if os.environ.get("READTHEDOCS_VERSION_NAME", "trunk") not in ("trunk", "latest"):
     # Remove the "Edit on GitHub" link for non-trunk versions of the docs
     html_theme_options = {"top_of_page_buttons": []}
 
