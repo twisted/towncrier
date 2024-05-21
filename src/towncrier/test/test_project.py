@@ -94,7 +94,8 @@ class VersionFetchingTests(TestCase):
             get_version(tmp_dir, "missing")
 
         self.assertEqual(
-            ("No __version__, I don't know how else to look",), e.exception.args
+            ("No __version__ or metadata version info for the missing package.",),
+            e.exception.args,
         )
 
     def test_missing_version_project_name(self):
