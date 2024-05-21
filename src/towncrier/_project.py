@@ -13,6 +13,7 @@ from importlib import import_module
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as metadata_version
 from types import ModuleType
+from typing import Any
 
 from incremental import Version as IncrementalVersion
 
@@ -20,7 +21,7 @@ from incremental import Version as IncrementalVersion
 try:
     from importlib.metadata import packages_distributions
 except ImportError:
-    from importlib_metadata import packages_distributions
+    from importlib_metadata import packages_distributions  # type: ignore
 
 
 def _get_package(package_dir: str, package: str) -> ModuleType:
@@ -57,6 +58,8 @@ def _get_metadata_version(package: str) -> str | None:
 
 
 def get_version(package_dir: str, package: str) -> str:
+    version: Any
+
     # First try to get the version from the package metadata.
     if version := _get_metadata_version(package):
         return version
