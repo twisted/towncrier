@@ -29,6 +29,8 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+import os
+
 from datetime import date
 
 from towncrier import __version__ as towncrier_version
@@ -90,7 +92,9 @@ html_theme = "furo"
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+if os.environ.get("READTHEDOCS_VERSION_NAME", "trunk") not in ("trunk", "latest"):
+    # Remove the "Edit on GitHub" link for non-trunk versions of the docs
+    html_theme_options = {"top_of_page_buttons": []}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

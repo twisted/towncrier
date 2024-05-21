@@ -8,6 +8,7 @@ import os
 import textwrap
 
 from collections import defaultdict
+from pathlib import Path
 from typing import Any, DefaultDict, Iterable, Iterator, Mapping, Sequence
 
 from jinja2 import Template
@@ -111,8 +112,7 @@ def find_fragments(
 
             full_filename = os.path.join(section_dir, basename)
             fragment_filenames.append(full_filename)
-            with open(full_filename, "rb") as f:
-                data = f.read().decode("utf8", "replace")
+            data = Path(full_filename).read_text(encoding="utf-8", errors="replace")
 
             if (ticket, category, counter) in file_content:
                 raise ValueError(

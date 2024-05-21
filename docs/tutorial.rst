@@ -146,6 +146,8 @@ You should get an output similar to this::
 
 Note: if you configure a Markdown file (for example, ``filename = "CHANGES.md"``) in your configuration file, the titles will be output in Markdown format instead.
 
+Note: all files (news fragments, the news file, the configuration file, and templates) are encoded and are expected to be encoded as UTF-8.
+
 
 Producing News Files In Production
 ----------------------------------

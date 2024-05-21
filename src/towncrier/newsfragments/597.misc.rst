@@ -1,0 +1,1 @@
+Fix readthedocs to keep the edit link for ``latest`` in addition to ``trunk``.
