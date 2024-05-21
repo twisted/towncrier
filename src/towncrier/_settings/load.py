@@ -67,7 +67,7 @@ def load_config_from_options(
 ) -> tuple[str, Config]:
     if config_path is None:
         if directory is None:
-            directory = os.getcwd()
+            return traverse_for_config(None)
 
         base_directory = os.path.abspath(directory)
         config = load_config(base_directory)
@@ -83,6 +83,26 @@ def load_config_from_options(
         raise ConfigError(f"No configuration file found.\nLooked in: {base_directory}")
 
     return base_directory, config
+
+
+def traverse_for_config(path: str | None) -> tuple[str, Config]:
+    """
+    Search for a configuration file in the current directory and all parent directories.
+
+    Returns the directory containing the configuration file and the parsed configuration.
+    """
+    start_directory = directory = os.path.abspath(path or os.getcwd())
+    while True:
+        config = load_config(directory)
+        if config is not None:
+            return directory, config
+
+        parent = os.path.dirname(directory)
+        if parent == directory:
+            raise ConfigError(
+                f"No configuration file found.\nLooked back from: {start_directory}"
+            )
+        directory = parent
 
 
 def load_config(directory: str) -> Config | None:
