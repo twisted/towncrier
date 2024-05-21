@@ -4,7 +4,8 @@
 import os
 import sys
 
-from unittest import skipIf
+from importlib.metadata import version as metadata_version
+from unittest import mock
 
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
@@ -12,12 +13,6 @@ from twisted.trial.unittest import TestCase
 from .._project import get_project_name, get_version
 from .._shell import cli as towncrier_cli
 from .helpers import write
-
-
-try:
-    from importlib.metadata import version as metadata_version
-except ImportError:
-    metadata_version = None
 
 
 towncrier_cli.name = "towncrier"
@@ -50,7 +45,6 @@ class VersionFetchingTests(TestCase):
         version = get_version(temp, "mytestproja")
         self.assertEqual(version, "1.3.12")
 
-    @skipIf(metadata_version is None, "Needs importlib.metadata.")
     def test_incremental(self):
         """
         An incremental Version __version__  is picked up.
@@ -60,6 +54,14 @@ class VersionFetchingTests(TestCase):
         with self.assertWarnsRegex(
             DeprecationWarning, "Accessing towncrier.__version__ is deprecated.*"
         ):
+            # Previously this triggered towncrier.__version__ but now the first version
+            # check is from the package metadata. Let's mock out that part to ensure we
+            # can get incremental versions from __version__ still.
+            with mock.patch(
+                "towncrier._project._get_metadata_version", return_value=None
+            ):
+                version = get_version(pkg, "towncrier")
+
             version = get_version(pkg, "towncrier")
 
         with self.assertWarnsRegex(
