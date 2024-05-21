@@ -1,0 +1,1 @@
+Running ``towncrier`` will now traverse back up directories looking for the configuration file.
