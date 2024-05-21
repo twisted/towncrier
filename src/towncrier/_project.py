@@ -47,7 +47,7 @@ def _get_package(package_dir: str, package: str) -> ModuleType:
 def _get_metadata_version(package: str) -> str | None:
     distributions = packages_distributions()
     distribution_names = distributions.get(package)
-    if not distribution_names or not len(distribution_names) == 1:
+    if not distribution_names or len(distribution_names) != 1:
         # We can only determine the version if there is exactly one matching distribution.
         return None
     try:
