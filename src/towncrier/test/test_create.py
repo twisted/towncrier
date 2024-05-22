@@ -416,6 +416,113 @@ Created news fragment at {expected}
             self.assertEqual(f.read(), "Edited content\n")
 
     @with_isolated_runner
+    def test_sections(self, runner: CliRunner):
+        setup_simple_project(
+            extra_config="""
+[[tool.towncrier.section]]
+name = "Backend"
+path = "backend"
+[[tool.towncrier.section]]
+name = "Frontend"
+path = "frontend"
+"""
+        )
+        result = runner.invoke(_main, ["123.feature.rst"])
+        self.assertTrue(result.exception, result.output)
+        self.assertEqual(
+            result.output,
+            """\
+Usage: create [OPTIONS] [FILENAME]
+Try 'create --help' for help.
+
+Error: Multiple sections defined in configuration file, all with paths.\
+ Please define a section with `--section`.
+""",
+        )
+
+        result = runner.invoke(_main, ["123.feature.rst", "--section", "invalid"])
+        self.assertTrue(result.exception, result.output)
+        self.assertIn(
+            "Invalid value for '--section': expected one of 'Backend', 'Frontend'",
+            result.output,
+        )
+
+        result = runner.invoke(_main, ["123.feature.rst", "--section", "Frontend"])
+        self.assertFalse(result.exception, result.output)
+        frag_path = Path("foo", "frontend", "newsfragments")
+
+        fragments = [f.name for f in frag_path.iterdir()]
+        self.assertEqual(fragments, ["123.feature.rst"])
+
+    @with_isolated_runner
+    def test_sections_without_filename(self, runner: CliRunner):
+        setup_simple_project(
+            extra_config="""
+[[tool.towncrier.section]]
+name = "Backend"
+path = ""
+
+[[tool.towncrier.section]]
+name = "Frontend"
+path = "frontend"
+"""
+        )
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = "Edited content"
+            result = runner.invoke(_main, input="2\n123\nfeature\n")
+            self.assertFalse(result.exception, result.output)
+            mock_edit.assert_called_once()
+        expected = os.path.join(
+            os.getcwd(), "foo", "frontend", "newsfragments", "123.feature.rst"
+        )
+
+        self.assertEqual(
+            result.output,
+            f"""\
+Pick a section:
+ 1: Backend
+ 2: Frontend
+Section (1, 2) [1]: 2
+Issue number (`+` if none): 123
+Fragment type (feature, bugfix, doc, removal, misc): feature
+Created news fragment at {expected}
+""",
+        )
+
+    @with_isolated_runner
+    def test_sections_without_filename_with_section_option(self, runner: CliRunner):
+        setup_simple_project(
+            extra_config="""
+[[tool.towncrier.section]]
+name = "Backend"
+path = ""
+
+[[tool.towncrier.section]]
+name = "Frontend"
+path = "frontend"
+"""
+        )
+        with mock.patch("click.edit") as mock_edit:
+            mock_edit.return_value = "Edited content"
+            result = runner.invoke(
+                _main, ["--section", "Frontend"], input="123\nfeature\n"
+            )
+            self.assertFalse(result.exception, result.output)
+            mock_edit.assert_called_once()
+        expected = os.path.join(
+            os.getcwd(), "foo", "frontend", "newsfragments", "123.feature.rst"
+        )
+
+        self.assertEqual(
+            result.output,
+            f"""\
+Issue number (`+` if none): 123
+Fragment type (feature, bugfix, doc, removal, misc): feature
+Created news fragment at {expected}
+""",
+        )
+
+    @with_isolated_runner
     def test_without_filename_with_message(self, runner: CliRunner):
         """
         When no filename is provided, the user is prompted for one. If a message is

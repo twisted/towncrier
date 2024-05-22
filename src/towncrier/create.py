@@ -13,6 +13,7 @@ from pathlib import Path
 
 import click
 
+from ._builder import FragmentsPath
 from ._settings import config_option_help, load_config_from_options
 
 
@@ -47,6 +48,11 @@ DEFAULT_CONTENT = "Add your info here"
     default=DEFAULT_CONTENT,
     help="Sets the content of the new fragment.",
 )
+@click.option(
+    "--section",
+    type=str,
+    help="The section to create the fragment for.",
+)
 @click.argument("filename", default="")
 def _main(
     ctx: click.Context,
@@ -55,6 +61,7 @@ def _main(
     filename: str,
     edit: bool | None,
     content: str,
+    section: str | None,
 ) -> None:
     """
     Create a new news fragment.
@@ -75,7 +82,7 @@ def _main(
     If the FILENAME base is just '+' (to create a fragment not tied to an
     issue), it will be appended with a random hex string.
     """
-    __main(ctx, directory, config, filename, edit, content)
+    __main(ctx, directory, config, filename, edit, content, section)
 
 
 def __main(
@@ -85,6 +92,7 @@ def __main(
     filename: str,
     edit: bool | None,
     content: str,
+    section: str | None,
 ) -> None:
     """
     The main entry point.
@@ -97,7 +105,47 @@ def __main(
         if ext.lower() in (".rst", ".md"):
             filename_ext = ext
 
+    # Get the default section.
+    default_section = None
+    if len(config.sections) == 1:
+        default_section = next(iter(config.sections))
+    else:
+        # If there are mulitple sections then the first without a path is the default
+        # section, otherwise there's no default.
+        for section_name, section_dir in config.sections.items():
+            if not section_dir:
+                default_section = section_name
+                break
+
+    if section is not None:
+        if section not in config.sections:
+            section_param = None
+            for p in ctx.command.params:  # pragma: no branch
+                if p.name == "section":
+                    section_param = p
+                    break
+            expected_sections = ", ".join(f"'{s}'" for s in config.sections)
+            raise click.BadParameter(
+                f"expected one of {expected_sections}",
+                param=section_param,
+            )
+
     if not filename:
+        if section is None:
+            sections = list(config.sections)
+            if len(sections) > 1:
+                click.echo("Pick a section:")
+                default_section_index = None
+                for i, section in enumerate(sections):
+                    click.echo(f" {i+1}: {section or '(primary)'}")
+                    if not default_section_index and section == default_section:
+                        default_section_index = str(i + 1)
+                section_index = click.prompt(
+                    "Section",
+                    type=click.Choice([str(i + 1) for i in range(len(sections))]),
+                    default=default_section_index,
+                )
+                section = sections[int(section_index) - 1]
         prompt = "Issue number"
         # Add info about adding orphan if config is set.
         if config.orphan_prefix:
@@ -133,6 +181,14 @@ def __main(
         )
     if filename_parts[-1] in config.types and filename_ext:
         filename += filename_ext
+
+    if not section:
+        if default_section is None:
+            raise click.UsageError(
+                "Multiple sections defined in configuration file, all with paths."
+                " Please define a section with `--section`."
+            )
+        section = default_section
 
     get_fragments_path = FragmentsPath(base_directory, config)
     fragments_directory = get_fragments_path(section_directory=config.sections[section])
