@@ -17,9 +17,9 @@ from typing import Any
 from incremental import Version as IncrementalVersion
 
 
-try:
+if sys.version_info >= (3, 10):
     from importlib.metadata import packages_distributions
-except ImportError:
+else:
     from importlib_metadata import packages_distributions  # type: ignore
 
 
