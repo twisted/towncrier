@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import os
 
+from pathlib import Path
+
 import click
 
 from ._settings import config_option_help, load_config_from_options
@@ -165,27 +167,27 @@ def __main(
     if edit:
         if content == DEFAULT_CONTENT:
             content = ""
-        content = _get_news_content_from_user(content)
+        content = _get_news_content_from_user(content, extension=filename_ext)
         if not content:
             click.echo("Aborted creating news fragment due to empty message.")
             ctx.exit(1)
 
-    with open(segment_file, "w") as f:
-        f.write(content)
-        if config.create_eof_newline and content and not content.endswith("\n"):
-            f.write("\n")
+    add_newline = bool(
+        config.create_eof_newline and content and not content.endswith("\n")
+    )
+    Path(segment_file).write_text(content + "\n" * add_newline, encoding="utf-8")
 
     click.echo(f"Created news fragment at {segment_file}")
 
 
-def _get_news_content_from_user(message: str) -> str:
+def _get_news_content_from_user(message: str, extension: str = "") -> str:
     initial_content = """
 # Please write your news content. Lines starting with '#' will be ignored, and
 # an empty message aborts.
 """
     if message:
         initial_content = f"{message}\n{initial_content}"
-    content = click.edit(initial_content)
+    content = click.edit(initial_content, extension=extension or ".txt")
     if content is None:
         return message
     all_lines = content.split("\n")

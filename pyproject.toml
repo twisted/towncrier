@@ -41,7 +41,7 @@ dependencies = [
 dev = [
     "packaging",
     "sphinx >= 5",
-    "furo",
+    "furo >= 2024.05.06",
     "twisted",
     "nox",
 ]
