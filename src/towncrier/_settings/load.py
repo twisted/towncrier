@@ -66,34 +66,28 @@ def load_config_from_options(
     directory: str | None, config_path: str | None
 ) -> tuple[str, Config]:
     """
-    Load the configuration from the given directory or specific configuration file.
+    Load the configuration from a given directory or specific configuration file.
+
+    Unless an explicit configuration file is given, traverse back from the given
+    directory looking for a configuration file.
 
     Returns a tuple of the base directory and the parsed Config instance.
     """
     if config_path is None:
-        if directory is None:
-            # Neither a directory or explicit config path was given so traverse for a
-            # config.
-            return traverse_for_config(None)
+        return traverse_for_config(directory)
 
-        # Since no explicit config path was provided, we'll look for a config in the
-        # given directory.
+    config_path = os.path.abspath(config_path)
+
+    # When a directory is provided (in addition to the config file), use it as the base
+    # directory. Otherwise use the directory containing the config file.
+    if directory is not None:
         base_directory = os.path.abspath(directory)
-        config = load_config(base_directory)
     else:
-        # If an explicit config path was provided, we'll use that.
-        config_path = os.path.abspath(config_path)
-        config = load_config_from_file(os.path.dirname(config_path), config_path)
+        base_directory = os.path.dirname(config_path)
 
-        # If a directory was also provided, we'll use that as the base directory
-        # otherwise we'll use the directory containing the config file.
-        if directory is None:
-            base_directory = os.path.dirname(config_path)
-        else:
-            base_directory = os.path.abspath(directory)
-
-    if config is None:
-        raise ConfigError(f"No configuration file found.\nLooked in: {base_directory}")
+    if not os.path.isfile(config_path):
+        raise ConfigError(f"Configuration file '{config_path}' not found.")
+    config = load_config_from_file(base_directory, config_path)
 
     return base_directory, config
 
