@@ -124,8 +124,8 @@ class TestCli(TestCase):
     @with_project()
     def test_traverse_up_to_find_config(self, runner):
         """
-        If the current directory doesn't contain the configuration file, Towncrier
-        should traverse up the directory tree until it finds it.
+        When the current directory doesn't contain the configuration file, Towncrier
+        will traverse up the directory tree until it finds it.
         """
         os.chdir("foo")
         result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
@@ -269,9 +269,7 @@ class TestCli(TestCase):
                         [[tool.towncrier.section]]
                             path = "{section}"
                             name = "{section}"
-                        """.format(
-                                    section=section
-                                )
+                        """.format(section=section)
                             )
                         )
 
@@ -283,9 +281,7 @@ class TestCli(TestCase):
                             directory = "{type_}"
                             name = "{type_}"
                             showcontent = true
-                        """.format(
-                                    type_=type_
-                                )
+                        """.format(type_=type_)
                             )
                         )
 
