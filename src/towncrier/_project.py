@@ -45,6 +45,9 @@ def _get_package(package_dir: str, package: str) -> ModuleType:
 
 
 def _get_metadata_version(package: str) -> str | None:
+    """
+    Try to get the version from the package metadata.
+    """
     distributions = packages_distributions()
     distribution_names = distributions.get(package)
     if not distribution_names or len(distribution_names) != 1:
@@ -54,12 +57,19 @@ def _get_metadata_version(package: str) -> str | None:
 
 
 def get_version(package_dir: str, package: str) -> str:
+    """
+    Get the version of a package.
+
+    Try to extract the version from the distribution version metadata that matches
+    `package`, then fall back to looking for the package in `package_dir`.
+    """
     version: Any
 
     # First try to get the version from the package metadata.
     if version := _get_metadata_version(package):
         return version
 
+    # When no version if found, fall back to looking for the package in `package_dir`.
     module = _get_package(package_dir, package)
 
     version = getattr(module, "__version__", None)
