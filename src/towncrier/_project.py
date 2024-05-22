@@ -10,7 +10,6 @@ from __future__ import annotations
 import sys
 
 from importlib import import_module
-from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as metadata_version
 from types import ModuleType
 from typing import Any
@@ -51,10 +50,7 @@ def _get_metadata_version(package: str) -> str | None:
     if not distribution_names or len(distribution_names) != 1:
         # We can only determine the version if there is exactly one matching distribution.
         return None
-    try:
-        return metadata_version(distribution_names[0])
-    except PackageNotFoundError:
-        return None
+    return metadata_version(distribution_names[0])
 
 
 def get_version(package_dir: str, package: str) -> str:
