@@ -72,6 +72,13 @@ class VersionFetchingTests(TestCase):
         self.assertEqual(metadata_version("towncrier"), version)
         self.assertEqual("towncrier", name)
 
+    def test_version_from_metadata(self):
+        """
+        A version from package metadata is picked up.
+        """
+        version = get_version(".", "towncrier")
+        self.assertEqual(metadata_version("towncrier"), version)
+
     def _setup_missing(self):
         """
         Create a minimalistic project with missing metadata in a temporary
