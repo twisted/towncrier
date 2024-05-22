@@ -134,19 +134,8 @@ def __main(
     if filename_parts[-1] in config.types and filename_ext:
         filename += filename_ext
 
-    if config.directory:
-        fragments_directory = os.path.abspath(
-            os.path.join(base_directory, config.directory)
-        )
-    else:
-        fragments_directory = os.path.abspath(
-            os.path.join(
-                base_directory,
-                config.package_dir,
-                config.package,
-                "newsfragments",
-            )
-        )
+    get_fragments_path = FragmentsPath(base_directory, config)
+    fragments_directory = get_fragments_path(section_directory=config.sections[section])
 
     if not os.path.exists(fragments_directory):
         os.makedirs(fragments_directory)

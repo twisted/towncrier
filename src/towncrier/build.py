@@ -175,24 +175,7 @@ def __main(
 
     click.echo("Finding news fragments...", err=to_err)
 
-    if config.directory is not None:
-        fragment_base_directory = os.path.abspath(
-            os.path.join(base_directory, config.directory)
-        )
-        fragment_directory = None
-    else:
-        fragment_base_directory = os.path.abspath(
-            os.path.join(base_directory, config.package_dir, config.package)
-        )
-        fragment_directory = "newsfragments"
-
-    fragment_contents, fragment_filenames = find_fragments(
-        fragment_base_directory,
-        config.sections,
-        fragment_directory,
-        config.types,
-        config.orphan_prefix,
-    )
+    fragment_contents, fragment_filenames = find_fragments(base_directory, config)
 
     click.echo("Rendering news fragments...", err=to_err)
     fragments = split_fragments(
