@@ -100,10 +100,10 @@ class VersionFetchingTests(TestCase):
         tmp_dir = self._setup_missing()
 
         with self.assertRaises(Exception) as e:
-            get_version(tmp_dir, "missing")
+            get_version(tmp_dir, "not_here")
 
         self.assertEqual(
-            ("No __version__ or metadata version info for the missing package.",),
+            ("No __version__ or metadata version info for the 'not_here' package.",),
             e.exception.args,
         )
 

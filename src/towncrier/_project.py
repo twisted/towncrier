@@ -76,7 +76,7 @@ def get_version(package_dir: str, package: str) -> str:
 
     if not version:
         raise Exception(
-            f"No __version__ or metadata version info for the {package} package."
+            f"No __version__ or metadata version info for the '{package}' package."
         )
 
     if isinstance(version, str):
