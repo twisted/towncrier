@@ -48,13 +48,14 @@ Create this folder::
 The ``.gitignore`` will remain and keep Git from not tracking the directory.
 
 
-Detecting Dates & Versions
---------------------------
+Detecting Version
+-----------------
 
-``towncrier`` needs to know what version your project is. These are the ways you can provide it (and their order of precedence):
+``towncrier`` needs to know what version your project is when generating news files.
+These are the ways you can provide it in order of precedence (with the first taking precedence over the second, and so on):
 
 1. Manually pass ``--version=<myversionhere>`` when interacting with ``towncrier``.
-2. Set a ``version`` key in your configuration file.
+2. Set a value for the ``version`` option in your configuration file.
 3. For Python projects with a ``package`` key in the configuration file:
 
    - install the package to use its metadata version information
@@ -63,6 +64,10 @@ Detecting Dates & Versions
 As an example, you can manually specify the version when calling ``towncrier`` on the command line with the ``--version`` flag::
 
    $ towncrier build --version=1.2.3post4
+
+
+Setting Date
+------------
 
 ``towncrier`` will also include the current date (in ``YYYY-MM-DD`` format) when generating news files.
 You can change this with the ``--date`` flag::
