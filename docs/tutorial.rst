@@ -56,6 +56,7 @@ Detecting Dates & Versions
 1. Manually pass ``--version=<myversionhere>`` when interacting with ``towncrier``.
 2. Set a ``version`` key in your configuration file.
 3. For Python projects with a ``package`` key in the configuration file:
+
    - install the package to use its metadata version information
    - add a ``__version__`` in the top level package that is either a string literal, a tuple, or an `Incremental <https://github.com/twisted/incremental>`_ version
 
