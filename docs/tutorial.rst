@@ -51,13 +51,15 @@ The ``.gitignore`` will remain and keep Git from not tracking the directory.
 Detecting Dates & Versions
 --------------------------
 
-``towncrier`` needs to know what version your project is, and there are two ways you can give it:
+``towncrier`` needs to know what version your project is. These are the ways you can provide it (and their order of precedence):
 
-- For Python 2/3-compatible projects, a ``__version__`` in the top level package.
-  This can be either a string literal, a tuple, or an `Incremental <https://github.com/twisted/incremental>`_ version.
-- Manually passing ``--version=<myversionhere>`` when interacting with ``towncrier``.
+1. Manually pass ``--version=<myversionhere>`` when interacting with ``towncrier``.
+2. Set a ``version`` key in your configuration file.
+3. For Python projects with a ``package`` key in the configuration file:
+   - install the package to use its metadata version information
+   - add a ``__version__`` in the top level package that is either a string literal, a tuple, or an `Incremental <https://github.com/twisted/incremental>`_ version
 
-As an example, if your package doesn't have a ``__version__``, you can manually specify it when calling ``towncrier`` on the command line with the ``--version`` flag::
+As an example, you can manually specify the version when calling ``towncrier`` on the command line with the ``--version`` flag::
 
    $ towncrier build --version=1.2.3post4
 
