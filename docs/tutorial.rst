@@ -52,7 +52,7 @@ Detecting Version
 -----------------
 
 ``towncrier`` needs to know what version your project is when generating news files.
-These are the ways you can provide it in order of precedence (with the first taking precedence over the second, and so on):
+These are the ways you can provide it, in order of precedence (with the first taking precedence over the second, and so on):
 
 1. Manually pass ``--version=<myversionhere>`` when interacting with ``towncrier``.
 2. Set a value for the ``version`` option in your configuration file.
