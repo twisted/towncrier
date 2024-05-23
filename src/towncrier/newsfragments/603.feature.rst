@@ -1,0 +1,4 @@
+The ``towncrier create`` action now uses sections defined in your config (either interactively, or via the new ``--section`` option).
+
+If you use sections and none have an empty path, you must now specify the section when creating a new news fragment.
+If one does have an empty path, that section will be used by default.

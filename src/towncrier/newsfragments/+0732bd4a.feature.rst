@@ -1,1 +1,0 @@
-The `towncrier create` action is now content aware (either interactively, or with a new `--section` option).
