@@ -29,6 +29,15 @@ The ``towncrier-draft`` hook matches the ``towncrier build --draft`` command, us
 
 This hook runs in all stages if any text files were added or modified.
 
+If you want to limit this to only run when files change within your fragments directory, you can add ``files`` to your pre-commit configuration.
+For example, if you use the default ``newsfragments`` directory:
+
+.. code-block:: yaml
+
+    ...
+      - id: towncrier-draft
+        files: newsfragments/
+
 .. note::
 
     The ``draft`` hook was previously (somewhat confusingly) named ``towncrier-check``.
