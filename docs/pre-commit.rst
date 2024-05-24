@@ -60,4 +60,3 @@ You can customize the hook arguments by adding them to the ``args`` key in your 
         args: ['--compare-with', 'trunk']
       - id: towncrier-update
         args: ['--config', 'custom.toml', '--directory', 'src/myapp']
-
