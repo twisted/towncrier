@@ -137,7 +137,8 @@ class TestParseNewsfragmentBasename(TestCase):
 
 
 class TestIssueOrdering(TestCase):
-    template = dedent("""
+    template = dedent(
+        """
     {% for section_name, category in sections.items() %}
     {% if section_name %}# {{ section_name }}{% endif %}
     {%- for category_name, issues in category.items() %}
@@ -148,7 +149,8 @@ class TestIssueOrdering(TestCase):
     {% endfor %}
     {% endfor -%}
     {% endfor -%}
-    """)
+    """
+    )
 
     def render(self, fragments):
         return render_fragments(
@@ -178,11 +180,13 @@ class TestIssueOrdering(TestCase):
                 }
             },
         )
-        assert output == dedent("""
+        assert output == dedent(
+            """
             ## feature
             - Added Eggs (random, gh-2)
             - Added Milk (gh-1)
             - Added Cheese (gh-3, #4, #10)
             - Added Bread
             - Added Fish
-""")
+"""
+        )
