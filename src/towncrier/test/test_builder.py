@@ -171,7 +171,7 @@ class TestIssueOrdering(TestCase):
             {
                 "": {
                     "feature": {
-                        "Added Cheese": ["10", "gh-3", "4"],
+                        "Added Cheese": ["10", "gh-25", "gh-3", "4"],
                         "Added Fish": [],
                         "Added Bread": [],
                         "Added Milk": ["gh-1"],
@@ -185,7 +185,7 @@ class TestIssueOrdering(TestCase):
             ## feature
             - Added Eggs (random, gh-2)
             - Added Milk (gh-1)
-            - Added Cheese (gh-3, #4, #10)
+            - Added Cheese (gh-3, gh-25, #4, #10)
             - Added Bread
             - Added Fish
 """
