@@ -122,10 +122,20 @@ class TestCli(TestCase):
         self.assertTrue((project_dir / "NEWS.rst").exists())
 
     @with_project()
+    def test_traverse_up_to_find_config(self, runner):
+        """
+        When the current directory doesn't contain the configuration file, Towncrier
+        will traverse up the directory tree until it finds it.
+        """
+        os.chdir("foo")
+        result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
+        self.assertEqual(0, result.exit_code, result.output)
+
+    @with_project()
     def test_in_different_dir_config_option(self, runner):
         """
         The current working directory and the location of the configuration
-        don't matter as long as we pass corrct paths to the directory and the
+        don't matter as long as we pass correct paths to the directory and the
         config file.
         """
         project_dir = Path(".").resolve()

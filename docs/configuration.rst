@@ -43,7 +43,7 @@ Top level keys
 ``version``
     The version of your project.
 
-    Python projects that provide the ``package`` key can have the version to be automatically determined from a ``__version__`` variable in the package's module.
+    Python projects that provide the ``package`` key, if left empty then the version will be automatically determined from the installed package's version metadata or a ``__version__`` variable in the package's module.
 
     If not provided or able to be determined, the version must be passed explicitly by the command line argument ``--version``.
 

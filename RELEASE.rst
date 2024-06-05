@@ -102,7 +102,14 @@ In ``src/towncrier/_version.py`` the version is set using ``incremental`` such a
 
 Commit and push the changes.
 
-Merge the commit in the main branch.
+Merge the commit in the main branch, **without using squash**.
+
+We tag the release based on a commit from the release branch.
+If we merge with squash,
+the release tag commit will no longer be found in the main branch history.
+With a squash merge, the whole branch history is lost.
+This causes the `pre-commit autoupdate` to fail.
+See `PR590 <https://github.com/twisted/towncrier/pull/590>`_ for more details.
 
 You can announce the release over IRC or Gitter.
 
