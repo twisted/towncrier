@@ -137,6 +137,13 @@ class TestParseNewsfragmentBasename(TestCase):
 
 
 class TestIssueOrdering(TestCase):
+    """
+    Tests to ensure that issues are ordered correctly in the output.
+
+    This tests both ordering of issues within a fragment and ordering of
+    fragments within a section.
+    """
+
     template = dedent(
         """
     {% for section_name, category in sections.items() %}
@@ -165,7 +172,11 @@ class TestIssueOrdering(TestCase):
 
     def test_ordering(self):
         """
-        Issues are ordered by their number, not lexicographically.
+        Issues are ordered first by the non-text component, then by their number.
+
+        For backwards compatibility, issues with no number are grouped first and issues which are only a number are grouped last.
+
+        Orhpan issues are always last, sorted by their fragment text.
         """
         output = self.render(
             {
@@ -180,6 +191,8 @@ class TestIssueOrdering(TestCase):
                 }
             },
         )
+        # "Eggs" are first because they have an issue with no number, and the first
+        # issue for each fragment is what is used for sorting the overall list.
         assert output == dedent(
             """
             ## feature
