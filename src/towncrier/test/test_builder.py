@@ -174,7 +174,8 @@ class TestIssueOrdering(TestCase):
         """
         Issues are ordered first by the non-text component, then by their number.
 
-        For backwards compatibility, issues with no number are grouped first and issues which are only a number are grouped last.
+        For backwards compatibility, issues with no number are grouped first and issues
+        which are only a number are grouped last.
 
         Orhpan issues are always last, sorted by their fragment text.
         """
