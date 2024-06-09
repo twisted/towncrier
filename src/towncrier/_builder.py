@@ -192,7 +192,7 @@ def issue_key(issue: str) -> IssueParts:
     """
     Used to sort issues in a human-friendly way.
 
-    Issues are grouped their non-integer part, then sorted by their integer part.
+    Issues are grouped by their non-integer part, then sorted by their integer part.
 
     For backwards compatible consistency, issues without no number are sorted first and
     digit only issues are sorted last.
