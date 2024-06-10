@@ -417,6 +417,10 @@ Created news fragment at {expected}
 
     @with_isolated_runner
     def test_sections(self, runner: CliRunner):
+        """
+        When creating a new fragment, the user can specify the section from the command
+        line (and if non is provided, the default section will be used).
+        """
         setup_simple_project(
             extra_config="""
 [[tool.towncrier.section]]
@@ -456,6 +460,10 @@ Error: Multiple sections defined in configuration file, all with paths.\
 
     @with_isolated_runner
     def test_sections_without_filename(self, runner: CliRunner):
+        """
+        When multiple sections exist when the interactive prompt is used, the user is
+        prompted to select a section.
+        """
         setup_simple_project(
             extra_config="""
 [[tool.towncrier.section]]
@@ -617,8 +625,7 @@ Created news fragment at {expected}
         Path("pyproject.toml").write_text(
             # Important to customize `config.directory` because the default
             # already supports this scenario.
-            "[tool.towncrier]\n"
-            + 'directory = "changelog.d"\n'
+            "[tool.towncrier]\n" + 'directory = "changelog.d"\n'
         )
         Path("foo/foo").mkdir(parents=True)
         Path("foo/foo/__init__.py").write_text("")
