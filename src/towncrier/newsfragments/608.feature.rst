@@ -1,4 +1,4 @@
-Issues are now sorted by issue number even if they have non-digit characters.
+News fragments are now sorted by ticket number even if they have non-digit characters.
 For example::
 
     - some issue (gh-3, gh-10)

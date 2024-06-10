@@ -188,13 +188,13 @@ class IssueParts(NamedTuple):
     number: int
 
 
-def issue_key(issue: str) -> IssueParts:
+def ticket_key(issue: str) -> IssueParts:
     """
-    Used to sort issues in a human-friendly way.
+    Used to sort the ticket ID inside a news fragment in a human-friendly way.
 
-    Issues are grouped by their non-integer part, then sorted by their integer part.
+    Ticket IDs are grouped by their non-integer part, then sorted by their integer part.
 
-    For backwards compatible consistency, issues without no number are sorted first and
+    For backwards compatible consistency, tickets without no number are sorted first and
     digit only issues are sorted last.
 
     For example::

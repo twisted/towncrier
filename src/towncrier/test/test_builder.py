@@ -136,7 +136,7 @@ class TestParseNewsfragmentBasename(TestCase):
         )
 
 
-class TestIssueOrdering(TestCase):
+class TestNewsFragmentsOrdering(TestCase):
     """
     Tests to ensure that issues are ordered correctly in the output.
 
@@ -177,7 +177,7 @@ class TestIssueOrdering(TestCase):
         For backwards compatibility, issues with no number are grouped first and issues
         which are only a number are grouped last.
 
-        Orhpan issues are always last, sorted by their fragment text.
+        Orhpan news fragments are always last, sorted by their text.
         """
         output = self.render(
             {
