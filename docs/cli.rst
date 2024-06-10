@@ -101,7 +101,7 @@ If that is the entire fragment name, a random hash will be added for you::
 .. option:: --section SECTION
 
    The section to use for the news fragment.
-   Default: the first section with no path.
+   Default: the section with no path, or if all sections have a path then the first defined section.
 
 
 ``towncrier check``

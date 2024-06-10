@@ -419,7 +419,10 @@ Created news fragment at {expected}
     def test_sections(self, runner: CliRunner):
         """
         When creating a new fragment, the user can specify the section from the command
-        line (and if non is provided, the default section will be used).
+        line (and if none is provided, the default section will be used).
+
+        The default section is either the section with a blank path, or else the first
+        section defined in the configuration file.
         """
         setup_simple_project(
             extra_config="""
@@ -428,21 +431,14 @@ name = "Backend"
 path = "backend"
 [[tool.towncrier.section]]
 name = "Frontend"
-path = "frontend"
+path = ""
 """
         )
         result = runner.invoke(_main, ["123.feature.rst"])
-        self.assertTrue(result.exception, result.output)
-        self.assertEqual(
-            result.output,
-            """\
-Usage: create [OPTIONS] [FILENAME]
-Try 'create --help' for help.
-
-Error: Multiple sections defined in configuration file, all with paths.\
- Please define a section with `--section`.
-""",
-        )
+        self.assertFalse(result.exception, result.output)
+        frag_path = Path("foo", "newsfragments")
+        fragments = [f.name for f in frag_path.iterdir()]
+        self.assertEqual(fragments, ["123.feature.rst"])
 
         result = runner.invoke(_main, ["123.feature.rst", "--section", "invalid"])
         self.assertTrue(result.exception, result.output)
@@ -451,10 +447,9 @@ Error: Multiple sections defined in configuration file, all with paths.\
             result.output,
         )
 
-        result = runner.invoke(_main, ["123.feature.rst", "--section", "Frontend"])
+        result = runner.invoke(_main, ["123.feature.rst", "--section", "Backend"])
         self.assertFalse(result.exception, result.output)
-        frag_path = Path("foo", "frontend", "newsfragments")
-
+        frag_path = Path("foo", "backend", "newsfragments")
         fragments = [f.name for f in frag_path.iterdir()]
         self.assertEqual(fragments, ["123.feature.rst"])
 

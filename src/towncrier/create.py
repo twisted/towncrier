@@ -105,40 +105,43 @@ def __main(
         if ext.lower() in (".rst", ".md"):
             filename_ext = ext
 
-    # Get the default section.
-    default_section = None
-    if len(config.sections) == 1:
-        default_section = next(iter(config.sections))
-    else:
-        # If there are mulitple sections then the first without a path is the default
-        # section, otherwise there's no default.
-        for section_name, section_dir in config.sections.items():
-            if not section_dir:
-                default_section = section_name
-                break
-
-    if section is not None:
-        if section not in config.sections:
-            section_param = None
-            for p in ctx.command.params:  # pragma: no branch
-                if p.name == "section":
-                    section_param = p
+    section_provided = section is not None
+    if not section_provided:
+        # Get the default section.
+        if len(config.sections) == 1:
+            section = next(iter(config.sections))
+        else:
+            # If there are multiple sections then the first without a path is the default
+            # section, otherwise it's the first defined section.
+            for section_name, section_dir in config.sections.items():
+                if not section_dir:
+                    section = section_name
                     break
-            expected_sections = ", ".join(f"'{s}'" for s in config.sections)
-            raise click.BadParameter(
-                f"expected one of {expected_sections}",
-                param=section_param,
-            )
+            if section is None:
+                section = list(config.sections.keys())[0]
+
+    if section not in config.sections:
+        # Raise a click exception with the correct parameter.
+        section_param = None
+        for p in ctx.command.params:  # pragma: no branch
+            if p.name == "section":
+                section_param = p
+                break
+        expected_sections = ", ".join(f"'{s}'" for s in config.sections)
+        raise click.BadParameter(
+            f"expected one of {expected_sections}",
+            param=section_param,
+        )
 
     if not filename:
-        if section is None:
+        if not section_provided:
             sections = list(config.sections)
             if len(sections) > 1:
                 click.echo("Pick a section:")
                 default_section_index = None
-                for i, section in enumerate(sections):
-                    click.echo(f" {i+1}: {section or '(primary)'}")
-                    if not default_section_index and section == default_section:
+                for i, s in enumerate(sections):
+                    click.echo(f" {i+1}: {s or '(primary)'}")
+                    if not default_section_index and s == section:
                         default_section_index = str(i + 1)
                 section_index = click.prompt(
                     "Section",
@@ -181,14 +184,6 @@ def __main(
         )
     if filename_parts[-1] in config.types and filename_ext:
         filename += filename_ext
-
-    if not section:
-        if default_section is None:
-            raise click.UsageError(
-                "Multiple sections defined in configuration file, all with paths."
-                " Please define a section with `--section`."
-            )
-        section = default_section
 
     get_fragments_path = FragmentsPath(base_directory, config)
     fragments_directory = get_fragments_path(section_directory=config.sections[section])
