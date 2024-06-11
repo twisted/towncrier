@@ -177,7 +177,7 @@ class TestNewsFragmentsOrdering(TestCase):
         For backwards compatibility, issues with no number are grouped first and issues
         which are only a number are grouped last.
 
-        Orhpan news fragments are always last, sorted by their text.
+        Orphan news fragments are always last, sorted by their text.
         """
         output = self.render(
             {
