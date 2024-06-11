@@ -70,7 +70,7 @@ def _main(
     * .bugfix - a bug fix
     * .doc - a documentation improvement,
     * .removal - a deprecation or removal of public API,
-    * .misc - a ticket has been closed, but it is not of interest to users.
+    * .misc - an issue has been closed, but it is not of interest to users.
 
     If the FILENAME base is just '+' (to create a fragment not tied to an
     issue), it will be appended with a random hex string.

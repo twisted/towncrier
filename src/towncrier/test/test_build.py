@@ -269,9 +269,7 @@ class TestCli(TestCase):
                         [[tool.towncrier.section]]
                             path = "{section}"
                             name = "{section}"
-                        """.format(
-                                    section=section
-                                )
+                        """.format(section=section)
                             )
                         )
 
@@ -283,9 +281,7 @@ class TestCli(TestCase):
                             directory = "{type_}"
                             name = "{type_}"
                             showcontent = true
-                        """.format(
-                                    type_=type_
-                                )
+                        """.format(type_=type_)
                             )
                         )
 
@@ -914,7 +910,7 @@ class TestCli(TestCase):
         """
         When all_bullets is false, subsequent lines are not indented.
 
-        The automatic ticket number inserted by towncrier will align with the
+        The automatic issue number inserted by towncrier will align with the
         manual bullet.
         """
         os.mkdir("newsfragments")

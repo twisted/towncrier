@@ -15,9 +15,9 @@ Bugfixes
 --------
 
 - ``build`` now treats a missing fragments directory the same as an empty one, consistent with other operations. (`#538 <https://github.com/twisted/towncrier/issues/538>`_)
-- Fragments with filenames like `fix-1.2.3.feature` are now associated with the ticket `fix-1.2.3`.
-  In previous versions they were incorrectly associated to ticket `3`. (`#562 <https://github.com/twisted/towncrier/issues/562>`_)
-- Orphan newsfragments containing numeric values are no longer accidentally associated to tickets. In previous versions the orphan marker was ignored and the newsfragment was associated to a ticket having the last numerical value from the filename. (`#562 <https://github.com/twisted/towncrier/issues/562>`_)
+- Fragments with filenames like `fix-1.2.3.feature` are now associated with the issue `fix-1.2.3`.
+  In previous versions they were incorrectly associated to issue `3`. (`#562 <https://github.com/twisted/towncrier/issues/562>`_)
+- Orphan newsfragments containing numeric values are no longer accidentally associated to issues. In previous versions the orphan marker was ignored and the newsfragment was associated to an issue having the last numerical value from the filename. (`#562 <https://github.com/twisted/towncrier/issues/562>`_)
 
 
 Misc
@@ -248,7 +248,7 @@ towncrier 21.3.0.rc1 (2021-03-21)
 Features
 --------
 
-- Ticket number from file names will be stripped down to avoid ticket links such as ``#007``. (`#126 <https://github.com/twisted/towncrier/issues/126>`_)
+- Issue number from file names will be stripped down to avoid issue links such as ``#007``. (`#126 <https://github.com/twisted/towncrier/issues/126>`_)
 - Allow definition of the project ``version`` and ``name`` in the configuration file.
   This allows use of towncrier seamlessly with non-Python projects. (`#165 <https://github.com/twisted/towncrier/issues/165>`_)
 - Improve news fragment file name parsing to allow using file names like
