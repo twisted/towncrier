@@ -10,6 +10,7 @@ from __future__ import annotations
 import os
 
 from pathlib import Path
+from typing import cast
 
 import click
 
@@ -132,6 +133,7 @@ def __main(
             f"expected one of {expected_sections}",
             param=section_param,
         )
+    section = cast(str, section)
 
     if not filename:
         if not section_provided:
