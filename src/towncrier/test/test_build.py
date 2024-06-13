@@ -122,10 +122,20 @@ class TestCli(TestCase):
         self.assertTrue((project_dir / "NEWS.rst").exists())
 
     @with_project()
+    def test_traverse_up_to_find_config(self, runner):
+        """
+        When the current directory doesn't contain the configuration file, Towncrier
+        will traverse up the directory tree until it finds it.
+        """
+        os.chdir("foo")
+        result = runner.invoke(_main, ["--draft", "--date", "01-01-2001"])
+        self.assertEqual(0, result.exit_code, result.output)
+
+    @with_project()
     def test_in_different_dir_config_option(self, runner):
         """
         The current working directory and the location of the configuration
-        don't matter as long as we pass corrct paths to the directory and the
+        don't matter as long as we pass correct paths to the directory and the
         config file.
         """
         project_dir = Path(".").resolve()
@@ -904,7 +914,7 @@ class TestCli(TestCase):
         """
         When all_bullets is false, subsequent lines are not indented.
 
-        The automatic ticket number inserted by towncrier will align with the
+        The automatic issue number inserted by towncrier will align with the
         manual bullet.
         """
         os.mkdir("newsfragments")
@@ -1019,6 +1029,56 @@ class TestCli(TestCase):
 
             - Adds levitation (#123)
             - Extends levitation (#124)
+
+
+
+        """
+        )
+
+        self.assertEqual(0, result.exit_code)
+        self.assertEqual(expected_output, result.output)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = "foo"
+        filename = "NEWS.md"
+        title_format = "[{project_date}] CUSTOM RELEASE for {name} version {version}"
+        """
+    )
+    def test_title_format_custom_markdown(self, runner):
+        """
+        A non-empty title format adds the specified title, and if the target filename is
+        markdown then the title is added as a markdown header.
+        """
+        with open("foo/newsfragments/123.feature", "w") as f:
+            f.write("Adds levitation")
+        result = runner.invoke(
+            _main,
+            [
+                "--name",
+                "FooBarBaz",
+                "--version",
+                "7.8.9",
+                "--date",
+                "20-01-2001",
+                "--draft",
+            ],
+        )
+
+        expected_output = dedent(
+            """\
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            # [20-01-2001] CUSTOM RELEASE for FooBarBaz version 7.8.9
+
+            ### Features
+
+            - Adds levitation (#123)
 
 
 

@@ -65,24 +65,51 @@ class ConfigError(ClickException):
 def load_config_from_options(
     directory: str | None, config_path: str | None
 ) -> tuple[str, Config]:
+    """
+    Load the configuration from a given directory or specific configuration file.
+
+    Unless an explicit configuration file is given, traverse back from the given
+    directory looking for a configuration file.
+
+    Returns a tuple of the base directory and the parsed Config instance.
+    """
     if config_path is None:
-        if directory is None:
-            directory = os.getcwd()
+        return traverse_for_config(directory)
 
+    config_path = os.path.abspath(config_path)
+
+    # When a directory is provided (in addition to the config file), use it as the base
+    # directory. Otherwise use the directory containing the config file.
+    if directory is not None:
         base_directory = os.path.abspath(directory)
-        config = load_config(base_directory)
     else:
-        config_path = os.path.abspath(config_path)
-        if directory is None:
-            base_directory = os.path.dirname(config_path)
-        else:
-            base_directory = os.path.abspath(directory)
-        config = load_config_from_file(os.path.dirname(config_path), config_path)
+        base_directory = os.path.dirname(config_path)
 
-    if config is None:
-        raise ConfigError(f"No configuration file found.\nLooked in: {base_directory}")
+    if not os.path.isfile(config_path):
+        raise ConfigError(f"Configuration file '{config_path}' not found.")
+    config = load_config_from_file(base_directory, config_path)
 
     return base_directory, config
+
+
+def traverse_for_config(path: str | None) -> tuple[str, Config]:
+    """
+    Search for a configuration file in the current directory and all parent directories.
+
+    Returns the directory containing the configuration file and the parsed configuration.
+    """
+    start_directory = directory = os.path.abspath(path or os.getcwd())
+    while True:
+        config = load_config(directory)
+        if config is not None:
+            return directory, config
+
+        parent = os.path.dirname(directory)
+        if parent == directory:
+            raise ConfigError(
+                f"No configuration file found.\nLooked back from: {start_directory}"
+            )
+        directory = parent
 
 
 def load_config(directory: str) -> Config | None:

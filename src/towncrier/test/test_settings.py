@@ -207,9 +207,24 @@ class TomlSettingsTests(TestCase):
 
         self.assertEqual(
             result.output,
-            f"No configuration file found.\nLooked in: {os.path.abspath(temp)}\n",
+            f"No configuration file found.\nLooked back from: {os.path.abspath(temp)}\n",
         )
         self.assertEqual(result.exit_code, 1)
+
+    @with_isolated_runner
+    def test_load_explicit_missing_config(self, runner: CliRunner):
+        """
+        Calling the CLI with an incorrect explicit configuration file will exit with
+        code 1 and an informative message is sent to standard output.
+        """
+        config = "not-there.toml"
+        result = runner.invoke(cli, ("--config", config))
+
+        self.assertEqual(result.exit_code, 1)
+        self.assertEqual(
+            result.output,
+            f"Configuration file '{os.path.abspath(config)}' not found.\n",
+        )
 
     def test_missing_template(self):
         """

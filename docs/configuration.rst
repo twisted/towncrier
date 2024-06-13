@@ -43,7 +43,7 @@ Top level keys
 ``version``
     The version of your project.
 
-    Python projects that provide the ``package`` key can have the version to be automatically determined from a ``__version__`` variable in the package's module.
+    Python projects that provide the ``package`` key, if left empty then the version will be automatically determined from the installed package's version metadata or a ``__version__`` variable in the package's module.
 
     If not provided or able to be determined, the version must be passed explicitly by the command line argument ``--version``.
 
@@ -79,6 +79,8 @@ Top level keys
     Strings should use the following keys to render the title dynamically: ``{name}``, ``{version}``, and ``{project_date}``.
 
     ``""`` by default.
+
+    Formatted titles are appended a line of ``=`` on the following line (reStructuredText title format) unless the template has an ``.md`` suffix, in which case the title will instead be prefixed with ``#`` (markdown title format).
 
 ``issue_format``
     A format string for rendering the issue/ticket number in newsfiles.

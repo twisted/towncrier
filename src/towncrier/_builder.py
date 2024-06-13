@@ -5,18 +5,19 @@
 from __future__ import annotations
 
 import os
+import re
 import textwrap
 
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, DefaultDict, Iterable, Iterator, Mapping, Sequence
+from typing import Any, DefaultDict, Iterable, Iterator, Mapping, NamedTuple, Sequence
 
 from jinja2 import Template
 
 from towncrier._settings.load import Config
 
 
-# Returns ticket, category and counter or (None, None, None) if the basename
+# Returns issue, category and counter or (None, None, None) if the basename
 # could not be parsed or doesn't contain a valid category.
 def parse_newfragment_basename(
     basename: str, frag_type_names: Iterable[str]
@@ -35,21 +36,21 @@ def parse_newfragment_basename(
         if parts[i] in frag_type_names:
             # Current part is a valid category according to given definitions.
             category = parts[i]
-            # Use all previous parts as the ticket number.
+            # Use all previous parts as the issue number.
             # NOTE: This allows news fragment names like fix-1.2.3.feature or
-            # something-cool.feature.ext for projects that don't use ticket
+            # something-cool.feature.ext for projects that don't use issue
             # numbers in news fragment names.
-            ticket = ".".join(parts[0:i]).strip()
-            # If the ticket is an integer, remove any leading zeros (to resolve
+            issue = ".".join(parts[0:i]).strip()
+            # If the issue is an integer, remove any leading zeros (to resolve
             # issue #126).
-            if ticket.isdigit():
-                ticket = str(int(ticket))
+            if issue.isdigit():
+                issue = str(int(issue))
             counter = 0
             # Use the following part as the counter if it exists and is a valid
             # digit.
             if len(parts) > (i + 1) and parts[i + 1].isdigit():
                 counter = int(parts[i + 1])
-            return ticket, category, counter
+            return issue, category, counter
     else:
         # No valid category found.
         return invalid
@@ -124,15 +125,15 @@ def find_fragments(
         file_content = {}
 
         for basename in files:
-            ticket, category, counter = parse_newfragment_basename(
-                basename, config.types
+            issue, category, counter = parse_newfragment_basename(
+                basename, frag_type_names
             )
             if category is None:
                 continue
-            assert ticket is not None
+            assert issue is not None
             assert counter is not None
-            if config.orphan_prefix and ticket.startswith(config.orphan_prefix):
-                ticket = ""
+            if config.orphan_prefix and issue.startswith(config.orphan_prefix):
+                issue = ""
                 # Use and increment the orphan news fragment counter.
                 counter = orphan_fragment_counter[category]
                 orphan_fragment_counter[category] += 1
@@ -141,13 +142,13 @@ def find_fragments(
             fragment_filenames.append(full_filename)
             data = Path(full_filename).read_text(encoding="utf-8", errors="replace")
 
-            if (ticket, category, counter) in file_content:
+            if (issue, category, counter) in file_content:
                 raise ValueError(
                     "multiple files for {}.{} in {}".format(
-                        ticket, category, section_dir
+                        issue, category, section_dir
                     )
                 )
-            file_content[ticket, category, counter] = data
+            file_content[issue, category, counter] = data
 
         content[key] = file_content
 
@@ -180,7 +181,7 @@ def split_fragments(
     for section_name, section_fragments in fragments.items():
         section: dict[str, dict[str, list[str]]] = {}
 
-        for (ticket, category, counter), content in section_fragments.items():
+        for (issue, category, counter), content in section_fragments.items():
             if all_bullets:
                 # By default all fragmetns are append by "-" automatically,
                 # and need to be indented because of that.
@@ -195,30 +196,57 @@ def split_fragments(
 
             texts = section.setdefault(category, {})
 
-            tickets = texts.setdefault(content, [])
-            if ticket:
-                # Only add the ticket if we have one (it can be blank for orphan news
+            issues = texts.setdefault(content, [])
+            if issue:
+                # Only add the issue if we have one (it can be blank for orphan news
                 # fragments).
-                tickets.append(ticket)
-                tickets.sort()
+                issues.append(issue)
+                issues.sort()
 
         output[section_name] = section
 
     return output
 
 
-def issue_key(issue: str) -> tuple[int, str]:
-    # We want integer issues to sort as integers, and we also want string
-    # issues to sort as strings. We arbitrarily put string issues before
-    # integer issues (hopefully no-one uses both at once).
-    try:
-        return (int(issue), "")
-    except Exception:
-        # Maybe we should sniff strings like "gh-10" -> (10, "gh-10")?
-        return (-1, issue)
+class IssueParts(NamedTuple):
+    is_digit: bool
+    has_digit: bool
+    non_digit_part: str
+    number: int
 
 
-def entry_key(entry: tuple[str, Sequence[str]]) -> tuple[str, list[tuple[int, str]]]:
+def issue_key(issue: str) -> IssueParts:
+    """
+    Used to sort the issue ID inside a news fragment in a human-friendly way.
+
+    Issue IDs are grouped by their non-integer part, then sorted by their integer part.
+
+    For backwards compatible consistency, issues without no number are sorted first and
+    digit only issues are sorted last.
+
+    For example::
+
+    >>> sorted(["2", "#11", "#3", "gh-10", "gh-4", "omega", "alpha"], key=issue_key)
+    ['alpha', 'omega', '#3', '#11', 'gh-4', 'gh-10', '2']
+    """
+    if issue.isdigit():
+        return IssueParts(
+            is_digit=True, has_digit=True, non_digit_part="", number=int(issue)
+        )
+    match = re.search(r"\d+", issue)
+    if not match:
+        return IssueParts(
+            is_digit=False, has_digit=False, non_digit_part=issue, number=-1
+        )
+    return IssueParts(
+        is_digit=False,
+        has_digit=True,
+        non_digit_part=issue[: match.start()] + issue[match.end() :],
+        number=int(match.group()),
+    )
+
+
+def entry_key(entry: tuple[str, Sequence[str]]) -> tuple[str, list[IssueParts]]:
     content, issues = entry
     # Orphan news fragments (those without any issues) should sort last by content.
     return "" if issues else content, [issue_key(issue) for issue in issues]
