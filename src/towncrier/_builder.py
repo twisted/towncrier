@@ -164,7 +164,7 @@ def split_fragments(
                 # Assume the text is formatted correctly
                 content = content.rstrip()
 
-            if definitions[category]["showcontent"] is False and ticket:
+            if definitions[category]["showcontent"] is False and issue:
                 # If this category is not supposed to show content (and we have an
                 # issue) then we should just add the issue to the section rather than
                 # the content. If there isn't an issue, still add the content so that
