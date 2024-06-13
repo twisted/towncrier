@@ -30,7 +30,7 @@ Philosophy
 That is, by duplicating what has changed from the "developer log" (which may contain complex information about the original issue, how it was fixed, who authored the fix, and who reviewed the fix) into a "news fragment" (a small file containing just enough information to be useful to end users), ``towncrier`` can produce a digest of the changes which is valuable to those who may wish to use the software.
 These fragments are also commonly called "topfiles" or "newsfiles".
 
-``towncrier`` works best in a development system where all merges involve closing a ticket.
+``towncrier`` works best in a development system where all merges involve closing an issue.
 
 To get started, check out our `tutorial <https://towncrier.readthedocs.io/en/latest/tutorial.html>`_!
 

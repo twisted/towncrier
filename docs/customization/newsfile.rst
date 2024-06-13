@@ -4,7 +4,7 @@ Customizing the News File Output
 Adding Content Above ``towncrier``
 ----------------------------------
 
-If you wish to have content at the top of the news file (for example, to say where you can find the tickets), you can use a special rST comment to tell ``towncrier`` to only update after it.
+If you wish to have content at the top of the news file (for example, to say where you can find the issues), you can use a special rST comment to tell ``towncrier`` to only update after it.
 In your existing news file (e.g. ``NEWS.rst``), add the following line above where you want ``towncrier`` to put content:
 
 .. code-block:: restructuredtext
