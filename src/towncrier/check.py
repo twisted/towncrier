@@ -106,25 +106,8 @@ def __main(
         click.echo("Checks SKIPPED: news file changes detected.")
         sys.exit(0)
 
-    if config.directory:
-        fragment_base_directory = os.path.abspath(
-            os.path.join(base_directory, config.directory)
-        )
-        fragment_directory = None
-    else:
-        fragment_base_directory = os.path.abspath(
-            os.path.join(base_directory, config.package_dir, config.package)
-        )
-        fragment_directory = "newsfragments"
-
     fragments = {
-        os.path.abspath(path)
-        for path in find_fragments(
-            fragment_base_directory,
-            config.sections,
-            fragment_directory,
-            config.types.keys(),
-        )[1]
+        os.path.abspath(path) for path in find_fragments(base_directory, config)[1]
     }
     fragments_in_branch = fragments & files
 

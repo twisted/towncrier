@@ -14,6 +14,8 @@ from typing import Any, DefaultDict, Iterable, Iterator, Mapping, NamedTuple, Se
 
 from jinja2 import Template
 
+from towncrier._settings.load import Config
+
 
 # Returns issue, category and counter or (None, None, None) if the basename
 # could not be parsed or doesn't contain a valid category.
@@ -54,6 +56,35 @@ def parse_newfragment_basename(
         return invalid
 
 
+class FragmentsPath:
+    """
+    A helper to get the full path to a fragments directory.
+
+    This is a callable that optionally takes a section directory and returns the full
+    path to the fragments directory for that section (or the default if no section is
+    provided).
+    """
+
+    def __init__(self, base_directory: str, config: Config):
+        self.base_directory = base_directory
+        self.config = config
+        if config.directory is not None:
+            self.base_directory = os.path.abspath(
+                os.path.join(base_directory, config.directory)
+            )
+            self.append_directory = ""
+        else:
+            self.base_directory = os.path.abspath(
+                os.path.join(base_directory, config.package_dir, config.package)
+            )
+            self.append_directory = "newsfragments"
+
+    def __call__(self, section_directory: str = "") -> str:
+        return os.path.join(
+            self.base_directory, section_directory, self.append_directory
+        )
+
+
 # Returns a structure like:
 #
 # {
@@ -70,25 +101,21 @@ def parse_newfragment_basename(
 # Also returns a list of the paths that the fragments were taken from.
 def find_fragments(
     base_directory: str,
-    sections: Mapping[str, str],
-    fragment_directory: str | None,
-    frag_type_names: Iterable[str],
-    orphan_prefix: str | None = None,
+    config: Config,
 ) -> tuple[Mapping[str, Mapping[tuple[str, str, int], str]], list[str]]:
     """
     Sections are a dictonary of section names to paths.
     """
+    get_section_path = FragmentsPath(base_directory, config)
+
     content = {}
     fragment_filenames = []
     # Multiple orphan news fragments are allowed per section, so initialize a counter
     # that can be incremented automatically.
     orphan_fragment_counter: DefaultDict[str | None, int] = defaultdict(int)
 
-    for key, val in sections.items():
-        if fragment_directory is not None:
-            section_dir = os.path.join(base_directory, val, fragment_directory)
-        else:
-            section_dir = os.path.join(base_directory, val)
+    for key, section_dir in config.sections.items():
+        section_dir = get_section_path(section_dir)
 
         try:
             files = os.listdir(section_dir)
@@ -99,13 +126,13 @@ def find_fragments(
 
         for basename in files:
             issue, category, counter = parse_newfragment_basename(
-                basename, frag_type_names
+                basename, config.types
             )
             if category is None:
                 continue
             assert issue is not None
             assert counter is not None
-            if orphan_prefix and issue.startswith(orphan_prefix):
+            if config.orphan_prefix and issue.startswith(config.orphan_prefix):
                 issue = ""
                 # Use and increment the orphan news fragment counter.
                 counter = orphan_fragment_counter[category]

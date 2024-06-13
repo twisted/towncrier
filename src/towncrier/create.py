@@ -10,9 +10,11 @@ from __future__ import annotations
 import os
 
 from pathlib import Path
+from typing import cast
 
 import click
 
+from ._builder import FragmentsPath
 from ._settings import config_option_help, load_config_from_options
 
 
@@ -47,6 +49,11 @@ DEFAULT_CONTENT = "Add your info here"
     default=DEFAULT_CONTENT,
     help="Sets the content of the new fragment.",
 )
+@click.option(
+    "--section",
+    type=str,
+    help="The section to create the fragment for.",
+)
 @click.argument("filename", default="")
 def _main(
     ctx: click.Context,
@@ -55,6 +62,7 @@ def _main(
     filename: str,
     edit: bool | None,
     content: str,
+    section: str | None,
 ) -> None:
     """
     Create a new news fragment.
@@ -75,7 +83,7 @@ def _main(
     If the FILENAME base is just '+' (to create a fragment not tied to an
     issue), it will be appended with a random hex string.
     """
-    __main(ctx, directory, config, filename, edit, content)
+    __main(ctx, directory, config, filename, edit, content, section)
 
 
 def __main(
@@ -85,6 +93,7 @@ def __main(
     filename: str,
     edit: bool | None,
     content: str,
+    section: str | None,
 ) -> None:
     """
     The main entry point.
@@ -97,7 +106,54 @@ def __main(
         if ext.lower() in (".rst", ".md"):
             filename_ext = ext
 
+    section_provided = section is not None
+    if not section_provided:
+        # Get the default section.
+        if len(config.sections) == 1:
+            section = next(iter(config.sections))
+        else:
+            # If there are multiple sections then the first without a path is the default
+            # section, otherwise it's the first defined section.
+            for (
+                section_name,
+                section_dir,
+            ) in config.sections.items():  # pragma: no branch
+                if not section_dir:
+                    section = section_name
+                    break
+            if section is None:
+                section = list(config.sections.keys())[0]
+
+    if section not in config.sections:
+        # Raise a click exception with the correct parameter.
+        section_param = None
+        for p in ctx.command.params:  # pragma: no branch
+            if p.name == "section":
+                section_param = p
+                break
+        expected_sections = ", ".join(f"'{s}'" for s in config.sections)
+        raise click.BadParameter(
+            f"expected one of {expected_sections}",
+            param=section_param,
+        )
+    section = cast(str, section)
+
     if not filename:
+        if not section_provided:
+            sections = list(config.sections)
+            if len(sections) > 1:
+                click.echo("Pick a section:")
+                default_section_index = None
+                for i, s in enumerate(sections):
+                    click.echo(f" {i+1}: {s or '(primary)'}")
+                    if not default_section_index and s == section:
+                        default_section_index = str(i + 1)
+                section_index = click.prompt(
+                    "Section",
+                    type=click.Choice([str(i + 1) for i in range(len(sections))]),
+                    default=default_section_index,
+                )
+                section = sections[int(section_index) - 1]
         prompt = "Issue number"
         # Add info about adding orphan if config is set.
         if config.orphan_prefix:
@@ -134,19 +190,8 @@ def __main(
     if filename_parts[-1] in config.types and filename_ext:
         filename += filename_ext
 
-    if config.directory:
-        fragments_directory = os.path.abspath(
-            os.path.join(base_directory, config.directory)
-        )
-    else:
-        fragments_directory = os.path.abspath(
-            os.path.join(
-                base_directory,
-                config.package_dir,
-                config.package,
-                "newsfragments",
-            )
-        )
+    get_fragments_path = FragmentsPath(base_directory, config)
+    fragments_directory = get_fragments_path(section_directory=config.sections[section])
 
     if not os.path.exists(fragments_directory):
         os.makedirs(fragments_directory)
