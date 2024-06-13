@@ -212,9 +212,12 @@ These may include the following optional keys:
 ``showcontent``
     A boolean value indicating whether the fragment contents should be included in the news file.
 
-    Note that orphan fragments (those without an issue number) will still show their content.
-
     ``true`` by default.
+
+    .. note::
+
+        Orphan fragments (those without an issue number) always have their content included.
+        If a fragment was created, it means that information is important for end users.
 
 For example, if you want your custom fragment types to be ``["feat", "fix", "chore",]`` and you want all of them to use the default configuration except ``"chore"`` you can do it as follows:
 
@@ -255,9 +258,12 @@ Each table within this array has the following mandatory keys:
 ``showcontent``
     A boolean value indicating whether the fragment contents should be included in the news file.
 
-    Note that orphan fragments (those without an issue number) will still show their content.
-
     ``true`` by default.
+
+    .. note::
+
+        Orphan fragments (those without an issue number) always have their content included.
+        If a fragment was created, it means that information is important for end users.
 
 For example:
 
