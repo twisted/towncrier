@@ -98,6 +98,11 @@ If that is the entire fragment name, a random hash will be added for you::
    Whether to start ``$EDITOR`` to edit the news fragment right away.
    Default: ``$EDITOR`` will be started unless you also provided content.
 
+.. option:: --section SECTION
+
+   The section to use for the news fragment.
+   Default: the section with no path, or if all sections have a path then the first defined section.
+
 
 ``towncrier check``
 -------------------
