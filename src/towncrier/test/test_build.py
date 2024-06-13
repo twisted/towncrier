@@ -914,7 +914,7 @@ class TestCli(TestCase):
         """
         When all_bullets is false, subsequent lines are not indented.
 
-        The automatic ticket number inserted by towncrier will align with the
+        The automatic issue number inserted by towncrier will align with the
         manual bullet.
         """
         os.mkdir("newsfragments")
