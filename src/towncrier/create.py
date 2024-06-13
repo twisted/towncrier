@@ -114,7 +114,10 @@ def __main(
         else:
             # If there are multiple sections then the first without a path is the default
             # section, otherwise it's the first defined section.
-            for section_name, section_dir in config.sections.items():
+            for (
+                section_name,
+                section_dir,
+            ) in config.sections.items():  # pragma: no branch
                 if not section_dir:
                     section = section_name
                     break
