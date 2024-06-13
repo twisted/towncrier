@@ -269,9 +269,7 @@ class TestCli(TestCase):
                         [[tool.towncrier.section]]
                             path = "{section}"
                             name = "{section}"
-                        """.format(
-                                    section=section
-                                )
+                        """.format(section=section)
                             )
                         )
 
@@ -283,9 +281,7 @@ class TestCli(TestCase):
                             directory = "{type_}"
                             name = "{type_}"
                             showcontent = true
-                        """.format(
-                                    type_=type_
-                                )
+                        """.format(type_=type_)
                             )
                         )
 
@@ -1364,6 +1360,115 @@ class TestCli(TestCase):
             ==================
 
             - Adds levitation
+
+
+        """
+        )
+
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertEqual(expected_output, result.output)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        """
+    )
+    def test_orphans_in_non_showcontent(self, runner):
+        """
+        When ``showcontent`` is false (like in the ``misc`` category by default),
+        orphans are still rendered because they don't have an issue number to display.
+        """
+        os.mkdir("newsfragments")
+        with open("newsfragments/123.misc", "w") as f:
+            f.write("Misc")
+        with open("newsfragments/345.misc", "w") as f:
+            f.write("Another misc")
+        with open("newsfragments/+.misc", "w") as f:
+            f.write("Orphan misc still displayed!")
+        with open("newsfragments/+2.misc", "w") as f:
+            f.write("Another orphan misc still displayed!")
+
+        result = runner.invoke(
+            _main,
+            [
+                "--version=7.8.9",
+                "--date=20-01-2001",
+                "--draft",
+            ],
+        )
+
+        expected_output = dedent(
+            """\
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            7.8.9 (20-01-2001)
+            ==================
+
+            Misc
+            ----
+
+            - #123, #345
+            - Another orphan misc still displayed!
+            - Orphan misc still displayed!
+
+
+
+        """
+        )
+
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertEqual(expected_output, result.output)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        filename = "CHANGES.md"
+        """
+    )
+    def test_orphans_in_non_showcontent_markdown(self, runner):
+        """
+        When ``showcontent`` is false (like in the ``misc`` category by default),
+        orphans are still rendered because they don't have an issue number to display.
+        """
+        os.mkdir("newsfragments")
+        with open("newsfragments/123.misc", "w") as f:
+            f.write("Misc")
+        with open("newsfragments/345.misc", "w") as f:
+            f.write("Another misc")
+        with open("newsfragments/+.misc", "w") as f:
+            f.write("Orphan misc still displayed!")
+        with open("newsfragments/+2.misc", "w") as f:
+            f.write("Another orphan misc still displayed!")
+
+        result = runner.invoke(
+            _main,
+            [
+                "--version=7.8.9",
+                "--date=20-01-2001",
+                "--draft",
+            ],
+        )
+
+        expected_output = dedent(
+            """\
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            # 7.8.9 (20-01-2001)
+
+            ### Misc
+
+            - #123, #345
+            - Another orphan misc still displayed!
+            - Orphan misc still displayed!
+
 
 
         """
