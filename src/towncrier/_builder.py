@@ -126,7 +126,7 @@ def find_fragments(
 
         for basename in files:
             issue, category, counter = parse_newfragment_basename(
-                basename, frag_type_names
+                basename, config.types
             )
             if category is None:
                 continue
