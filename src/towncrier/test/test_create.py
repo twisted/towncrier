@@ -494,6 +494,10 @@ Created news fragment at {expected}
 
     @with_isolated_runner
     def test_sections_without_filename_with_section_option(self, runner: CliRunner):
+        """
+        When multiple sections exist and the section is provided via the command line,
+        the user isn't prompted to select a section.
+        """
         setup_simple_project(
             extra_config="""
 [[tool.towncrier.section]]
@@ -524,6 +528,28 @@ Fragment type (feature, bugfix, doc, removal, misc): feature
 Created news fragment at {expected}
 """,
         )
+
+    @with_isolated_runner
+    def test_sections_all_with_paths(self, runner: CliRunner):
+        """
+        When all sections have paths, the first is the default.
+        """
+        setup_simple_project(
+            extra_config="""
+[[tool.towncrier.section]]
+name = "Frontend"
+path = "frontend"
+
+[[tool.towncrier.section]]
+name = "Backend"
+path = "backend"
+"""
+        )
+        result = runner.invoke(_main, ["123.feature.rst"])
+        self.assertFalse(result.exception, result.output)
+        frag_path = Path("foo", "frontend", "newsfragments")
+        fragments = [f.name for f in frag_path.iterdir()]
+        self.assertEqual(fragments, ["123.feature.rst"])
 
     @with_isolated_runner
     def test_without_filename_with_message(self, runner: CliRunner):
