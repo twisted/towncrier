@@ -1042,6 +1042,56 @@ class TestCli(TestCase):
         config="""
         [tool.towncrier]
         package = "foo"
+        filename = "NEWS.md"
+        title_format = "[{project_date}] CUSTOM RELEASE for {name} version {version}"
+        """
+    )
+    def test_title_format_custom_markdown(self, runner):
+        """
+        A non-empty title format adds the specified title, and if the target filename is
+        markdown then the title is added as a markdown header.
+        """
+        with open("foo/newsfragments/123.feature", "w") as f:
+            f.write("Adds levitation")
+        result = runner.invoke(
+            _main,
+            [
+                "--name",
+                "FooBarBaz",
+                "--version",
+                "7.8.9",
+                "--date",
+                "20-01-2001",
+                "--draft",
+            ],
+        )
+
+        expected_output = dedent(
+            """\
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            # [20-01-2001] CUSTOM RELEASE for FooBarBaz version 7.8.9
+
+            ### Features
+
+            - Adds levitation (#123)
+
+
+
+        """
+        )
+
+        self.assertEqual(0, result.exit_code)
+        self.assertEqual(expected_output, result.output)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = "foo"
         title_format = false
         template = "template.rst"
         """
