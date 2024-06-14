@@ -18,16 +18,11 @@
 {{ definitions[category]['name'] }}
 {{ underline * definitions[category]['name']|length }}
 
-{% if definitions[category]['showcontent'] %}
 {% for text, values in sections[section][category].items() %}
-- {{ text }}{% if values %} ({{ values|join(', ') }}){% endif %}
+- {% if text %}{{ text }}{% if values %} ({{ values|join(', ') }}){% endif %}{% else %}{{ values|join(', ') }}{% endif  %}
 
 {% endfor %}
 
-{% else %}
-- {{ sections[section][category]['']|join(', ') }}
-
-{% endif %}
 {% if sections[section][category]|length == 0 %}
 No significant changes.
 
