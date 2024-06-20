@@ -106,16 +106,24 @@ def __main(
         click.echo("Checks SKIPPED: news file changes detected.")
         sys.exit(0)
 
-    fragments = {
-        os.path.abspath(path)
-        for path in find_fragments(base_directory, config, only_check_categories=True)[
-            1
-        ]
-    }
+    all_fragment_files = find_fragments(base_directory, config)[1]
+    fragments = set()  # will only include fragments of types that are checked
+    unchecked_fragments = set()  # will include fragments of types that are not checked
+    for fragment_filename, category in all_fragment_files:
+        if config.types[category]["check"]:
+            fragments.add(fragment_filename)
+        else:
+            unchecked_fragments.add(fragment_filename)
     fragments_in_branch = fragments & files
 
     if not fragments_in_branch:
-        click.echo("No new newsfragments found on this branch.")
+        unchecked_fragments_in_branch = unchecked_fragments & files
+        if unchecked_fragments:
+            click.echo("Found newsfragments of unchecked types in the branch:")
+            for n, fragment in enumerate(unchecked_fragments_in_branch, start=1):
+                click.echo(f"{n}. {fragment}")
+        else:
+            click.echo("No new newsfragments found on this branch.")
         sys.exit(1)
     else:
         click.echo("Found:")

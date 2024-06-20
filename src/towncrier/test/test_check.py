@@ -167,6 +167,7 @@ class TestChecker(TestCase):
             )
 
     def test_fragment_exists_but_not_in_check(self):
+        """A fragment that exists but is marked as check=False is ignored by the check."""
         runner = CliRunner()
 
         with runner.isolated_filesystem():
@@ -178,8 +179,8 @@ class TestChecker(TestCase):
                 'name = "Features"\n'
                 "showcontent = true\n"
                 "[[tool.towncrier.type]]\n"
-                'directory = "auto"\n'
-                'name = "Automatic"\n'
+                'directory = "sut"\n'
+                'name = "System Under Test"\n'
                 "showcontent = true\n"
                 "check=false\n",
             )
@@ -187,7 +188,7 @@ class TestChecker(TestCase):
             file_path = "foo/somefile.py"
             write(file_path, "import os")
 
-            fragment_path = Path("foo/newsfragments/1234.auto").absolute()
+            fragment_path = Path("foo/newsfragments/1234.sut").absolute()
             write(fragment_path, "Adds gravity back")
             commit("add a file and a newsfragment")
 
@@ -195,10 +196,19 @@ class TestChecker(TestCase):
 
             self.assertEqual(1, result.exit_code)
             self.assertTrue(
-                result.output.endswith("No new newsfragments found on this branch.\n")
+                result.output.endswith(
+                    "Found newsfragments of unchecked types in the branch:\n1. "
+                    + str(fragment_path)
+                    + "\n"
+                ),
+                (result.output, str(fragment_path)),
             )
 
-    def test_fragment_exists_but_in_check(self):
+    def test_fragment_exists_and_in_check(self):
+        """
+        A fragment that exists but is not marked as check=False is
+        not ignored by the check, even if other categories are marked as check=False.
+        """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
@@ -210,8 +220,8 @@ class TestChecker(TestCase):
                 'name = "Features"\n'
                 "showcontent = true\n"
                 "[[tool.towncrier.type]]\n"
-                'directory = "auto"\n'
-                'name = "Automatic"\n'
+                'directory = "sut"\n'
+                'name = "System Under Test"\n'
                 "showcontent = true\n"
                 "check=false\n",
             )

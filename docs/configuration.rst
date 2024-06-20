@@ -239,8 +239,8 @@ For example, if you want your custom fragment types to be ``["feat", "fix", "cho
    name = "Other Tasks"
    showcontent = false
 
-   [tool.towncrier.fragment.auto]
-   name = "Automatic Changes"
+   [tool.towncrier.fragment.deps]
+   name = "Dependency Changes"
    check = false
 
 
@@ -297,7 +297,7 @@ For example:
    showcontent = false
 
    [[tool.towncrier.type]]
-   directory = "auto"
-   name = "Automatic Changes"
+   directory = "deps"
+   name = "Dependency Changes"
    showcontent = true
    check = false

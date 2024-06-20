@@ -178,7 +178,8 @@ def __main(
 
     click.echo("Finding news fragments...", err=to_err)
 
-    fragment_contents, fragment_filenames = find_fragments(base_directory, config)
+    fragment_contents, fragment_files = find_fragments(base_directory, config)
+    fragment_filenames = [filename for (filename, _category) in fragment_files]
 
     click.echo("Rendering news fragments...", err=to_err)
     fragments = split_fragments(
