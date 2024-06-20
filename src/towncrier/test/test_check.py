@@ -173,8 +173,15 @@ class TestChecker(TestCase):
             create_project(
                 "pyproject.toml",
                 main_branch="master",
-                extra_config='[[tool.towncrier.type]]\ndirectory = "feature"\nname = "Features"\nshowcontent = true\n'
-                '[[tool.towncrier.type]]\ndirectory = "auto"\nname = "Automatic"\nshowcontent = true\ncheck=false\n',
+                extra_config="[[tool.towncrier.type]]\n"
+                'directory = "feature"\n'
+                'name = "Features"\n'
+                "showcontent = true\n"
+                "[[tool.towncrier.type]]\n"
+                'directory = "auto"\n'
+                'name = "Automatic"\n'
+                "showcontent = true\n"
+                "check=false\n",
             )
 
             file_path = "foo/somefile.py"
@@ -198,8 +205,15 @@ class TestChecker(TestCase):
             create_project(
                 "pyproject.toml",
                 main_branch="master",
-                extra_config='[[tool.towncrier.type]]\ndirectory = "feature"\nname = "Features"\nshowcontent = true\n'
-                '[[tool.towncrier.type]]\ndirectory = "auto"\nname = "Automatic"\nshowcontent = true\ncheck=false\n',
+                extra_config="[[tool.towncrier.type]]\n"
+                'directory = "feature"\n'
+                'name = "Features"\n'
+                "showcontent = true\n"
+                "[[tool.towncrier.type]]\n"
+                'directory = "auto"\n'
+                'name = "Automatic"\n'
+                "showcontent = true\n"
+                "check=false\n",
             )
 
             file_path = "foo/somefile.py"
