@@ -1,0 +1,1 @@
+newsfragment categories can now be marked with ``check = false``, causing them to be ignored in ``towncrier check``

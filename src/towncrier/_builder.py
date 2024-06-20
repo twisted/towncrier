@@ -89,11 +89,11 @@ class FragmentsPath:
 #
 # {
 #     "": {
-#         ("142", "misc"): "",
-#         ("1", "feature"): "some cool description",
+#         ("142", "misc", 1): "",
+#         ("1", "feature", 1): "some cool description",
 #     },
 #     "Names": {},
-#     "Web": {("3", "bugfix"): "Fixed a thing"},
+#     "Web": {("3", "bugfix", 1): "Fixed a thing"},
 # }
 #
 # We should really use attrs.
@@ -102,6 +102,7 @@ class FragmentsPath:
 def find_fragments(
     base_directory: str,
     config: Config,
+    only_check_categories: bool = False,
 ) -> tuple[Mapping[str, Mapping[tuple[str, str, int], str]], list[str]]:
     """
     Sections are a dictonary of section names to paths.
@@ -129,6 +130,8 @@ def find_fragments(
                 basename, config.types
             )
             if category is None:
+                continue
+            if only_check_categories and config.types[category]["check"] is False:
                 continue
             assert issue is not None
             assert counter is not None

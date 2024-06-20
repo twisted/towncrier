@@ -166,6 +166,57 @@ class TestChecker(TestCase):
                 result.output.endswith("No new newsfragments found on this branch.\n")
             )
 
+    def test_fragment_exists_but_not_in_check(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            create_project(
+                "pyproject.toml",
+                main_branch="master",
+                extra_config='[[tool.towncrier.type]]\ndirectory = "feature"\nname = "Features"\nshowcontent = true\n'
+                '[[tool.towncrier.type]]\ndirectory = "auto"\nname = "Automatic"\nshowcontent = true\ncheck=false\n',
+            )
+
+            file_path = "foo/somefile.py"
+            write(file_path, "import os")
+
+            fragment_path = Path("foo/newsfragments/1234.auto").absolute()
+            write(fragment_path, "Adds gravity back")
+            commit("add a file and a newsfragment")
+
+            result = runner.invoke(towncrier_check, ["--compare-with", "master"])
+
+            self.assertEqual(1, result.exit_code)
+            self.assertTrue(
+                result.output.endswith("No new newsfragments found on this branch.\n")
+            )
+
+    def test_fragment_exists_but_in_check(self):
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            create_project(
+                "pyproject.toml",
+                main_branch="master",
+                extra_config='[[tool.towncrier.type]]\ndirectory = "feature"\nname = "Features"\nshowcontent = true\n'
+                '[[tool.towncrier.type]]\ndirectory = "auto"\nname = "Automatic"\nshowcontent = true\ncheck=false\n',
+            )
+
+            file_path = "foo/somefile.py"
+            write(file_path, "import os")
+
+            fragment_path = Path("foo/newsfragments/1234.feature").absolute()
+            write(fragment_path, "Adds gravity back")
+            commit("add a file and a newsfragment")
+
+            result = runner.invoke(towncrier_check, ["--compare-with", "master"])
+
+            self.assertEqual(0, result.exit_code)
+            self.assertTrue(
+                result.output.endswith("Found:\n1. " + str(fragment_path) + "\n"),
+                (result.output, str(fragment_path)),
+            )
+
     def test_none_stdout_encoding_works(self):
         """
         No failure when output is piped causing None encoding for stdout.

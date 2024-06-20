@@ -107,7 +107,10 @@ def __main(
         sys.exit(0)
 
     fragments = {
-        os.path.abspath(path) for path in find_fragments(base_directory, config)[1]
+        os.path.abspath(path)
+        for path in find_fragments(base_directory, config, only_check_categories=True)[
+            1
+        ]
     }
     fragments_in_branch = fragments & files
 

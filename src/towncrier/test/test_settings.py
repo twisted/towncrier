@@ -288,6 +288,12 @@ class TomlSettingsTests(TestCase):
                 directory="spam"
                 name="Spam"
                 showcontent=true
+
+                [[tool.towncrier.type]]
+                directory="auto"
+                name="Automatic"
+                showcontent=true
+                check=false
             """
         )
         config = load_config(project_dir)
@@ -297,6 +303,7 @@ class TomlSettingsTests(TestCase):
                 {
                     "name": "Foo",
                     "showcontent": False,
+                    "check": True,
                 },
             ),
             (
@@ -304,6 +311,15 @@ class TomlSettingsTests(TestCase):
                 {
                     "name": "Spam",
                     "showcontent": True,
+                    "check": True,
+                },
+            ),
+            (
+                "auto",
+                {
+                    "name": "Automatic",
+                    "showcontent": True,
+                    "check": False,
                 },
             ),
         ]
@@ -326,6 +342,9 @@ class TomlSettingsTests(TestCase):
                 [tool.towncrier.fragment.chore]
                 name = "Other Tasks"
                 showcontent = false
+                [tool.towncrier.fragment.auto]
+                name = "Automatic"
+                check = false
             """
         )
         config = load_config(project_dir)
@@ -333,14 +352,22 @@ class TomlSettingsTests(TestCase):
             "chore": {
                 "name": "Other Tasks",
                 "showcontent": False,
+                "check": True,
             },
             "feat": {
                 "name": "Feat",
                 "showcontent": True,
+                "check": True,
             },
             "fix": {
                 "name": "Fix",
                 "showcontent": True,
+                "check": True,
+            },
+            "auto": {
+                "name": "Automatic",
+                "showcontent": True,
+                "check": False,
             },
         }
         actual = config.types
