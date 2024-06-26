@@ -221,6 +221,11 @@ These may include the following optional keys:
         Orphan fragments (those without an issue number) always have their content included.
         If a fragment was created, it means that information is important for end users.
 
+``check``
+    A boolean value indicating whether the fragment should be considered by the ``towncrier check`` command.
+
+    ``true`` by default.
+
 For example, if you want your custom fragment types to be ``["feat", "fix", "chore",]`` and you want all of them to use the default configuration except ``"chore"`` you can do it as follows:
 
 .. code-block:: toml
@@ -233,6 +238,10 @@ For example, if you want your custom fragment types to be ``["feat", "fix", "cho
    [tool.towncrier.fragment.chore]
    name = "Other Tasks"
    showcontent = false
+
+   [tool.towncrier.fragment.deps]
+   name = "Dependency Changes"
+   check = false
 
 
 .. warning::
@@ -267,6 +276,11 @@ Each table within this array has the following mandatory keys:
         Orphan fragments (those without an issue number) always have their content included.
         If a fragment was created, it means that information is important for end users.
 
+``check``
+    A boolean value indicating whether the fragment should be considered by the ``towncrier check`` command.
+
+    ``true`` by default.
+
 For example:
 
 .. code-block:: toml
@@ -281,3 +295,9 @@ For example:
    directory = "chore"
    name = "Other Tasks"
    showcontent = false
+
+   [[tool.towncrier.type]]
+   directory = "deps"
+   name = "Dependency Changes"
+   showcontent = true
+   check = false

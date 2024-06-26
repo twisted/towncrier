@@ -89,27 +89,31 @@ class FragmentsPath:
 #
 # {
 #     "": {
-#         ("142", "misc"): "",
-#         ("1", "feature"): "some cool description",
+#         ("142", "misc", 1): "",
+#         ("1", "feature", 1): "some cool description",
 #     },
 #     "Names": {},
-#     "Web": {("3", "bugfix"): "Fixed a thing"},
+#     "Web": {("3", "bugfix", 1): "Fixed a thing"},
 # }
 #
-# We should really use attrs.
+# and a list like:
+# [
+#    ("/path/to/fragments/142.misc.1", "misc"),
+#    ("/path/to/fragments/1.feature.1", "feature"),
+# ]
 #
-# Also returns a list of the paths that the fragments were taken from.
+# We should really use attrs.
 def find_fragments(
     base_directory: str,
     config: Config,
-) -> tuple[Mapping[str, Mapping[tuple[str, str, int], str]], list[str]]:
+) -> tuple[Mapping[str, Mapping[tuple[str, str, int], str]], list[tuple[str, str]]]:
     """
     Sections are a dictonary of section names to paths.
     """
     get_section_path = FragmentsPath(base_directory, config)
 
     content = {}
-    fragment_filenames = []
+    fragment_files = []
     # Multiple orphan news fragments are allowed per section, so initialize a counter
     # that can be incremented automatically.
     orphan_fragment_counter: DefaultDict[str | None, int] = defaultdict(int)
@@ -139,7 +143,7 @@ def find_fragments(
                 orphan_fragment_counter[category] += 1
 
             full_filename = os.path.join(section_dir, basename)
-            fragment_filenames.append(full_filename)
+            fragment_files.append((full_filename, category))
             data = Path(full_filename).read_text(encoding="utf-8", errors="replace")
 
             if (issue, category, counter) in file_content:
@@ -152,7 +156,7 @@ def find_fragments(
 
         content[key] = file_content
 
-    return content, fragment_filenames
+    return content, fragment_files
 
 
 def indent(text: str, prefix: str) -> str:
