@@ -12,6 +12,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any, DefaultDict, Iterable, Iterator, Mapping, NamedTuple, Sequence
 
+from click import ClickException
 from jinja2 import Template
 
 from towncrier._settings.load import Config
@@ -106,10 +107,22 @@ class FragmentsPath:
 def find_fragments(
     base_directory: str,
     config: Config,
+    strict: bool | None,
 ) -> tuple[Mapping[str, Mapping[tuple[str, str, int], str]], list[tuple[str, str]]]:
     """
     Sections are a dictonary of section names to paths.
+
+    In strict mode, raise ClickException if any fragments have an invalid name.
     """
+    if strict is None:
+        # If strict mode is not set, turn it on only if build_ignore_filenames is set
+        # (this maintains backward compatibility).
+        strict = config.build_ignore_filenames is not None
+
+    ignored_files = {".gitignore"}
+    if config.build_ignore_filenames:
+        ignored_files.update(config.build_ignore_filenames)
+
     get_section_path = FragmentsPath(base_directory, config)
 
     content = {}
@@ -129,10 +142,20 @@ def find_fragments(
         file_content = {}
 
         for basename in files:
+            # Skip files that are deliberately ignored
+            if basename in ignored_files:
+                continue
+
             issue, category, counter = parse_newfragment_basename(
                 basename, config.types
             )
             if category is None:
+                if strict and issue is None:
+                    raise ClickException(
+                        f"Invalid news fragment name: {basename}\n"
+                        "If this filename is deliberate, add it to "
+                        "'build_ignore_filenames' in your configuration."
+                    )
                 continue
             assert issue is not None
             assert counter is not None

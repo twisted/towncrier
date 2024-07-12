@@ -101,12 +101,14 @@ def __main(
         click.echo(f"{n}. {change}")
     click.echo("----")
 
+    # This will fail if any fragment files have an invalid name:
+    all_fragment_files = find_fragments(base_directory, config, strict=True)[1]
+
     news_file = os.path.normpath(os.path.join(base_directory, config.filename))
     if news_file in files:
         click.echo("Checks SKIPPED: news file changes detected.")
         sys.exit(0)
 
-    all_fragment_files = find_fragments(base_directory, config)[1]
     fragments = set()  # will only include fragments of types that are checked
     unchecked_fragments = set()  # will include fragments of types that are not checked
     for fragment_filename, category in all_fragment_files:

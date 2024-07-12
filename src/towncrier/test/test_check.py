@@ -470,3 +470,23 @@ class TestChecker(TestCase):
         self.assertTrue(
             result.output.endswith("No new newsfragments found on this branch.\n")
         )
+
+    @with_isolated_runner
+    def test_invalid_fragment_name(self, runner):
+        create_project("pyproject.toml")
+        opts = ["--compare-with", "main"]
+
+        write("foo/bar.py", "# Scorpions!")
+        write("foo/newsfragments/123.feature", "Adds scorpions")
+        write("foo/newsfragments/.gitignore", "!.gitignore")
+        commit("add stuff")
+
+        result = runner.invoke(towncrier_check, opts)
+        self.assertEqual(0, result.exit_code, result.output)
+
+        # Make invalid filename:
+        os.rename("foo/newsfragments/123.feature", "foo/newsfragments/feature.123")
+
+        result = runner.invoke(towncrier_check, opts)
+        self.assertEqual(1, result.exit_code, result.output)
+        self.assertIn("Invalid news fragment name: feature.123", result.output)

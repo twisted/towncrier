@@ -130,6 +130,13 @@ Top level keys
 
     ``true`` by default.
 
+``build_ignore_filenames``
+    A list of filenames in the news fragments directory to ignore when building the news file.
+
+    If this is configured, it turns on the ``--strict`` build mode which will fail if there are any news fragment files not in this list that have invalid filenames. Note that if a template is used, it should also be included here.
+
+    ``None`` by default.
+
 Extra top level keys for Python projects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

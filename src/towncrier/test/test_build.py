@@ -1530,3 +1530,60 @@ class TestCli(TestCase):
 
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected_output, result.output)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = "foo"
+        build_ignore_filenames = ["template.jinja", "CAPYBARAS.md"]
+        """
+    )
+    def test_invalid_fragment_names(self, runner):
+        """
+        When build_ignore_filenames is set, files with those names are ignored.
+        """
+        opts = ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
+        # Valid filename:
+        with open("foo/newsfragments/123.feature", "w") as f:
+            f.write("Adds levitation")
+        # Files that should be ignored:
+        with open("foo/newsfragments/template.jinja", "w") as f:
+            f.write("Jinja template")
+        with open("foo/newsfragments/CAPYBARAS.md", "w") as f:
+            f.write("Peanut butter")
+        # Automatically ignored:
+        with open("foo/newsfragments/.gitignore", "w") as f:
+            f.write("!.gitignore")
+
+        result = runner.invoke(_main, opts)
+        # Should succeed
+        self.assertEqual(0, result.exit_code, result.output)
+
+        # Invalid filename:
+        with open("foo/newsfragments/feature.124", "w") as f:
+            f.write("Extends levitation")
+
+        result = runner.invoke(_main, opts)
+        # Should now fail
+        self.assertEqual(1, result.exit_code, result.output)
+        self.assertIn("Invalid news fragment name: feature.124", result.output)
+
+    @with_project()
+    def test_invalid_fragment_names_strict(self, runner):
+        """
+        When using --strict, any invalid filenames will cause an error even if
+        build_ignore_filenames is NOT set.
+        """
+        opts = ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
+        # Invalid filename:
+        with open("foo/newsfragments/feature.124", "w") as f:
+            f.write("Extends levitation")
+
+        result = runner.invoke(_main, opts)
+        # Should succeed in normal mode
+        self.assertEqual(0, result.exit_code, result.output)
+
+        result = runner.invoke(_main, [*opts, "--strict"])
+        # Should now fail
+        self.assertEqual(1, result.exit_code, result.output)
+        self.assertIn("Invalid news fragment name: feature.124", result.output)
