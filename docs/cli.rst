@@ -28,8 +28,9 @@ If there are no news fragments (including an empty fragments directory or a
 non-existent directory), a notice of "no significant changes" will be added to
 the news file.
 
-By default, the processed news fragments are removed using ``git``, which will
-also remove the fragments directory if now empty.
+By default, the processed news fragments are removed. For any fragments
+committed in your git repository, git rm will be used (which will also remove
+the fragments directory if now empty).
 
 .. option:: --draft
 
