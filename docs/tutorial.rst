@@ -47,11 +47,6 @@ Create this folder::
 
 The ``.gitignore`` will remain and keep Git from not tracking the directory.
 
-If needed, you can also specify a list of filenames for ``towncrier`` to ignore in the news fragments directory::
-
-   [tool.towncrier]
-   build_ignore_filenames = ["README.rst"]
-
 
 Detecting Version
 -----------------

@@ -1535,55 +1535,61 @@ class TestCli(TestCase):
         config="""
         [tool.towncrier]
         package = "foo"
-        build_ignore_filenames = ["template.jinja", "CAPYBARAS.md"]
+        ignore = ["template.jinja", "CAPYBARAS.md"]
         """
     )
-    def test_invalid_fragment_names(self, runner):
+    def test_ignored_files(self, runner):
         """
-        When build_ignore_filenames is set, files with those names are ignored.
+        When `ignore` is set in config, files with those names are ignored.
         """
-        opts = ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
-        # Valid filename:
         with open("foo/newsfragments/123.feature", "w") as f:
-            f.write("Adds levitation")
-        # Files that should be ignored:
+            f.write("This has valid filename (control case)")
         with open("foo/newsfragments/template.jinja", "w") as f:
-            f.write("Jinja template")
+            f.write("This template has been manually ignored")
         with open("foo/newsfragments/CAPYBARAS.md", "w") as f:
-            f.write("Peanut butter")
-        # Automatically ignored:
+            f.write("This markdown file has been manually ignored")
         with open("foo/newsfragments/.gitignore", "w") as f:
-            f.write("!.gitignore")
+            f.write("gitignore is automatically ignored")
 
-        result = runner.invoke(_main, opts)
-        # Should succeed
+        result = runner.invoke(
+            _main, ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
+        )
         self.assertEqual(0, result.exit_code, result.output)
 
-        # Invalid filename:
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = "foo"
+        ignore = []
+        """
+    )
+    def test_invalid_fragment_name(self, runner):
+        """
+        When `ignore` is set in config, invalid filenames cause failure.
+        """
+        with open("foo/newsfragments/123.feature", "w") as f:
+            f.write("This has valid filename (control case)")
         with open("foo/newsfragments/feature.124", "w") as f:
-            f.write("Extends levitation")
+            f.write("This has the issue and category the wrong way round")
 
-        result = runner.invoke(_main, opts)
-        # Should now fail
+        result = runner.invoke(
+            _main, ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
+        )
         self.assertEqual(1, result.exit_code, result.output)
         self.assertIn("Invalid news fragment name: feature.124", result.output)
 
     @with_project()
-    def test_invalid_fragment_names_strict(self, runner):
+    def test_no_ignore_configured(self, runner):
         """
-        When using --strict, any invalid filenames will cause an error even if
-        build_ignore_filenames is NOT set.
+        When `ignore` is not set in config, invalid filenames are skipped.
+
+        This maintains backward compatibility with before we added `ignore`
+        to the configuration spec.
         """
-        opts = ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
-        # Invalid filename:
         with open("foo/newsfragments/feature.124", "w") as f:
-            f.write("Extends levitation")
+            f.write("This has the issue and category the wrong way round")
 
-        result = runner.invoke(_main, opts)
-        # Should succeed in normal mode
+        result = runner.invoke(
+            _main, ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
+        )
         self.assertEqual(0, result.exit_code, result.output)
-
-        result = runner.invoke(_main, [*opts, "--strict"])
-        # Should now fail
-        self.assertEqual(1, result.exit_code, result.output)
-        self.assertIn("Invalid news fragment name: feature.124", result.output)

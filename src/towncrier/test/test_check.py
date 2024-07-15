@@ -472,21 +472,41 @@ class TestChecker(TestCase):
         )
 
     @with_isolated_runner
-    def test_invalid_fragment_name(self, runner):
-        create_project("pyproject.toml")
-        opts = ["--compare-with", "main"]
+    def test_ignored_files(self, runner):
+        """
+        When `ignore` is set in config, files with those names are ignored.
+        """
+        create_project("pyproject.toml", extra_config='ignore = ["template.jinja"]')
 
-        write("foo/bar.py", "# Scorpions!")
-        write("foo/newsfragments/123.feature", "Adds scorpions")
-        write("foo/newsfragments/.gitignore", "!.gitignore")
+        write(
+            "foo/newsfragments/123.feature",
+            "This fragment has valid name (control case)",
+        )
+        write("foo/newsfragments/template.jinja", "This is manually ignored")
+        write("foo/newsfragments/.gitignore", "gitignore is automatically ignored")
         commit("add stuff")
 
-        result = runner.invoke(towncrier_check, opts)
+        result = runner.invoke(towncrier_check, ["--compare-with", "main"])
         self.assertEqual(0, result.exit_code, result.output)
 
-        # Make invalid filename:
-        os.rename("foo/newsfragments/123.feature", "foo/newsfragments/feature.123")
+    @with_isolated_runner
+    def test_invalid_fragment_name(self, runner):
+        """
+        Fails if a news fragment has an invalid name, even if `ignore` is not set in
+        the config.
+        """
+        create_project("pyproject.toml")
 
-        result = runner.invoke(towncrier_check, opts)
+        write(
+            "foo/newsfragments/123.feature",
+            "This fragment has valid name (control case)",
+        )
+        write(
+            "foo/newsfragments/feature.124",
+            "This has issue and category wrong way round",
+        )
+        commit("add stuff")
+
+        result = runner.invoke(towncrier_check, ["--compare-with", "main"])
         self.assertEqual(1, result.exit_code, result.output)
-        self.assertIn("Invalid news fragment name: feature.123", result.output)
+        self.assertIn("Invalid news fragment name: feature.124", result.output)

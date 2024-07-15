@@ -107,21 +107,16 @@ class FragmentsPath:
 def find_fragments(
     base_directory: str,
     config: Config,
-    strict: bool | None,
+    strict: bool,
 ) -> tuple[Mapping[str, Mapping[tuple[str, str, int], str]], list[tuple[str, str]]]:
     """
     Sections are a dictonary of section names to paths.
 
-    In strict mode, raise ClickException if any fragments have an invalid name.
+    If strict, raise ClickException if any fragments have an invalid name.
     """
-    if strict is None:
-        # If strict mode is not set, turn it on only if build_ignore_filenames is set
-        # (this maintains backward compatibility).
-        strict = config.build_ignore_filenames is not None
-
     ignored_files = {".gitignore"}
-    if config.build_ignore_filenames:
-        ignored_files.update(config.build_ignore_filenames)
+    if config.ignore:
+        ignored_files.update(config.ignore)
 
     get_section_path = FragmentsPath(base_directory, config)
 
@@ -142,7 +137,6 @@ def find_fragments(
         file_content = {}
 
         for basename in files:
-            # Skip files that are deliberately ignored
             if basename in ignored_files:
                 continue
 
@@ -154,7 +148,7 @@ def find_fragments(
                     raise ClickException(
                         f"Invalid news fragment name: {basename}\n"
                         "If this filename is deliberate, add it to "
-                        "'build_ignore_filenames' in your configuration."
+                        "'ignore' in your configuration."
                     )
                 continue
             assert issue is not None

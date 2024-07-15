@@ -130,10 +130,12 @@ Top level keys
 
     ``true`` by default.
 
-``build_ignore_filenames``
-    A list of filenames in the news fragments directory to ignore when building the news file.
+``ignore``
+    A list of filenames in the news fragments directory to ignore.
 
-    If this is configured, it turns on the ``--strict`` build mode which will fail if there are any news fragment files not in this list that have invalid filenames. Note that if a template is used, it should also be included here.
+    ``towncrier check`` will fail if there are any news fragment files that have invalid filenames, except for those in the list. ``towncrier build`` will likewise fail, but only if this list has been configured (set to an empty list if there are no files to ignore).
+
+    Note that if a custom template is stored in the news fragment directory, you should add it to this list.
 
     ``None`` by default.
 

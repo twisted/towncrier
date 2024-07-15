@@ -64,11 +64,6 @@ also remove the fragments directory if now empty.
 
    Don't delete news fragments after the build and don't ask for confirmation whether to delete or keep the fragments.
 
-.. option:: --strict
-
-   Fail if there are any news fragments that have invalid filenames.
-   This is automatically turned on if ``build_ignore_filenames`` has been set in the configuration.
-
 
 ``towncrier create``
 --------------------
