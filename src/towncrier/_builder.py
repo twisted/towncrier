@@ -114,9 +114,9 @@ def find_fragments(
 
     If strict, raise ClickException if any fragments have an invalid name.
     """
-    ignored_files = {".gitignore"}
+    ignored_files = {".gitignore", ".keep", "readme", "readme.md", "readme.rst"}
     if config.ignore:
-        ignored_files.update(config.ignore)
+        ignored_files.update(filename.lower() for filename in config.ignore)
 
     get_section_path = FragmentsPath(base_directory, config)
 
@@ -137,7 +137,7 @@ def find_fragments(
         file_content = {}
 
         for basename in files:
-            if basename in ignored_files:
+            if basename.lower() in ignored_files:
                 continue
 
             issue, category, counter = parse_newfragment_basename(

@@ -131,11 +131,11 @@ Top level keys
     ``true`` by default.
 
 ``ignore``
-    A list of filenames in the news fragments directory to ignore.
+    A case-insensitive list of filenames in the news fragments directory to ignore.
 
     ``towncrier check`` will fail if there are any news fragment files that have invalid filenames, except for those in the list. ``towncrier build`` will likewise fail, but only if this list has been configured (set to an empty list if there are no files to ignore).
 
-    Note that if a custom template is stored in the news fragment directory, you should add it to this list.
+    Some filenames such as ``.gitignore`` and ``README`` are automatically ignored. However, if a custom template is stored in the news fragment directory, you should add it to this list.
 
     ``None`` by default.
 
