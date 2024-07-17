@@ -305,6 +305,17 @@ def render_fragments(
     data: dict[str, dict[str, dict[str, list[str]]]] = {}
     issues_by_category: dict[str, dict[str, list[str]]] = {}
 
+    def maybe_append_newlines(text: str) -> str:
+        # if a newsfragment text ends with a code block, we want to append two newlines
+        # so issue number(s) don't get inserted into the block
+        if re.search(r"::\n\n([ \t]*\S*)*$", text):
+            # We insert one space, the default template inserts another, which results
+            # in the correct indentation given default bullet indentation.
+            # TODO: This breaks on different indentation though, and would require instead
+            # doing this change after the template has been applied.... I thought?
+            return text + "\n\n "
+        return text
+
     for section_name, section_value in fragments.items():
         data[section_name] = {}
         issues_by_category[section_name] = {}
@@ -337,6 +348,7 @@ def render_fragments(
             # for the template, after formatting each issue number
             categories = {}
             for text, issues in entries:
+                text = maybe_append_newlines(text)
                 rendered = [render_issue(issue_format, i) for i in issues]
                 categories[text] = rendered
 
