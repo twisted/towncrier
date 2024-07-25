@@ -74,9 +74,6 @@ release = towncrier_version.public()
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-# The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "sphinx"
-
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
