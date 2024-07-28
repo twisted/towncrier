@@ -13,10 +13,9 @@ from importlib.metadata import PackageNotFoundError, version
 
 import click
 
-from click_default_group import DefaultGroup
-
 from .build import _main as _build_cmd
 from .check import _main as _check_cmd
+from .click_default_group import DefaultGroup
 from .create import _main as _create_cmd
 
 

@@ -7,10 +7,20 @@ import towncrier
 
 
 class TestPackaging(TestCase):
-    def no_version_attr(self):
+    def test_version_attr(self):
         """
-        towncrier.__version__ was deprecated, now no longer exists.
+        towncrier.__version__ was deprecated, but still exists for now.
         """
 
-        with self.assertRaises(AttributeError):
-            towncrier.__version__
+        def access__version():
+            return towncrier.__version__
+
+        expected_warning = (
+            "Accessing towncrier.__version__ is deprecated and will be "
+            "removed in a future release. Use importlib.metadata directly "
+            "to query for towncrier's packaging metadata."
+        )
+
+        self.assertWarns(
+            DeprecationWarning, expected_warning, __file__, access__version
+        )

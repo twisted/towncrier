@@ -7,13 +7,13 @@ Responsible for getting the version and name from a project.
 
 from __future__ import annotations
 
+import contextlib
 import importlib.metadata as importlib_metadata
 import sys
 
 from importlib import import_module
 from importlib.metadata import version as metadata_version
 from types import ModuleType
-from typing import Any
 
 
 if sys.version_info >= (3, 10):
@@ -62,7 +62,7 @@ def get_version(package_dir: str, package: str) -> str:
     Try to extract the version from the distribution version metadata that matches
     `package`, then fall back to looking for the package in `package_dir`.
     """
-    version: Any
+    version: str
 
     # First try to get the version from the package metadata.
     if version := _get_metadata_version(package):
@@ -105,9 +105,7 @@ def get_project_name(package_dir: str, package: str) -> str:
     module = _get_package(package_dir, package)
     version = getattr(module, "__version__", None)
     # Incremental has support for package names, try duck-typing it.
-    try:
+    with contextlib.suppress(AttributeError):
         return str(version.package)  # type: ignore
-    except AttributeError:
-        pass
 
     return package.title()

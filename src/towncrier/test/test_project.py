@@ -136,7 +136,7 @@ __version__ = WeirdVersion()
             get_version(tmp_dir, "missing")
 
         self.assertEqual(
-            ("Package not installed and no missing.__version__ found",),
+            ("No __version__ or metadata version info for the 'missing' package.",),
             e.exception.args,
         )
 
