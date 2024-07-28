@@ -55,7 +55,7 @@ _today = date.today()
 project = "Towncrier"
 copyright = "{}, Towncrier contributors. Ver {}".format(
     _today.year,
-    towncrier_version.public(),
+    towncrier_version,
 )
 author = "Amber Brown"
 
@@ -63,11 +63,9 @@ author = "Amber Brown"
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 # The short X.Y version.
-version = "{}.{}.{}".format(
-    towncrier_version.major, towncrier_version.minor, towncrier_version.micro
-)
+version = ".".join(towncrier_version.split(".")[:3])
 # The full version, including alpha/beta/rc tags.
-release = towncrier_version.public()
+release = towncrier_version
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
