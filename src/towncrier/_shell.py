@@ -9,24 +9,17 @@ Each sub-command has its separate CLI definition andd help messages.
 
 from __future__ import annotations
 
-from importlib.metadata import PackageNotFoundError, version
-
 import click
 
+from ._version import __version__
 from .build import _main as _build_cmd
 from .check import _main as _check_cmd
 from .click_default_group import DefaultGroup
 from .create import _main as _create_cmd
 
 
-try:
-    _version = version("towncrier")
-except PackageNotFoundError:  # pragma: no cover
-    _version = "unknown"
-
-
 @click.group(cls=DefaultGroup, default="build", default_if_no_args=True)
-@click.version_option(_version)
+@click.version_option(__version__)
 def cli() -> None:
     """
     Towncrier is a utility to produce useful, summarised news files for your project.

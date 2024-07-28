@@ -8,7 +8,6 @@ Responsible for getting the version and name from a project.
 from __future__ import annotations
 
 import contextlib
-import importlib.metadata as importlib_metadata
 import sys
 
 from importlib import import_module
@@ -72,12 +71,9 @@ def get_version(package_dir: str, package: str) -> str:
     module = _get_package(package_dir, package)
     version = getattr(module, "__version__", None)
     if not version:
-        try:
-            version = importlib_metadata.version(package)
-        except importlib_metadata.PackageNotFoundError:
-            raise Exception(
-                f"No __version__ or metadata version info for the '{package}' package."
-            )
+        raise Exception(
+            f"No __version__ or metadata version info for the '{package}' package."
+        )
 
     if isinstance(version, str):
         return version.strip()

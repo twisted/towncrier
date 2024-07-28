@@ -29,13 +29,13 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-import importlib.metadata as importlib_metadata
 import os
 
 from datetime import date
 
+from towncrier import __version__ as towncrier_version
 
-towncrier_version = importlib_metadata.version("towncrier")
+
 extensions = []
 
 # Add any paths that contain templates here, relative to this directory.
@@ -55,7 +55,7 @@ _today = date.today()
 project = "Towncrier"
 copyright = "{}, Towncrier contributors. Ver {}".format(
     _today.year,
-    importlib_metadata.version("towncrier"),
+    towncrier_version.public(),
 )
 author = "Amber Brown"
 
@@ -63,9 +63,11 @@ author = "Amber Brown"
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 # The short X.Y version.
-version = ".".join(towncrier_version.split(".")[:3])
+version = "{}.{}.{}".format(
+    towncrier_version.major, towncrier_version.minor, towncrier_version.micro
+)
 # The full version, including alpha/beta/rc tags.
-release = towncrier_version
+release = towncrier_version.public()
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.

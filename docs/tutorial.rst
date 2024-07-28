@@ -52,18 +52,16 @@ Detecting Version
 -----------------
 
 ``towncrier`` needs to know what version your project is when generating news files.
+These are the ways you can provide it, in order of precedence (with the first taking precedence over the second, and so on):
 
-For Python projects, the version can be automatically determined in one of the following ways:
+1. Manually pass ``--version=<myversionhere>`` when interacting with ``towncrier``.
+2. Set a value for the ``version`` option in your configuration file.
+3. For Python projects with a ``package`` key in the configuration file:
 
-- if the project is installed, the version can be read from the package's metadata
-- the version can be provided in a ``__version__`` attribute of the top level package (as a string literal, a tuple, or an `Incremental <https://github.com/twisted/incremental>`_ version)
+   - install the package to use its metadata version information
+   - add a ``__version__`` in the top level package that is either a string literal, a tuple, or an `Incremental <https://github.com/twisted/incremental>`_ version
 
-For non-Python projects, you can store the version in the ``towncrier.toml`` file::
-
-   [tool.towncrier]
-   version = "1.0.0"
-
-If you don't want to store the version, you can manually pass ``--version=<myversionhere>`` whenever interacting with ``towncrier``. For example::
+As an example, you can manually specify the version when calling ``towncrier`` on the command line with the ``--version`` flag::
 
    $ towncrier build --version=1.2.3post4
 
