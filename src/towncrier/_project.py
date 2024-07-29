@@ -61,7 +61,7 @@ def get_version(package_dir: str, package: str) -> str:
     Try to extract the version from the distribution version metadata that matches
     `package`, then fall back to looking for the package in `package_dir`.
     """
-    version: str
+    version: str | None
 
     # First try to get the version from the package metadata.
     if version := _get_metadata_version(package):

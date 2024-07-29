@@ -44,34 +44,37 @@ class VersionFetchingTests(TestCase):
         version = get_version(temp, "mytestproja")
         self.assertEqual(version, "1.3.12")
 
-        def test_incremental(self):
-            """
-            An incremental-like Version __version__  is picked up.
-            """
-            temp = self.mktemp()
-            os.makedirs(temp)
-            os.makedirs(os.path.join(temp, "mytestprojinc"))
+    def test_incremental(self):
+        """
+        An incremental-like Version __version__  is picked up.
+        """
+        temp = self.mktemp()
+        os.makedirs(temp)
+        os.makedirs(os.path.join(temp, "mytestprojinc"))
 
-            with open(os.path.join(temp, "mytestprojinc", "__init__.py"), "w") as f:
-                f.write(
-                    """
-    class Version:
-        '''
-        This is emulating a Version object from incremental.
-        '''
+        with open(os.path.join(temp, "mytestprojinc", "__init__.py"), "w") as f:
+            f.write(
+                """
+class Version:
+    '''
+    This is emulating a Version object from incremental.
+    '''
 
-        def __init__(self, *version_parts):
-            self.version = version_parts
+    def __init__(self, *version_parts):
+        self.version = version_parts
 
-        def base(self):
-            return '.'.join(map(str, self.version))
+    def base(self):
+        return '.'.join(map(str, self.version))
 
+__version__ = Version(1, 3, 12, "rc1")
+                """
+            )
 
-    __version__ = Version(1, 3, 12, "rc1")
-    """
-                )
-            version = get_version(temp, "mytestprojinc")
-            self.assertEqual(version, "1.3.12rc1")
+        version = get_version(temp, "mytestprojinc")
+        self.assertEqual(version, "1.3.12rc1")
+
+        project = get_project_name(temp, "mytestprojinc")
+        self.assertEqual(project, "Mytestprojinc")
 
     def test_not_incremental(self):
         """
