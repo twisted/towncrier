@@ -62,6 +62,7 @@ class Version:
 
     def __init__(self, *version_parts):
         self.version = version_parts
+        self.package = "mytestprojinc"
 
     def base(self):
         return '.'.join(map(str, self.version))
@@ -74,7 +75,7 @@ __version__ = Version(1, 3, 12, "rc1")
         self.assertEqual(version, "1.3.12rc1")
 
         project = get_project_name(temp, "mytestprojinc")
-        self.assertEqual(project, "Mytestprojinc")
+        self.assertEqual(project, "mytestprojinc")
 
     def test_not_incremental(self):
         """
