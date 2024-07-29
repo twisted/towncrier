@@ -75,8 +75,10 @@ class VersionFetchingTests(TestCase):
 
     def test_not_incremental(self):
         """
-        An incremental-like Version __version__  is picked up, base takes unexpected
-        arguments.
+        An exception is raised when the version could not be detected.
+        For this test we use an incremental-like object,
+        that has the `base` method, but that method
+        does not match the return type for `incremental`.
         """
         temp = self.mktemp()
         os.makedirs(os.path.join(temp, "mytestprojnotinc"))
