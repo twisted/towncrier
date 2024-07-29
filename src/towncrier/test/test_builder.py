@@ -22,6 +22,10 @@ class TestParseNewsfragmentBasename(TestCase):
             parse_newfragment_basename("README.ext", ["feature"]),
             (None, None, None),
         )
+        self.assertEqual(
+            parse_newfragment_basename("README", ["feature"]),
+            (None, None, None),
+        )
 
     def test_counter(self):
         """<number>.<category>.<counter> generates a custom counter value."""

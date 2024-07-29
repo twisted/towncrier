@@ -45,8 +45,6 @@ Create this folder::
    # This makes sure that Git will never delete the empty folder
    $ echo '!.gitignore' > src/myproject/newsfragments/.gitignore
 
-The ``.gitignore`` will remain and keep Git from not tracking the directory.
-
 
 Detecting Version
 -----------------

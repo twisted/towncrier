@@ -470,3 +470,47 @@ class TestChecker(TestCase):
         self.assertTrue(
             result.output.endswith("No new newsfragments found on this branch.\n")
         )
+
+    @with_isolated_runner
+    def test_ignored_files(self, runner):
+        """
+        When `ignore` is set in config, files with those names are ignored.
+        """
+        create_project("pyproject.toml", extra_config='ignore = ["template.jinja"]')
+
+        write(
+            "foo/newsfragments/124.feature",
+            "This fragment has valid name (control case)",
+        )
+        write("foo/newsfragments/template.jinja", "This is manually ignored")
+        write("foo/newsfragments/.gitignore", "gitignore is automatically ignored")
+        commit("add stuff")
+
+        result = runner.invoke(towncrier_check, ["--compare-with", "main"])
+        self.assertEqual(0, result.exit_code, result.output)
+
+    @with_isolated_runner
+    def test_invalid_fragment_name(self, runner):
+        """
+        Fails if a news fragment has an invalid name, even if `ignore` is not set in
+        the config.
+        """
+        create_project("pyproject.toml")
+
+        write(
+            "foo/newsfragments/124.feature",
+            "This fragment has valid name (control case)",
+        )
+        write(
+            "foo/newsfragments/feature.125",
+            "This has issue and category wrong way round",
+        )
+        write(
+            "NEWS.rst",
+            "Modification of news file should not skip check of invalid names",
+        )
+        commit("add stuff")
+
+        result = runner.invoke(towncrier_check, ["--compare-with", "main"])
+        self.assertEqual(1, result.exit_code, result.output)
+        self.assertIn("Invalid news fragment name: feature.125", result.output)

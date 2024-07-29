@@ -54,6 +54,7 @@ class Config:
     orphan_prefix: str = "+"
     create_eof_newline: bool = True
     create_add_extension: bool = True
+    ignore: list[str] | None = None
 
 
 class ConfigError(ClickException):
