@@ -1,1 +1,0 @@
-Remove github edit link in non-trunk versions of docs

@@ -1,1 +1,0 @@
-Inferring the version of a Python package now tries to use the metadata of the installed package before importing the package explicitly (which only looks for ``[package].__version__``).
