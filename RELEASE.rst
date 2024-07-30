@@ -14,30 +14,30 @@ Before the final release, a set of release candidates are released.
 Release candidate
 -----------------
 
-Create a release branch with a name of the form ``release-23.11.0`` starting from the main branch.
-The same branch is used for the release candidated and the final release.
+Create a release branch with a name of the form ``release-19.9.0`` starting from the main branch.
+The same branch is used for the release candidate and the final release.
 In the end, the release branch is merged into the main branch.
 
 Update the version to the release candidate with the first being ``rc1`` (as opposed to 0).
 In ``src/towncrier/_version.py`` the version is set using a PEP440 compliant string:
 
-    __version__ = "23.11.0rc1"
+    __version__ = "19.9.0rc1"
 
 Run ``venv/bin/towncrier build --yes`` to generate the news release NEWS file.
 Commit and push to the primary repository, not a fork.
 It is important to not use a fork so that pushed tags end up in the primary repository,
 server provided secrets for publishing to PyPI are available, and maybe more.
 
-Create a PR named in the form ``Release 23.11.0``.
+Create a PR named in the form ``Release 19.9.0``.
 The same PR will be used for the release candidates and the final release.
 
 Wait for the tests to be green.
 Start with the release candidates.
 Create a new release candidate using `GitHub New release UI <https://github.com/twisted/towncrier/releases/new>`_.
 
-* *Choose a tag*: Type `23.11.0rc1` and select `Create new tag on publish.`
+* *Choose a tag*: Type `19.9.0rc1` and select `Create new tag on publish.`
 * *Target*: Search for the release branch and select it.
-* *Title*: "Towncrier 23.11.0rc1".
+* *Title*: "Towncrier 19.9.0rc1".
 * Set the content based on the NEWS file (for now in RST format).
 * Make sure to check **This is a pre-release**.
 * Click `Publish release`
@@ -60,20 +60,20 @@ In the future we might create a separate Markdown version.
 
 
 Final release
---------------
+-------------
 
 Once the PR is approved, you can trigger the final release.
 
 Update the version to the final version.
 In ``src/towncrier/_version.py`` the version is set using a PEP440 compliant string:
 
-    __version__ = "23.11.0"
+    __version__ = "19.9.0"
 
 Manually update the `NEWS.rst` file to include the final release version and date.
 Usually it will look like this.
 This will replace the release candidate section::
 
-    towncrier 23.11.0 (2023-11-01)
+    towncrier 19.9.0 (2019-09-01)
     =============================
 
     No significant changes since the previous release candidate.
@@ -85,9 +85,9 @@ Trigger the final release using GitHub Release GUI.
 
 Similar to the release candidate, with the difference:
 
-* tag will be named `23.11.0`
+* tag will be named `19.9.0`
 * the target is the same branch
-* Title will be `towncrier 23.11.0`
+* Title will be `towncrier 19.9.0`
 * Content can be the content of the final release (RST format).
 * Check **Set as the latest release**.
 * Check **Create a discussion for this release**.
@@ -98,7 +98,7 @@ No need for another review request.
 Update the version to the development version.
 In ``src/towncrier/_version.py`` the version is set using a PEP440 compliant string:
 
-    __version__ = "23.11.0.dev0"
+    __version__ = "19.9.0.dev0"
 
 Commit and push the changes.
 
@@ -111,6 +111,6 @@ With a squash merge, the whole branch history is lost.
 This causes the `pre-commit autoupdate` to fail.
 See `PR590 <https://github.com/twisted/towncrier/pull/590>`_ for more details.
 
-You can announce the release over IRC or Gitter.
+You can announce the release over IRC, Gitter, or Twisted mailing list.
 
 Done.
