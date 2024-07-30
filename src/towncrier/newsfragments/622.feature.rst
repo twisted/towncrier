@@ -1,0 +1,3 @@
+``towncrier check`` will now fail if any news fragments have invalid filenames.
+
+Added a new configuration option called ``ignore`` that allows you to specify a list of filenames that should be ignored. If this is set, ``towncrier build`` will also fail if any filenames are invalid, except for those in the list.
