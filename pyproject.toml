@@ -1,7 +1,7 @@
 [build-system]
 requires = [
     "hatchling",
-    "incremental == 22.10.0",
+    "wheel",
 ]
 build-backend = "hatchling.build"
 
@@ -32,8 +32,7 @@ dependencies = [
     "click",
     "importlib-resources>=5; python_version<'3.10'",
     "importlib-metadata>=4.6; python_version<'3.10'",
-    "incremental",
-    "jinja2>=3",
+    "jinja2",
     "tomli; python_version<'3.11'",
 ]
 
@@ -152,12 +151,6 @@ exclude = '^src/towncrier/test/test_.*\.py$'
 module = 'towncrier.click_default_group'
 # Vendored module without type annotations.
 ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = 'incremental'
-# No released version with type hints.
-ignore_missing_imports = true
-
 
 [tool.coverage.run]
 parallel = true

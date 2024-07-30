@@ -2,18 +2,11 @@
 Provides towncrier version information.
 """
 
-# This file is auto-generated! Do not edit!
-# Use `python -m incremental.update towncrier` to change this file.
+# For dev   - 23.11.1.dev0
+# For RC    - 23.11.1.rc1
+# For final - 23.11.1
+# make sure to follow PEP440
+__version__ = "23.11.1.dev0"
 
-from incremental import Version
-
-
-# For dev   - Version('towncrier', 23, 8, 1, dev=0)
-# For RC    - Version('towncrier', 23, 9, 0, release_candidate=1)
-# For final - Version('towncrier', 23, 9, 0)
-__version__ = Version("towncrier", 23, 11, 1, dev=0)
-# The version is exposed in string format to be
-# available for the hatching build tools.
-_hatchling_version = __version__.short()
-
-__all__ = ["__version__", "_hatchling_version"]
+_hatchling_version = __version__
+__all__ = ["_hatchling_version"]
