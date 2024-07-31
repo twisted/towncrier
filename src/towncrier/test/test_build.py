@@ -1604,9 +1604,7 @@ class TestCli(TestCase):
         with open("foo/newsfragments/.gitignore", "w") as f:
             f.write("gitignore is automatically ignored")
 
-        result = runner.invoke(
-            _main, ["--draft"]
-        )
+        result = runner.invoke(_main, ["--draft"])
         self.assertEqual(0, result.exit_code, result.output)
 
     @with_project(
@@ -1625,9 +1623,7 @@ class TestCli(TestCase):
         with open("foo/newsfragments/feature.124", "w") as f:
             f.write("This has the issue and category the wrong way round")
 
-        result = runner.invoke(
-            _main, ["--draft"]
-        )
+        result = runner.invoke(_main, ["--draft"])
         self.assertEqual(1, result.exit_code, result.output)
         self.assertIn("Invalid news fragment name: feature.124", result.output)
 
@@ -1648,7 +1644,8 @@ class TestCli(TestCase):
             f.write("Brand new thing.")
         with open("foo/newsfragments/template.j2", "w") as f:
             # Just a simple template to check that the file is rendered.
-            f.write("""
+            f.write(
+                """
 {% for section, _ in sections.items() %}
 {% for category, val in definitions.items() if category in sections[section]%}
 {{ definitions[category]['name'] }}
@@ -1659,11 +1656,12 @@ class TestCli(TestCase):
 
 {% endfor %}
 {% endfor %}
-""")
+"""
+            )
 
         result = runner.invoke(_main, ["--draft"])
         self.assertEqual(0, result.exit_code, result.output)
-        self.assertIn('- TEST Brand new thing.\n', result.output)
+        self.assertIn("- TEST Brand new thing.\n", result.output)
 
     @with_project()
     def test_no_ignore_configured(self, runner):
