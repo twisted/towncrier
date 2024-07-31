@@ -11,6 +11,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
 jobs:
   build:
     name: ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}
