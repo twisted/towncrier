@@ -1654,7 +1654,6 @@ class TestCli(TestCase):
         )
         self.assertEqual(0, result.exit_code, result.output)
 
-
     @with_project()
     def test_no_ignore_configured(self, runner):
         """
