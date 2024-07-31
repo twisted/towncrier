@@ -5,60 +5,6 @@ Release notes
 
 .. towncrier release notes start
 
-Towncrier 23.11.1.dev0 (2024-07-31)
-===================================
-
-Features
---------
-
-- ``towncrier build`` now handles removing news fragments which are not part of the git repository. For example, uncommitted or unstaged files. (`#357 <https://github.com/twisted/towncrier/issues/357>`_)
-- Inferring the version of a Python package now tries to use the metadata of the installed package before importing the package explicitly (which only looks for ``[package].__version__``). (`#432 <https://github.com/twisted/towncrier/issues/432>`_)
-- If no filename is given when doing ``towncrier`` create, interactively ask for the issue number and fragment type (and then launch an interactive editor for the fragment content).
-
-  Now by default, when creating a fragment it will be appended with the ``filename`` option's extension (unless an extension is explicitly provided). For example, ``towncrier create 123.feature`` will create ``news/123.feature.rst``. This can be changed in configuration file by setting `add_extension = false`.
-
-  A new line is now added by default to the end of the fragment contents. This can be reverted in the configuration file by setting `add_newline = false`. (`#482 <https://github.com/twisted/towncrier/issues/482>`_)
-- The temporary file ``towncrier create`` creates now uses the correct ``.rst`` or ``.md`` extension, which may help your editor with with syntax highlighting. (`#594 <https://github.com/twisted/towncrier/issues/594>`_)
-- Running ``towncrier`` will now traverse back up directories looking for the configuration file. (`#601 <https://github.com/twisted/towncrier/issues/601>`_)
-- The ``towncrier create`` action now uses sections defined in your config (either interactively, or via the new ``--section`` option). (`#603 <https://github.com/twisted/towncrier/issues/603>`_)
-- News fragments are now sorted by issue number even if they have non-digit characters.
-  For example::
-
-      - some issue (gh-3, gh-10)
-      - another issue (gh-4)
-      - yet another issue (gh-11)
-
-  The sorting algorithm groups the issues first by non-text characters and then by number. (`#608 <https://github.com/twisted/towncrier/issues/608>`_)
-- The ``title_format`` configuration option now uses a markdown format for markdown templates. (`#610 <https://github.com/twisted/towncrier/issues/610>`_)
-- newsfragment categories can now be marked with ``check = false``, causing them to be ignored in ``towncrier check`` (`#617 <https://github.com/twisted/towncrier/issues/617>`_)
-- ``towncrier check`` will now fail if any news fragments have invalid filenames.
-
-  Added a new configuration option called ``ignore`` that allows you to specify a list of filenames that should be ignored. If this is set, ``towncrier build`` will also fail if any filenames are invalid, except for those in the list. (`#622 <https://github.com/twisted/towncrier/issues/622>`_)
-
-
-Bugfixes
---------
-
-- Add explicit encoding to read_text. (`#561 <https://github.com/twisted/towncrier/issues/561>`_)
-- The default Markdown template now renders a title containing the release version and date, even when the `name` configuration is left empty. (`#587 <https://github.com/twisted/towncrier/issues/587>`_)
-- Orphan news fragments, fragments not associated with an issue, consisting of only digits (e.g. '+12345678.feature') now retain their leading marker character. (`#588 <https://github.com/twisted/towncrier/issues/588>`_)
-- Orphan news fragments, fragments not associated with an issue, will now still show in categories that are marked to not show content, since they do not have an issue number to show. (`#612 <https://github.com/twisted/towncrier/issues/612>`_)
-
-
-Improved Documentation
-----------------------
-
-- Clarify version discovery behavior. (`#432 <https://github.com/twisted/towncrier/issues/432>`_, `#602 <https://github.com/twisted/towncrier/issues/602>`_)
-- The tutorial now introduces the `filename` option in the appropriate paragraph and mentions its default value. (`#586 <https://github.com/twisted/towncrier/issues/586>`_)
-- Add docs to explain how ``towncrier create +.feature.rst`` (orphan fragments) works. (`#589 <https://github.com/twisted/towncrier/issues/589>`_)
-
-
-Misc
-----
-
-- `#491 <https://github.com/twisted/towncrier/issues/491>`_, `#561 <https://github.com/twisted/towncrier/issues/561>`_, `#562 <https://github.com/twisted/towncrier/issues/562>`_, `#568 <https://github.com/twisted/towncrier/issues/568>`_, `#569 <https://github.com/twisted/towncrier/issues/569>`_, `#571 <https://github.com/twisted/towncrier/issues/571>`_, `#574 <https://github.com/twisted/towncrier/issues/574>`_, `#575 <https://github.com/twisted/towncrier/issues/575>`_, `#582 <https://github.com/twisted/towncrier/issues/582>`_, `#591 <https://github.com/twisted/towncrier/issues/591>`_, `#596 <https://github.com/twisted/towncrier/issues/596>`_, `#597 <https://github.com/twisted/towncrier/issues/597>`_, `#625 <https://github.com/twisted/towncrier/issues/625>`_, `#629 <https://github.com/twisted/towncrier/issues/629>`_, `#630 <https://github.com/twisted/towncrier/issues/630>`_
-
-
 towncrier 23.11.0 (2023-11-08)
 ==============================
 
