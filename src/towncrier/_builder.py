@@ -115,6 +115,8 @@ def find_fragments(
     If strict, raise ClickException if any fragments have an invalid name.
     """
     ignored_files = {".gitignore", ".keep", "readme", "readme.md", "readme.rst"}
+    if isinstance(config.template, str):
+        ignored_files.add(config.template)
     if config.ignore:
         ignored_files.update(filename.lower() for filename in config.ignore)
 
