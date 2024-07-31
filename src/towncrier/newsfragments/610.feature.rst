@@ -1,1 +1,0 @@
-The ``title_format`` configuration option now uses a markdown format for markdown templates.

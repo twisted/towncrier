@@ -1,3 +1,0 @@
-Remove incremental dependency from towncrier.
-
-Towncrier can still read incremental versions, it just doesn't rely on the package itself any more.

@@ -1,1 +1,0 @@
-Orphan news fragments, fragments not associated with an issue, will now still show in categories that are marked to not show content, since they do not have an issue number to show.

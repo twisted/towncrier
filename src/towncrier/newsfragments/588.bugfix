@@ -1,1 +1,0 @@
-Orphan news fragments, fragments not associated with an issue, consisting of only digits (e.g. '+12345678.feature') now retain their leading marker character.

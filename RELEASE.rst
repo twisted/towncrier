@@ -59,6 +59,25 @@ For now, the GitHub release text is reStructuredText as it's easy to copy and pa
 In the future we might create a separate Markdown version.
 
 
+Release candidate publish failures
+----------------------------------
+
+The PyPI publish process is automatically triggered when a tag is created.
+
+The publish is skipped for PRs, so we can check that the automated process works only a release time.
+It can happen for the automated publish process to fail.
+
+As long as the package was not published to PyPI, do the followings:
+
+* Manually delete the candidate release from GitHub releases
+* Manually delete the tag for the release candidate
+
+Try to fix the issue and trigger the same release candidate again.
+
+Once the package is published on PyPI, do not delete the release or the tag.
+Proceed with create a new release candidate instead.
+
+
 Final release
 -------------
 
