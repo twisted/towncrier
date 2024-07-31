@@ -263,6 +263,32 @@ jobs:
     - name: Publish to PyPI - on tag
       uses: pypa/gh-action-pypi-publish@a56da0b891b3dc519c7ee3284aff1fad93cc8598
 
+  fake-pypi-publish:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Download package files
+      uses: actions/download-artifact@v3
+      with:
+        name: dist
+        path: dist/
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.12
+
+    - name: Display structure of files to be pushed
+      run: ls --recursive dist/
+
+    - name: Ensure tag and package versions match.
+      run: |
+        python -Im pip install dist/*.whl
+        python -I admin/check_tag_version_match.py "${{ github.ref }}"
+
 
   coverage:
     name: Combine & check coverage.
