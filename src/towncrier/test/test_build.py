@@ -1631,6 +1631,29 @@ class TestCli(TestCase):
         self.assertEqual(1, result.exit_code, result.output)
         self.assertIn("Invalid news fragment name: feature.124", result.output)
 
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = "foo"
+        template = "foo/newsfragments/template.jinja"
+        """
+    )
+    def test_ignored_template_string(self, runner):
+        """
+        Files used in `template` are automatically ignored.
+        """
+        with open("foo/newsfragments/123.feature", "w") as f:
+            f.write("This has valid filename (control case)")
+        with open("foo/newsfragments/template.jinja", "w") as f:
+            f.write("Template file should be automatically ignored")
+        with open("foo/newsfragments/.gitignore", "w") as f:
+            f.write("gitignore is automatically ignored")
+
+        result = runner.invoke(
+            _main, ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
+        )
+        self.assertEqual(0, result.exit_code, result.output)
+
     @with_project()
     def test_no_ignore_configured(self, runner):
         """
