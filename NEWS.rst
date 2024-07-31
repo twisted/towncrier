@@ -5,8 +5,11 @@ Release notes
 
 .. towncrier release notes start
 
-Towncrier 24.7.1rc1 (2024-07-31)
-================================
+Towncrier 24.7.1 (2024-07-31)
+=============================
+
+No significant changes since the previous release candidate.
+
 
 Bugfixes
 --------
