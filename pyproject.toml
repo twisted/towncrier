@@ -1,7 +1,6 @@
 [build-system]
 requires = [
     "hatchling",
-    "wheel",
 ]
 build-backend = "hatchling.build"
 
