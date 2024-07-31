@@ -1605,7 +1605,7 @@ class TestCli(TestCase):
             f.write("gitignore is automatically ignored")
 
         result = runner.invoke(
-            _main, ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
+            _main, ["--draft"]
         )
         self.assertEqual(0, result.exit_code, result.output)
 
@@ -1626,7 +1626,7 @@ class TestCli(TestCase):
             f.write("This has the issue and category the wrong way round")
 
         result = runner.invoke(
-            _main, ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
+            _main, ["--draft"]
         )
         self.assertEqual(1, result.exit_code, result.output)
         self.assertIn("Invalid news fragment name: feature.124", result.output)
@@ -1635,24 +1635,35 @@ class TestCli(TestCase):
         config="""
         [tool.towncrier]
         package = "foo"
-        template = "foo/newsfragments/template.jinja"
+        template = "foo/newsfragments/template.j2"
+        ignore = ["placeholder-to-trigger-strict-checks.txt"]
         """
     )
-    def test_ignored_template_string(self, runner):
+    def test_ignore_template_filename(self, runner):
         """
-        Files used in `template` are automatically ignored.
+        The `template` filename is automatically ignored when it
+        is stored in the same path as the newsfragment files.
         """
         with open("foo/newsfragments/123.feature", "w") as f:
-            f.write("This has valid filename (control case)")
-        with open("foo/newsfragments/template.jinja", "w") as f:
-            f.write("Template file should be automatically ignored")
-        with open("foo/newsfragments/.gitignore", "w") as f:
-            f.write("gitignore is automatically ignored")
+            f.write("Brand new thing.")
+        with open("foo/newsfragments/template.j2", "w") as f:
+            # Just a simple template to check that the file is rendered.
+            f.write("""
+{% for section, _ in sections.items() %}
+{% for category, val in definitions.items() if category in sections[section]%}
+{{ definitions[category]['name'] }}
 
-        result = runner.invoke(
-            _main, ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
-        )
+{% for text, values in sections[section][category].items() %}
+- TEST {{ text }}
+{% endfor %}
+
+{% endfor %}
+{% endfor %}
+""")
+
+        result = runner.invoke(_main, ["--draft"])
         self.assertEqual(0, result.exit_code, result.output)
+        self.assertIn('- TEST Brand new thing.\n', result.output)
 
     @with_project()
     def test_no_ignore_configured(self, runner):
