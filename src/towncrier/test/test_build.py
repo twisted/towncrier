@@ -1635,7 +1635,7 @@ class TestCli(TestCase):
         config="""
         [tool.towncrier]
         package = "foo"
-        template = ["template.jinja"]
+        template = "foo/newsfragments/template.jinja"
         """
     )
     def test_ignored_template_string(self, runner):
@@ -1645,7 +1645,7 @@ class TestCli(TestCase):
         with open("foo/newsfragments/123.feature", "w") as f:
             f.write("This has valid filename (control case)")
         with open("foo/newsfragments/template.jinja", "w") as f:
-            f.write("This template has been automatically ignored")
+            f.write("Template file should be automatically ignored")
         with open("foo/newsfragments/.gitignore", "w") as f:
             f.write("gitignore is automatically ignored")
 
