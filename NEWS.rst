@@ -5,6 +5,21 @@ Release notes
 
 .. towncrier release notes start
 
+Towncrier 24.7.1rc1 (2024-07-31)
+================================
+
+Bugfixes
+--------
+
+- When the template file is stored in the same directory with the news fragments, it is automatically ignored when checking for valid fragment file names. (`#632 <https://github.com/twisted/towncrier/issues/632>`_)
+
+
+Misc
+----
+
+- `#629 <https://github.com/twisted/towncrier/issues/629>`_, `#630 <https://github.com/twisted/towncrier/issues/630>`_
+
+
 Towncrier 24.7.0 (2024-07-31)
 =============================
 
