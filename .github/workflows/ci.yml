@@ -11,6 +11,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
 jobs:
   build:
     name: ${{ matrix.task.name}} - ${{ matrix.os.name }} ${{ matrix.python.name }}
@@ -252,16 +255,13 @@ jobs:
       with:
         python-version: 3.12
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip wheel
-        python -m pip install pep517
-
     - name: Display structure of files to be pushed
       run: ls --recursive dist/
 
-    - name: Check matched tag version and branch version - on tag
-      run: python admin/check_tag_version_match.py "${{ github.ref }}"
+    - name: Ensure tag and package versions match.
+      run: |
+        python -Im pip install dist/*.whl
+        python -I admin/check_tag_version_match.py "${{ github.ref }}"
 
     - name: Publish to PyPI - on tag
       # This was tag 1.9.0 on 2024-07-30

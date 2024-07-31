@@ -1,8 +1,5 @@
 [build-system]
-requires = [
-    "hatchling",
-    "wheel",
-]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 

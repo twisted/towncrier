@@ -135,7 +135,7 @@ Top level keys
 
     ``towncrier check`` will fail if there are any news fragment files that have invalid filenames, except for those in the list. ``towncrier build`` will likewise fail, but only if this list has been configured (set to an empty list if there are no files to ignore).
 
-    Some filenames such as ``.gitignore`` and ``README`` are automatically ignored. However, if a custom template is stored in the news fragment directory, you should add it to this list.
+    Some filenames such as .gitignore, README.rst. README.md, and the template file, are automatically ignored.
 
     ``None`` by default.
 
