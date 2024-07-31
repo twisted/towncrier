@@ -119,7 +119,7 @@ def find_fragments(
         # Template can be a tuple of (package_name, resource_name).
         #
         # See https://github.com/twisted/towncrier/issues/634
-        ignored_files.add(config.template)
+        ignored_files.add(os.path.basename(config.template))
     if config.ignore:
         ignored_files.update(filename.lower() for filename in config.ignore)
 
