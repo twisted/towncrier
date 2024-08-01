@@ -4,8 +4,12 @@ build-backend = "hatchling.build"
 
 
 [project]
-dynamic = ["version"]
 name = "towncrier"
+# For dev   - 23.11.0.dev0
+# For RC    - 23.11.0rc1  (release candidate starts at 1)
+# For final - 23.11.0
+# make sure to follow PEP440
+version = "24.7.2.dev0"
 description = "Building newsfiles for your project."
 readme = "README.rst"
 license = "MIT"
@@ -54,12 +58,6 @@ Repository = "https://github.com/twisted/towncrier"
 Tests = "https://github.com/twisted/towncrier/actions?query=branch%3Atrunk"
 Coverage = "https://codecov.io/gh/twisted/towncrier"
 Distribution = "https://pypi.org/project/towncrier"
-
-
-[tool.hatch.version]
-source = "code"
-path = "src/towncrier/_version.py"
-expression = "_hatchling_version"
 
 [tool.hatch.build]
 exclude = [
