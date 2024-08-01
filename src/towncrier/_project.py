@@ -8,17 +8,12 @@ Responsible for getting the version and name from a project.
 from __future__ import annotations
 
 import contextlib
+import importlib.metadata
 import sys
 
 from importlib import import_module
-from importlib.metadata import version as metadata_version
+from importlib.metadata import PackageNotFoundError
 from types import ModuleType
-
-
-if sys.version_info >= (3, 10):
-    from importlib.metadata import packages_distributions
-else:
-    from importlib_metadata import packages_distributions  # type: ignore
 
 
 def _get_package(package_dir: str, package: str) -> ModuleType:
@@ -46,12 +41,11 @@ def _get_metadata_version(package: str) -> str | None:
     """
     Try to get the version from the package metadata.
     """
-    distributions = packages_distributions()
-    distribution_names = distributions.get(package)
-    if not distribution_names or len(distribution_names) != 1:
-        # We can only determine the version if there is exactly one matching distribution.
-        return None
-    return metadata_version(distribution_names[0])
+    with contextlib.suppress(PackageNotFoundError):
+        if version := importlib.metadata.version(package):
+            return version
+
+    return None
 
 
 def get_version(package_dir: str, package: str) -> str:

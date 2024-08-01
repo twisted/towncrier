@@ -1,0 +1,1 @@
+Use importlib.metadata to get the towncrier's version.
