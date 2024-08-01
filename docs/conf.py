@@ -32,8 +32,10 @@
 import os
 
 from datetime import date
+from importlib.metadata import version
 
-from towncrier import __version__ as towncrier_version
+
+towncrier_version = version("towncrier")
 
 
 extensions = []

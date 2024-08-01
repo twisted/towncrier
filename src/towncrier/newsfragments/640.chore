@@ -1,0 +1,3 @@
+Moved towncrier version definition from src/towncrier/_version.py to pyproject.toml
+
+Removed deprecated __version__ attribute from towncrier/__init__.py
