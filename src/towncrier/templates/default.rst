@@ -16,7 +16,7 @@
 {% if sections[section] %}
 {% for category, val in definitions.items() if category in sections[section]%}
 {{ definitions[category]['name'] }}
-{{ underline * definitions[category]['name']|length }}
+{{ underline * definitions[category]['underline_size'] }}
 
 {% for text, values in sections[section][category].items() %}
 - {% if text %}{{ text }}{% if values %} ({{ values|join(', ') }}){% endif %}{% else %}{{ values|join(', ') }}{% endif  %}

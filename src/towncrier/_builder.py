@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 import re
 import textwrap
+import unicodedata
 
 from collections import defaultdict
 from fnmatch import fnmatch
@@ -203,6 +204,22 @@ def find_fragments(
     return content, fragment_files
 
 
+def get_underline_size(text: str) -> int:
+    """
+    Given `text` determine the underline size needed for the reStructuredText output.
+
+    Particularly helps determine if an extra underline is needed for wide characters like emojis.
+    """
+    underline_size: int = 0
+    for char in text:
+        if unicodedata.east_asian_width(char) in ("W", "F"):
+            underline_size += 2
+        else:
+            underline_size += 1
+
+    return underline_size
+
+
 def indent(text: str, prefix: str) -> str:
     """
     Adds `prefix` to the beginning of non-empty lines in `text`.
@@ -245,6 +262,11 @@ def split_fragments(
                 # the content. If there isn't an issue, still add the content so that
                 # it's recorded.
                 content = ""
+
+            # Calculate the underline size for the name of the category.
+            definitions[category]["underline_size"] = get_underline_size(
+                definitions[category]["name"]
+            )
 
             texts = section.setdefault(category, {})
 

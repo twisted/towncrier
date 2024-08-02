@@ -1,0 +1,1 @@
+Fixed section names not having enough underline characters for emojis.

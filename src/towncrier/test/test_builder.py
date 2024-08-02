@@ -5,7 +5,7 @@ from textwrap import dedent
 
 from twisted.trial.unittest import TestCase
 
-from .._builder import parse_newfragment_basename, render_fragments
+from .._builder import get_underline_size, parse_newfragment_basename, render_fragments
 
 
 class TestParseNewsfragmentBasename(TestCase):
@@ -208,3 +208,13 @@ class TestNewsFragmentsOrdering(TestCase):
             - Added Fish
 """
         )
+
+
+class TestUtilityFunctions(TestCase):
+    def test_get_underline_size_ascii(self):
+        """Determine underline size for normal ASCII strings."""
+        assert get_underline_size("bugfixes") == 8
+
+    def test_get_underline_size_wide_character(self):
+        """Determine underline size for strings with wide characters."""
+        assert get_underline_size("🐛 Bugfixes") == 11
