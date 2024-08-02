@@ -132,6 +132,7 @@ Top level keys
 
 ``ignore``
     A case-insensitive list of filenames in the news fragments directory to ignore.
+    Wildcard matching is supported via the `fnmatch <https://docs.python.org/3/library/fnmatch.html#fnmatch.fnmatch>`_ function.
 
     ``towncrier check`` will fail if there are any news fragment files that have invalid filenames, except for those in the list. ``towncrier build`` will likewise fail, but only if this list has been configured (set to an empty list if there are no files to ignore).
 
