@@ -1588,7 +1588,8 @@ class TestCli(TestCase):
         config="""
         [tool.towncrier]
         package = "foo"
-        ignore = ["template.jinja", "CAPYBARAS.md"]
+        ignore = ["template.jinja", "CAPYBARAS.md", \
+        "star_wildcard*", "question_wildcard_?", "seq_wildcard_[ab]"]
         """
     )
     def test_ignored_files(self, runner):
@@ -1603,6 +1604,12 @@ class TestCli(TestCase):
             f.write("This markdown file has been manually ignored")
         with open("foo/newsfragments/.gitignore", "w") as f:
             f.write("gitignore is automatically ignored")
+        with open("foo/newsfragments/star_wildcard_bar", "w") as f:
+            f.write("Manually ignored with * wildcard")
+        with open("foo/newsfragments/question_wildcard_1", "w") as f:
+            f.write("Manually ignored with ? wildcard")
+        with open("foo/newsfragments/seq_wildcard_a", "w") as f:
+            f.write("Manually ignored with [] wildcard")
 
         result = runner.invoke(_main, ["--draft"])
         self.assertEqual(0, result.exit_code, result.output)
