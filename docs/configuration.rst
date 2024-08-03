@@ -137,7 +137,7 @@ Top level keys
 
     ``towncrier check`` will fail if there are any news fragment files that have invalid filenames, except for those in the list. ``towncrier build`` will likewise fail, but only if this list has been configured (set to an empty list if there are no files to ignore).
 
-    The following filenames are automatically ignored.
+    The following filenames are automatically ignored, case insensitive.
 
     -   ``.gitignore``
     -   ``.gitkeep``
