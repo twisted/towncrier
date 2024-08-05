@@ -270,7 +270,9 @@ class TestCli(TestCase):
                         [[tool.towncrier.section]]
                             path = "{section}"
                             name = "{section}"
-                        """.format(section=section)
+                        """.format(
+                                    section=section
+                                )
                             )
                         )
 
@@ -282,7 +284,9 @@ class TestCli(TestCase):
                             directory = "{type_}"
                             name = "{type_}"
                             showcontent = true
-                        """.format(type_=type_)
+                        """.format(
+                                    type_=type_
+                                )
                             )
                         )
 
