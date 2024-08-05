@@ -80,7 +80,10 @@ Top level keys
 
     ``""`` by default.
 
-    Formatted titles are appended a line of ``=`` on the following line (reStructuredText title format) unless the template has an ``.md`` suffix, in which case the title will instead be prefixed with ``#`` (markdown title format).
+    When using reStructuredText, formatted titles are underlined using the ``underlines`` configuration.
+    For titles, the first value from ``underlines`` is used to create the underline (which is inserted on the line following the title).
+    If the template has an ``.md`` suffix, we assume we are looking at markdown format and the title is applied as, i.e. full control over the title format is given to the user.
+    This choice is made because setting the correct markdown header level automatically is non-trivial (mainly because you don't know what context the generated CHANGELOG entries are being written into).
 
 ``issue_format``
     A format string for rendering the issue/ticket number in newsfiles.
