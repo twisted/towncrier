@@ -57,12 +57,6 @@ def _get_default_compare_branch(branches: Container[str]) -> str | None:
     metavar="FILE_PATH",
     help=config_option_help,
 )
-@click.option(
-    "--fragment-filename-pattern",
-    default=None,
-    metavar="FRAGMENT_FILE_PATTERN",
-    help=r"A regex pattern to require fragment files to match, e.g. [A-Z]+-\d+",
-)
 def _main(compare_with: str | None, directory: str | None, config: str | None) -> None:
     """
     Check for new fragments on a branch.
