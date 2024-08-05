@@ -514,3 +514,23 @@ class TestChecker(TestCase):
         result = runner.invoke(towncrier_check, ["--compare-with", "main"])
         self.assertEqual(1, result.exit_code, result.output)
         self.assertIn("Invalid news fragment name: feature.125", result.output)
+
+    # @with_isolated_runner
+    # def test_invalid_fragment_name_pattern(self, runner):
+    #     """
+    #     Fails if a news fragment has an invalid name, even if `ignore` is not set in
+    #     the config.
+    #     """
+    #     create_project(
+    #         "pyproject.toml",
+    #         extra_config=r'fragment_filename_stem_pattern = "[A-Z]+-\d+"',
+    #     )
+    #     write(
+    #         "foo/newsfragments/124.feature",
+    #         "This fragment has valid name (control case)",
+    #     )
+    #     commit("add stuff")
+
+    #     result = runner.invoke(towncrier_check, ["--compare-with", "main"])
+    #     self.assertEqual(1, result.exit_code, result.output)
+    #     self.assertIn("Invalid news fragment name: feature.125", result.output)
