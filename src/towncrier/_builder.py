@@ -172,8 +172,7 @@ def find_fragments(
                 orphan_fragment_counter[category] += 1
             if config.issue_pattern and (
                 not re.fullmatch(
-                    config.issue_pattern,
-                    issue_name := Path(basename).stem.removesuffix(f".{category}"),
+                    config.issue_pattern, issue_name := Path(basename).stem
                 )
             ):
                 raise ClickException(

@@ -525,7 +525,7 @@ class TestChecker(TestCase):
             extra_config='issue_pattern = "\\\\d+"',
         )
         write(
-            "foo/newsfragments/AAA.feature",
+            "foo/newsfragments/AAA.BBB.feature",
             "This fragment has an invalid name (should be digits only)",
         )
         write(
@@ -537,7 +537,7 @@ class TestChecker(TestCase):
         result = runner.invoke(towncrier_check, ["--compare-with", "main"])
         self.assertEqual(1, result.exit_code, result.output)
         self.assertIn(
-            "Error: File name 'AAA' does not match the given issue pattern, '\\d+'",
+            "Error: File name 'AAA.BBB' does not match the given issue pattern, '\\d+'",
             result.output,
         )
         self.assertNotIn(
