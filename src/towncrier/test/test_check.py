@@ -516,34 +516,31 @@ class TestChecker(TestCase):
         self.assertIn("Invalid news fragment name: feature.125", result.output)
 
     @with_isolated_runner
-    def test_fragment_name_stem_pattern(self, runner):
+    def test_issue_pattern(self, runner):
         """
-        Fails if a news fragment has an invalid name, even if `ignore` is not set in
-        the config.
+        Fails if an issue name goes against the configured pattern.
         """
         create_project(
             "pyproject.toml",
-            extra_config='fragment_filename_stem_pattern = "\\\\d+"',
+            extra_config='issue_pattern = "\\\\d+"',
         )
         write(
-            "foo/newsfragments/AAA.feature",  #
+            "foo/newsfragments/AAA.feature",
             "This fragment has an invalid name (should be digits only)",
         )
         write(
-            "foo/newsfragments/123.feature",  #
+            "foo/newsfragments/123.feature",
             "This fragment has a valid name",
         )
         commit("add stuff")
 
         result = runner.invoke(towncrier_check, ["--compare-with", "main"])
-        print(">>>")
-        print(result)
         self.assertEqual(1, result.exit_code, result.output)
         self.assertIn(
-            "Error: File name stem 'AAA' does not match the given pattern, '\\d+'",
+            "Error: File name 'AAA' does not match the given issue pattern, '\\d+'",
             result.output,
         )
         self.assertNotIn(
-            "Error: File name stem '123' does not match the given pattern, '\\d+'",
+            "Error: File name '123' does not match the given issue pattern, '\\d+'",
             result.output,
         )

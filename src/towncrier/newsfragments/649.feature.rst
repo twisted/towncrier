@@ -1,1 +1,1 @@
-Add a config for enforcing the fragment filename stems, using regex.
+Add a config for enforcing issue names using regex.

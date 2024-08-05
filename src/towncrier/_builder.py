@@ -170,15 +170,15 @@ def find_fragments(
                 # Use and increment the orphan news fragment counter.
                 counter = orphan_fragment_counter[category]
                 orphan_fragment_counter[category] += 1
-            if config.fragment_filename_stem_pattern and (
+            if config.issue_pattern and (
                 not re.fullmatch(
-                    config.fragment_filename_stem_pattern,
-                    stem := Path(basename).stem.removesuffix(f".{category}"),
+                    config.issue_pattern,
+                    issue_name := Path(basename).stem.removesuffix(f".{category}"),
                 )
             ):
                 raise ClickException(
-                    f"File name stem '{stem}' does not match the "
-                    f"given pattern, '{config.fragment_filename_stem_pattern}'"
+                    f"File name '{issue_name}' does not match the "
+                    f"given issue pattern, '{config.issue_pattern}'"
                 )
             full_filename = os.path.join(section_dir, basename)
             fragment_files.append((full_filename, category))
