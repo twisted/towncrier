@@ -1,0 +1,1 @@
+Add a config for enforcing the fragment filename stems, using regex.
