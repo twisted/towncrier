@@ -232,7 +232,7 @@ def __main(
             name=project_name, version=project_version, project_date=project_date
         )
         if is_markdown:
-            parts = [f"# {top_line}"]
+            parts = [top_line]
         else:
             parts = [top_line, config.underlines[0] * len(top_line)]
         parts.append(rendered)
