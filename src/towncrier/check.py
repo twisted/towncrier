@@ -65,9 +65,7 @@ def _main(compare_with: str | None, directory: str | None, config: str | None) -
 
 
 def __main(
-    comparewith: str | None,
-    directory: str | None,
-    config_path: str | None,
+    comparewith: str | None, directory: str | None, config_path: str | None
 ) -> None:
     base_directory, config = load_config_from_options(directory, config_path)
 
@@ -104,11 +102,7 @@ def __main(
     click.echo("----")
 
     # This will fail if any fragment files have an invalid name:
-    all_fragment_files = find_fragments(
-        base_directory,
-        config,
-        strict=True,
-    )[1]
+    all_fragment_files = find_fragments(base_directory, config, strict=True)[1]
 
     news_file = os.path.normpath(os.path.join(base_directory, config.filename))
     if news_file in files:
