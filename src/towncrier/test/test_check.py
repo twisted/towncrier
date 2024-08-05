@@ -519,3 +519,33 @@ class TestChecker(TestCase):
         result = runner.invoke(towncrier_check, ["--compare-with", "main"])
         self.assertEqual(1, result.exit_code, result.output)
         self.assertIn("Invalid news fragment name: feature.125", result.output)
+
+    @with_isolated_runner
+    def test_issue_pattern(self, runner):
+        """
+        Fails if an issue name goes against the configured pattern.
+        """
+        create_project(
+            "pyproject.toml",
+            extra_config='issue_pattern = "\\\\d+"',
+        )
+        write(
+            "foo/newsfragments/AAA.BBB.feature",
+            "This fragment has an invalid name (should be digits only)",
+        )
+        write(
+            "foo/newsfragments/123.feature",
+            "This fragment has a valid name",
+        )
+        commit("add stuff")
+
+        result = runner.invoke(towncrier_check, ["--compare-with", "main"])
+        self.assertEqual(1, result.exit_code, result.output)
+        self.assertIn(
+            "Error: File name 'AAA.BBB' does not match the given issue pattern, '\\d+'",
+            result.output,
+        )
+        self.assertNotIn(
+            "Error: File name '123' does not match the given issue pattern, '\\d+'",
+            result.output,
+        )

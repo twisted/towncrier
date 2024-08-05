@@ -55,6 +55,7 @@ class Config:
     create_eof_newline: bool = True
     create_add_extension: bool = True
     ignore: list[str] | None = None
+    issue_pattern: str = ""
 
 
 class ConfigError(ClickException):
