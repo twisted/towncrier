@@ -147,6 +147,11 @@ Top level keys
     -   ``README.rst``
     -   the template file itself
 
+``fragment_filename_stem_pattern``
+    Ensure the stem (first part, excluding the category and suffix) of fragment files matches a certain regex pattern.
+    Make sure to use escape characters properly, e.g. "\\d+" for digit-only file names.
+
+    ``None`` by default.
 
 Extra top level keys for Python projects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
