@@ -172,11 +172,12 @@ def find_fragments(
                 orphan_fragment_counter[category] += 1
             if config.fragment_filename_stem_pattern and (
                 not re.fullmatch(
-                    config.fragment_filename_stem_pattern, stem := Path(basename).stem
+                    config.fragment_filename_stem_pattern,
+                    stem := Path(basename).stem.removesuffix(f".{category}"),
                 )
             ):
                 raise ClickException(
-                    f"File name '{stem}' does not match the "
+                    f"File name stem '{stem}' does not match the "
                     f"given pattern, '{config.fragment_filename_stem_pattern}'"
                 )
             full_filename = os.path.join(section_dir, basename)
