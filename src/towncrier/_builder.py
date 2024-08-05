@@ -9,6 +9,7 @@ import re
 import textwrap
 
 from collections import defaultdict
+from fnmatch import fnmatch
 from pathlib import Path
 from typing import Any, DefaultDict, Iterable, Iterator, Mapping, NamedTuple, Sequence
 
@@ -149,7 +150,12 @@ def find_fragments(
         file_content = {}
 
         for basename in files:
-            if basename.lower() in ignored_files:
+            if any(
+                [
+                    fnmatch(basename.lower(), ignore_pattern)
+                    for ignore_pattern in ignored_files
+                ]
+            ):
                 continue
 
             issue, category, counter = parse_newfragment_basename(

@@ -135,6 +135,7 @@ Top level keys
 
 ``ignore``
     A case-insensitive list of filenames in the news fragments directory to ignore.
+    Wildcard matching is supported via the `fnmatch <https://docs.python.org/3/library/fnmatch.html#fnmatch.fnmatch>`_ function.
 
     ``None`` by default.
 

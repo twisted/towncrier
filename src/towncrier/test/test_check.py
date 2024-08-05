@@ -475,8 +475,12 @@ class TestChecker(TestCase):
     def test_ignored_files(self, runner):
         """
         When `ignore` is set in config, files with those names are ignored.
+        Configuration supports wildcard matching with `fnmatch`.
         """
-        create_project("pyproject.toml", extra_config='ignore = ["template.jinja"]')
+        create_project(
+            "pyproject.toml",
+            extra_config='ignore = ["template.jinja", "star_wildcard*"]',
+        )
 
         write(
             "foo/newsfragments/124.feature",
@@ -484,6 +488,7 @@ class TestChecker(TestCase):
         )
         write("foo/newsfragments/template.jinja", "This is manually ignored")
         write("foo/newsfragments/.gitignore", "gitignore is automatically ignored")
+        write("foo/newsfragments/star_wildcard_foo", "Manually ignored with * wildcard")
         commit("add stuff")
 
         result = runner.invoke(towncrier_check, ["--compare-with", "main"])
