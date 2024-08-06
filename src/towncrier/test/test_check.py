@@ -542,14 +542,14 @@ class TestChecker(TestCase):
         result = runner.invoke(towncrier_check, ["--compare-with", "main"])
         self.assertEqual(1, result.exit_code, result.output)
         self.assertIn(
-            "Error: Issue name 'AAA.BBB' does not match the given issue pattern, '\\d+'",
+            "Error: Issue name 'AAA.BBB' does not match the configured pattern, '\\d+'",
             result.output,
         )
         self.assertNotIn(
-            "Error: Issue '123' does not match the given issue pattern, '\\d+'",
+            "Error: Issue '123' does not match the configured pattern, '\\d+'",
             result.output,
         )
         self.assertNotIn(
-            "Error: Issue '123.feature' does not match the given issue pattern, '\\d+'",
+            "Error: Issue '123.feature' does not match the configured pattern, '\\d+'",
             result.output,
         )

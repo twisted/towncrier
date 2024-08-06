@@ -180,7 +180,7 @@ def find_fragments(
             if config.issue_pattern and not re.fullmatch(config.issue_pattern, issue):
                 raise ClickException(
                     f"Issue name '{issue}' does not match the "
-                    f"given issue pattern, '{config.issue_pattern}'"
+                    f"configured pattern, '{config.issue_pattern}'"
                 )
             full_filename = os.path.join(section_dir, basename)
             fragment_files.append((full_filename, category))
