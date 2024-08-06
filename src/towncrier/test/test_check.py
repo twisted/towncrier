@@ -535,7 +535,7 @@ class TestChecker(TestCase):
         )
         write(
             "foo/newsfragments/+abcdefg.feature",
-            "This fragment has a valid name (no issue name)",
+            "This fragment has a valid name (orphan fragment)",
         )
         commit("add stuff")
 
