@@ -1,1 +1,1 @@
-Fixed an issue where non-issue fragments (e.g. +abc1234.feature) would fail when an `issue_pattern` is configured. Non-issue fragments are now excempt from `issue_pattern` checks.
+Fixed a bug where orphan news fragments (e.g. +abc1234.feature) would fail when an `issue_pattern` is configured. Orphan news fragments are now excempt from `issue_pattern` checks.
