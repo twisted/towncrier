@@ -179,7 +179,7 @@ def find_fragments(
 
             if (
                 config.issue_pattern
-                and issue  # doesn't start with +
+                and issue  # not orphan
                 and not re.fullmatch(config.issue_pattern, issue)
             ):
                 raise ClickException(
