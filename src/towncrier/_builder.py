@@ -176,13 +176,10 @@ def find_fragments(
                 # Use and increment the orphan news fragment counter.
                 counter = orphan_fragment_counter[category]
                 orphan_fragment_counter[category] += 1
-            if config.issue_pattern and (
-                not re.fullmatch(
-                    config.issue_pattern, issue_name := Path(basename).stem
-                )
-            ):
+
+            if config.issue_pattern and not re.fullmatch(config.issue_pattern, issue):
                 raise ClickException(
-                    f"File name '{issue_name}' does not match the "
+                    f"Issue name '{issue}' does not match the "
                     f"given issue pattern, '{config.issue_pattern}'"
                 )
             full_filename = os.path.join(section_dir, basename)
