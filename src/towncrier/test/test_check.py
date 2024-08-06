@@ -530,12 +530,30 @@ class TestChecker(TestCase):
             extra_config='issue_pattern = "\\\\d+"',
         )
         write(
-            "foo/newsfragments/AAA.BBB.feature.md",
-            "This fragment has an invalid name (should be digits only)",
-        )
-        write(
             "foo/newsfragments/123.feature",
             "This fragment has a valid name",
+        )
+        write(
+            "foo/newsfragments/+abcdefg.feature",
+            "This fragment has a valid name (orphan fragment)",
+        )
+        commit("add stuff")
+
+        result = runner.invoke(towncrier_check, ["--compare-with", "main"])
+        self.assertEqual(0, result.exit_code, result.output)
+
+    @with_isolated_runner
+    def test_issue_pattern_invalid_with_suffix(self, runner):
+        """
+        Fails if an issue name goes against the configured pattern.
+        """
+        create_project(
+            "pyproject.toml",
+            extra_config='issue_pattern = "\\\\d+"',
+        )
+        write(
+            "foo/newsfragments/AAA.BBB.feature.md",
+            "This fragment has an invalid name (should be digits only)",
         )
         commit("add stuff")
 
@@ -545,11 +563,25 @@ class TestChecker(TestCase):
             "Error: Issue name 'AAA.BBB' does not match the configured pattern, '\\d+'",
             result.output,
         )
-        self.assertNotIn(
-            "Error: Issue '123' does not match the configured pattern, '\\d+'",
-            result.output,
+
+    @with_isolated_runner
+    def test_issue_pattern_invalid(self, runner):
+        """
+        Fails if an issue name goes against the configured pattern.
+        """
+        create_project(
+            "pyproject.toml",
+            extra_config='issue_pattern = "\\\\d+"',
         )
-        self.assertNotIn(
-            "Error: Issue '123.feature' does not match the configured pattern, '\\d+'",
+        write(
+            "foo/newsfragments/AAA.BBB.feature",
+            "This fragment has an invalid name (should be digits only)",
+        )
+        commit("add stuff")
+
+        result = runner.invoke(towncrier_check, ["--compare-with", "main"])
+        self.assertEqual(1, result.exit_code, result.output)
+        self.assertIn(
+            "Error: Issue name 'AAA.BBB' does not match the configured pattern, '\\d+'",
             result.output,
         )

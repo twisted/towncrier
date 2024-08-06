@@ -177,7 +177,11 @@ def find_fragments(
                 counter = orphan_fragment_counter[category]
                 orphan_fragment_counter[category] += 1
 
-            if config.issue_pattern and not re.fullmatch(config.issue_pattern, issue):
+            if (
+                config.issue_pattern
+                and issue  # not orphan
+                and not re.fullmatch(config.issue_pattern, issue)
+            ):
                 raise ClickException(
                     f"Issue name '{issue}' does not match the "
                     f"configured pattern, '{config.issue_pattern}'"
