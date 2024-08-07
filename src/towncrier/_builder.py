@@ -263,7 +263,6 @@ def split_fragments(
                 # it's recorded.
                 content = ""
 
-            # Calculate the underline size for the name of the category.
             definitions[category]["underline_size"] = get_underline_size(
                 definitions[category]["name"]
             )
@@ -433,6 +432,7 @@ def render_fragments(
         top_underline=top_underline,
         get_indent=get_indent,  # simplify indentation in the jinja template.
         issues_by_category=issues_by_category,
+        versiondata_name_underline_size=get_underline_size(versiondata.get("name", "")),
     )
 
     for line in res.split("\n"):
