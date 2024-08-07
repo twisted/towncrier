@@ -1401,6 +1401,58 @@ class TestCli(TestCase):
     @with_project(
         config="""
         [tool.towncrier]
+        name = "🍫 FooBar"
+
+          [[tool.towncrier.type]]
+          directory = "bugfix"
+          name = "🐛 Bugfixes"
+          showcontent = true
+        """
+    )
+    def test_underline_size_unicode(self, runner):
+        """
+        TODO: Add better description
+        """
+        os.mkdir("newsfragments")
+        with open("newsfragments/321.bugfix", "w") as f:
+            f.write("Squashed a bug")
+
+        result = runner.invoke(
+            _main,
+            [
+                "--version=7.8.9",
+                "--date=01-01-2001",
+                "--draft",
+            ],
+        )
+
+        expected_output = dedent(
+            """\
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            🍫 FooBar 7.8.9 (01-01-2001)
+            ============================
+
+            🐛 Bugfixes
+            -----------
+
+            - Squashed a bug (#321)
+
+
+
+        """
+        )
+
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertEqual(expected_output, result.output)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
         name = ""
         directory = "changes"
         filename = "NEWS.md"
