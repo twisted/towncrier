@@ -1411,7 +1411,11 @@ class TestCli(TestCase):
     )
     def test_underline_size_unicode(self, runner):
         """
-        TODO: Add better description
+        The news file can be generated for project names,
+        and categories that contains emoji in their names.
+
+        This is a test for generating the RST section
+        underline to meet the docutils requirements.
         """
         os.mkdir("newsfragments")
         with open("newsfragments/321.bugfix", "w") as f:
