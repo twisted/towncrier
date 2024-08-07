@@ -41,6 +41,14 @@ class TestParseNewsfragmentBasename(TestCase):
             ("123", "feature", 1),
         )
 
+    def test_get_underline_size_ascii(self):
+        """Determine underline size for normal ASCII strings."""
+        assert get_underline_size("bugfixes") == 8
+
+    def test_get_underline_size_wide_character(self):
+        """Determine underline size for strings with wide characters."""
+        assert get_underline_size("🐛 Bugfixes") == 11
+
     def test_ignores_extension(self):
         """File extensions are ignored."""
         self.assertEqual(
@@ -208,13 +216,3 @@ class TestNewsFragmentsOrdering(TestCase):
             - Added Fish
 """
         )
-
-
-class TestUtilityFunctions(TestCase):
-    def test_get_underline_size_ascii(self):
-        """Determine underline size for normal ASCII strings."""
-        assert get_underline_size("bugfixes") == 8
-
-    def test_get_underline_size_wide_character(self):
-        """Determine underline size for strings with wide characters."""
-        assert get_underline_size("🐛 Bugfixes") == 11
