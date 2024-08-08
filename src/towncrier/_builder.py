@@ -204,20 +204,45 @@ def find_fragments(
     return content, fragment_files
 
 
-def get_underline_length(text: str) -> int:
+def get_dict_length(obj: dict) -> int:
     """
-    Given `text` determine the underline length needed for the reStructuredText output.
+    Gets the sum of the underline lengths for all keys and values in a dictionary.
+    """
+    return sum(
+        get_underline_length(key) + get_underline_length(value)
+        for key, value in obj.items()
+    )
+
+
+def get_list_length(obj: list) -> int:
+    """
+    Gets the sum of the underline lengths for all items in a list.
+    """
+    return sum(get_underline_length(item) for item in obj)
+
+
+def get_string_length(text: str) -> int:
+    """
+    Determines the amount of characters needed to underline a string.
+    """
+    return sum(
+        2 if unicodedata.east_asian_width(char) in ("W", "F") else 1 for char in text
+    )
+
+
+def get_underline_length(obj: str | dict | list) -> int:
+    """
+    Given `obj` determine the underline length needed for the reStructuredText output.
 
     Particularly helps determine if an extra underline is needed for wide characters like emojis.
     """
-    underline_length: int = 0
-    for char in text:
-        if unicodedata.east_asian_width(char) in ("W", "F"):
-            underline_length += 2
-        else:
-            underline_length += 1
-
-    return underline_length
+    if isinstance(obj, dict):
+        return get_dict_length(obj)
+    elif isinstance(obj, list):
+        return get_list_length(obj)
+    elif isinstance(obj, str):
+        return get_string_length(obj)
+    raise ValueError("Object must be a string, list, or dictionary.")
 
 
 def indent(text: str, prefix: str) -> str:
@@ -262,10 +287,6 @@ def split_fragments(
                 # the content. If there isn't an issue, still add the content so that
                 # it's recorded.
                 content = ""
-
-            definitions[category]["underline_length"] = get_underline_length(
-                definitions[category]["name"]
-            )
 
             texts = section.setdefault(category, {})
 
@@ -432,9 +453,7 @@ def render_fragments(
         top_underline=top_underline,
         get_indent=get_indent,  # simplify indentation in the jinja template.
         issues_by_category=issues_by_category,
-        versiondata_name_underline_length=get_underline_length(
-            versiondata.get("name", "")
-        ),
+        get_underline_length=get_underline_length,  # helps determine length for non-ascii chars
     )
 
     for line in res.split("\n"):
