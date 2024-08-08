@@ -20,6 +20,9 @@ from jinja2 import Template
 from towncrier._settings.load import Config
 
 
+UnderlineLengthType = float | str | int | dict[str, Any] | list[Any]
+
+
 # Returns issue, category and counter or (None, None, None) if the basename
 # could not be parsed or doesn't contain a valid category.
 def parse_newfragment_basename(
@@ -204,7 +207,7 @@ def find_fragments(
     return content, fragment_files
 
 
-def get_dict_length(obj: dict) -> int:
+def get_dict_length(obj: dict[str, Any]) -> int:
     """
     Gets the sum of the underline lengths for all keys and values in a dictionary.
     """
@@ -214,7 +217,7 @@ def get_dict_length(obj: dict) -> int:
     )
 
 
-def get_list_length(obj: list) -> int:
+def get_list_length(obj: list[Any]) -> int:
     """
     Gets the sum of the underline lengths for all items in a list.
     """
@@ -230,7 +233,7 @@ def get_string_length(text: str) -> int:
     )
 
 
-def get_underline_length(obj: str | dict | list) -> int:
+def get_underline_length(obj: UnderlineLengthType) -> int:
     """
     Given `obj` determine the underline length needed for the reStructuredText output.
 
@@ -242,7 +245,9 @@ def get_underline_length(obj: str | dict | list) -> int:
         return get_list_length(obj)
     elif isinstance(obj, str):
         return get_string_length(obj)
-    raise ValueError("Object must be a string, list, or dictionary.")
+    elif isinstance(obj, int) or isinstance(obj, float):
+        return len(str(obj))
+    raise TypeError("Object must be a string, int, float, list, or dictionary.")
 
 
 def indent(text: str, prefix: str) -> str:
