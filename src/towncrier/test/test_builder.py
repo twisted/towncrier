@@ -53,6 +53,26 @@ class TestParseNewsfragmentBasename(TestCase):
         """Determine underline size for strings with wide characters."""
         assert get_underline_length("🐛 Bugfixes") == 11
 
+    def test_get_underline_length_list_of_lists(self):
+        """Determine underline size for lists."""
+        assert get_underline_length([["a", "b"], ["c", "d"]]) == 4
+
+    def test_get_underline_length_dict_of_dicts(self):
+        """Determine underline size for dictionaries."""
+        assert get_underline_length({"a": {"b": "c"}, "d": {"e": "f"}}) == 6
+
+    def test_get_underline_length_int(self):
+        """Determine underline size for integers."""
+        assert get_underline_length(123) == 3
+
+    def test_get_underline_length_float(self):
+        """Determine underline size for floats."""
+        assert get_underline_length(123.5) == 5
+
+    def test_get_underline_length_wrong_type(self):
+        """Determine underline size for wrong type."""
+        self.assertRaises(TypeError, get_underline_length, None)
+
     def test_ignores_extension(self):
         """File extensions are ignored."""
         self.assertEqual(
