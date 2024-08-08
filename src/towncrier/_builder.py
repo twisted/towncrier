@@ -20,7 +20,7 @@ from jinja2 import Template
 from towncrier._settings.load import Config
 
 
-UnderlineLengthType = float | str | int | dict[str, Any] | list[Any]
+UnderlineLengthType = float | str | int | dict[Any, Any] | list[Any]
 
 
 # Returns issue, category and counter or (None, None, None) if the basename
@@ -207,7 +207,7 @@ def find_fragments(
     return content, fragment_files
 
 
-def get_dict_length(obj: dict[str, Any]) -> int:
+def get_dict_length(obj: dict[UnderlineLengthType, UnderlineLengthType]) -> int:
     """
     Gets the sum of the underline lengths for all keys and values in a dictionary.
     """
@@ -217,7 +217,7 @@ def get_dict_length(obj: dict[str, Any]) -> int:
     )
 
 
-def get_list_length(obj: list[Any]) -> int:
+def get_list_length(obj: list[UnderlineLengthType]) -> int:
     """
     Gets the sum of the underline lengths for all items in a list.
     """
