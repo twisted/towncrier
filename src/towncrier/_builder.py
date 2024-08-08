@@ -12,7 +12,16 @@ import unicodedata
 from collections import defaultdict
 from fnmatch import fnmatch
 from pathlib import Path
-from typing import Any, DefaultDict, Iterable, Iterator, Mapping, NamedTuple, Sequence
+from typing import (
+    Any,
+    DefaultDict,
+    Iterable,
+    Iterator,
+    Mapping,
+    NamedTuple,
+    Sequence,
+    TypeAlias,
+)
 
 from click import ClickException
 from jinja2 import Template
@@ -20,7 +29,7 @@ from jinja2 import Template
 from towncrier._settings.load import Config
 
 
-UnderlineLengthType = float | str | int | dict[Any, Any] | list[Any]
+UnderlineLengthType: TypeAlias = float | str | int | dict[Any, Any] | list[Any]
 
 
 # Returns issue, category and counter or (None, None, None) if the basename
