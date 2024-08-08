@@ -21,7 +21,7 @@ from towncrier import _git
 
 from ._builder import (
     find_fragments,
-    get_underline_size,
+    get_underline_length,
     render_fragments,
     split_fragments,
 )
@@ -239,7 +239,7 @@ def __main(
         if is_markdown:
             parts = [top_line]
         else:
-            parts = [top_line, config.underlines[0] * get_underline_size(top_line)]
+            parts = [top_line, config.underlines[0] * get_underline_length(top_line)]
         parts.append(rendered)
         content = "\n".join(parts)
     else:

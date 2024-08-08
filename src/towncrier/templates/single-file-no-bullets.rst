@@ -1,7 +1,7 @@
 {% if render_title %}
 {% if versiondata.name %}
 {{ versiondata.name }} {{ versiondata.version }} ({{ versiondata.date }})
-{{ top_underline * ((versiondata.version + versiondata.date)|length + 4 + versiondata_name_underline_size)}}
+{{ top_underline * ((versiondata.version + versiondata.date)|length + 4 + versiondata_name_underline_length)}}
 {% else %}
 {{ versiondata.version }} ({{ versiondata.date }})
 {{ top_underline * ((versiondata.version + versiondata.date)|length + 3)}}
@@ -16,7 +16,7 @@
 {% for category, val in definitions.items() if category in sections[section] %}
 
 {{ definitions[category]['name'] }}
-{{ underline * definitions[category]['underline_size'] }}
+{{ underline * definitions[category]['underline_length'] }}
 
 {% if definitions[category]['showcontent'] %}
 {% for text, values in sections[section][category].items() %}

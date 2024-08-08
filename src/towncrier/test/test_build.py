@@ -1409,7 +1409,7 @@ class TestCli(TestCase):
           showcontent = true
         """
     )
-    def test_underline_size_unicode(self, runner):
+    def test_underline_length_unicode(self, runner):
         """
         The news file can be generated for project names,
         and categories that contains emoji in their names.

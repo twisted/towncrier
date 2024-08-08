@@ -204,20 +204,20 @@ def find_fragments(
     return content, fragment_files
 
 
-def get_underline_size(text: str) -> int:
+def get_underline_length(text: str) -> int:
     """
-    Given `text` determine the underline size needed for the reStructuredText output.
+    Given `text` determine the underline length needed for the reStructuredText output.
 
     Particularly helps determine if an extra underline is needed for wide characters like emojis.
     """
-    underline_size: int = 0
+    underline_length: int = 0
     for char in text:
         if unicodedata.east_asian_width(char) in ("W", "F"):
-            underline_size += 2
+            underline_length += 2
         else:
-            underline_size += 1
+            underline_length += 1
 
-    return underline_size
+    return underline_length
 
 
 def indent(text: str, prefix: str) -> str:
@@ -263,7 +263,7 @@ def split_fragments(
                 # it's recorded.
                 content = ""
 
-            definitions[category]["underline_size"] = get_underline_size(
+            definitions[category]["underline_length"] = get_underline_length(
                 definitions[category]["name"]
             )
 
@@ -432,7 +432,9 @@ def render_fragments(
         top_underline=top_underline,
         get_indent=get_indent,  # simplify indentation in the jinja template.
         issues_by_category=issues_by_category,
-        versiondata_name_underline_size=get_underline_size(versiondata.get("name", "")),
+        versiondata_name_underline_length=get_underline_length(
+            versiondata.get("name", "")
+        ),
     )
 
     for line in res.split("\n"):
