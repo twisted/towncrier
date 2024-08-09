@@ -178,4 +178,4 @@ Finale
 ------
 
 You should now have everything you need to get started with ``towncrier``!
-Please see `Customizing <customization/index.html>`_ for some common c tasks, or `Configuration <configuration.html>`_ for the full configuration specification.
+Please see `Customizing <customization/index.html>`_ for some common tasks, or `Configuration <configuration.html>`_ for the full configuration specification.
