@@ -1,1 +1,0 @@
-Config `ignore` option now supports wildcard matching via `fnmatch <https://docs.python.org/3/library/fnmatch.html#fnmatch.fnmatch>`_.
