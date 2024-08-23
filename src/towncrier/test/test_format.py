@@ -205,7 +205,7 @@ Bugfixes
 
         expected_output = """# MyProject 1.0 (never)
 
-### Features
+## Features
 
 - Fun! (baz)
 - Foo added. (#2, #9, #72)
@@ -213,7 +213,7 @@ Bugfixes
   here (#3)
 - Stuff! (#4)
 
-### Misc
+## Misc
 
 - bar, #1, #9, #142
 
@@ -254,7 +254,7 @@ No significant changes.
         # Also test with custom issue format
         expected_output = """# MyProject 1.0 (never)
 
-### Features
+## Features
 
 - Fun! ([baz])
 - Foo added. ([2], [9], [72])
@@ -269,7 +269,7 @@ No significant changes.
 [9]: https://github.com/twisted/towncrier/issues/9
 [72]: https://github.com/twisted/towncrier/issues/72
 
-### Misc
+## Misc
 
 - [bar], [1], [9], [142]
 
