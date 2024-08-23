@@ -9,7 +9,7 @@ name = "towncrier"
 # For RC    - 23.11.0rc1  (release candidate starts at 1)
 # For final - 23.11.0
 # make sure to follow PEP440
-version = "24.8.0"
+version = "24.8.0.dev0"
 description = "Building newsfiles for your project."
 readme = "README.rst"
 license = "MIT"
