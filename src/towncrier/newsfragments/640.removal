@@ -1,3 +1,0 @@
-Moved towncrier version definition from src/towncrier/_version.py to pyproject.toml
-
-towncrier.__version__ was removed, after being deprecated in 23.6.0.
