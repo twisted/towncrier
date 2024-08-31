@@ -45,8 +45,6 @@ Create this folder::
    # This makes sure that Git will never delete the empty folder
    $ echo '!.gitignore' > src/myproject/newsfragments/.gitignore
 
-The ``.gitignore`` will remain and keep Git from not tracking the directory.
-
 
 Detecting Version
 -----------------
@@ -180,4 +178,4 @@ Finale
 ------
 
 You should now have everything you need to get started with ``towncrier``!
-Please see `Customizing <customization/index.html>`_ for some common c tasks, or `Configuration <configuration.html>`_ for the full configuration specification.
+Please see `Customizing <customization/index.html>`_ for some common tasks, or `Configuration <configuration.html>`_ for the full configuration specification.

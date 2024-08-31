@@ -470,3 +470,118 @@ class TestChecker(TestCase):
         self.assertTrue(
             result.output.endswith("No new newsfragments found on this branch.\n")
         )
+
+    @with_isolated_runner
+    def test_ignored_files(self, runner):
+        """
+        When `ignore` is set in config, files with those names are ignored.
+        Configuration supports wildcard matching with `fnmatch`.
+        """
+        create_project(
+            "pyproject.toml",
+            extra_config='ignore = ["template.jinja", "star_wildcard*"]',
+        )
+
+        write(
+            "foo/newsfragments/124.feature",
+            "This fragment has valid name (control case)",
+        )
+        write("foo/newsfragments/template.jinja", "This is manually ignored")
+        write("foo/newsfragments/.gitignore", "gitignore is automatically ignored")
+        write("foo/newsfragments/star_wildcard_foo", "Manually ignored with * wildcard")
+        commit("add stuff")
+
+        result = runner.invoke(towncrier_check, ["--compare-with", "main"])
+        self.assertEqual(0, result.exit_code, result.output)
+
+    @with_isolated_runner
+    def test_invalid_fragment_name(self, runner):
+        """
+        Fails if a news fragment has an invalid name, even if `ignore` is not set in
+        the config.
+        """
+        create_project("pyproject.toml")
+
+        write(
+            "foo/newsfragments/124.feature",
+            "This fragment has valid name (control case)",
+        )
+        write(
+            "foo/newsfragments/feature.125",
+            "This has issue and category wrong way round",
+        )
+        write(
+            "NEWS.rst",
+            "Modification of news file should not skip check of invalid names",
+        )
+        commit("add stuff")
+
+        result = runner.invoke(towncrier_check, ["--compare-with", "main"])
+        self.assertEqual(1, result.exit_code, result.output)
+        self.assertIn("Invalid news fragment name: feature.125", result.output)
+
+    @with_isolated_runner
+    def test_issue_pattern(self, runner):
+        """
+        Fails if an issue name goes against the configured pattern.
+        """
+        create_project(
+            "pyproject.toml",
+            extra_config='issue_pattern = "\\\\d+"',
+        )
+        write(
+            "foo/newsfragments/123.feature",
+            "This fragment has a valid name",
+        )
+        write(
+            "foo/newsfragments/+abcdefg.feature",
+            "This fragment has a valid name (orphan fragment)",
+        )
+        commit("add stuff")
+
+        result = runner.invoke(towncrier_check, ["--compare-with", "main"])
+        self.assertEqual(0, result.exit_code, result.output)
+
+    @with_isolated_runner
+    def test_issue_pattern_invalid_with_suffix(self, runner):
+        """
+        Fails if an issue name goes against the configured pattern.
+        """
+        create_project(
+            "pyproject.toml",
+            extra_config='issue_pattern = "\\\\d+"',
+        )
+        write(
+            "foo/newsfragments/AAA.BBB.feature.md",
+            "This fragment has an invalid name (should be digits only)",
+        )
+        commit("add stuff")
+
+        result = runner.invoke(towncrier_check, ["--compare-with", "main"])
+        self.assertEqual(1, result.exit_code, result.output)
+        self.assertIn(
+            "Error: Issue name 'AAA.BBB' does not match the configured pattern, '\\d+'",
+            result.output,
+        )
+
+    @with_isolated_runner
+    def test_issue_pattern_invalid(self, runner):
+        """
+        Fails if an issue name goes against the configured pattern.
+        """
+        create_project(
+            "pyproject.toml",
+            extra_config='issue_pattern = "\\\\d+"',
+        )
+        write(
+            "foo/newsfragments/AAA.BBB.feature",
+            "This fragment has an invalid name (should be digits only)",
+        )
+        commit("add stuff")
+
+        result = runner.invoke(towncrier_check, ["--compare-with", "main"])
+        self.assertEqual(1, result.exit_code, result.output)
+        self.assertIn(
+            "Error: Issue name 'AAA.BBB' does not match the configured pattern, '\\d+'",
+            result.output,
+        )

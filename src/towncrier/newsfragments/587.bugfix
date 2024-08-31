@@ -1,1 +1,0 @@
-The default Markdown template now renders a title containing the release version and date, even when the `name` configuration is left empty.

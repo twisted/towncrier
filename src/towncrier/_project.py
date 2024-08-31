@@ -7,20 +7,13 @@ Responsible for getting the version and name from a project.
 
 from __future__ import annotations
 
+import contextlib
+import importlib.metadata
 import sys
 
 from importlib import import_module
-from importlib.metadata import version as metadata_version
+from importlib.metadata import PackageNotFoundError
 from types import ModuleType
-from typing import Any
-
-from incremental import Version as IncrementalVersion
-
-
-if sys.version_info >= (3, 10):
-    from importlib.metadata import packages_distributions
-else:
-    from importlib_metadata import packages_distributions  # type: ignore
 
 
 def _get_package(package_dir: str, package: str) -> ModuleType:
@@ -48,12 +41,11 @@ def _get_metadata_version(package: str) -> str | None:
     """
     Try to get the version from the package metadata.
     """
-    distributions = packages_distributions()
-    distribution_names = distributions.get(package)
-    if not distribution_names or len(distribution_names) != 1:
-        # We can only determine the version if there is exactly one matching distribution.
-        return None
-    return metadata_version(distribution_names[0])
+    with contextlib.suppress(PackageNotFoundError):
+        if version := importlib.metadata.version(package):
+            return version
+
+    return None
 
 
 def get_version(package_dir: str, package: str) -> str:
@@ -63,7 +55,7 @@ def get_version(package_dir: str, package: str) -> str:
     Try to extract the version from the distribution version metadata that matches
     `package`, then fall back to looking for the package in `package_dir`.
     """
-    version: Any
+    version: str | None
 
     # First try to get the version from the package metadata.
     if version := _get_metadata_version(package):
@@ -71,9 +63,7 @@ def get_version(package_dir: str, package: str) -> str:
 
     # When no version if found, fall back to looking for the package in `package_dir`.
     module = _get_package(package_dir, package)
-
     version = getattr(module, "__version__", None)
-
     if not version:
         raise Exception(
             f"No __version__ or metadata version info for the '{package}' package."
@@ -82,37 +72,30 @@ def get_version(package_dir: str, package: str) -> str:
     if isinstance(version, str):
         return version.strip()
 
-    if isinstance(version, IncrementalVersion):
-        # FIXME:https://github.com/twisted/incremental/issues/81
-        # Incremental uses `.rcN`.
-        # importlib uses `rcN` (without a dot separation).
-        # Here we make incremental work like importlib.
-        return version.base().strip().replace(".rc", "rc")
-
     if isinstance(version, tuple):
         return ".".join(map(str, version)).strip()
 
+    # Try duck-typing as an Incremental version.
+    if hasattr(version, "base"):
+        try:
+            version = str(version.base()).strip()
+            # Incremental uses `X.Y.rcN`.
+            # Standardize on importlib (and PEP440) use of `X.YrcN`:
+            return version.replace(".rc", "rc")  # type: ignore
+        except TypeError:
+            pass
+
     raise Exception(
-        "I only know how to look at a __version__ that is a str, "
-        "an Increment Version, or a tuple. If you can't provide "
-        "that, use the --version argument and specify one."
+        "Version must be a string, tuple, or an Incremental Version."
+        " If you can't provide that, use the --version argument and specify one."
     )
 
 
 def get_project_name(package_dir: str, package: str) -> str:
     module = _get_package(package_dir, package)
-
     version = getattr(module, "__version__", None)
+    # Incremental has support for package names, try duck-typing it.
+    with contextlib.suppress(AttributeError):
+        return str(version.package)  # type: ignore
 
-    if not version:
-        # welp idk
-        return package.title()
-
-    if isinstance(version, str):
-        return package.title()
-
-    if isinstance(version, IncrementalVersion):
-        # Incremental has support for package names
-        return version.package
-
-    raise TypeError(f"Unsupported type for __version__: {type(version)}")
+    return package.title()

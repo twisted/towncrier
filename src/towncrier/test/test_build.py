@@ -15,7 +15,7 @@ from twisted.trial.unittest import TestCase
 
 from .._shell import cli
 from ..build import _main
-from .helpers import read, with_git_project, with_project, write
+from .helpers import read, read_pkg_resource, with_git_project, with_project, write
 
 
 class TestCli(TestCase):
@@ -1050,7 +1050,15 @@ class TestCli(TestCase):
     def test_title_format_custom_markdown(self, runner):
         """
         A non-empty title format adds the specified title, and if the target filename is
-        markdown then the title is added as a markdown header.
+        markdown then the title is added as given by the config.
+        In this way, full control is given to the user.
+        We make this choice for markdown files
+        because markdown header levels depend on where in the file
+        the section is being written and require modifications in the same line,
+        hence there is no easy way to know what to do to get the header to be at the right level.
+        This avoids a repeat of the regression introduced in
+        [#610](https://github.com/twisted/towncrier/pull/610),
+        which mistakenly assumed that starting the line with '# ' would work in all use cases.
         """
         with open("foo/newsfragments/123.feature", "w") as f:
             f.write("Adds levitation")
@@ -1075,7 +1083,7 @@ class TestCli(TestCase):
             Draft only -- nothing has been written.
             What is seen below is what would be written.
 
-            # [20-01-2001] CUSTOM RELEASE for FooBarBaz version 7.8.9
+            [20-01-2001] CUSTOM RELEASE for FooBarBaz version 7.8.9
 
             ### Features
 
@@ -1088,6 +1096,87 @@ class TestCli(TestCase):
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(expected_output, result.output)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = "foo"
+        filename = "NEWS.md"
+        title_format = "### [{project_date}] CUSTOM RELEASE for {name} version {version}"
+        template = "custom_template.md"
+        """
+    )
+    def test_markdown_injected_after_header(self, runner):
+        """
+        Test that we can inject markdown after some fixed header
+        and have the injected markdown header levels set at the desired level.
+        This avoids a repeat of the regression introduced in
+        [#610](https://github.com/twisted/towncrier/pull/610),
+        which mistakenly assumed that starting the line with '# ' would work in all use cases.
+        """
+        write("foo/newsfragments/123.feature", "Adds levitation")
+        write(
+            "NEWS.md",
+            contents="""
+                # Top title
+
+                ## Section title
+
+                Some text explaining something
+
+                another line
+
+                ## Release notes
+
+                <!-- towncrier release notes start -->
+
+                a footer!
+            """,
+            dedent=True,
+        )
+
+        default_template = read_pkg_resource("templates/default.md")
+        write(
+            "custom_template.md",
+            contents=default_template.replace(
+                "### {{ definitions", "#### {{ definitions"
+            ),
+        )
+
+        result = runner.invoke(_main, ["--date", "01-01-2001"], catch_exceptions=False)
+
+        with open("foo/newsfragments/123.feature", "w") as f:
+            f.write("Adds levitation")
+
+        self.assertEqual(0, result.exit_code, result.output)
+        output = read("NEWS.md")
+
+        expected_output = dedent(
+            """
+            # Top title
+
+            ## Section title
+
+            Some text explaining something
+
+            another line
+
+            ## Release notes
+
+            <!-- towncrier release notes start -->
+
+            ### [01-01-2001] CUSTOM RELEASE for Foo version 1.2.3
+
+            #### Features
+
+            - Adds levitation (#123)
+
+
+            a footer!
+            """
+        )
+
+        self.assertEqual(expected_output, output)
 
     @with_project(
         config="""
@@ -1583,3 +1672,101 @@ class TestCli(TestCase):
                 """
             ),
         )
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = "foo"
+        ignore = ["template.jinja", "CAPYBARAS.md", "seq_wildcard_[ab]"]
+        """
+    )
+    def test_ignored_files(self, runner):
+        """
+        When `ignore` is set in config, files with those names are ignored.
+        Configuration supports wildcard matching with `fnmatch`.
+        """
+        with open("foo/newsfragments/123.feature", "w") as f:
+            f.write("This has valid filename (control case)")
+        with open("foo/newsfragments/template.jinja", "w") as f:
+            f.write("This template has been manually ignored")
+        with open("foo/newsfragments/CAPYBARAS.md", "w") as f:
+            f.write("This markdown file has been manually ignored")
+        with open("foo/newsfragments/.gitignore", "w") as f:
+            f.write("gitignore is automatically ignored")
+        with open("foo/newsfragments/seq_wildcard_a", "w") as f:
+            f.write("Manually ignored with [] wildcard")
+
+        result = runner.invoke(_main, ["--draft"])
+        self.assertEqual(0, result.exit_code, result.output)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = "foo"
+        ignore = []
+        """
+    )
+    def test_invalid_fragment_name(self, runner):
+        """
+        When `ignore` is set in config, invalid filenames cause failure.
+        """
+        with open("foo/newsfragments/123.feature", "w") as f:
+            f.write("This has valid filename (control case)")
+        with open("foo/newsfragments/feature.124", "w") as f:
+            f.write("This has the issue and category the wrong way round")
+
+        result = runner.invoke(_main, ["--draft"])
+        self.assertEqual(1, result.exit_code, result.output)
+        self.assertIn("Invalid news fragment name: feature.124", result.output)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = "foo"
+        template = "foo/newsfragments/template.j2"
+        ignore = ["placeholder-to-trigger-strict-checks.txt"]
+        """
+    )
+    def test_ignore_template_filename(self, runner):
+        """
+        The `template` filename is automatically ignored when it
+        is stored in the same path as the newsfragment files.
+        """
+        with open("foo/newsfragments/123.feature", "w") as f:
+            f.write("Brand new thing.")
+        with open("foo/newsfragments/template.j2", "w") as f:
+            # Just a simple template to check that the file is rendered.
+            f.write(
+                """
+{% for section, _ in sections.items() %}
+{% for category, val in definitions.items() if category in sections[section]%}
+{{ definitions[category]['name'] }}
+
+{% for text, values in sections[section][category].items() %}
+- TEST {{ text }}
+{% endfor %}
+
+{% endfor %}
+{% endfor %}
+"""
+            )
+
+        result = runner.invoke(_main, ["--draft"])
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertIn("- TEST Brand new thing.\n", result.output)
+
+    @with_project()
+    def test_no_ignore_configured(self, runner):
+        """
+        When `ignore` is not set in config, invalid filenames are skipped.
+
+        This maintains backward compatibility with before we added `ignore`
+        to the configuration spec.
+        """
+        with open("foo/newsfragments/feature.124", "w") as f:
+            f.write("This has the issue and category the wrong way round")
+
+        result = runner.invoke(
+            _main, ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
+        )
+        self.assertEqual(0, result.exit_code, result.output)

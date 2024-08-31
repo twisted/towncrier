@@ -178,7 +178,13 @@ def __main(
 
     click.echo("Finding news fragments...", err=to_err)
 
-    fragment_contents, fragment_files = find_fragments(base_directory, config)
+    fragment_contents, fragment_files = find_fragments(
+        base_directory,
+        config,
+        # Fail if any fragment filenames are invalid only if ignore list is set
+        # (this maintains backward compatibility):
+        strict=(config.ignore is not None),
+    )
     fragment_filenames = [filename for (filename, _category) in fragment_files]
 
     click.echo("Rendering news fragments...", err=to_err)
@@ -226,7 +232,7 @@ def __main(
             name=project_name, version=project_version, project_date=project_date
         )
         if is_markdown:
-            parts = [f"# {top_line}"]
+            parts = [top_line]
         else:
             parts = [top_line, config.underlines[0] * len(top_line)]
         parts.append(rendered)

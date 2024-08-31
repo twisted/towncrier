@@ -15,15 +15,20 @@ Release candidate
 -----------------
 
 Create a release branch with a name of the form ``release-19.9.0`` starting from the main branch.
-The same branch is used for the release candidated and the final release.
+The same branch is used for the release candidate and the final release.
 In the end, the release branch is merged into the main branch.
 
 Update the version to the release candidate with the first being ``rc1`` (as opposed to 0).
-In ``src/towncrier/_version.py`` the version is set using ``incremental`` such as::
+In ``pyproject.toml`` the version is set using a PEP440 compliant string:
 
-    __version__ = Version('towncrier', 19, 9, 0, release_candidate=1)
+    version = "19.9.0rc1"
 
-Run ``venv/bin/towncrier build --yes`` to generate the news release NEWS file.
+Use `towncrier` to generate the news release NEWS file, but first,
+make sure the new version is installed::
+
+    venv/bin/pip install -e .
+    venv/bin/towncrier build --yes
+
 Commit and push to the primary repository, not a fork.
 It is important to not use a fork so that pushed tags end up in the primary repository,
 server provided secrets for publishing to PyPI are available, and maybe more.
@@ -59,21 +64,40 @@ For now, the GitHub release text is reStructuredText as it's easy to copy and pa
 In the future we might create a separate Markdown version.
 
 
+Release candidate publish failures
+----------------------------------
+
+The PyPI publish process is automatically triggered when a tag is created.
+
+The publish is skipped for PRs, so we can check that the automated process works only a release time.
+It can happen for the automated publish process to fail.
+
+As long as the package was not published to PyPI, do the followings:
+
+* Manually delete the candidate release from GitHub releases
+* Manually delete the tag for the release candidate
+
+Try to fix the issue and trigger the same release candidate again.
+
+Once the package is published on PyPI, do not delete the release or the tag.
+Proceed with create a new release candidate instead.
+
+
 Final release
---------------
+-------------
 
 Once the PR is approved, you can trigger the final release.
 
 Update the version to the final version.
-In ``src/towncrier/_version.py`` the version is set using ``incremental`` such as::
+In ``pyproject.toml`` the version is set using a PEP440 compliant string:
 
-    __version__ = Version('towncrier', 19, 9, 0)
+    version = "19.9.0"
 
 Manually update the `NEWS.rst` file to include the final release version and date.
 Usually it will look like this.
 This will replace the release candidate section::
 
-    towncrier 19.9.0 (2019-09-29)
+    towncrier 19.9.0 (2019-09-01)
     =============================
 
     No significant changes since the previous release candidate.
@@ -87,7 +111,7 @@ Similar to the release candidate, with the difference:
 
 * tag will be named `19.9.0`
 * the target is the same branch
-* Title will be `towncrier 19.0.0`
+* Title will be `towncrier 19.9.0`
 * Content can be the content of the final release (RST format).
 * Check **Set as the latest release**.
 * Check **Create a discussion for this release**.
@@ -96,9 +120,9 @@ Similar to the release candidate, with the difference:
 No need for another review request.
 
 Update the version to the development version.
-In ``src/towncrier/_version.py`` the version is set using ``incremental`` such as::
+In ``pyproject.toml`` the version is set using a PEP440 compliant string:
 
-    __version__ = Version('towncrier', 19, 9, 1, dev=0)
+    version = "19.9.0.dev0"
 
 Commit and push the changes.
 
@@ -111,6 +135,6 @@ With a squash merge, the whole branch history is lost.
 This causes the `pre-commit autoupdate` to fail.
 See `PR590 <https://github.com/twisted/towncrier/pull/590>`_ for more details.
 
-You can announce the release over IRC or Gitter.
+You can announce the release over IRC, Gitter, or Twisted mailing list.
 
 Done.

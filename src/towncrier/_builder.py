@@ -9,9 +9,11 @@ import re
 import textwrap
 
 from collections import defaultdict
+from fnmatch import fnmatch
 from pathlib import Path
 from typing import Any, DefaultDict, Iterable, Iterator, Mapping, NamedTuple, Sequence
 
+from click import ClickException
 from jinja2 import Template
 
 from towncrier._settings.load import Config
@@ -106,10 +108,29 @@ class FragmentsPath:
 def find_fragments(
     base_directory: str,
     config: Config,
+    strict: bool,
 ) -> tuple[Mapping[str, Mapping[tuple[str, str, int], str]], list[tuple[str, str]]]:
     """
     Sections are a dictonary of section names to paths.
+
+    If strict, raise ClickException if any fragments have an invalid name.
     """
+    ignored_files = {
+        ".gitignore",
+        ".gitkeep",
+        ".keep",
+        "readme",
+        "readme.md",
+        "readme.rst",
+    }
+    if isinstance(config.template, str):
+        # Template can be a tuple of (package_name, resource_name).
+        #
+        # See https://github.com/twisted/towncrier/issues/634
+        ignored_files.add(os.path.basename(config.template))
+    if config.ignore:
+        ignored_files.update(filename.lower() for filename in config.ignore)
+
     get_section_path = FragmentsPath(base_directory, config)
 
     content = {}
@@ -129,10 +150,24 @@ def find_fragments(
         file_content = {}
 
         for basename in files:
+            if any(
+                [
+                    fnmatch(basename.lower(), ignore_pattern)
+                    for ignore_pattern in ignored_files
+                ]
+            ):
+                continue
+
             issue, category, counter = parse_newfragment_basename(
                 basename, config.types
             )
             if category is None:
+                if strict and issue is None:
+                    raise ClickException(
+                        f"Invalid news fragment name: {basename}\n"
+                        "If this filename is deliberate, add it to "
+                        "'ignore' in your configuration."
+                    )
                 continue
             assert issue is not None
             assert counter is not None
@@ -142,6 +177,15 @@ def find_fragments(
                 counter = orphan_fragment_counter[category]
                 orphan_fragment_counter[category] += 1
 
+            if (
+                config.issue_pattern
+                and issue  # not orphan
+                and not re.fullmatch(config.issue_pattern, issue)
+            ):
+                raise ClickException(
+                    f"Issue name '{issue}' does not match the "
+                    f"configured pattern, '{config.issue_pattern}'"
+                )
             full_filename = os.path.join(section_dir, basename)
             fragment_files.append((full_filename, category))
             data = Path(full_filename).read_text(encoding="utf-8", errors="replace")

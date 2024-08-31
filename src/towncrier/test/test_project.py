@@ -5,7 +5,6 @@ import os
 import sys
 
 from importlib.metadata import version as metadata_version
-from unittest import mock
 
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
@@ -47,30 +46,69 @@ class VersionFetchingTests(TestCase):
 
     def test_incremental(self):
         """
-        An incremental Version __version__  is picked up.
+        An incremental-like Version __version__  is picked up.
         """
-        pkg = "../src"
+        temp = self.mktemp()
+        os.makedirs(temp)
+        os.makedirs(os.path.join(temp, "mytestprojinc"))
 
-        with self.assertWarnsRegex(
-            DeprecationWarning, "Accessing towncrier.__version__ is deprecated.*"
-        ):
-            # Previously this triggered towncrier.__version__ but now the first version
-            # check is from the package metadata. Let's mock out that part to ensure we
-            # can get incremental versions from __version__ still.
-            with mock.patch(
-                "towncrier._project._get_metadata_version", return_value=None
-            ):
-                version = get_version(pkg, "towncrier")
+        with open(os.path.join(temp, "mytestprojinc", "__init__.py"), "w") as f:
+            f.write(
+                """
+class Version:
+    '''
+    This is emulating a Version object from incremental.
+    '''
 
-            version = get_version(pkg, "towncrier")
+    def __init__(self, *version_parts):
+        self.version = version_parts
+        self.package = "mytestprojinc"
 
-        with self.assertWarnsRegex(
-            DeprecationWarning, "Accessing towncrier.__version__ is deprecated.*"
-        ):
-            name = get_project_name(pkg, "towncrier")
+    def base(self):
+        return '.'.join(map(str, self.version))
 
-        self.assertEqual(metadata_version("towncrier"), version)
-        self.assertEqual("towncrier", name)
+__version__ = Version(1, 3, 12, "rc1")
+                """
+            )
+
+        version = get_version(temp, "mytestprojinc")
+        self.assertEqual(version, "1.3.12rc1")
+
+        project = get_project_name(temp, "mytestprojinc")
+        self.assertEqual(project, "mytestprojinc")
+
+    def test_not_incremental(self):
+        """
+        An exception is raised when the version could not be detected.
+        For this test we use an incremental-like object,
+        that has the `base` method, but that method
+        does not match the return type for `incremental`.
+        """
+        temp = self.mktemp()
+        os.makedirs(os.path.join(temp, "mytestprojnotinc"))
+
+        with open(os.path.join(temp, "mytestprojnotinc", "__init__.py"), "w") as f:
+            f.write(
+                """
+class WeirdVersion:
+    def base(self, some_arg):
+        return "shouldn't get here"
+
+
+__version__ = WeirdVersion()
+"""
+            )
+        with self.assertRaises(Exception) as e:
+            get_version(temp, "mytestprojnotinc")
+
+        self.assertEqual(
+            (
+                "Version must be a string, tuple, or an Incremental Version. "
+                "If you can't provide that, use the --version argument and "
+                "specify one.",
+            ),
+            e.exception.args,
+        )
 
     def test_version_from_metadata(self):
         """
@@ -129,7 +167,7 @@ class VersionFetchingTests(TestCase):
 
         self.assertRaises(Exception, get_version, temp, "mytestprojb")
 
-        self.assertRaises(TypeError, get_project_name, temp, "mytestprojb")
+        self.assertEqual("Mytestprojb", get_project_name(temp, "mytestprojb"))
 
     def test_import_fails(self):
         """

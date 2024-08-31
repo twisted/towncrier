@@ -80,7 +80,10 @@ Top level keys
 
     ``""`` by default.
 
-    Formatted titles are appended a line of ``=`` on the following line (reStructuredText title format) unless the template has an ``.md`` suffix, in which case the title will instead be prefixed with ``#`` (markdown title format).
+    When using reStructuredText, formatted titles are underlined using the ``underlines`` configuration.
+    For titles, the first value from ``underlines`` is used to create the underline (which is inserted on the line following the title).
+    If the template has an ``.md`` suffix, we assume we are looking at markdown format and the title is applied as, i.e. full control over the title format is given to the user.
+    This choice is made because setting the correct markdown header level automatically is non-trivial (mainly because you don't know what context the generated CHANGELOG entries are being written into).
 
 ``issue_format``
     A format string for rendering the issue/ticket number in newsfiles.
@@ -129,6 +132,31 @@ Top level keys
     Add the ``filename`` option extension to news fragment files created with ``towncrier create`` if an extension is not explicitly provided.
 
     ``true`` by default.
+
+``ignore``
+    A case-insensitive list of filenames in the news fragments directory to ignore.
+    Wildcard matching is supported via the `fnmatch <https://docs.python.org/3/library/fnmatch.html#fnmatch.fnmatch>`_ function.
+
+    ``None`` by default.
+
+    ``towncrier check`` will fail if there are any news fragment files that have invalid filenames, except for those in the list. ``towncrier build`` will likewise fail, but only if this list has been configured (set to an empty list if there are no files to ignore).
+
+    The following filenames are automatically ignored, case insensitive.
+
+    -   ``.gitignore``
+    -   ``.gitkeep``
+    -   ``.keep``
+    -   ``README``
+    -   ``README.md``
+    -   ``README.rst``
+    -   the template file itself
+
+``issue_pattern``
+    Ensure the issue name (file name excluding the category and suffix) matches a certain regex pattern.
+    Make sure to use escape characters properly (e.g. "\\d+" for digit-only file names).
+    When emptry (``""``), all issue names will be considered valid.
+
+    ``""`` by default.
 
 Extra top level keys for Python projects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

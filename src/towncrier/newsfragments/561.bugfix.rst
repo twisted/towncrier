@@ -1,1 +1,0 @@
-Add explicit encoding to read_text.

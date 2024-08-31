@@ -32,8 +32,10 @@
 import os
 
 from datetime import date
+from importlib.metadata import version
 
-from towncrier import __version__ as towncrier_version
+
+towncrier_version = version("towncrier")
 
 
 extensions = []
@@ -55,7 +57,7 @@ _today = date.today()
 project = "Towncrier"
 copyright = "{}, Towncrier contributors. Ver {}".format(
     _today.year,
-    towncrier_version.public(),
+    towncrier_version,
 )
 author = "Amber Brown"
 
@@ -63,19 +65,14 @@ author = "Amber Brown"
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 # The short X.Y version.
-version = "{}.{}.{}".format(
-    towncrier_version.major, towncrier_version.minor, towncrier_version.micro
-)
+version = ".".join(towncrier_version.split(".")[:3])
 # The full version, including alpha/beta/rc tags.
-release = towncrier_version.public()
+release = towncrier_version
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
-
-# The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "sphinx"
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False

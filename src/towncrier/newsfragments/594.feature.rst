@@ -1,1 +1,0 @@
-The temporary file ``towncrier create`` creates now uses the correct ``.rst`` or ``.md`` extension, which may help your editor with with syntax highlighting.

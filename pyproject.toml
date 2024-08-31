@@ -1,14 +1,15 @@
 [build-system]
-requires = [
-    "hatchling",
-    "incremental == 22.10.0",
-]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 
 [project]
-dynamic = ["version"]
 name = "towncrier"
+# For dev   - 23.11.0.dev0
+# For RC    - 23.11.0rc1  (release candidate starts at 1)
+# For final - 23.11.0
+# make sure to follow PEP440
+version = "24.8.0.dev0"
 description = "Building newsfiles for your project."
 readme = "README.rst"
 license = "MIT"
@@ -32,8 +33,7 @@ dependencies = [
     "click",
     "importlib-resources>=5; python_version<'3.10'",
     "importlib-metadata>=4.6; python_version<'3.10'",
-    "incremental",
-    "jinja2>=3",
+    "jinja2",
     "tomli; python_version<'3.11'",
 ]
 
@@ -58,12 +58,6 @@ Repository = "https://github.com/twisted/towncrier"
 Tests = "https://github.com/twisted/towncrier/actions?query=branch%3Atrunk"
 Coverage = "https://codecov.io/gh/twisted/towncrier"
 Distribution = "https://pypi.org/project/towncrier"
-
-
-[tool.hatch.version]
-source = "code"
-path = "src/towncrier/_version.py"
-expression = "_hatchling_version"
 
 [tool.hatch.build]
 exclude = [
@@ -152,12 +146,6 @@ exclude = '^src/towncrier/test/test_.*\.py$'
 module = 'towncrier.click_default_group'
 # Vendored module without type annotations.
 ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = 'incremental'
-# No released version with type hints.
-ignore_missing_imports = true
-
 
 [tool.coverage.run]
 parallel = true
