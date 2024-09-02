@@ -339,8 +339,8 @@ def append_newlines_if_trailing_code_block(text: str) -> str:
     # 2. any number of indented, or empty, lines (or the code block would end)
     # 3. one line of indented text w/o a trailing newline (because the string is stripped)
     # 4. end of the string.
-    indented_text=r"  [ \t]+[^\n]*"
-    empty_or_indented_text_lines=f"(({indented_text})?\n)*"
+    indented_text = r"  [ \t]+[^\n]*"
+    empty_or_indented_text_lines = f"(({indented_text})?\n)*"
     regex = r"::\n\n" + empty_or_indented_text_lines + indented_text + "$"
     if re.search(regex, text):
         # We insert one space, the default template inserts another, which results
