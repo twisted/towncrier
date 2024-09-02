@@ -463,7 +463,7 @@ Features
         )
         self.assertEqual(output, expected_output)
 
-    def test_trailing_block(self):
+    def test_trailing_block(self) -> None:
         """
         Make sure a newline gets inserted before appending the issue number, if the
         newsfragment ends with an indented block.
@@ -475,84 +475,48 @@ Features
                     "1",
                     "feature",
                     0,
-                ): "text::\n\n    def foo(): ..."
+                ): "this fragment has a trailing code block::\n\n    def foo(): ...\n\n   \n    def bar(): ...",
+                (
+                    "2",
+                    "feature",
+                    0,
+                ): "this block is not trailing::\n\n    def foo(): ...\n    def bar(): ...\n\nso we can append the issue number directly after this",
             }
         }
+        # the line with 3 spaces (and nothing else) is stripped
         expected_output = """MyProject 1.0 (never)
 =====================
 
 Features
 --------
 
-- text::
+- this fragment has a trailing code block::
 
       def foo(): ...
 
+
+      def bar(): ...
+
   (#1)
+- this block is not trailing::
+
+      def foo(): ...
+      def bar(): ...
+
+  so we can append the issue number directly after this (#2)
 
 
 """
 
-        # TODO: I copy-pasted the below lines from previous test, they probably contain
-        # crap that's irrelevant to this test.
         definitions = {
             "feature": {"name": "Features", "showcontent": True},
         }
         template = read_pkg_resource("templates/default.rst")
-
-        fragments = split_fragments(fragments, definitions)
+        fragments_split = split_fragments(fragments, definitions)
         output = render_fragments(
             template,
             None,
-            fragments,
-            definitions,
-            ["-", "~"],
-            wrap=True,
-            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
-        )
-        self.assertEqual(output, expected_output)
-
-    def test_trailing_block_nondefault_bullets(self):
-        """
-        Test insertion of newlines after code block with single-file-no-bullets.
-        """
-        # TODO: I expected this to break with the issue number being indented, but
-        # instead I got an extra newline? Which seems fine?
-
-        fragments = {
-            "": {
-                (
-                    "1",
-                    "feature",
-                    0,
-                ): "text::\n\n    def foo(): ..."
-            }
-        }
-        expected_output = """MyProject 1.0 (never)
-=====================
-
-Features
---------
-
-text::
-
-      def foo(): ...
-
-
-(#1)
-
-"""
-
-        definitions = {
-            "feature": {"name": "Features", "showcontent": True},
-        }
-        template = read_pkg_resource("templates/single-file-no-bullets.rst")
-
-        fragments = split_fragments(fragments, definitions)
-        output = render_fragments(
-            template,
-            None,
-            fragments,
+            fragments_split,
             definitions,
             ["-", "~"],
             wrap=True,
