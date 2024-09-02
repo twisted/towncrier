@@ -475,12 +475,19 @@ Features
                     "1",
                     "feature",
                     0,
-                ): "this fragment has a trailing code block::\n\n    def foo(): ...\n\n   \n    def bar(): ...",
+                ): (
+                    "this fragment has a trailing code block::\n\n"
+                    "def foo(): ...\n\n   \n    def bar(): ..."
+                ),
                 (
                     "2",
                     "feature",
                     0,
-                ): "this block is not trailing::\n\n    def foo(): ...\n    def bar(): ...\n\nso we can append the issue number directly after this",
+                ): (
+                    "this block is not trailing::\n\n"
+                    "def foo(): ...\n    def bar(): ..."
+                    "\n\nso we can append the issue number directly after this"
+                ),
             }
         }
         # the line with 3 spaces (and nothing else) is stripped
