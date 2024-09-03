@@ -84,7 +84,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Download package files
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: dist
         path: dist/
@@ -131,7 +131,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Download package files
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: dist
         path: dist/
@@ -178,7 +178,7 @@ jobs:
         fetch-depth: 0
 
     - name: Download package files
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: dist
         path: dist/
@@ -246,7 +246,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Download package files
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: dist
         path: dist/
@@ -283,7 +283,7 @@ jobs:
 
     - run: python -Im pip install --upgrade coverage[toml]
 
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4.1.7
       with:
         name: coverage-data
 
