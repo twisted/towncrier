@@ -1,0 +1,1 @@
+Markdown template: Render category headers as h2 when no sections are present.

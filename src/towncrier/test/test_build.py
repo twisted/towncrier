@@ -1085,7 +1085,7 @@ class TestCli(TestCase):
 
             [20-01-2001] CUSTOM RELEASE for FooBarBaz version 7.8.9
 
-            ### Features
+            ## Features
 
             - Adds levitation (#123)
 
@@ -1136,11 +1136,10 @@ class TestCli(TestCase):
         )
 
         default_template = read_pkg_resource("templates/default.md")
+        assert "##{%" in default_template
         write(
             "custom_template.md",
-            contents=default_template.replace(
-                "### {{ definitions", "#### {{ definitions"
-            ),
+            contents=default_template.replace("##{%", "####{%"),
         )
 
         result = runner.invoke(_main, ["--date", "01-01-2001"], catch_exceptions=False)
@@ -1387,7 +1386,7 @@ class TestCli(TestCase):
 
             # Foo 1.2.3 (01-01-2001)
 
-            ### Features
+            ## Features
 
             - Adds levitation (#123)
 
@@ -1437,7 +1436,7 @@ class TestCli(TestCase):
 
             # 1.2.3 (01-01-2001)
 
-            ### Features
+            ## Features
 
             - Adds levitation (#123)
             """
@@ -1607,7 +1606,7 @@ class TestCli(TestCase):
 
             # 7.8.9 (20-01-2001)
 
-            ### Misc
+            ## Misc
 
             - #123, #345
             - Another orphan misc still displayed!
