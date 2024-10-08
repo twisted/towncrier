@@ -462,3 +462,71 @@ Features
             versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
         )
         self.assertEqual(output, expected_output)
+
+    def test_trailing_block(self) -> None:
+        """
+        Make sure a newline gets inserted before appending the issue number, if the
+        newsfragment ends with an indented block.
+        """
+
+        fragments = {
+            "": {
+                (
+                    "1",
+                    "feature",
+                    0,
+                ): (
+                    "this fragment has a trailing code block::\n\n"
+                    "def foo(): ...\n\n   \n    def bar(): ..."
+                ),
+                (
+                    "2",
+                    "feature",
+                    0,
+                ): (
+                    "this block is not trailing::\n\n"
+                    "def foo(): ...\n    def bar(): ..."
+                    "\n\nso we can append the issue number directly after this"
+                ),
+            }
+        }
+        # the line with 3 spaces (and nothing else) is stripped
+        expected_output = """MyProject 1.0 (never)
+=====================
+
+Features
+--------
+
+- this fragment has a trailing code block::
+
+      def foo(): ...
+
+
+      def bar(): ...
+
+  (#1)
+- this block is not trailing::
+
+      def foo(): ...
+      def bar(): ...
+
+  so we can append the issue number directly after this (#2)
+
+
+"""
+
+        definitions = {
+            "feature": {"name": "Features", "showcontent": True},
+        }
+        template = read_pkg_resource("templates/default.rst")
+        fragments_split = split_fragments(fragments, definitions)
+        output = render_fragments(
+            template,
+            None,
+            fragments_split,
+            definitions,
+            ["-", "~"],
+            wrap=True,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
+        )
+        self.assertEqual(output, expected_output)
