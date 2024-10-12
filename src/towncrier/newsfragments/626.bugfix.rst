@@ -1,0 +1,2 @@
+For reStructuredText format, you can now use emojis in category names.
+In previous versions, the generated underline was not matching the title width.

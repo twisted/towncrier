@@ -7,16 +7,29 @@ from __future__ import annotations
 import os
 import re
 import textwrap
+import unicodedata
 
 from collections import defaultdict
 from fnmatch import fnmatch
 from pathlib import Path
-from typing import Any, DefaultDict, Iterable, Iterator, Mapping, NamedTuple, Sequence
+from typing import (
+    Any,
+    DefaultDict,
+    Iterable,
+    Iterator,
+    Mapping,
+    NamedTuple,
+    Sequence,
+    TypeAlias,
+)
 
 from click import ClickException
 from jinja2 import Template
 
 from towncrier._settings.load import Config
+
+
+UnderlineLengthType: TypeAlias = float | str | int | dict[Any, Any] | list[Any]
 
 
 # Returns issue, category and counter or (None, None, None) if the basename
@@ -201,6 +214,49 @@ def find_fragments(
         content[key] = file_content
 
     return content, fragment_files
+
+
+def get_dict_length(obj: dict[UnderlineLengthType, UnderlineLengthType]) -> int:
+    """
+    Gets the sum of the underline lengths for all keys and values in a dictionary.
+    """
+    return sum(
+        get_underline_length(key) + get_underline_length(value)
+        for key, value in obj.items()
+    )
+
+
+def get_list_length(obj: list[UnderlineLengthType]) -> int:
+    """
+    Gets the sum of the underline lengths for all items in a list.
+    """
+    return sum(get_underline_length(item) for item in obj)
+
+
+def get_string_length(text: str) -> int:
+    """
+    Determines the amount of characters needed to underline a string.
+    """
+    return sum(
+        2 if unicodedata.east_asian_width(char) in ("W", "F") else 1 for char in text
+    )
+
+
+def get_underline_length(obj: UnderlineLengthType) -> int:
+    """
+    Given `obj` determine the underline length needed for the reStructuredText output.
+
+    Particularly helps determine if an extra underline is needed for wide characters like emojis.
+    """
+    if isinstance(obj, dict):
+        return get_dict_length(obj)
+    elif isinstance(obj, list):
+        return get_list_length(obj)
+    elif isinstance(obj, str):
+        return get_string_length(obj)
+    elif isinstance(obj, int) or isinstance(obj, float):
+        return len(str(obj))
+    raise TypeError("Object must be a string, int, float, list, or dictionary.")
 
 
 def indent(text: str, prefix: str) -> str:
@@ -411,6 +467,7 @@ def render_fragments(
         top_underline=top_underline,
         get_indent=get_indent,  # simplify indentation in the jinja template.
         issues_by_category=issues_by_category,
+        get_underline_length=get_underline_length,  # helps determine length for non-ascii chars
     )
 
     for line in res.split("\n"):

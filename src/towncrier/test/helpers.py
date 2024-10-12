@@ -29,7 +29,7 @@ def write(path: str | Path, contents: str, dedent: bool = False) -> None:
     p.parent.mkdir(parents=True, exist_ok=True)
     if dedent:
         contents = textwrap.dedent(contents)
-    p.write_text(contents)
+    p.write_text(contents, encoding="utf-8")
 
 
 def read_pkg_resource(path: str) -> str:
@@ -65,9 +65,9 @@ def setup_simple_project(
         config = "[tool.towncrier]\n" 'package = "foo"\n' + extra_config
     else:
         config = textwrap.dedent(config)
-    Path(pyproject_path).write_text(config)
+    Path(pyproject_path).write_text(config, encoding="utf-8")
     Path("foo").mkdir()
-    Path("foo/__init__.py").write_text('__version__ = "1.2.3"\n')
+    Path("foo/__init__.py").write_text('__version__ = "1.2.3"\n', encoding="utf-8")
 
     if mkdir_newsfragments:
         Path("foo/newsfragments").mkdir()
