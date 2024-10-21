@@ -63,7 +63,6 @@ Distribution = "https://pypi.org/project/towncrier"
 exclude = [
     "admin",
     "bin",
-    "docs",
     ".readthedocs.yaml",
     "src/towncrier/newsfragments",
 ]
