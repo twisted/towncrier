@@ -2,14 +2,12 @@ from __future__ import annotations
 
 import sys
 import textwrap
-
 from functools import wraps
 from pathlib import Path
 from subprocess import call
 from typing import Any, Callable
 
 from click.testing import CliRunner
-
 
 if sys.version_info < (3, 9):
     import importlib_resources as resources

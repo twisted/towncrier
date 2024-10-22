@@ -4,7 +4,6 @@ import os
 
 import nox
 
-
 nox.options.sessions = ["pre_commit", "docs", "typecheck", "tests"]
 nox.options.reuse_existing_virtualenvs = True
 nox.options.error_on_external_run = True

@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import os
-
 from subprocess import STDOUT, CalledProcessError, call, check_output
 
 
