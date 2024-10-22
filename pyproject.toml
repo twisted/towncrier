@@ -63,6 +63,10 @@ Distribution = "https://pypi.org/project/towncrier"
 exclude = [
     "admin",
     "bin",
+    ".github",
+    ".git-blame-ignore-revs",
+    ".pre-commit-config.yaml,
+    ".pre-commit-hooks.yaml",
     ".readthedocs.yaml",
     "src/towncrier/newsfragments",
 ]
