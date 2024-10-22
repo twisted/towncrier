@@ -30,10 +30,8 @@
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 import os
-
 from datetime import date
 from importlib.metadata import version
-
 
 towncrier_version = version("towncrier")
 

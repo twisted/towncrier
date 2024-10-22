@@ -4,7 +4,6 @@
 import os
 import os.path
 import warnings
-
 from pathlib import Path
 from subprocess import call
 

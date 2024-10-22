@@ -7,11 +7,11 @@ from __future__ import annotations
 import os
 import re
 import textwrap
-
 from collections import defaultdict
 from fnmatch import fnmatch
 from pathlib import Path
-from typing import Any, DefaultDict, Iterable, Iterator, Mapping, NamedTuple, Sequence
+from typing import (Any, DefaultDict, Iterable, Iterator, Mapping, NamedTuple,
+                    Sequence)
 
 from click import ClickException
 from jinja2 import Template

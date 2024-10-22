@@ -8,7 +8,6 @@ import dataclasses
 import os
 import re
 import sys
-
 from contextlib import ExitStack
 from pathlib import Path
 from typing import Any, Literal, Mapping, Sequence
@@ -16,7 +15,6 @@ from typing import Any, Literal, Mapping, Sequence
 from click import ClickException
 
 from .._settings import fragment_types as ft
-
 
 if sys.version_info < (3, 10):
     import importlib_resources as resources
