@@ -8,48 +8,48 @@
 # the project looks unmaintaintained.
 
 """
-   click_default_group
-   ~~~~~~~~~~~~~~~~~~~
+click_default_group
+~~~~~~~~~~~~~~~~~~~
 
-   Define a default subcommand by `default=True`:
+Define a default subcommand by `default=True`:
 
-   .. sourcecode:: python
+.. sourcecode:: python
 
-      import click
-      from click_default_group import DefaultGroup
+   import click
+   from click_default_group import DefaultGroup
 
-      @click.group(cls=DefaultGroup, default_if_no_args=True)
-      def cli():
-          pass
+   @click.group(cls=DefaultGroup, default_if_no_args=True)
+   def cli():
+       pass
 
-      @cli.command(default=True)
-      def foo():
-          click.echo('foo')
+   @cli.command(default=True)
+   def foo():
+       click.echo('foo')
 
-      @cli.command()
-      def bar():
-          click.echo('bar')
+   @cli.command()
+   def bar():
+       click.echo('bar')
 
-   Then you can invoke that without explicit subcommand name:
+Then you can invoke that without explicit subcommand name:
 
-   .. sourcecode:: console
+.. sourcecode:: console
 
-      $ cli.py --help
-      Usage: cli.py [OPTIONS] COMMAND [ARGS]...
+   $ cli.py --help
+   Usage: cli.py [OPTIONS] COMMAND [ARGS]...
 
-      Options:
-        --help    Show this message and exit.
+   Options:
+     --help    Show this message and exit.
 
-      Command:
-        foo*
-        bar
+   Command:
+     foo*
+     bar
 
-      $ cli.py
-      foo
-      $ cli.py foo
-      foo
-      $ cli.py bar
-      bar
+   $ cli.py
+   foo
+   $ cli.py foo
+   foo
+   $ cli.py bar
+   bar
 
 """
 import warnings
