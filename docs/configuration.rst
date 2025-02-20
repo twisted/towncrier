@@ -17,9 +17,8 @@ A minimal configuration for a Python project looks like this:
 .. code-block:: toml
 
    # pyproject.toml
-
-   [tool.towncrier]
-   package = "myproject"
+   [project]
+   name = "myproject"
 
 A minimal configuration for a non-Python project looks like this:
 
@@ -36,9 +35,9 @@ Top level keys
 ``name``
     The name of your project.
 
-    For Python projects that provide a ``package`` key, if left empty then the name will be automatically determined.
+    For Python projects that provide a ``package`` key, if left empty then the name will be automatically determined from the ``package`` key.
 
-    ``""`` by default.
+    Defaults to the key ``[project.name]`` in ``pyproject.toml`` (if present), otherwise defaults to the empty string ``""``.
 
 ``version``
     The version of your project.
@@ -166,6 +165,8 @@ Extra top level keys for Python projects
 
     Allows ``name`` and ``version`` to be automatically determined from the Python package.
     Changes the default ``directory`` to be a ``newsfragments`` directory within this package.
+
+    Defaults to the key ``[project.name]`` in ``pyproject.toml`` (if present), otherwise defaults to the empty string ``""``.
 
 ``package_dir``
     The folder your package lives.

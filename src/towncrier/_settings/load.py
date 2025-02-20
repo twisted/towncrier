@@ -118,19 +118,44 @@ def load_config(directory: str) -> Config | None:
     towncrier_toml = os.path.join(directory, "towncrier.toml")
     pyproject_toml = os.path.join(directory, "pyproject.toml")
 
+    # In case the [tool.towncrier.name|package] is not specified
+    # we'll read it from [project.name]
+
+    if os.path.exists(pyproject_toml):
+        pyproject_config = load_toml_from_file(pyproject_toml)
+    else:
+        # make it empty so it won't be used as a backup plan
+        pyproject_config = {}
+
     if os.path.exists(towncrier_toml):
-        config_file = towncrier_toml
+        config_toml = towncrier_toml
     elif os.path.exists(pyproject_toml):
-        config_file = pyproject_toml
+        config_toml = pyproject_toml
     else:
         return None
 
-    return load_config_from_file(directory, config_file)
+    # Read the default configuration. Depending on which exists
+    config = load_config_from_file(directory, config_toml)
+
+    # Fallback certain values depending on the [project.name]
+    if project_name := pyproject_config.get("project", {}).get("name", ""):
+        # Fallback to the project name for the configuration name
+        # and the configuration package entries.
+        if not config.name:
+            config.name = project_name
+        if not config.package:
+            config.package = project_name
+
+    return config
+
+
+def load_toml_from_file(config_file: str) -> Mapping[str, Any]:
+    with open(config_file, "rb") as conffile:
+        return tomllib.load(conffile)
 
 
 def load_config_from_file(directory: str, config_file: str) -> Config:
-    with open(config_file, "rb") as conffile:
-        config = tomllib.load(conffile)
+    config = load_toml_from_file(config_file)
 
     return parse_toml(directory, config)
 

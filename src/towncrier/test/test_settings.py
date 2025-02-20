@@ -194,6 +194,42 @@ class TomlSettingsTests(TestCase):
         config = load_config(project_dir)
         self.assertEqual(config.package, "a")
 
+    def test_pyproject_name_fallback_both(self):
+        """
+        Towncrier will fallback to the [project.name] value in pyproject.toml.
+        """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [project]
+                name = "a"
+            """,
+        )
+
+        config = load_config(project_dir)
+        self.assertEqual(config.package, "a")
+        self.assertEqual(config.name, "a")
+
+    def test_pyproject_name_fallback_towncrier(self):
+        """
+        Towncrier will fallback to the [project.name] value in pyproject.toml.
+        """
+        project_dir = self.mktemp_project(
+            towncrier_toml="""
+                [tool.towncrier]
+                package = "a"
+            """,
+            pyproject_toml="""
+                [project]
+                name = "c"
+                [tool.towncrier]
+                name = "b"
+            """,
+        )
+
+        config = load_config(project_dir)
+        self.assertEqual(config.package, "a")
+        self.assertEqual(config.name, "c")
+
     @with_isolated_runner
     def test_load_no_config(self, runner: CliRunner):
         """
