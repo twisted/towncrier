@@ -1,0 +1,1 @@
+Enabled fallback values of [tool.towncrier.name|package] to [project.name] if pyproject.toml files are used
