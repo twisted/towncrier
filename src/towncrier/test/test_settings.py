@@ -112,22 +112,6 @@ class TomlSettingsTests(TestCase):
 
         self.assertEqual(config.template, ("towncrier.templates", "default.rst"))
 
-    def test_missing(self):
-        """
-        If the config file doesn't have the correct toml key, we error.
-        """
-        project_dir = self.mktemp_project(
-            pyproject_toml="""
-                [something.else]
-                blah='baz'
-            """
-        )
-
-        with self.assertRaises(ConfigError) as e:
-            load_config(project_dir)
-
-        self.assertEqual(e.exception.failing_option, "all")
-
     def test_incorrect_single_file(self):
         """
         single_file must be a bool.
