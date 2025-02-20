@@ -166,10 +166,7 @@ atexit.register(_file_manager.close)
 
 
 def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
-    if "towncrier" not in (config.get("tool") or {}):
-        raise ConfigError("No [tool.towncrier] section.", failing_option="all")
-
-    config = config["tool"]["towncrier"]
+    config = config.get("tool", {}).get("towncrier", {})
     parsed_data = {}
 
     # Check for misspelt options.
