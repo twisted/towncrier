@@ -257,16 +257,12 @@ class TomlSettingsTests(TestCase):
                 # name fallsback to package
                 if "package" in tc_fields:
                     package = "d"
-                elif "package" in pp_fields:
-                    package = "b"
                 else:
                     package = "foo"
                 self.assertEqual(config.package, package)
 
                 if "name" in tc_fields:
                     self.assertEqual(config.name, "c")
-                elif "name" in pp_fields:
-                    self.assertEqual(config.name, "a")
                 else:
                     # fall-back to package name
                     self.assertEqual(config.name, package)

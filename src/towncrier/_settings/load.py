@@ -141,10 +141,10 @@ def load_config(directory: str) -> Config | None:
     if project_name := pyproject_config.get("project", {}).get("name", ""):
         # Fallback to the project name for the configuration name
         # and the configuration package entries.
-        if not config.name:
-            config.name = project_name
         if not config.package:
             config.package = project_name
+        if not config.name:
+            config.name = config.package
 
     return config
 
