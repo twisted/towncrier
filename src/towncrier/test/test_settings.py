@@ -3,6 +3,8 @@
 
 import os
 
+from textwrap import dedent
+
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
@@ -112,22 +114,6 @@ class TomlSettingsTests(TestCase):
 
         self.assertEqual(config.template, ("towncrier.templates", "default.rst"))
 
-    def test_missing(self):
-        """
-        If the config file doesn't have the correct toml key, we error.
-        """
-        project_dir = self.mktemp_project(
-            pyproject_toml="""
-                [something.else]
-                blah='baz'
-            """
-        )
-
-        with self.assertRaises(ConfigError) as e:
-            load_config(project_dir)
-
-        self.assertEqual(e.exception.failing_option, "all")
-
     def test_incorrect_single_file(self):
         """
         single_file must be a bool.
@@ -193,6 +179,93 @@ class TomlSettingsTests(TestCase):
 
         config = load_config(project_dir)
         self.assertEqual(config.package, "a")
+
+    def test_pyproject_only_pyproject_toml(self):
+        """
+        Towncrier will fallback to the [project.name] value in pyproject.toml.
+
+        This tests asserts that the minimal configuration is to do *nothing*
+        when using a pyproject.toml file.
+        """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [project]
+                name = "a"
+            """,
+        )
+
+        config = load_config(project_dir)
+        self.assertEqual(config.package, "a")
+        self.assertEqual(config.name, "a")
+
+    def test_pyproject_assert_fallback(self):
+        """
+        This test is an extensive test of the fallback scenarios
+        for the `package` and `name` keys in the towncrier section.
+
+        It will fallback to pyproject.toml:name in any case.
+        And as such it checks the various fallback mechanisms
+        if the fields are not present in the towncrier.toml, nor
+        in the pyproject.toml files.
+
+        This both tests when things are *only* in the pyproject.toml
+        and default usage of the data in the towncrier.toml file.
+        """
+        pyproject_toml = dedent(
+            """
+        [project]
+        name = "foo"
+        [tool.towncrier]
+        """
+        )
+        towncrier_toml = dedent(
+            """
+        [tool.towncrier]
+        """
+        )
+        tests = [
+            "",
+            "name = '{name}'",
+            "package = '{package}'",
+            "name = '{name}'",
+            "package = '{package}'",
+        ]
+
+        def factory(name, package):
+            def func(test):
+                return dedent(test).format(name=name, package=package)
+
+            return func
+
+        for pp_fields in map(factory(name="a", package="b"), tests):
+            pp_toml = pyproject_toml + pp_fields
+            for tc_fields in map(factory(name="c", package="d"), tests):
+                tc_toml = towncrier_toml + tc_fields
+
+                # Create the temporary project
+                project_dir = self.mktemp_project(
+                    pyproject_toml=pp_toml,
+                    towncrier_toml=tc_toml,
+                )
+
+                # Read the configuration file.
+                config = load_config(project_dir)
+
+                # Now the values depend on where the fallback
+                # is.
+                # If something is in towncrier.toml, it will be preferred
+                # name fallsback to package
+                if "package" in tc_fields:
+                    package = "d"
+                else:
+                    package = "foo"
+                self.assertEqual(config.package, package)
+
+                if "name" in tc_fields:
+                    self.assertEqual(config.name, "c")
+                else:
+                    # fall-back to package name
+                    self.assertEqual(config.name, package)
 
     @with_isolated_runner
     def test_load_no_config(self, runner: CliRunner):
