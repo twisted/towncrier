@@ -78,7 +78,7 @@ class ArrayFragmentTypesLoader(BaseFragmentTypesLoader):
         for type_config in types_config:
             directory = type_config["directory"]
             fragment_type_name = type_config["name"]
-            is_content_required = type_config["showcontent"]
+            is_content_required = type_config.get("showcontent", True)
             check = type_config.get("check", True)
             types[directory] = {
                 "name": fragment_type_name,

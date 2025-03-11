@@ -1769,3 +1769,26 @@ class TestCli(TestCase):
             _main, ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
         )
         self.assertEqual(0, result.exit_code, result.output)
+
+    @with_project(
+        config="""
+    [tool.towncrier]
+    title_format = "{version} - {project_date}"
+
+      [[tool.towncrier.type]]
+      directory = "feature"
+      name = "Feature"
+    """
+    )
+    def test_showcontent_default_toml_array(self, runner):
+        """
+        When configuring custom fragment types with a TOML array
+        `showcontent` should default to `true`.
+        """
+        with open("foo/newsfragments/+new_feature.feature.md", "w") as f:
+            f.write("We added an exciting new feature!")
+
+        result = runner.invoke(
+            _main, ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
+        )
+        self.assertEqual(0, result.exit_code, result.output)
