@@ -292,12 +292,12 @@ Each table within this array has the following mandatory keys:
     The description of the fragment type, as it must be included
     in the news file.
 
-``directory`` (optional)
+``directory``
     The type / category of the fragment.
 
     Defaults to ``name.lower()``.
 
-``showcontent`` (optional)
+``showcontent``
     A boolean value indicating whether the fragment contents should be included in the news file.
 
     ``true`` by default.
@@ -307,7 +307,7 @@ Each table within this array has the following mandatory keys:
         Orphan fragments (those without an issue number) always have their content included.
         If a fragment was created, it means that information is important for end users.
 
-``check`` (optional)
+``check``
     A boolean value indicating whether the fragment should be considered by the ``towncrier check`` command.
 
     ``true`` by default.
