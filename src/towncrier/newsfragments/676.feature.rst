@@ -1,0 +1,1 @@
+The `towncrier check` command now has a `--staged` flag to inspect the files staged for commit when checking for a news fragment: useful in a pre-commit hook

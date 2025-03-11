@@ -121,3 +121,10 @@ By default, ``towncrier`` compares the current branch against ``origin/main`` (a
    Use ``REMOTE-BRANCH`` instead of ``origin/main``::
 
       $ towncrier check --compare-with origin/trunk
+
+.. option:: --staged
+
+   Include files that have been staged for commit when checking for news fragments::
+
+      $ towncrier check --staged
+      $ towncrier check --staged --compare-with origin/trunk

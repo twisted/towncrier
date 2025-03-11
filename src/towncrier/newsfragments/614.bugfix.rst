@@ -1,0 +1,1 @@
+Multi-line newsfragments that ends with a code block will now have a newline inserted before appending the link to the issue, to avoid breaking formatting.

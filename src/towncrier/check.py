@@ -57,15 +57,27 @@ def _get_default_compare_branch(branches: Container[str]) -> str | None:
     metavar="FILE_PATH",
     help=config_option_help,
 )
-def _main(compare_with: str | None, directory: str | None, config: str | None) -> None:
+@click.option(
+    "--staged",
+    "staged",
+    is_flag=True,
+    default=False,
+    help="Include staged files as part of the branch checked in the --compare-with",
+)
+def _main(
+    compare_with: str | None, directory: str | None, config: str | None, staged: bool
+) -> None:
     """
     Check for new fragments on a branch.
     """
-    __main(compare_with, directory, config)
+    __main(compare_with, directory, config, staged)
 
 
 def __main(
-    comparewith: str | None, directory: str | None, config_path: str | None
+    comparewith: str | None,
+    directory: str | None,
+    config_path: str | None,
+    staged: bool,
 ) -> None:
     base_directory, config = load_config_from_options(directory, config_path)
 
@@ -80,7 +92,7 @@ def __main(
 
     try:
         files_changed = list_changed_files_compared_to_branch(
-            base_directory, comparewith
+            base_directory, comparewith, staged
         )
     except CalledProcessError as e:
         click.echo("git produced output while failing:")

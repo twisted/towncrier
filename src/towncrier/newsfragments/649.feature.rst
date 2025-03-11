@@ -1,1 +1,0 @@
-Add a config for enforcing issue names using regex.

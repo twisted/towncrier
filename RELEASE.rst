@@ -23,7 +23,12 @@ In ``pyproject.toml`` the version is set using a PEP440 compliant string:
 
     version = "19.9.0rc1"
 
-Run ``venv/bin/towncrier build --yes`` to generate the news release NEWS file.
+Use `towncrier` to generate the news release NEWS file, but first,
+make sure the new version is installed::
+
+    venv/bin/pip install -e .
+    venv/bin/towncrier build --yes
+
 Commit and push to the primary repository, not a fork.
 It is important to not use a fork so that pushed tags end up in the primary repository,
 server provided secrets for publishing to PyPI are available, and maybe more.

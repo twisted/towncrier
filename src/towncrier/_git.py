@@ -41,7 +41,7 @@ def get_remote_branches(base_directory: str) -> list[str]:
 
 
 def list_changed_files_compared_to_branch(
-    base_directory: str, compare_with: str
+    base_directory: str, compare_with: str, include_staged: bool
 ) -> list[str]:
     output = check_output(
         ["git", "diff", "--name-only", compare_with + "..."],
@@ -49,5 +49,14 @@ def list_changed_files_compared_to_branch(
         encoding="utf-8",
         stderr=STDOUT,
     )
+    filenames = output.strip().splitlines()
+    if include_staged:
+        output = check_output(
+            ["git", "diff", "--name-only", "--cached"],
+            cwd=base_directory,
+            encoding="utf-8",
+            stderr=STDOUT,
+        )
+        filenames.extend(output.strip().splitlines())
 
-    return output.strip().splitlines()
+    return filenames

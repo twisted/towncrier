@@ -1,1 +1,0 @@
-Fixed an issue where `issue_template` failed recognizing the issue name of files with a non-category suffix (`.md`)

@@ -89,7 +89,7 @@ def docs(session: nox.Session) -> None:
 
 @nox.session
 def build(session: nox.Session) -> None:
-    session.install("build", "twine")
+    session.install("build", "twine", "pkginfo>=1.12.0")
 
     # If no argument is passed, build builds an sdist and then a wheel from
     # that sdist.

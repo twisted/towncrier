@@ -328,6 +328,29 @@ def render_issue(issue_format: str | None, issue: str) -> str:
         return issue_format.format(issue=issue)
 
 
+def append_newlines_if_trailing_code_block(text: str) -> str:
+    """
+    Appends two newlines to a text string if it ends with a code block.
+
+    Used by `render_fragments` to avoid appending link to issue number into the code block.
+    """
+    # Search for the existence of a code block at the end. We do this by searching for:
+    # 1. start of code block: two ":", followed by two newlines
+    # 2. any number of indented, or empty, lines (or the code block would end)
+    # 3. one line of indented text w/o a trailing newline (because the string is stripped)
+    # 4. end of the string.
+    indented_text = r"  [ \t]+[^\n]*"
+    empty_or_indented_text_lines = f"(({indented_text})?\n)*"
+    regex = r"::\n\n" + empty_or_indented_text_lines + indented_text + "$"
+    if re.search(regex, text):
+        # We insert one space, the default template inserts another, which results
+        # in the correct indentation given default bullet indentation.
+        # Non-default templates with different indentation will likely encounter issues
+        # if they have trailing code blocks.
+        return text + "\n\n "
+    return text
+
+
 def render_fragments(
     template: str,
     issue_format: str | None,
@@ -381,6 +404,7 @@ def render_fragments(
             # for the template, after formatting each issue number
             categories = {}
             for text, issues in entries:
+                text = append_newlines_if_trailing_code_block(text)
                 rendered = [render_issue(issue_format, i) for i in issues]
                 categories[text] = rendered
 

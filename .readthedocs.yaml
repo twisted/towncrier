@@ -3,6 +3,7 @@ version: 2
 sphinx:
   # We want to fail as this is also our CI check for the docs.
   fail_on_warning: True
+  configuration: docs/conf.py
 
 # We don't need PDF and epub for the docs.
 formats: []
