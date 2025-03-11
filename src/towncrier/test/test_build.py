@@ -1776,7 +1776,7 @@ class TestCli(TestCase):
         [tool.towncrier]
         package = "foo"
         title_format = "{version} - {project_date}"
-    
+
           [[tool.towncrier.type]]
           directory = "feature"
           name = "Feature"
@@ -1795,10 +1795,10 @@ class TestCli(TestCase):
             """\
             1.0.0 - 01-01-2001
             ==================
-            
+
             Feature
             -------
-            
+
             - An exciting new feature!
             """
         )
@@ -1835,16 +1835,16 @@ class TestCli(TestCase):
             """\
             1.0.0 - 01-01-2001
             ==================
-            
+
             Feature
             -------
-            
+
             - An exciting new feature!
-            
-            
+
+
             Dependency
             ----------
-            
+
             - We bumped our dependencies.
             """
         )
