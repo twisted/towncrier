@@ -25,27 +25,21 @@ Put the following into your ``pyproject.toml`` or ``towncrier.toml``:
    issue_format = "[#{issue}](https://github.com/twisted/my-project/issues/{issue})"
 
    [[tool.towncrier.type]]
-   directory = "security"
    name = "Security"
 
    [[tool.towncrier.type]]
-   directory = "removed"
    name = "Removed"
 
    [[tool.towncrier.type]]
-   directory = "deprecated"
    name = "Deprecated"
 
    [[tool.towncrier.type]]
-   directory = "added"
    name = "Added"
 
    [[tool.towncrier.type]]
-   directory = "changed"
    name = "Changed"
 
    [[tool.towncrier.type]]
-   directory = "fixed"
    name = "Fixed"
 
 

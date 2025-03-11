@@ -288,14 +288,16 @@ If you use this way to configure custom fragment types, ensure there is no ``too
 Each table within this array has the following mandatory keys:
 
 
-``directory``
-    The type / category of the fragment.
-
-``name``
+``name`` (required)
     The description of the fragment type, as it must be included
     in the news file.
 
-``showcontent``
+``directory`` (optional)
+    The type / category of the fragment.
+
+    Defaults to ``name.lower()``.
+
+``showcontent`` (optional)
     A boolean value indicating whether the fragment contents should be included in the news file.
 
     ``true`` by default.
@@ -305,7 +307,7 @@ Each table within this array has the following mandatory keys:
         Orphan fragments (those without an issue number) always have their content included.
         If a fragment was created, it means that information is important for end users.
 
-``check``
+``check`` (optional)
     A boolean value indicating whether the fragment should be considered by the ``towncrier check`` command.
 
     ``true`` by default.
@@ -316,9 +318,7 @@ For example:
 
    [tool.towncrier]
    [[tool.towncrier.type]]
-   directory = "deprecation"
    name = "Deprecations"
-   showcontent = true
 
    [[tool.towncrier.type]]
    directory = "chore"

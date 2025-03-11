@@ -1792,3 +1792,31 @@ class TestCli(TestCase):
             _main, ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
         )
         self.assertEqual(0, result.exit_code, result.output)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        title_format = "{version} - {project_date}"
+
+          [[tool.towncrier.type]]
+          name = "Feature"
+
+          [[tool.towncrier.type]]
+          directory = "deps"
+          name = "Dependency"
+        """
+    )
+    def test_directory_default_toml_array(self, runner):
+        """
+        When configuring custom fragment types with a TOML array
+        the `directory` key should be optional.
+        """
+        with open("foo/newsfragments/+new_feature.feature.md", "w") as f:
+            f.write("We added an exciting new feature!")
+        with open("foo/newsfragments/+bump_deps.deps.md", "w") as f:
+            f.write("We bumped our dependencies.")
+
+        result = runner.invoke(
+            _main, ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
+        )
+        self.assertEqual(0, result.exit_code, result.output)
