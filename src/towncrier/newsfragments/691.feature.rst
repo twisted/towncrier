@@ -1,0 +1,1 @@
+More simple configuration for Keep a Changelog style changelogs

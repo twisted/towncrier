@@ -288,12 +288,14 @@ If you use this way to configure custom fragment types, ensure there is no ``too
 Each table within this array has the following mandatory keys:
 
 
+``name`` (required)
+    The description of the fragment type, as it must be included
+    in the news file.
+
 ``directory``
     The type / category of the fragment.
 
-``name``
-    The description of the fragment type, as it must be included
-    in the news file.
+    Defaults to ``name.lower()``.
 
 ``showcontent``
     A boolean value indicating whether the fragment contents should be included in the news file.
@@ -316,9 +318,7 @@ For example:
 
    [tool.towncrier]
    [[tool.towncrier.type]]
-   directory = "deprecation"
    name = "Deprecations"
-   showcontent = true
 
    [[tool.towncrier.type]]
    directory = "chore"

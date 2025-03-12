@@ -3,6 +3,7 @@
 
 import os
 import tempfile
+import textwrap
 
 from datetime import date
 from pathlib import Path
@@ -1769,3 +1770,83 @@ class TestCli(TestCase):
             _main, ["--draft", "--date", "01-01-2001", "--version", "1.0.0"]
         )
         self.assertEqual(0, result.exit_code, result.output)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = "foo"
+        title_format = "{version} - {project_date}"
+
+          [[tool.towncrier.type]]
+          directory = "feature"
+          name = "Feature"
+          # showcontent is not defined in TOML
+    """
+    )
+    def test_showcontent_default_toml_array(self, runner):
+        """
+        When configuring custom fragment types with a TOML array
+        a missing `showcontent` defaults to `true`.
+        """
+        write("foo/newsfragments/+new_feature.feature.md", "An exciting new feature!")
+        result = runner.invoke(_main, ["--date", "01-01-2001", "--version", "1.0.0"])
+        news = read("NEWS.rst")
+        expected = textwrap.dedent(
+            """\
+            1.0.0 - 01-01-2001
+            ==================
+
+            Feature
+            -------
+
+            - An exciting new feature!
+            """
+        )
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertEqual(expected, news, news)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = "foo"
+        title_format = "{version} - {project_date}"
+
+          [[tool.towncrier.type]]
+          # The `FRAGMENT.feature` files have no explicit
+          # `directory` configuration.
+          name = "Feature"
+
+          [[tool.towncrier.type]]
+          directory = "deps"
+          name = "Dependency"
+        """
+    )
+    def test_directory_default_toml_array(self, runner):
+        """
+        When configuring custom fragment types with a TOML array
+        the `directory` key is optional. Its value is inferred
+        from the `name` configuration.
+        """
+        write("foo/newsfragments/+new_feature.feature.md", "An exciting new feature!")
+        write("foo/newsfragments/+bump_deps.deps.md", "We bumped our dependencies.")
+        result = runner.invoke(_main, ["--date", "01-01-2001", "--version", "1.0.0"])
+        news = read("NEWS.rst")
+        expected = textwrap.dedent(
+            """\
+            1.0.0 - 01-01-2001
+            ==================
+
+            Feature
+            -------
+
+            - An exciting new feature!
+
+
+            Dependency
+            ----------
+
+            - We bumped our dependencies.
+            """
+        )
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertEqual(expected, news, news)
