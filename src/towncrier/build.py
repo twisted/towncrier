@@ -19,7 +19,12 @@ from click import Context, Option, UsageError
 
 from towncrier import _git
 
-from ._builder import find_fragments, render_fragments, split_fragments
+from ._builder import (
+    find_fragments,
+    get_underline_length,
+    render_fragments,
+    split_fragments,
+)
 from ._project import get_project_name, get_version
 from ._settings import ConfigError, config_option_help, load_config_from_options
 from ._writer import append_to_newsfile
@@ -234,7 +239,7 @@ def __main(
         if is_markdown:
             parts = [top_line]
         else:
-            parts = [top_line, config.underlines[0] * len(top_line)]
+            parts = [top_line, config.underlines[0] * get_underline_length(top_line)]
         parts.append(rendered)
         content = "\n".join(parts)
     else:
