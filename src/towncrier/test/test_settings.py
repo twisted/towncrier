@@ -370,6 +370,7 @@ class TomlSettingsTests(TestCase):
             """
         )
         config = load_config(project_dir)
+        assert config
         expected = [
             (
                 "foo",
@@ -377,6 +378,7 @@ class TomlSettingsTests(TestCase):
                     "name": "Foo",
                     "showcontent": False,
                     "check": True,
+                    "all_bullets": True,
                 },
             ),
             (
@@ -385,6 +387,7 @@ class TomlSettingsTests(TestCase):
                     "name": "Spam",
                     "showcontent": True,
                     "check": True,
+                    "all_bullets": True,
                 },
             ),
             (
@@ -393,6 +396,7 @@ class TomlSettingsTests(TestCase):
                     "name": "Automatic",
                     "showcontent": True,
                     "check": False,
+                    "all_bullets": True,
                 },
             ),
         ]
@@ -421,26 +425,31 @@ class TomlSettingsTests(TestCase):
             """
         )
         config = load_config(project_dir)
+        assert config
         expected = {
             "chore": {
                 "name": "Other Tasks",
                 "showcontent": False,
                 "check": True,
+                "all_bullets": True,
             },
             "feat": {
                 "name": "Feat",
                 "showcontent": True,
                 "check": True,
+                "all_bullets": True,
             },
             "fix": {
                 "name": "Fix",
                 "showcontent": True,
                 "check": True,
+                "all_bullets": True,
             },
             "auto": {
                 "name": "Automatic",
                 "showcontent": True,
                 "check": False,
+                "all_bullets": True,
             },
         }
         actual = config.types

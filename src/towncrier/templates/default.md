@@ -13,10 +13,12 @@
 
 {% if sections[section] %}
 {% for category, val in definitions.items() if category in sections[section] %}
+{% if definitions[category]['name'] %}
 ##{% if section %}#{% endif %} {{ definitions[category]['name'] }}
 
+{% endif %}
 {% for text, values in sections[section][category].items() %}
-- {{ text }}
+{% if "all_bullets" not in definitions[category] or definitions[category].all_bullets %}- {% endif %}{{ text }}
 {%- if values %}
 {% if "\n  - " in text or '\n  * ' in text %}
 

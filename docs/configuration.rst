@@ -255,6 +255,12 @@ These may include the following optional keys:
 
     ``true`` by default.
 
+``all_bullets``
+
+    A boolean value indicating whether this fragment type should be rendered without bullets, overriding the global ``all_bullets`` configuration.
+
+    Matches the global ``all_bullets`` configuration by default.
+
 For example, if you want your custom fragment types to be ``["feat", "fix", "chore",]`` and you want all of them to use the default configuration except ``"chore"`` you can do it as follows:
 
 .. code-block:: toml
@@ -312,11 +318,22 @@ Each table within this array has the following mandatory keys:
 
     ``true`` by default.
 
+``nobullets``
+
+    A boolean value indicating whether this fragment type should be rendered without bullets.
+
+    ``false`` by default.
+
 For example:
 
 .. code-block:: toml
 
    [tool.towncrier]
+   [[tool.towncrier.type]]
+   name = ""
+   directory = "description"
+   nobullets = true
+
    [[tool.towncrier.type]]
    name = "Deprecations"
 

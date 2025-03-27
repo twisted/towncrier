@@ -2,7 +2,11 @@ from __future__ import annotations
 
 import abc
 
-from typing import Any, Iterable, Mapping
+from typing import TYPE_CHECKING, Any, Iterable, Mapping
+
+
+if TYPE_CHECKING:
+    from .load import CategoryType, Config
 
 
 class BaseFragmentTypesLoader:
@@ -10,12 +14,15 @@ class BaseFragmentTypesLoader:
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, config: Mapping[str, Any]):
+    def __init__(self, config: Mapping[str, Any], parsed_config: Config):
         """Initialize."""
         self.config = config
+        self.parsed_config = parsed_config
 
     @classmethod
-    def factory(cls, config: Mapping[str, Any]) -> BaseFragmentTypesLoader:
+    def factory(
+        cls, config: Mapping[str, Any], parsed_config: Config
+    ) -> BaseFragmentTypesLoader:
         fragment_types_class: type[BaseFragmentTypesLoader] = DefaultFragmentTypesLoader
         fragment_types = config.get("fragment", {})
         types_config = config.get("type", {})
@@ -24,18 +31,18 @@ class BaseFragmentTypesLoader:
         elif types_config:
             fragment_types_class = ArrayFragmentTypesLoader
 
-        new = fragment_types_class(config)
+        new = fragment_types_class(config, parsed_config)
         return new
 
     @abc.abstractmethod
-    def load(self) -> Mapping[str, Mapping[str, Any]]:
+    def load(self) -> Mapping[str, CategoryType]:
         """Load fragment types."""
 
 
 class DefaultFragmentTypesLoader(BaseFragmentTypesLoader):
     """Default towncrier's fragment types."""
 
-    _default_types = {
+    _default_types: Mapping[str, CategoryType] = {
         # Keep in-sync with docs/tutorial.rst.
         "feature": {"name": "Features", "showcontent": True, "check": True},
         "bugfix": {"name": "Bugfixes", "showcontent": True, "check": True},
@@ -48,7 +55,7 @@ class DefaultFragmentTypesLoader(BaseFragmentTypesLoader):
         "misc": {"name": "Misc", "showcontent": False, "check": True},
     }
 
-    def load(self) -> Mapping[str, Mapping[str, Any]]:
+    def load(self) -> Mapping[str, CategoryType]:
         """Load default types."""
         return self._default_types
 
@@ -70,10 +77,10 @@ class ArrayFragmentTypesLoader(BaseFragmentTypesLoader):
 
     """
 
-    def load(self) -> Mapping[str, Mapping[str, Any]]:
+    def load(self) -> Mapping[str, CategoryType]:
         """Load types from toml array of mappings."""
 
-        types = {}
+        types: dict[str, CategoryType] = {}
         types_config = self.config["type"]
         for type_config in types_config:
             fragment_type_name = type_config["name"]
@@ -84,6 +91,9 @@ class ArrayFragmentTypesLoader(BaseFragmentTypesLoader):
                 "name": fragment_type_name,
                 "showcontent": is_content_required,
                 "check": check,
+                "all_bullets": type_config.get(
+                    "all_bullets", self.parsed_config.all_bullets
+                ),
             }
         return types
 
@@ -113,12 +123,12 @@ class TableFragmentTypesLoader(BaseFragmentTypesLoader):
 
     """
 
-    def __init__(self, config: Mapping[str, Mapping[str, Any]]):
+    def __init__(self, *args: Any, **kwargs: Any):
         """Initialize."""
-        self.config = config
-        self.fragment_options = config.get("fragment", {})
+        super().__init__(*args, **kwargs)
+        self.fragment_options = self.config.get("fragment", {})
 
-    def load(self) -> Mapping[str, Mapping[str, Any]]:
+    def load(self) -> Mapping[str, CategoryType]:
         """Load types from nested mapping."""
         fragment_types: Iterable[str] = self.fragment_options.keys()
         fragment_types = sorted(fragment_types)
@@ -129,16 +139,17 @@ class TableFragmentTypesLoader(BaseFragmentTypesLoader):
         types = dict(custom_types_sequence)
         return types
 
-    def _load_options(self, fragment_type: str) -> Mapping[str, Any]:
+    def _load_options(self, fragment_type: str) -> CategoryType:
         """Load fragment options."""
         capitalized_fragment_type = fragment_type.capitalize()
         options = self.fragment_options.get(fragment_type, {})
         fragment_description = options.get("name", capitalized_fragment_type)
         show_content = options.get("showcontent", True)
         check = options.get("check", True)
-        clean_fragment_options = {
+        clean_fragment_options: CategoryType = {
             "name": fragment_description,
             "showcontent": show_content,
             "check": check,
+            "all_bullets": options.get("all_bullets", self.parsed_config.all_bullets),
         }
         return clean_fragment_options
