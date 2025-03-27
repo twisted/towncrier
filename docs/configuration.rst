@@ -328,12 +328,6 @@ For example:
 
 .. code-block:: toml
 
-   [tool.towncrier]
-   [[tool.towncrier.type]]
-   name = ""
-   directory = "description"
-   nobullets = true
-
    [[tool.towncrier.type]]
    name = "Deprecations"
 
@@ -347,3 +341,19 @@ For example:
    name = "Dependency Changes"
    showcontent = true
    check = false
+
+To insert the default types into your configuration, use the ``default_types = true`` key.
+
+In this special case, no other keys should be set for that item. For example:
+
+.. code-block:: toml
+
+   [tool.towncrier]
+   [[tool.towncrier.type]]
+   name = ""
+   directory = "description"
+   all_bullets = true
+   check = false
+
+   [[tool.towncrier.type]]
+   default_types = true

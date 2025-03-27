@@ -14,6 +14,19 @@ class BaseFragmentTypesLoader:
 
     __metaclass__ = abc.ABCMeta
 
+    _default_types: Mapping[str, CategoryType] = {
+        # Keep in-sync with docs/tutorial.rst.
+        "feature": {"name": "Features", "showcontent": True, "check": True},
+        "bugfix": {"name": "Bugfixes", "showcontent": True, "check": True},
+        "doc": {"name": "Improved Documentation", "showcontent": True, "check": True},
+        "removal": {
+            "name": "Deprecations and Removals",
+            "showcontent": True,
+            "check": True,
+        },
+        "misc": {"name": "Misc", "showcontent": False, "check": True},
+    }
+
     def __init__(self, config: Mapping[str, Any], parsed_config: Config):
         """Initialize."""
         self.config = config
@@ -42,19 +55,6 @@ class BaseFragmentTypesLoader:
 class DefaultFragmentTypesLoader(BaseFragmentTypesLoader):
     """Default towncrier's fragment types."""
 
-    _default_types: Mapping[str, CategoryType] = {
-        # Keep in-sync with docs/tutorial.rst.
-        "feature": {"name": "Features", "showcontent": True, "check": True},
-        "bugfix": {"name": "Bugfixes", "showcontent": True, "check": True},
-        "doc": {"name": "Improved Documentation", "showcontent": True, "check": True},
-        "removal": {
-            "name": "Deprecations and Removals",
-            "showcontent": True,
-            "check": True,
-        },
-        "misc": {"name": "Misc", "showcontent": False, "check": True},
-    }
-
     def load(self) -> Mapping[str, CategoryType]:
         """Load default types."""
         return self._default_types
@@ -75,6 +75,12 @@ class ArrayFragmentTypesLoader(BaseFragmentTypesLoader):
         name = "Deprecations"
         showcontent = true
 
+    Use a type that only contains ``default_types = true`` to
+    insert the default fragment types::
+
+        ...
+        [[tool.towncrier.type]]
+        default_types = true
     """
 
     def load(self) -> Mapping[str, CategoryType]:
@@ -83,6 +89,10 @@ class ArrayFragmentTypesLoader(BaseFragmentTypesLoader):
         types: dict[str, CategoryType] = {}
         types_config = self.config["type"]
         for type_config in types_config:
+            if type_config == {"default_types": True}:
+                for type_name, type_options in self._default_types.items():
+                    types[type_name] = type_options
+                continue
             fragment_type_name = type_config["name"]
             directory = type_config.get("directory", fragment_type_name.lower())
             is_content_required = type_config.get("showcontent", True)

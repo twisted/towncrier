@@ -38,3 +38,40 @@ If your news file is in Markdown (e.g. ``NEWS.md``), use the following comment i
 .. code-block:: html
 
     <!-- towncrier release notes start -->
+
+
+Adding Content at the Start of the Next Release
+-----------------------------------------------
+
+Using a custom section type, you can add content at the start of the next release.
+Here's an example configuration to add a text-only section at the start of the next release:
+
+.. code-block:: toml
+
+   [[tool.towncrier.type]]
+   name = ""
+   directory = "description"
+   all_bullets = false
+   check = false
+
+   [[tool.towncrier.type]]
+   default_types = true
+
+Any fragments with a suffix of ``.description`` will be added to this description section.
+The section has no visible name and no bullets, so the content of the fragments will be shown directly after the release title (or in the case of a more complex configuration with multiple sections, after the relevant section title).
+
+The output of the above configuration with a ``+.description.rst`` fragment containing "Happy new year!" (and other ``.feature`` fragments) will look something like this:
+
+.. code-block:: rst
+
+   myproject 1.2.3 (2026-01-01)
+   ============================
+
+
+   Happy new year!
+
+
+   Features
+   --------
+
+   - Added, etc...
