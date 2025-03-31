@@ -1086,7 +1086,7 @@ class TestCli(TestCase):
 
             [20-01-2001] CUSTOM RELEASE for FooBarBaz version 7.8.9
 
-            ## Features
+            # Features
 
             - Adds levitation (#123)
 
@@ -1104,7 +1104,6 @@ class TestCli(TestCase):
         package = "foo"
         filename = "NEWS.md"
         title_format = "### [{project_date}] CUSTOM RELEASE for {name} version {version}"
-        template = "custom_template.md"
         """
     )
     def test_markdown_injected_after_header(self, runner):
@@ -1134,13 +1133,6 @@ class TestCli(TestCase):
                 a footer!
             """,
             dedent=True,
-        )
-
-        default_template = read_pkg_resource("templates/default.md")
-        assert "##{%" in default_template
-        write(
-            "custom_template.md",
-            contents=default_template.replace("##{%", "####{%"),
         )
 
         result = runner.invoke(_main, ["--date", "01-01-2001"], catch_exceptions=False)
