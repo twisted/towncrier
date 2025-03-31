@@ -220,10 +220,8 @@ def __main(
         if config.title_format:
             m = re.search(r"^#+(?=\s)", config.title_format, re.MULTILINE)
             lvl = len(m[0]) if m else 0
-        else:
-            lvl = (
-                1 if render_title else 0
-            )  # TODO: derive from template or make configurable
+        else:  # TODO: derive from template or make configurable?
+            lvl = 1 if render_title else 0
         md_header_level = lvl
 
     rendered = render_fragments(
