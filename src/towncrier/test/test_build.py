@@ -16,7 +16,7 @@ from twisted.trial.unittest import TestCase
 
 from .._shell import cli
 from ..build import _main
-from .helpers import read, read_pkg_resource, with_git_project, with_project, write
+from .helpers import read, with_git_project, with_project, write
 
 
 class TestCli(TestCase):
