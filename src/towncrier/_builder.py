@@ -436,7 +436,9 @@ def render_fragments(
         top_underline=top_underline,
         get_indent=get_indent,  # simplify indentation in the jinja template.
         issues_by_category=issues_by_category,
-        **({} if md_header_level is None else dict(header_prefix="#" * md_header_level)),
+        **(
+            {} if md_header_level is None else dict(header_prefix="#" * md_header_level)
+        ),
     )
 
     for line in res.split("\n"):
