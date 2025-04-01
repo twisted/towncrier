@@ -362,7 +362,7 @@ def render_fragments(
     top_underline: str = "=",
     all_bullets: bool = False,
     render_title: bool = True,
-    md_header_level: int | None = 1,
+    md_header_level: int = 1,
 ) -> str:
     """
     Render the fragments into a news file.

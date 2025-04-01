@@ -215,7 +215,7 @@ def __main(
     render_title = config.title_format == ""
 
     # Add format-specific context to the template
-    md_header_level: int | None = None
+    md_header_level = 1
     if is_markdown:
         if config.title_format:
             m = re.search(r"^#+(?=\s)", config.title_format, re.MULTILINE)
