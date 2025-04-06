@@ -318,11 +318,11 @@ Each table within this array has the following mandatory keys:
 
     ``true`` by default.
 
-``nobullets``
+``all_bullets``
 
-    A boolean value indicating whether this fragment type should be rendered without bullets.
+    A boolean value indicating whether this fragment type should be rendered without bullets, overriding the global ``all_bullets`` configuration.
 
-    ``false`` by default.
+    Matches the global ``all_bullets`` configuration by default.
 
 For example:
 
