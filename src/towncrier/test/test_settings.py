@@ -409,7 +409,7 @@ class TomlSettingsTests(TestCase):
     def test_custom_types_array_with_defaults(self):
         """
         Custom fragment types defined using an array of tables can include
-        the default types by specifying `default_types = true`.
+        the default types by specifying `use_default_types = true`.
         """
         project_dir = self.mktemp_project(
             pyproject_toml="""
@@ -422,7 +422,7 @@ class TomlSettingsTests(TestCase):
                 showcontent=false
 
                 [[tool.towncrier.type]]
-                default_types = true
+                use_default_types = true
 
                 [[tool.towncrier.type]]
                 directory="another"

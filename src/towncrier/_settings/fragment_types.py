@@ -75,12 +75,12 @@ class ArrayFragmentTypesLoader(BaseFragmentTypesLoader):
         name = "Deprecations"
         showcontent = true
 
-    Use a type that only contains ``default_types = true`` to
+    Use a type that only contains ``use_default_types = true`` to
     insert the default fragment types::
 
         ...
         [[tool.towncrier.type]]
-        default_types = true
+        use_default_types = true
     """
 
     def load(self) -> Mapping[str, CategoryType]:
@@ -89,7 +89,7 @@ class ArrayFragmentTypesLoader(BaseFragmentTypesLoader):
         types: dict[str, CategoryType] = {}
         types_config = self.config["type"]
         for type_config in types_config:
-            if type_config == {"default_types": True}:
+            if type_config == {"use_default_types": True}:
                 for type_name, type_options in self._default_types.items():
                     types[type_name] = type_options
                 continue

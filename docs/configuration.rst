@@ -342,7 +342,7 @@ For example:
    showcontent = true
    check = false
 
-To insert the default types into your configuration, use the ``default_types = true`` key.
+To insert the default types into your configuration, use the ``use_default_types = true`` key.
 
 In this special case, no other keys should be set for that item. For example:
 
@@ -351,9 +351,9 @@ In this special case, no other keys should be set for that item. For example:
    [tool.towncrier]
    [[tool.towncrier.type]]
    name = ""
-   directory = "description"
+   directory = "highlight"
    all_bullets = true
    check = false
 
    [[tool.towncrier.type]]
-   default_types = true
+   use_default_types = true

@@ -50,17 +50,17 @@ Here's an example configuration to add a text-only section at the start of the n
 
    [[tool.towncrier.type]]
    name = ""
-   directory = "description"
+   directory = "highlight"
    all_bullets = false
    check = false
 
    [[tool.towncrier.type]]
-   default_types = true
+   use_default_types = true
 
-Any fragments with a suffix of ``.description`` will be added to this description section.
+Any fragments with a suffix of ``.highlight`` will be added to this highlight section which will be rendered as the first section after the release title (with no title of its own).
 The section has no visible name and no bullets, so the content of the fragments will be shown directly after the release title (or in the case of a more complex configuration with multiple sections, after the relevant section title).
 
-The output of the above configuration with a ``+.description.rst`` fragment containing "Happy new year!" (and other ``.feature`` fragments) will look something like this:
+The output of the above configuration with a ``+.highlight.rst`` fragment containing "Happy new year!" (and other ``.feature`` fragments) will look something like this:
 
 .. code-block:: rst
 

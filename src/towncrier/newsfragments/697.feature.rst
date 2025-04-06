@@ -1,0 +1,3 @@
+The default template now respects the ``all_bullets`` configuration setting.
+
+In addition, categories can be override the ``all_bullets`` setting so fragments in that specific category can override the global configuration.
