@@ -230,9 +230,9 @@ def split_fragments(
         section: dict[str, dict[str, list[str]]] = {}
 
         for (issue, category, counter), content in section_fragments.items():
-            if all_bullets:
-                # By default all fragmetns are append by "-" automatically,
-                # and need to be indented because of that.
+            if definitions[category].get("all_bullets", all_bullets):
+                # By default all fragments are appended by "-" automatically, and need
+                # to be indented because of that.
                 # (otherwise, assume they are formatted correctly)
                 content = indent(content.strip(), "  ")[2:]
             else:
@@ -417,13 +417,10 @@ def render_fragments(
     done = []
 
     def get_indent(text: str) -> str:
-        # If bullets are not assumed and we wrap, the subsequent
-        # indentation depends on whether or not this is a bullet point.
-        # (it is probably usually best to disable wrapping in that case)
-        if all_bullets or text[:2] == "- " or text[:2] == "* ":
-            return "  "
-        elif text[:3] == "#. ":
-            return "   "
+        # Subsequent indentation depends on whether or not this is a bullet point.
+        match = re.match(r"^([-*]|(\d+|#)\.) ", text)
+        if match:
+            return " " * len(match.group(0))
         return ""
 
     res = jinja_template.render(

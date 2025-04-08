@@ -15,11 +15,13 @@
 
 {% if sections[section] %}
 {% for category, val in definitions.items() if category in sections[section]%}
+{% if definitions[category]['name'] %}
 {{ definitions[category]['name'] }}
 {{ underline * definitions[category]['name']|length }}
+{% endif %}
 
 {% for text, values in sections[section][category].items() %}
-- {% if text %}{{ text }}{% if values %} ({{ values|join(', ') }}){% endif %}{% else %}{{ values|join(', ') }}{% endif  %}
+{% if "all_bullets" not in definitions[category] or definitions[category].all_bullets %}- {% endif %}{% if text %}{{ text }}{% if values %} ({{ values|join(', ') }}){% endif %}{% else %}{{ values|join(', ') }}{% endif  %}
 
 {% endfor %}
 

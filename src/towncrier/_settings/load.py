@@ -11,7 +11,7 @@ import sys
 
 from contextlib import ExitStack
 from pathlib import Path
-from typing import Any, Literal, Mapping, Sequence
+from typing import Any, Literal, Mapping, Sequence, TypedDict
 
 from click import ClickException
 
@@ -33,10 +33,18 @@ else:
 re_resource_template = re.compile(r"[-\w.]+:[-\w.]+$")
 
 
+class CategoryType(TypedDict, total=False):
+    name: str
+    directory: str
+    showcontent: bool
+    check: bool
+    all_bullets: bool
+
+
 @dataclasses.dataclass
 class Config:
     sections: Mapping[str, str]
-    types: Mapping[str, Mapping[str, Any]]
+    types: Mapping[str, CategoryType]
     template: str | tuple[str, str]
     start_string: str
     package: str = ""
@@ -203,10 +211,6 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
         sections[""] = ""
     parsed_data["sections"] = sections
 
-    # Process 'types'.
-    fragment_types_loader = ft.BaseFragmentTypesLoader.factory(config)
-    parsed_data["types"] = fragment_types_loader.load()
-
     # Process 'template'.
     markdown_file = Path(config.get("filename", "")).suffix == ".md"
     template = config.get("template", "towncrier:default")
@@ -241,6 +245,12 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
         start_string_template = "<!-- {} -->\n" if markdown_file else ".. {}\n"
         start_string = start_string_template.format("towncrier release notes start")
     parsed_data["start_string"] = start_string
+
+    # Process 'types'.
+    fragment_types_loader = ft.BaseFragmentTypesLoader.factory(
+        config, parsed_config=Config(types={}, **parsed_data)
+    )
+    parsed_data["types"] = fragment_types_loader.load()
 
     # Return the parsed config.
     return Config(**parsed_data)

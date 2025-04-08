@@ -14,6 +14,8 @@ from .helpers import with_isolated_runner, write
 
 
 class TomlSettingsTests(TestCase):
+    maxDiff = None
+
     def mktemp_project(
         self, *, pyproject_toml: str = "", towncrier_toml: str = ""
     ) -> str:
@@ -370,6 +372,7 @@ class TomlSettingsTests(TestCase):
             """
         )
         config = load_config(project_dir)
+        assert config
         expected = [
             (
                 "foo",
@@ -377,6 +380,7 @@ class TomlSettingsTests(TestCase):
                     "name": "Foo",
                     "showcontent": False,
                     "check": True,
+                    "all_bullets": True,
                 },
             ),
             (
@@ -385,6 +389,7 @@ class TomlSettingsTests(TestCase):
                     "name": "Spam",
                     "showcontent": True,
                     "check": True,
+                    "all_bullets": True,
                 },
             ),
             (
@@ -393,10 +398,113 @@ class TomlSettingsTests(TestCase):
                     "name": "Automatic",
                     "showcontent": True,
                     "check": False,
+                    "all_bullets": True,
                 },
             ),
         ]
         expected = dict(expected)
+        actual = config.types
+        self.assertDictEqual(expected, actual)
+
+    def test_custom_types_array_with_defaults(self):
+        """
+        Custom fragment types defined using an array of tables can include
+        the default types by specifying `use_default_types = true`.
+        """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [tool.towncrier]
+                package = "foobar"
+
+                [[tool.towncrier.type]]
+                directory="custom"
+                name="Custom Type"
+                showcontent=false
+
+                [[tool.towncrier.type]]
+                use_default_types = true
+
+                [[tool.towncrier.type]]
+                directory="another"
+                name="Another Type"
+                showcontent=true
+            """
+        )
+        config = load_config(project_dir)
+        assert config
+        expected = {
+            "custom": {
+                "all_bullets": True,
+                "name": "Custom Type",
+                "showcontent": False,
+                "check": True,
+            },
+            # Default types inserted here
+            "feature": {"name": "Features", "showcontent": True, "check": True},
+            "bugfix": {"name": "Bugfixes", "showcontent": True, "check": True},
+            "doc": {
+                "name": "Improved Documentation",
+                "showcontent": True,
+                "check": True,
+            },
+            "removal": {
+                "name": "Deprecations and Removals",
+                "showcontent": True,
+                "check": True,
+            },
+            "misc": {"name": "Misc", "showcontent": False, "check": True},
+            # Another custom type after defaults
+            "another": {
+                "all_bullets": True,
+                "name": "Another Type",
+                "showcontent": True,
+                "check": True,
+            },
+        }
+
+        actual = config.types
+        self.assertDictEqual(expected, actual)
+
+        # Check key ordering
+        self.assertEqual(
+            ["custom", "feature", "bugfix", "doc", "removal", "misc", "another"],
+            list(actual.keys()),
+        )
+
+    def test_custom_types_all_bullets_inheritance(self):
+        """
+        Test that fragment types inherit the global all_bullets setting
+        when not explicitly set.
+        """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [tool.towncrier]
+                package = "foobar"
+                all_bullets = false # Global setting
+                [tool.towncrier.fragment.feat]
+                name = "Features"
+                # No all_bullets here - should inherit false
+                [tool.towncrier.fragment.fix]
+                name = "Bugfixes"
+                all_bullets = true # Explicit override
+            """
+        )
+        config = load_config(project_dir)
+        assert config is not None
+        expected = {
+            "feat": {
+                "name": "Features",
+                "showcontent": True,
+                "check": True,
+                "all_bullets": False,  # Inherited
+            },
+            "fix": {
+                "name": "Bugfixes",
+                "showcontent": True,
+                "check": True,
+                "all_bullets": True,  # Overridden
+            },
+        }
         actual = config.types
         self.assertDictEqual(expected, actual)
 
@@ -421,26 +529,31 @@ class TomlSettingsTests(TestCase):
             """
         )
         config = load_config(project_dir)
+        assert config
         expected = {
             "chore": {
                 "name": "Other Tasks",
                 "showcontent": False,
                 "check": True,
+                "all_bullets": True,
             },
             "feat": {
                 "name": "Feat",
                 "showcontent": True,
                 "check": True,
+                "all_bullets": True,
             },
             "fix": {
                 "name": "Fix",
                 "showcontent": True,
                 "check": True,
+                "all_bullets": True,
             },
             "auto": {
                 "name": "Automatic",
                 "showcontent": True,
                 "check": False,
+                "all_bullets": True,
             },
         }
         actual = config.types

@@ -1,0 +1,12 @@
+Adding a type to configuration with just ``use_default_types = true`` will insert the default types rather than needing to duplicate them.
+
+For example, to add a new ``highlight`` type first, but keep all of the other default types::
+
+   [[tool.towncrier.type]]
+   name = ""
+   directory = "highlight"
+   all_bullets = false
+   check = false
+
+   [[tool.towncrier.type]]
+   use_default_types = true
