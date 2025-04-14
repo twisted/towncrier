@@ -278,7 +278,7 @@ def __main(
         answer_keep,
     ):
         click.echo("Removing news fragments...", err=to_err)
-        _vcs.remove_files(fragment_filenames)
+        _vcs.remove_files(base_directory, fragment_filenames)
 
     click.echo("Done!", err=to_err)
 

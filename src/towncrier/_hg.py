@@ -37,7 +37,6 @@ _has_topics_cache = {}
 
 
 def has_topics(directory: str) -> bool:
-    global _has_topics_cache
     if directory not in _has_topics_cache:
         _has_topics_cache[directory] = _topic_enabled(directory)
     return _has_topics_cache[directory]
@@ -96,4 +95,4 @@ def list_changed_files_compared_to_branch(
         stderr=STDOUT,
     ).splitlines()
 
-    return [l.split("|")[0].strip() for l in output if "|" in l]
+    return [line.split("|")[0].strip() for line in output if "|" in line]

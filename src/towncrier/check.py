@@ -12,12 +12,12 @@ from subprocess import CalledProcessError
 import click
 
 from ._builder import find_fragments
+from ._settings import config_option_help, load_config_from_options
 from ._vcs import (
+    get_default_compare_branch,
     get_remote_branches,
     list_changed_files_compared_to_branch,
-    get_default_compare_branch,
 )
-from ._settings import config_option_help, load_config_from_options
 
 
 @click.command(name="check")
@@ -71,7 +71,7 @@ def __main(
 
     if comparewith is None:
         comparewith = get_default_compare_branch(
-            get_remote_branches(base_directory=base_directory)
+            base_directory, get_remote_branches(base_directory=base_directory)
         )
 
     if comparewith is None:
