@@ -2,6 +2,8 @@ import os
 
 if os.path.exists(".git"):
     from ._git import *
+elif os.path.exists(".hg"):
+    from ._hg import *
 else:
 
     def remove_files(fragment_filenames: list[str]) -> None:
