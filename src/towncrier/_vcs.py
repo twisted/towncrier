@@ -1,9 +1,22 @@
+from __future__ import annotations
+
 import os
 
-from typing import Container
+from typing import Container, Protocol
 
 
-def _get_mod(base_directory: str):
+class VCSMod(Protocol):
+    def get_default_compare_branch(self, branches: Container[str]) -> str | None: ...
+    def remove_files(self, fragment_filenames: list[str]) -> None: ...
+    def stage_newsfile(self, directory: str, filename: str) -> None: ...
+    def get_remote_branches(self, base_directory: str) -> list[str]: ...
+
+    def list_changed_files_compared_to_branch(
+        self, base_directory: str, compare_with: str, include_staged: bool
+    ) -> list[str]: ...
+
+
+def _get_mod(base_directory: str) -> VCSMod:
     if os.path.exists(os.path.join(base_directory, ".git")):
         from . import _git
 
@@ -11,11 +24,15 @@ def _get_mod(base_directory: str):
     elif os.path.exists(os.path.join(base_directory, ".hg")):
         from . import _hg
 
-        return _hg
-    else:
+        hg: VCSMod = _hg
+
+        return hg
+    elif base_directory == "/":
         from . import _novcs
 
         return _novcs
+    else:
+        return _get_mod(os.path.dirname(base_directory))
 
 
 def get_default_compare_branch(

@@ -15,7 +15,7 @@ def get_default_compare_branch(branches: Container[str]) -> str | None:
     return None
 
 
-def _topic_enabled(directory: str):
+def _topic_enabled(directory: str) -> bool:
     for e in (
         check_output(
             ["hg", "config"],
@@ -39,7 +39,8 @@ _has_topics_cache = {}
 def has_topics(directory: str) -> bool:
     if directory not in _has_topics_cache:
         _has_topics_cache[directory] = _topic_enabled(directory)
-    return _has_topics_cache[directory]
+
+    return _has_topics_cache[directory] is True
 
 
 def remove_files(fragment_filenames: list[str]) -> None:

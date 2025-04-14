@@ -3,7 +3,6 @@
 
 import os
 import os.path
-import warnings
 
 from pathlib import Path
 from subprocess import check_call
@@ -11,7 +10,6 @@ from subprocess import check_call
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
-from towncrier import check
 from towncrier.build import _main as towncrier_build
 from towncrier.check import _main as towncrier_check
 
@@ -400,24 +398,6 @@ class TestChecker(TestCase):
 
         self.assertEqual(1, result.exit_code)
         self.assertEqual("Could not detect default branch. Aborting.\n", result.output)
-
-    def test_get_default_compare_branch_main(self):
-        """
-        If there's a remote branch origin/main, prefer it over everything else.
-        """
-        branch = check._get_default_compare_branch(["origin/master", "origin/main"])
-
-        self.assertEqual("origin/main", branch)
-
-    def test_get_default_compare_branch_fallback(self):
-        """
-        If there's origin/master and no main, use it and warn about it.
-        """
-        with warnings.catch_warnings(record=True) as w:
-            branch = check._get_default_compare_branch(["origin/master", "origin/foo"])
-
-        self.assertEqual("origin/master", branch)
-        self.assertTrue(w[0].message.args[0].startswith('Using "origin/master'))
 
     @with_isolated_runner
     def test_in_different_dir_with_nondefault_newsfragments_directory(self, runner):
