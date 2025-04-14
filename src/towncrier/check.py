@@ -8,28 +8,16 @@ import os
 import sys
 
 from subprocess import CalledProcessError
-from typing import Container
-from warnings import warn
 
 import click
 
 from ._builder import find_fragments
-from ._vcs import get_remote_branches, list_changed_files_compared_to_branch
+from ._vcs import (
+    get_remote_branches,
+    list_changed_files_compared_to_branch,
+    get_default_compare_branch,
+)
 from ._settings import config_option_help, load_config_from_options
-
-
-def _get_default_compare_branch(branches: Container[str]) -> str | None:
-    if "origin/main" in branches:
-        return "origin/main"
-    if "origin/master" in branches:
-        warn(
-            'Using "origin/master" as default compare branch is deprecated '
-            "and will be removed in a future version.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return "origin/master"
-    return None
 
 
 @click.command(name="check")
@@ -82,7 +70,7 @@ def __main(
     base_directory, config = load_config_from_options(directory, config_path)
 
     if comparewith is None:
-        comparewith = _get_default_compare_branch(
+        comparewith = get_default_compare_branch(
             get_remote_branches(base_directory=base_directory)
         )
 

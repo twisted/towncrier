@@ -6,6 +6,22 @@ from __future__ import annotations
 import os
 
 from subprocess import STDOUT, CalledProcessError, call, check_output
+from typing import Container
+from warnings import warn
+
+
+def get_default_compare_branch(branches: Container[str]) -> str | None:
+    if "origin/main" in branches:
+        return "origin/main"
+    if "origin/master" in branches:
+        warn(
+            'Using "origin/master" as default compare branch is deprecated '
+            "and will be removed in a future version.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return "origin/master"
+    return None
 
 
 def remove_files(fragment_filenames: list[str]) -> None:

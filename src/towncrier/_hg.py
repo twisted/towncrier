@@ -6,6 +6,41 @@ from __future__ import annotations
 import os
 
 from subprocess import STDOUT, CalledProcessError, call, check_output
+from typing import Container
+
+
+def get_default_compare_branch(branches: Container[str]) -> str | None:
+    if "default" in branches:
+        return "default"
+    return None
+
+
+def _topic_enabled(directory: str):
+    for e in (
+        check_output(
+            ["hg", "config"],
+            cwd=directory,
+            encoding="utf-8",
+        )
+        .strip()
+        .splitlines()
+    ):
+        if (
+            e.startswith("extensions.topic")
+            and e.split("=")[0].strip() == "extensions.topic"
+        ):
+            return True
+    return False
+
+
+_has_topics_cache = {}
+
+
+def has_topics(directory: str) -> bool:
+    global _has_topics_cache
+    if directory not in _has_topics_cache:
+        _has_topics_cache[directory] = _topic_enabled(directory)
+    return _has_topics_cache[directory]
 
 
 def remove_files(fragment_filenames: list[str]) -> None:
@@ -33,10 +68,32 @@ def stage_newsfile(directory: str, filename: str) -> None:
 
 
 def get_remote_branches(base_directory: str) -> list[str]:
-    return []
+    branches = check_output(
+        ["hg", "branch"],
+        cwd=base_directory,
+        encoding="utf-8",
+        stderr=STDOUT,
+    ).splitlines()
+
+    if has_topics(base_directory):
+        branches += check_output(
+            ["hg", "topic", "--template", "{topic}"],
+            cwd=base_directory,
+            encoding="utf-8",
+            stderr=STDOUT,
+        ).splitlines()
+
+    return branches
 
 
 def list_changed_files_compared_to_branch(
     base_directory: str, compare_with: str, include_staged: bool
 ) -> list[str]:
-    return []
+    output = check_output(
+        ["hg", "diff", "--stat", "-r", compare_with],
+        cwd=base_directory,
+        encoding="utf-8",
+        stderr=STDOUT,
+    ).splitlines()
+
+    return [l.split("|")[0].strip() for l in output if "|" in l]

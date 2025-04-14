@@ -1,10 +1,15 @@
 import os
 
 if os.path.exists(".git"):
+    flavor = "git"
     from ._git import *
+
 elif os.path.exists(".hg"):
+    flavor = "hg"
     from ._hg import *
+
 else:
+    flavor = "none"
 
     def remove_files(fragment_filenames: list[str]) -> None:
         if not fragment_filenames:
