@@ -2,14 +2,14 @@
 # See LICENSE for details.
 
 
-from twisted.trial.unittest import TestCase
-
 from pathlib import Path
 from subprocess import check_call
 
+from click.testing import CliRunner
+from twisted.trial.unittest import TestCase
+
 from towncrier import _hg, _vcs
 
-from click.testing import CliRunner
 from .helpers import setup_simple_project, write
 
 
