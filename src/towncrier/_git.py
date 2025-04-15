@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import os
 
-from subprocess import STDOUT, CalledProcessError, call, check_output
+from subprocess import STDOUT, call, check_output
 from typing import Container
 from warnings import warn
 
@@ -29,13 +29,9 @@ def remove_files(fragment_filenames: list[str]) -> None:
         return
 
     # Filter out files that are unknown to git
-    try:
-        git_fragments = check_output(
-            ["git", "ls-files"] + fragment_filenames, encoding="utf-8"
-        ).split("\n")
-    except CalledProcessError:
-        # we may not be in a git repository
-        git_fragments = []
+    git_fragments = check_output(
+        ["git", "ls-files"] + fragment_filenames, encoding="utf-8"
+    ).split("\n")
 
     git_fragments = [os.path.abspath(f) for f in git_fragments if os.path.isfile(f)]
     call(["git", "rm", "--quiet", "--force"] + git_fragments)

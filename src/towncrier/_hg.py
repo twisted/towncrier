@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import os
 
-from subprocess import STDOUT, CalledProcessError, call, check_output
+from subprocess import STDOUT, call, check_output
 from typing import Container
 
 
@@ -15,49 +15,22 @@ def get_default_compare_branch(branches: Container[str]) -> str | None:
     return None
 
 
-def _topic_enabled(directory: str) -> bool:
-    for e in (
-        check_output(
-            ["hg", "config"],
-            cwd=directory,
-            encoding="utf-8",
-        )
-        .strip()
-        .splitlines()
-    ):
-        if (
-            e.startswith("extensions.topic")
-            and e.split("=")[0].strip() == "extensions.topic"
-        ):
-            return True
-    return False
-
-
-_has_topics_cache = {}
-
-
-def has_topics(directory: str) -> bool:
-    if directory not in _has_topics_cache:
-        _has_topics_cache[directory] = _topic_enabled(directory)
-
-    return _has_topics_cache[directory] is True
-
-
 def remove_files(fragment_filenames: list[str]) -> None:
     if not fragment_filenames:
         return
 
-    # Filter out files that are unknown to git
-    try:
-        hg_fragments = check_output(
-            ["hg", "files"] + fragment_filenames, encoding="utf-8"
-        ).split("\n")
-    except CalledProcessError:
-        # we may not be in a git repository
-        hg_fragments = []
+    # Filter out files that are unknown to mercurial
+    hg_fragments = (
+        check_output(["hg", "files"] + fragment_filenames, encoding="utf-8")
+        .strip()
+        .split("\n")
+    )
 
     hg_fragments = [os.path.abspath(f) for f in hg_fragments if os.path.isfile(f)]
-    call(["hg", "rm", "--force"] + hg_fragments)
+    fragment_filenames = [
+        os.path.abspath(f) for f in fragment_filenames if os.path.isfile(f)
+    ]
+    call(["hg", "rm", "--force"] + hg_fragments, encoding="utf-8")
     unknown_fragments = set(fragment_filenames) - set(hg_fragments)
     for unknown_fragment in unknown_fragments:
         os.remove(unknown_fragment)
@@ -69,19 +42,10 @@ def stage_newsfile(directory: str, filename: str) -> None:
 
 def get_remote_branches(base_directory: str) -> list[str]:
     branches = check_output(
-        ["hg", "branch"],
+        ["hg", "branches", "--template", "{branch}\n"],
         cwd=base_directory,
         encoding="utf-8",
-        stderr=STDOUT,
     ).splitlines()
-
-    if has_topics(base_directory):
-        branches += check_output(
-            ["hg", "topic", "--template", "{topic}"],
-            cwd=base_directory,
-            encoding="utf-8",
-            stderr=STDOUT,
-        ).splitlines()
 
     return branches
 
