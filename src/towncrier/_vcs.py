@@ -17,6 +17,7 @@ class VCSMod(Protocol):
 
 
 def _get_mod(base_directory: str) -> VCSMod:
+    base_directory = os.path.abspath(base_directory)
     if os.path.exists(os.path.join(base_directory, ".git")):
         from . import _git
 
@@ -27,12 +28,14 @@ def _get_mod(base_directory: str) -> VCSMod:
         hg: VCSMod = _hg
 
         return hg
-    elif base_directory == "/":
-        from . import _novcs
-
-        return _novcs
     else:
-        return _get_mod(os.path.dirname(base_directory))
+        parent = os.path.dirname(base_directory)
+        if parent == base_directory:
+            from . import _novcs
+
+            return _novcs
+
+        return _get_mod(parent)
 
 
 def get_default_compare_branch(

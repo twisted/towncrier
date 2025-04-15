@@ -1,6 +1,7 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
+import os.path
 
 from pathlib import Path
 from subprocess import check_call
@@ -71,7 +72,7 @@ class TestHg(TestCase):
             self.assertEqual(["main", "otherbranch"], branches)
 
             self.assertEqual(
-                ["changes/000.misc.rst"],
+                [os.path.join("changes", "000.misc.rst")],
                 _hg.list_changed_files_compared_to_branch(".", "main", False),
             )
 
