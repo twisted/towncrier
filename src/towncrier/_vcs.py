@@ -1,3 +1,6 @@
+# Copyright (c) towncrier contributors, 2025
+# See LICENSE for details.
+
 from __future__ import annotations
 
 import os
@@ -29,8 +32,11 @@ def _get_mod(base_directory: str) -> VCSMod:
 
         return hg
     else:
+        # No VCS was found in the current directory
+        # We will try our luck in the parent directory.
         parent = os.path.dirname(base_directory)
         if parent == base_directory:
+            # We reached the fs root, abandoning
             from . import _novcs
 
             return _novcs

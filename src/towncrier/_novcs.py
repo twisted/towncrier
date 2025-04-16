@@ -1,3 +1,6 @@
+# Copyright (c) towncrier contributors, 2025
+# See LICENSE for details.
+
 from __future__ import annotations
 
 import os

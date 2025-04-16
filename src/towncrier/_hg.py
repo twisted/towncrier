@@ -1,4 +1,4 @@
-# Copyright (c) Amber Brown, 2015
+# Copyright (c) towncrier contributors, 2025
 # See LICENSE for details.
 
 from __future__ import annotations

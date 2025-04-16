@@ -1,1 +1,1 @@
-Implement Mercurial support
+Support was added for Mercurial SCM.

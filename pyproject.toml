@@ -164,6 +164,8 @@ skip_covered = true
 exclude_lines = [
     "pragma: no cover",
     "if TYPE_CHECKING:",
+    # Empty functions of a Protocol definition (used in _vcs.py) can never be
+    # executed. Ignoring them.
     ": \\.\\.\\.$",
 ]
 omit = [

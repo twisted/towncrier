@@ -1,4 +1,4 @@
-# Copyright (c) Amber Brown, 2015
+# Copyright (c) towncrier contributors, 2025
 # See LICENSE for details.
 
 import os.path
@@ -45,6 +45,9 @@ def commit(message):
 
 class TestHg(TestCase):
     def test_get_default_compare_branch(self):
+        """
+        Test the 'get_default_compare_branch' behavior.
+        """
         assert _hg.get_default_compare_branch(["main", "default"]) == "default"
         assert _hg.get_default_compare_branch(["main", "a_topic"]) is None
 
@@ -54,7 +57,13 @@ class TestHg(TestCase):
         """
         _hg.remove_files([])
 
-    def test_hg(self):
+    def test_complete_scenario(self):
+        """
+        Tests all the _hg functions that interact with an actual repository.
+
+        Setting up a project is a little slow, hence the grouping of all the
+        tests in one.
+        """
         runner = CliRunner()
         with runner.isolated_filesystem():
             create_project("pyproject.toml")
