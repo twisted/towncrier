@@ -1,19 +1,19 @@
 {% if render_title %}
 {% if versiondata.name %}
-# {{ versiondata.name }} {{ versiondata.version }} ({{ versiondata.date }})
+{{header_prefix}} {{ versiondata.name }} {{ versiondata.version }} ({{ versiondata.date }})
 {% else %}
-# {{ versiondata.version }} ({{ versiondata.date }})
+{{header_prefix}} {{ versiondata.version }} ({{ versiondata.date }})
 {% endif %}
 {% endif %}
 {% for section, _ in sections.items() %}
 {% if section %}
 
-## {{section}}
+{{header_prefix}}# {{section}}
 {% endif %}
 
 {% if sections[section] %}
 {% for category, val in definitions.items() if category in sections[section] %}
-##{% if section %}#{% endif %} {{ definitions[category]['name'] }}
+{{header_prefix}}#{% if section %}#{% endif %} {{ definitions[category]['name'] }}
 
 {% for text, values in sections[section][category].items() %}
 - {{ text }}

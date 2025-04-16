@@ -362,6 +362,7 @@ def render_fragments(
     top_underline: str = "=",
     all_bullets: bool = False,
     render_title: bool = True,
+    md_header_level: int = 1,
 ) -> str:
     """
     Render the fragments into a news file.
@@ -435,6 +436,7 @@ def render_fragments(
         top_underline=top_underline,
         get_indent=get_indent,  # simplify indentation in the jinja template.
         issues_by_category=issues_by_category,
+        header_prefix="#" * md_header_level,
     )
 
     for line in res.split("\n"):
