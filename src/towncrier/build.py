@@ -17,7 +17,7 @@ import click
 
 from click import Context, Option, UsageError
 
-from towncrier import _git
+from towncrier import _vcs
 
 from ._builder import find_fragments, render_fragments, split_fragments
 from ._project import get_project_name, get_version
@@ -270,7 +270,7 @@ def __main(
     )
 
     click.echo("Staging newsfile...", err=to_err)
-    _git.stage_newsfile(base_directory, news_file)
+    _vcs.stage_newsfile(base_directory, news_file)
 
     if should_remove_fragment_files(
         fragment_filenames,
@@ -278,7 +278,7 @@ def __main(
         answer_keep,
     ):
         click.echo("Removing news fragments...", err=to_err)
-        _git.remove_files(fragment_filenames)
+        _vcs.remove_files(base_directory, fragment_filenames)
 
     click.echo("Done!", err=to_err)
 
