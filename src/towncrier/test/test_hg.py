@@ -2,6 +2,8 @@
 # See LICENSE for details.
 
 import os.path
+import shutil
+import unittest
 
 from pathlib import Path
 from subprocess import check_call
@@ -12,6 +14,9 @@ from twisted.trial.unittest import TestCase
 from towncrier import _hg, _vcs
 
 from .helpers import setup_simple_project, write
+
+
+hg_available = shutil.which("hg") is not None
 
 
 def create_project(
@@ -43,6 +48,7 @@ def commit(message):
     check_call(["hg", "commit", "--user", "Example <test@example.com>", "-m", message])
 
 
+@unittest.skipUnless(hg_available, "requires 'mercurial' to be installed")
 class TestHg(TestCase):
     def test_get_default_compare_branch(self):
         """
