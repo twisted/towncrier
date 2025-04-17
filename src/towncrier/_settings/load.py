@@ -11,13 +11,18 @@ import sys
 
 from collections.abc import Mapping, Sequence
 from contextlib import ExitStack
-from importlib import resources
 from pathlib import Path
 from typing import Any, Literal
 
 from click import ClickException
 
 from .._settings import fragment_types as ft
+
+
+if sys.version_info < (3, 10):
+    import importlib_resources as resources
+else:
+    from importlib import resources
 
 
 if sys.version_info < (3, 11):
