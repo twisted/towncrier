@@ -2,6 +2,7 @@
 # See LICENSE for details.
 
 import os.path
+import unittest
 
 from pathlib import Path
 
@@ -26,57 +27,65 @@ def novcs_commit(message):
 
 
 class TestVCS(TestCase):
-    def test_vcs(self):
-        for tt in [
+    def do_test_vcs(self, vcs):
+        create_project = vcs["create_project"]
+        commit = vcs["commit"]
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            create_project("pyproject.toml")
+
+            write("changes/000.misc.rst", "some change")
+
+            _vcs.stage_newsfile(os.getcwd(), "changes/000.misc.rst")
+
+            commit("commit 1")
+
+            branches = sorted(_vcs.get_remote_branches("."))
+            self.assertIn(branches, [[], ["main", "otherbranch"]])
+
+            if vcs["name"] != "novcs":
+                self.assertIn(
+                    _vcs.list_changed_files_compared_to_branch(".", "main", False),
+                    [
+                        ["changes/000.misc.rst"],
+                        [os.path.join("changes", "000.misc.rst")],
+                    ],
+                )
+
+            write("changes/001.misc.rst", "some change")
+            _vcs.remove_files(
+                os.getcwd(),
+                [
+                    os.path.abspath(f)
+                    for f in ["changes/000.misc.rst", "changes/001.misc.rst"]
+                ],
+            )
+
+    def test_git(self):
+        self.do_test_vcs(
             {
                 "name": "git",
                 "create_project": test_check.create_project,
                 "commit": test_check.commit,
             },
+        )
+
+    @unittest.skipUnless(test_hg.hg_available, "requires 'mercurial' to be installed")
+    def test_mercurial(self):
+        self.do_test_vcs(
             {
                 "name": "mercurial",
                 "create_project": test_hg.create_project,
                 "commit": test_hg.commit,
             },
+        )
+
+    def test_novcs(self):
+        self.do_test_vcs(
             {
                 "name": "novcs",
                 "create_project": novcs_create_project,
                 "commit": novcs_commit,
             },
-        ]:
-            with self.subTest(tt["name"]):
-                create_project = tt["create_project"]
-                commit = tt["commit"]
-
-                runner = CliRunner()
-                with runner.isolated_filesystem():
-                    create_project("pyproject.toml")
-
-                    write("changes/000.misc.rst", "some change")
-
-                    _vcs.stage_newsfile(os.getcwd(), "changes/000.misc.rst")
-
-                    commit("commit 1")
-
-                    branches = sorted(_vcs.get_remote_branches("."))
-                    self.assertIn(branches, [[], ["main", "otherbranch"]])
-
-                    if tt["name"] != "novcs":
-                        self.assertIn(
-                            _vcs.list_changed_files_compared_to_branch(
-                                ".", "main", False
-                            ),
-                            [
-                                ["changes/000.misc.rst"],
-                                [os.path.join("changes", "000.misc.rst")],
-                            ],
-                        )
-
-                    write("changes/001.misc.rst", "some change")
-                    _vcs.remove_files(
-                        os.getcwd(),
-                        [
-                            os.path.abspath(f)
-                            for f in ["changes/000.misc.rst", "changes/001.misc.rst"]
-                        ],
-                    )
+        )
