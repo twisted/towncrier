@@ -5,8 +5,8 @@ from __future__ import annotations
 
 import os
 
+from collections.abc import Container
 from subprocess import STDOUT, call, check_output
-from typing import Container
 
 
 def get_default_compare_branch(branches: Container[str]) -> str | None:

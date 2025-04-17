@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import os
 
-from typing import Container
+from collections.abc import Container
 
 
 def get_default_compare_branch(branches: Container[str]) -> str | None:

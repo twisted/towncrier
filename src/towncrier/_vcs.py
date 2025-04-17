@@ -5,7 +5,8 @@ from __future__ import annotations
 
 import os
 
-from typing import Container, Protocol
+from collections.abc import Container
+from typing import Protocol
 
 
 class VCSMod(Protocol):
