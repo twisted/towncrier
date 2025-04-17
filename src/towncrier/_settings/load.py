@@ -9,9 +9,10 @@ import os
 import re
 import sys
 
+from collections.abc import Mapping, Sequence
 from contextlib import ExitStack
 from pathlib import Path
-from typing import Any, Literal, Mapping, Sequence
+from typing import Any, Literal
 
 from click import ClickException
 

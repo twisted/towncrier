@@ -9,9 +9,10 @@ import re
 import textwrap
 
 from collections import defaultdict
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from fnmatch import fnmatch
 from pathlib import Path
-from typing import Any, DefaultDict, Iterable, Iterator, Mapping, NamedTuple, Sequence
+from typing import Any, DefaultDict, NamedTuple
 
 from click import ClickException
 from jinja2 import Template
