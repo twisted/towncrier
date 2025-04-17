@@ -45,7 +45,7 @@ def commit(message):
     There must be uncommitted changes
     """
     check_call(["hg", "addremove", "."])
-    check_call(["hg", "commit", "-m", message])
+    check_call(["hg", "commit", "--user", "Example <test@example.com>", "-m", message])
 
 
 @unittest.skipUnless(hg_available, "requires 'mercurial' to be installed")
