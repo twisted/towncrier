@@ -287,7 +287,12 @@ class TestChecker(TestCase):
         """
         No failure when output is piped causing None encoding for stdout.
         """
-        runner = CliRunner()
+        try:
+            runner = CliRunner(mix_stderr=False)
+        except TypeError:
+            # Fallback for older Click versions (or unexpected signature)
+            print("TypeError with mix_stderr=False, falling back to echo_stdin=True")
+            runner = CliRunner(echo_stdin=True)
 
         with runner.isolated_filesystem():
             create_project("pyproject.toml", main_branch="master")
@@ -299,7 +304,6 @@ class TestChecker(TestCase):
             check_call(["git", "add", fragment_path])
             check_call(["git", "commit", "-m", "add a newsfragment"])
 
-            runner = CliRunner(mix_stderr=False)
             result = runner.invoke(towncrier_check, ["--compare-with", "master"])
 
         self.assertEqual(0, result.exit_code)
