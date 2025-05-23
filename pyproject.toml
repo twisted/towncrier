@@ -160,7 +160,7 @@ source = ["src", ".nox/tests-*/**/site-packages"]
 
 [tool.coverage.report]
 show_missing = true
-skip_covered = true
+skip_covered = false
 exclude_lines = [
     "pragma: no cover",
     "if TYPE_CHECKING:",
