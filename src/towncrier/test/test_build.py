@@ -1135,7 +1135,7 @@ class TestCli(TestCase):
             dedent=True,
         )
 
-        result = runner.invoke(_main, ["--date", "01-01-2001"], catch_exceptions=False)
+        result = runner.invoke(_main, ["--date", "01-01-2001", "--yes"], catch_exceptions=False)
 
         with open("foo/newsfragments/123.feature", "w") as f:
             f.write("Adds levitation")
@@ -1311,7 +1311,7 @@ class TestCli(TestCase):
             dedent=True,
         )
 
-        result = runner.invoke(_main, ["--date", "01-01-2001"], catch_exceptions=False)
+        result = runner.invoke(_main, ["--date", "01-01-2001", "--yes"], catch_exceptions=False)
         self.assertEqual(0, result.exit_code, result.output)
         output = read("NEWS.rst")
 
@@ -1365,7 +1365,7 @@ class TestCli(TestCase):
             dedent=True,
         )
 
-        result = runner.invoke(_main, ["--date", "01-01-2001"], catch_exceptions=False)
+        result = runner.invoke(_main, ["--date", "01-01-2001", "--yes"], catch_exceptions=False)
         self.assertEqual(0, result.exit_code, result.output)
         output = read("NEWS.md")
 
@@ -1417,7 +1417,7 @@ class TestCli(TestCase):
             dedent=True,
         )
 
-        result = runner.invoke(_main, ["--date", "01-01-2001"], catch_exceptions=False)
+        result = runner.invoke(_main, ["--date", "01-01-2001", "--yes"], catch_exceptions=False)
         self.assertEqual(0, result.exit_code, result.output)
         output = read("NEWS.md")
 
@@ -1781,7 +1781,7 @@ class TestCli(TestCase):
         a missing `showcontent` defaults to `true`.
         """
         write("foo/newsfragments/+new_feature.feature.md", "An exciting new feature!")
-        result = runner.invoke(_main, ["--date", "01-01-2001", "--version", "1.0.0"])
+        result = runner.invoke(_main, ["--date", "01-01-2001", "--version", "1.0.0", "--yes"])
         news = read("NEWS.rst")
         expected = textwrap.dedent(
             """\
@@ -1821,7 +1821,7 @@ class TestCli(TestCase):
         """
         write("foo/newsfragments/+new_feature.feature.md", "An exciting new feature!")
         write("foo/newsfragments/+bump_deps.deps.md", "We bumped our dependencies.")
-        result = runner.invoke(_main, ["--date", "01-01-2001", "--version", "1.0.0"])
+        result = runner.invoke(_main, ["--date", "01-01-2001", "--version", "1.0.0", "--yes"])
         news = read("NEWS.rst")
         expected = textwrap.dedent(
             """\
