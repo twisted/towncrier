@@ -1,4 +1,4 @@
-{#- 
+{#-
 ══════════════════════════════════════════════════════════════════════════════
 TOWNCRIER MARKDOWN TEMPLATE
 ══════════════════════════════════════════════════════════════════════════════
@@ -17,7 +17,7 @@ Arguments:
 
 {#-
 ─── Variable: newline ──────────────────────────────────────────────────────
-Purpose: 
+Purpose:
     Consistent newline handling. -#}
 {%- set newline = "\n" -%}
 
@@ -42,7 +42,7 @@ Purpose:
     {%- endif %}
 
     {%- if sections[section] %}
-        
+
         {%- for category, val in definitions.items() if category in sections[section] %}
             {%- set issue_pks = [] %}
             {#- ─── CATEGORY HEADING ─── #}
@@ -58,10 +58,10 @@ Purpose:
                     {%- set _= issue_pks.append(v_issue.split(": ", 1)[0]) %}
                 {%- endfor %}
                 {%- set issues_list = issue_pks | join(", ") %}
-                
+
                 {#- Check if text contains a sublist #}
                 {%- set text_has_sublist = (("\n  - " in text) or ("\n  * " in text)) %}
-                
+
                 {#- CASE 1: No text, only issues #}
                 {#- Output: -  #1, #9, #142 #}
                 {%- if not text and issues_list %}
@@ -83,12 +83,12 @@ Purpose:
                     {#- Implicit Case: Text, but no issues #}
                     {#- Output: - TEXT #}
                     {{- "- " ~ text ~ newline }}
-                {%- endif %}    
+                {%- endif %}
             {%- endfor %}
-            
+
             {#- New line between list and link references #}
             {{- newline }}
-            
+
             {#- Link references #}
             {%- if issues_by_category[section][category] and "]: " in issues_by_category[section][category][0] %}
                 {%- for issue in issues_by_category[section][category] %}
@@ -108,7 +108,7 @@ Purpose:
         {{- "No significant changes." ~ newline * 2 }}
     {%- endif %}
 {%- endfor %}
-{#- 
+{#-
 Newline at the end of the rendered newsfile content.
 In this way the there are 2 newlines between the latest release and the previous release content.
 -#}
