@@ -1,0 +1,4 @@
+# Hint Github.com about the language use in our template files.
+# The project templates indicate the target output type (.md/.rst) rather than the template type (jinja)
+# Reference: https://github.com/github-linguist/linguist/blob/main/docs/overrides.md#using-gitattributes
+src/towncrier/templates/* linguist-language=Jinja
