@@ -81,7 +81,7 @@ def get_version(package_dir: str, package: str) -> str:
             version = str(version.base()).strip()
             # Incremental uses `X.Y.rcN`.
             # Standardize on importlib (and PEP440) use of `X.YrcN`:
-            return version.replace(".rc", "rc")  # type: ignore
+            return version.replace(".rc", "rc")
         except TypeError:
             pass
 
