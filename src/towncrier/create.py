@@ -38,6 +38,11 @@ DEFAULT_CONTENT = "Add your info here"
     help=config_option_help,
 )
 @click.option(
+    "--overwrite",
+    is_flag=True,
+    help="Overwrite existing fragements",
+)
+@click.option(
     "--edit/--no-edit",
     default=None,
     help="Open an editor for writing the newsfragment content.",
@@ -59,6 +64,7 @@ def _main(
     ctx: click.Context,
     directory: str | None,
     config: str | None,
+    overwrite: bool | False,
     filename: str,
     edit: bool | None,
     content: str,
@@ -83,13 +89,14 @@ def _main(
     If the FILENAME base is just '+' (to create a fragment not tied to an
     issue), it will be appended with a random hex string.
     """
-    __main(ctx, directory, config, filename, edit, content, section)
+    __main(ctx, directory, config, overwrite, filename, edit, content, section)
 
 
 def __main(
     ctx: click.Context,
     directory: str | None,
     config_path: str | None,
+    overwrite: bool | False,
     filename: str,
     edit: bool | None,
     content: str,
@@ -198,16 +205,17 @@ def __main(
 
     segment_file = os.path.join(fragments_directory, filename)
 
-    retry = 0
-    if filename.split(".")[-1] not in config.types:
-        filename, extra_ext = os.path.splitext(filename)
-    else:
-        extra_ext = ""
-    while os.path.exists(segment_file):
-        retry += 1
-        segment_file = os.path.join(
-            fragments_directory, f"{filename}.{retry}{extra_ext}"
-        )
+    if not overwrite:
+        retry = 0
+        if filename.split(".")[-1] not in config.types:
+            filename, extra_ext = os.path.splitext(filename)
+        else:
+            extra_ext = ""
+        while os.path.exists(segment_file):
+            retry += 1
+            segment_file = os.path.join(
+                fragments_directory, f"{filename}.{retry}{extra_ext}"
+            )
 
     if edit:
         if content == DEFAULT_CONTENT:
