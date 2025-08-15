@@ -1,1 +1,0 @@
-Skip the mercurial tests if not found on the local system.
