@@ -6,18 +6,14 @@ from __future__ import annotations
 
 import os
 import sys
-
 from subprocess import CalledProcessError
 
 import click
 
 from ._builder import find_fragments
 from ._settings import config_option_help, load_config_from_options
-from ._vcs import (
-    get_default_compare_branch,
-    get_remote_branches,
-    list_changed_files_compared_to_branch,
-)
+from ._vcs import (get_default_compare_branch, get_remote_branches,
+                   list_changed_files_compared_to_branch)
 
 
 @click.command(name="check")

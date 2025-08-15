@@ -4,7 +4,6 @@
 import os.path
 import shutil
 import unittest
-
 from pathlib import Path
 from subprocess import check_call
 
@@ -14,7 +13,6 @@ from twisted.trial.unittest import TestCase
 from towncrier import _hg, _vcs
 
 from .helpers import setup_simple_project, write
-
 
 hg_available = shutil.which("hg") is not None
 

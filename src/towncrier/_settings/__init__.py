@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from towncrier._settings import load
 
-
 load_config = load.load_config
 ConfigError = load.ConfigError
 load_config_from_options = load.load_config_from_options
