@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import textwrap
+
 from functools import wraps
 from importlib import resources
 from pathlib import Path

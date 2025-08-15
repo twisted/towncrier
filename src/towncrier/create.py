@@ -8,6 +8,7 @@ Create a new fragment.
 from __future__ import annotations
 
 import os
+
 from pathlib import Path
 from typing import cast
 
@@ -15,6 +16,7 @@ import click
 
 from ._builder import FragmentsPath
 from ._settings import config_option_help, load_config_from_options
+
 
 DEFAULT_CONTENT = "Add your info here"
 

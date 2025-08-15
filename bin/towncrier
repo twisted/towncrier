@@ -4,9 +4,11 @@
 import os.path
 import sys
 
+
 srcdir = os.path.join(os.path.dirname(__file__), "..", "src")
 sys.path.insert(0, srcdir)
 
 import towncrier
+
 
 towncrier._main()

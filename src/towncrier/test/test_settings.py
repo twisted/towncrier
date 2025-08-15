@@ -2,6 +2,7 @@
 # See LICENSE for details.
 
 import os
+
 from textwrap import dedent
 
 from click.testing import CliRunner

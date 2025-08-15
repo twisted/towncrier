@@ -10,6 +10,7 @@ from __future__ import annotations
 import contextlib
 import importlib.metadata
 import sys
+
 from importlib import import_module
 from importlib.metadata import PackageNotFoundError
 from types import ModuleType

@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 import re
 import textwrap
+
 from collections import defaultdict
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from fnmatch import fnmatch

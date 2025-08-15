@@ -3,6 +3,7 @@
 
 import os
 import sys
+
 from importlib.metadata import version as metadata_version
 
 from click.testing import CliRunner
@@ -11,6 +12,7 @@ from twisted.trial.unittest import TestCase
 from .._project import get_project_name, get_version
 from .._shell import cli as towncrier_cli
 from .helpers import write
+
 
 towncrier_cli.name = "towncrier"
 
