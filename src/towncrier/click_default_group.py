@@ -56,7 +56,6 @@ import warnings
 
 import click
 
-
 __all__ = ["DefaultGroup"]
 __version__ = "1.2.2"
 
