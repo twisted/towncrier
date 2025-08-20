@@ -12,18 +12,20 @@ Features
 --------
 
 - Support was added for Mercurial SCM. (`#394 <https://github.com/twisted/towncrier/issues/394>`_)
-- The `towncrier check` command now has a `--staged` flag to inspect the files staged for commit when checking for a news fragment: useful in a pre-commit hook (`#676 <https://github.com/twisted/towncrier/issues/676>`_)
-- When used with an `pyproject.toml` file, when no explicit values are
-  defined for [tool.towncrier.name|package] they will now fallback to
-  the value of [project.name]. (`#687 <https://github.com/twisted/towncrier/issues/687>`_)
-- More simple configuration for Keep a Changelog style changelogs (`#691 <https://github.com/twisted/towncrier/issues/691>`_)
+- The :command:`towncrier check` command now has a ``--staged`` flag to inspect the files staged for commit when checking for a news fragment: useful in a pre-commit hook (`#676 <https://github.com/twisted/towncrier/issues/676>`_)
+- When used with an :file:`pyproject.toml` file, when no explicit values are
+  defined for ``[tool.towncrier.name|package]`` they will now fallback to
+  the value of ``[project.name]``. (`#687 <https://github.com/twisted/towncrier/issues/687>`_)
+- The `directory` configuration option is no longer required.
+  It can now be generated based on value from the `name` configuration.
+  (`#691 <https://github.com/twisted/towncrier/issues/691>`_)
 - Added support for Python 3.13 and removed support for Python 3.8. (`#700 <https://github.com/twisted/towncrier/issues/700>`_)
 
 
 Bugfixes
 --------
 
-- Multi-line newsfragments that ends with a code block will now have a newline inserted before appending the link to the issue, to avoid breaking formatting. (`#614 <https://github.com/twisted/towncrier/issues/614>`_)
+- Multi-line news fragments that end with a code block will now have a newline inserted before appending the link to the issue, to avoid breaking formatting. (`#614 <https://github.com/twisted/towncrier/issues/614>`_)
 - Markdown header level is correctly inferred from ``title_format``. (`#695 <https://github.com/twisted/towncrier/issues/695>`_)
 
 
@@ -37,6 +39,7 @@ Improved Documentation
 Deprecations and Removals
 -------------------------
 
+- Support for Python 3.8 was removed. (`#700 <https://github.com/twisted/towncrier/issues/700>`_)
 - When no sections are present,
   the default Markdown template now renders the category headers as H2.
   In previous versions it was rendered as H3. (`#663 <https://github.com/twisted/towncrier/issues/663>`_)
