@@ -16,8 +16,8 @@ Features
 - When used with an :file:`pyproject.toml` file, when no explicit values are
   defined for ``[tool.towncrier.name|package]`` they will now fallback to
   the value of ``[project.name]``. (`#687 <https://github.com/twisted/towncrier/issues/687>`_)
-- The `directory` configuration option is no longer required.
-  It can now be generated based on value from the `name` configuration.
+- The ``directory`` configuration option is no longer required.
+  It can now be generated based on value from the ``name`` configuration.
   (`#691 <https://github.com/twisted/towncrier/issues/691>`_)
 - Added support for Python 3.13 and removed support for Python 3.8. (`#700 <https://github.com/twisted/towncrier/issues/700>`_)
 
