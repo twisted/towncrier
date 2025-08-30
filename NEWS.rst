@@ -5,8 +5,11 @@ Release notes
 
 .. towncrier release notes start
 
-towncrier 25.8.0rc2 (2025-08-15)
-================================
+towncrier 25.8.0 (2025-08-30)
+=============================
+
+No significant changes since the previous release candidate.
+
 
 Features
 --------
