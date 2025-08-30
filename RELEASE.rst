@@ -123,6 +123,12 @@ Similar to the release candidate, with the difference:
 
 No need for another review request.
 
+
+Merge the release branch
+------------------------
+
+Once the release is done, we can prepare for a new development cycle and merge the release branch.
+
 Update the version to the development version.
 In ``pyproject.toml`` the version is set using a PEP440 compliant string:
 
