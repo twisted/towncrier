@@ -35,6 +35,7 @@ dependencies = [
     "importlib-metadata>=4.6; python_version<'3.10'",
     "jinja2",
     "tomli; python_version<'3.11'",
+    "questionary",
 ]
 
 [project.optional-dependencies]
@@ -77,6 +78,7 @@ exclude = [
     package_dir = "src"
     filename = "NEWS.rst"
     issue_format = "`#{issue} <https://github.com/twisted/towncrier/issues/{issue}>`_"
+    issue_pattern = "\\d+"
 
     [[tool.towncrier.section]]
         path = ""
