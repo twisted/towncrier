@@ -1,3 +1,0 @@
-When no sections are present,
-the default Markdown template now renders the category headers as H2.
-In previous versions it was rendered as H3.

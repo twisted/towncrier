@@ -34,7 +34,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: hynek/build-and-inspect-python-package@b5076c307dc91924a82ad150cdd1533b444d3310  # v2.12.0
+    - uses: hynek/build-and-inspect-python-package@efb823f52190ad02594531168b7a2d5790e66516 # v2.14.0
 
     - name: Set up ${{ matrix.python.name }}
       uses: actions/setup-python@v4
@@ -265,8 +265,7 @@ jobs:
         python -I admin/check_tag_version_match.py "${{ github.ref }}"
 
     - name: Publish to PyPI - on tag
-      # This was tag 1.9.0 on 2024-07-30
-      uses: pypa/gh-action-pypi-publish@ec4db0b4ddc65acdf4bff5fa45ac92d78b56bdf0
+      uses: pypa/gh-action-pypi-publish@release/v1
 
 
   coverage:

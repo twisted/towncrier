@@ -1,3 +1,0 @@
-When used with an `pyproject.toml` file, when no explicit values are
-defined for [tool.towncrier.name|package] they will now fallback to
-the value of [project.name].

@@ -1,1 +1,0 @@
-Markdown header level is correctly inferred from ``title_format``.
