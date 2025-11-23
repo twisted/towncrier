@@ -77,6 +77,8 @@ As long as the package was not published to PyPI, we will only "yank" it from Gi
 To yank from GitHub release, keep the release title, and tag,
 but remove the description and replace it with this content.
 
+.. ::
+
     > [!CAUTION]
     > This tag corresponds to a release that never made it to PyPI.
 
