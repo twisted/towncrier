@@ -78,7 +78,6 @@ exclude = [
     package_dir = "src"
     filename = "NEWS.rst"
     issue_format = "`#{issue} <https://github.com/twisted/towncrier/issues/{issue}>`_"
-    issue_pattern = "\\d+"
 
     [[tool.towncrier.section]]
         path = ""

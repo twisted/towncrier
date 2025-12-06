@@ -178,7 +178,14 @@ def find_fragments(
                 counter = orphan_fragment_counter[category]
                 orphan_fragment_counter[category] += 1
 
-            config.check_issue_pattern(issue)
+            check_pattern_result = config.check_issue_pattern(issue)
+            if check_pattern_result is not True:
+                raise ClickException(
+                    f"Issue name '{issue}' does not match the "
+                    f"configured pattern, '{config.issue_pattern}'"
+                )
+
+
             full_filename = os.path.join(section_dir, basename)
             fragment_files.append((full_filename, category))
             data = Path(full_filename).read_text(encoding="utf-8", errors="replace")

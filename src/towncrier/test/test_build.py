@@ -847,6 +847,7 @@ class TestCli(TestCase):
                 ],
                 catch_exceptions=False,
             )
+
             # Fragment files unknown to git are removed even without a git repo
             assert not Path(f"newsfragments/{fragment_file}").exists()
             return result

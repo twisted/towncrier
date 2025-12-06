@@ -107,9 +107,15 @@ class Config:
         return None
 
     def check_issue_pattern(self, issue: str) -> bool | str:
+        if issue == "":
+            return True
         prompt = f"must match to {self.issue_pattern}"
-        if self.orphan_prefix:
+        if issue.startswith(self.orphan_prefix):
             prompt += f" (`{self.orphan_prefix}` if none)"
+
+        if not self.issue_pattern:
+            return True
+
         pattern = re.compile(self.issue_pattern)
         if pattern.fullmatch(issue):
             return True

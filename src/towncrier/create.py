@@ -144,7 +144,7 @@ def __main(
 
     if issue:
         check_issue = config.check_issue_pattern(issue)
-        if isinstance(check_issue, str):
+        if check_issue is not True:
             raise click.BadParameter(check_issue)
     else:
         issue = questionary.text(
