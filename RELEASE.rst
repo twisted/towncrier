@@ -69,17 +69,23 @@ Release candidate publish failures
 
 The PyPI publish process is automatically triggered when a tag is created.
 
-The publish is skipped for PRs, so we can check that the automated process works only a release time.
+The publish is skipped for PRs, so we can **only check** that the automated process works at release time.
 It can happen for the automated publish process to fail.
 
-As long as the package was not published to PyPI, do the followings:
+As long as the package was not published to PyPI, we will only "yank" it from GitHub, as there is nothing to yank on PyPI.
 
-* Manually delete the candidate release from GitHub releases
-* Manually delete the tag for the release candidate
+To yank from GitHub release, keep the release title, and tag,
+but remove the description and replace it with this content.
 
-Try to fix the issue and trigger the same release candidate again.
+.. ::
 
-Once the package is published on PyPI, do not delete the release or the tag.
+    > [!CAUTION]
+    > This tag corresponds to a release that never made it to PyPI.
+
+Try to fix the issue and trigger the a new release candidate with a new tag.
+
+Once the package is published on PyPI,
+**do not delete** the release or the tag.
 Proceed with create a new release candidate instead.
 
 
@@ -118,6 +124,12 @@ Similar to the release candidate, with the difference:
 * Click `Publish release`
 
 No need for another review request.
+
+
+Merge the release branch
+------------------------
+
+Once the release is done, we can prepare for a new development cycle and merge the release branch.
 
 Update the version to the development version.
 In ``pyproject.toml`` the version is set using a PEP440 compliant string:
