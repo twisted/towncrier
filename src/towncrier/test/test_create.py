@@ -25,24 +25,25 @@ class TestCli(TestCase):
         mkdir=True,
         additional_args=None,
         eof_newline=True,
+        file_extension="rst",
     ):
         runner = CliRunner()
 
         with runner.isolated_filesystem():
             setup_simple_project(config=config, mkdir_newsfragments=mkdir)
 
-            args = ["123.feature.rst"]
+            args = [f"123.feature.{file_extension}"]
             if content is None:
                 content = [DEFAULT_CONTENT]
             if additional_args is not None:
                 args.extend(additional_args)
             result = runner.invoke(_main, args)
 
-            self.assertEqual(["123.feature.rst"], os.listdir("foo/newsfragments"))
+            self.assertEqual([f"123.feature.{file_extension}"], os.listdir("foo/newsfragments"))
 
             if eof_newline:
                 content.append("")
-            with open("foo/newsfragments/123.feature.rst") as fh:
+            with open(f"foo/newsfragments/123.feature.{file_extension}") as fh:
                 self.assertEqual("\n".join(content), fh.read())
 
         self.assertEqual(0, result.exit_code)

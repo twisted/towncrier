@@ -14,12 +14,17 @@ from pathlib import Path
 import click
 import questionary
 
+from ._settings.load import Config
 from ._builder import FragmentsPath
 from ._settings import config_option_help, load_config_from_options
 
 
 DEFAULT_CONTENT = "Add your info here"
 
+def add_file_extension(file_name: str, config: Config) -> str:
+    if config.create_add_extension and len(file_name.split(".")) == 2:
+        file_name = f"{file_name}.{config.file_extension}"
+    return file_name
 
 @click.command(name="create")
 @click.pass_context
@@ -116,55 +121,51 @@ def __main(
     """
     base_directory, config = load_config_from_options(directory, config_path)
 
-    filename_ext = ""
-    if config.create_add_extension:
-        ext = os.path.splitext(config.filename)[1]
-        if ext.lower() in (".rst", ".md"):
-            filename_ext = ext
+    if not filename:
+        if section is None:
+            if len(config.section_display_names) == 1:
+                section_display_name = config.section_display_names[0]
+            else:
+                section_display_name = questionary.select(
+                    "Pick a section:", choices=config.section_display_names
+                ).ask()
+            section = config.get_section_for_display_name(section_display_name)
 
-    if section is None:
-        if len(config.section_display_names) == 1:
-            section_display_name = config.section_display_names[0]
-        else:
-            section_display_name = questionary.select(
-                "Pick a section:", choices=config.section_display_names
-            ).ask()
-        section = config.get_section_for_display_name(section_display_name)
+        if section and section.lower() == "none":
+            section = ""
 
-    if section and section.lower() == "none":
-        section = ""
-
-    if section not in config.sections:
-        section_param = [x for x in ctx.command.params if x.name == "section"][0]
-        expected_sections = ", ".join(f"'{s}'" for s in config.section_display_names)
-        raise click.BadParameter(
-            f"'{section}' is not a valid section name, expected one of {expected_sections}",
-            param=section_param,
-        )
-
-    if issue:
-        check_issue = config.check_issue_pattern(issue)
-        if check_issue is not True:
-            raise click.BadParameter(check_issue)
-    else:
-        issue = questionary.text(
-            "Issue number:", validate=config.check_issue_pattern
-        ).ask()
-
-    if fragment_type:
-        expected_types = ", ".join(f"'{s}'" for s in config.types)
-        if fragment_type not in config.types:
+        if section not in config.sections:
+            section_param = [x for x in ctx.command.params if x.name == "section"][0]
+            expected_sections = ", ".join(f"'{s}'" for s in config.section_display_names)
             raise click.BadParameter(
-                f"'{fragment_type}' is not a valid type, expected one of {expected_types}",
+                f"'{section}' is not a valid section name, expected one of {expected_sections}",
+                param=section_param,
             )
-    else:
-        fragment_type = questionary.select(
-            "Fragment type:", choices=[type_name for type_name in config.types.keys()]
-        ).ask()
 
-    filename = f"{issue}.{fragment_type}"
-    if edit is None and content == DEFAULT_CONTENT:
-        edit = True
+
+        if issue:
+            check_issue = config.check_issue_pattern(issue)
+            if check_issue is not True:
+                raise click.BadParameter(check_issue)
+        else:
+            issue = questionary.text(
+                "Issue number (`+` if none):", validate=config.check_issue_pattern
+            ).ask()
+
+        if fragment_type:
+            expected_types = ", ".join(f"'{s}'" for s in config.types)
+            if fragment_type not in config.types:
+                raise click.BadParameter(
+                    f"'{fragment_type}' is not a valid type, expected one of {expected_types}",
+                )
+        else:
+            fragment_type = questionary.select(
+                "Fragment type:", choices=[type_name for type_name in config.types.keys()]
+            ).ask()
+
+        filename = f"{issue}.{fragment_type}"
+        if edit is None and content == DEFAULT_CONTENT:
+            edit = True
 
     file_dir, file_basename = os.path.split(filename)
     if config.orphan_prefix and file_basename.startswith(f"{config.orphan_prefix}."):
@@ -176,21 +177,20 @@ def __main(
                 f"{file_basename[len(config.orphan_prefix):]}"
             ),
         )
-    filename_parts = filename.split(".")
-    if len(filename_parts) < 2 or (
-        filename_parts[-1] not in config.types
-        and filename_parts[-2] not in config.types
-    ):
-        raise click.BadParameter(
-            "Expected filename '{}' to be of format '{{name}}.{{type}}', "
-            "where '{{name}}' is an arbitrary slug and '{{type}}' is "
-            "one of: {}".format(filename, ", ".join(config.types))
-        )
-    if filename_parts[-1] in config.types and filename_ext:
-        filename += filename_ext
+
+
+    filename = add_file_extension(filename, config)
+
+    check_filename_result = config.check_filename(filename)
+    if check_filename_result is not True:
+        raise click.BadParameter(check_filename_result)
 
     get_fragments_path = FragmentsPath(base_directory, config)
-    if not section and section not in config.sections:
+
+    if section is None:
+        section = ""
+
+    if section and section not in config.sections:
         raise click.BadParameter(f"No such section {section}")
 
     fragments_directory = get_fragments_path(
@@ -216,7 +216,7 @@ def __main(
     if edit:
         if content == DEFAULT_CONTENT:
             content = ""
-        content = _get_news_content_from_user(content, extension=filename_ext)
+        content = _get_news_content_from_user(content, extension=config.file_extension_for_edit)
         if not content:
             click.echo("Aborted creating news fragment due to empty message.")
             ctx.exit(1)
@@ -229,14 +229,14 @@ def __main(
     click.echo(f"Created news fragment at {segment_file}")
 
 
-def _get_news_content_from_user(message: str, extension: str = "") -> str:
+def _get_news_content_from_user(message: str, extension: str) -> str:
     initial_content = """
 # Please write your news content. Lines starting with '#' will be ignored, and
 # an empty message aborts.
 """
     if message:
         initial_content = f"{message}\n{initial_content}"
-    content = click.edit(initial_content, extension=extension or ".txt")
+    content = click.edit(initial_content, extension=f".{extension}")
     if content is None:
         return message
     all_lines = content.split("\n")

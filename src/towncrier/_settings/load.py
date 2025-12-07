@@ -14,6 +14,7 @@ from collections.abc import Mapping, Sequence
 from contextlib import ExitStack
 from pathlib import Path
 from typing import Any, Dict, Literal  # noqa: F401
+from unittest.mock import file_spec
 
 from click import ClickException
 
@@ -58,10 +59,23 @@ class Config:
     create_add_extension: bool = True
     ignore: list[str] | None = None
     issue_pattern: str = ""
+    regular_file_extensions: list[str] = dataclasses.field(default_factory=lambda: ["md", "rst"])
 
     @property
     def section_display_names(self) -> list[str]:
         return [x["display_name"] for x in self._section_data().values()]
+
+    @property
+    def file_extension(self) -> str:
+        return self.filename.split(".")[-1].lower()
+
+    @property
+    def file_extension_for_edit(self) -> str:
+        if self.file_extension  in self.regular_file_extensions:
+            return self.file_extension
+        else:
+            return "txt"
+
 
     def _section_data(self) -> dict[str, dict[str, Any]]:
         primary_addition = "(primary)"
@@ -105,6 +119,42 @@ class Config:
             if section_display_name == section_data["display_name"]:
                 return section
         return None
+
+    def check_filename(self, filename: str) -> bool | str:
+        message = "Expected filename '{}' to be of format '{{name}}.{{type}}.{{extension}}', " + \
+                    "where '{{name}}' is an arbitrary slug and '{{type}}' is " + \
+                    "one of: {}".format(filename, ", ".join(self.types))
+
+        elements = filename.split(".")
+        if len(elements) == 4:
+            issue_id = elements[0]
+            type_name = elements[1]
+            increment_nr = elements[2]
+            file_extension = elements[3]
+        elif len(elements) == 3:
+            issue_id = elements[0]
+            type_name = elements[1]
+            increment_nr = "0"
+            file_extension = elements[2]
+        else:
+            return message
+
+        # TODO
+        #if file_extension != self.file_extension:
+        #    return message
+
+        if not increment_nr.isdigit():
+            return message
+
+        if type_name not in self.types.keys():
+            return message
+
+        issue_check_result = self.check_issue_pattern(issue_id)
+
+        if issue_check_result is not True:
+            return message
+
+        return True
 
     def check_issue_pattern(self, issue: str) -> bool | str:
         if issue == "":

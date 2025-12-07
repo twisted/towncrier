@@ -5,6 +5,21 @@ Release notes
 
 .. towncrier release notes start
 
+towncrier 25.8.0.dev0 (2025-12-06)
+==================================
+
+Features
+--------
+
+- sdfsdfsdf (`#234 <https://github.com/twisted/towncrier/issues/234>`_)
+
+
+Misc
+----
+
+- `#719 <https://github.com/twisted/towncrier/issues/719>`_, `#729 <https://github.com/twisted/towncrier/issues/729>`_
+
+
 towncrier 25.8.0 (2025-08-30)
 =============================
 
