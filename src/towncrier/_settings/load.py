@@ -130,18 +130,13 @@ class Config:
             issue_id = elements[0]
             type_name = elements[1]
             increment_nr = elements[2]
-            file_extension = elements[3]
-        elif len(elements) == 3:
+        elif len(elements) == 3 or len(elements) == 2:
             issue_id = elements[0]
             type_name = elements[1]
             increment_nr = "0"
-            file_extension = elements[2]
         else:
             return message
 
-        # TODO
-        #if file_extension != self.file_extension:
-        #    return message
 
         if not increment_nr.isdigit():
             return message
