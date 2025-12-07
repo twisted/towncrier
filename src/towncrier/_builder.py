@@ -185,7 +185,6 @@ def find_fragments(
                     f"configured pattern, '{config.issue_pattern}'"
                 )
 
-
             full_filename = os.path.join(section_dir, basename)
             fragment_files.append((full_filename, category))
             data = Path(full_filename).read_text(encoding="utf-8", errors="replace")

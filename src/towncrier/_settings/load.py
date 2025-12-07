@@ -59,7 +59,9 @@ class Config:
     create_add_extension: bool = True
     ignore: list[str] | None = None
     issue_pattern: str = ""
-    regular_file_extensions: list[str] = dataclasses.field(default_factory=lambda: ["md", "rst"])
+    regular_file_extensions: list[str] = dataclasses.field(
+        default_factory=lambda: ["md", "rst"]
+    )
 
     @property
     def section_display_names(self) -> list[str]:
@@ -75,11 +77,10 @@ class Config:
 
     @property
     def file_extension_for_edit(self) -> str:
-        if self.file_extension  in self.regular_file_extensions:
+        if self.file_extension in self.regular_file_extensions:
             return self.file_extension
         else:
             return "txt"
-
 
     def _section_data(self) -> dict[str, dict[str, Any]]:
         primary_addition = "(primary)"
@@ -125,9 +126,11 @@ class Config:
         return None
 
     def check_filename(self, filename: str) -> bool | str:
-        message = ("Expected filename '{}' to be of format '{{name}}.{{type}}.{{extension}}', "
-                    "where '{{name}}' is an arbitrary slug and '{{type}}' is "
-                    "one of: {}".format(filename, ", ".join(self.types)))
+        message = (
+            "Expected filename '{}' to be of format '{{name}}.{{type}}.{{extension}}', "
+            "where '{{name}}' is an arbitrary slug and '{{type}}' is "
+            "one of: {}".format(filename, ", ".join(self.types))
+        )
 
         elements = filename.split(".")
         if len(elements) == 4:
@@ -140,7 +143,6 @@ class Config:
             increment_nr = "0"
         else:
             return message
-
 
         if not increment_nr.isdigit():
             return message

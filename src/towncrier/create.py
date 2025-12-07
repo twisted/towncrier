@@ -14,17 +14,23 @@ from pathlib import Path
 import click
 import questionary
 
-from ._settings.load import Config
 from ._builder import FragmentsPath
 from ._settings import config_option_help, load_config_from_options
+from ._settings.load import Config
 
 
 DEFAULT_CONTENT = "Add your info here"
 
+
 def add_file_extension(file_name: str, config: Config) -> str:
-    if config.create_add_extension and len(file_name.split(".")) == 2 and config.file_extension != "":
+    if (
+        config.create_add_extension
+        and len(file_name.split(".")) == 2
+        and config.file_extension != ""
+    ):
         file_name = f"{file_name}.{config.file_extension}"
     return file_name
+
 
 @click.command(name="create")
 @click.pass_context
@@ -136,12 +142,13 @@ def __main(
 
         if section not in config.sections:
             section_param = [x for x in ctx.command.params if x.name == "section"][0]
-            expected_sections = ", ".join(f"'{s}'" for s in config.section_display_names)
+            expected_sections = ", ".join(
+                f"'{s}'" for s in config.section_display_names
+            )
             raise click.BadParameter(
                 f"'{section}' is not a valid section name, expected one of {expected_sections}",
                 param=section_param,
             )
-
 
         if issue:
             check_issue = config.check_issue_pattern(issue)
@@ -160,7 +167,8 @@ def __main(
                 )
         else:
             fragment_type = questionary.select(
-                "Fragment type:", choices=[type_name for type_name in config.types.keys()]
+                "Fragment type:",
+                choices=[type_name for type_name in config.types.keys()],
             ).ask()
 
         filename = f"{issue}.{fragment_type}"
@@ -177,7 +185,6 @@ def __main(
                 f"{file_basename[len(config.orphan_prefix):]}"
             ),
         )
-
 
     filename = add_file_extension(filename, config)
 
@@ -216,7 +223,9 @@ def __main(
     if edit:
         if content == DEFAULT_CONTENT:
             content = ""
-        content = _get_news_content_from_user(content, extension=config.file_extension_for_edit)
+        content = _get_news_content_from_user(
+            content, extension=config.file_extension_for_edit
+        )
         if not content:
             click.echo("Aborted creating news fragment due to empty message.")
             ctx.exit(1)

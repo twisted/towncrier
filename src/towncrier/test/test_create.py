@@ -39,7 +39,9 @@ class TestCli(TestCase):
                 args.extend(additional_args)
             result = runner.invoke(_main, args)
 
-            self.assertEqual([f"123.feature.{file_extension}"], os.listdir("foo/newsfragments"))
+            self.assertEqual(
+                [f"123.feature.{file_extension}"], os.listdir("foo/newsfragments")
+            )
 
             if eof_newline:
                 content.append("")
