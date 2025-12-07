@@ -22,7 +22,7 @@ from ._settings import config_option_help, load_config_from_options
 DEFAULT_CONTENT = "Add your info here"
 
 def add_file_extension(file_name: str, config: Config) -> str:
-    if config.create_add_extension and len(file_name.split(".")) == 2:
+    if config.create_add_extension and len(file_name.split(".")) == 2 and config.file_extension != "":
         file_name = f"{file_name}.{config.file_extension}"
     return file_name
 

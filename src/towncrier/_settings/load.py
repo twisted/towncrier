@@ -67,7 +67,11 @@ class Config:
 
     @property
     def file_extension(self) -> str:
-        return self.filename.split(".")[-1].lower()
+        parts = self.filename.split(".")
+        if len(parts) >= 2:
+            return parts[-1].lower()
+        else:
+            return ""
 
     @property
     def file_extension_for_edit(self) -> str:
@@ -121,9 +125,9 @@ class Config:
         return None
 
     def check_filename(self, filename: str) -> bool | str:
-        message = "Expected filename '{}' to be of format '{{name}}.{{type}}.{{extension}}', " + \
-                    "where '{{name}}' is an arbitrary slug and '{{type}}' is " + \
-                    "one of: {}".format(filename, ", ".join(self.types))
+        message = ("Expected filename '{}' to be of format '{{name}}.{{type}}.{{extension}}', "
+                    "where '{{name}}' is an arbitrary slug and '{{type}}' is "
+                    "one of: {}".format(filename, ", ".join(self.types)))
 
         elements = filename.split(".")
         if len(elements) == 4:
