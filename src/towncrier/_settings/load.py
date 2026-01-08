@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import atexit
+import collections
 import dataclasses
 import os
 import re
@@ -12,7 +13,8 @@ import sys
 from collections.abc import Mapping, Sequence
 from contextlib import ExitStack
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Dict, Literal  # noqa: F401
+from unittest.mock import file_spec
 
 from click import ClickException
 
@@ -57,6 +59,119 @@ class Config:
     create_add_extension: bool = True
     ignore: list[str] | None = None
     issue_pattern: str = ""
+    regular_file_extensions: list[str] = dataclasses.field(
+        default_factory=lambda: ["md", "rst"]
+    )
+
+    @property
+    def section_display_names(self) -> list[str]:
+        return [x["display_name"] for x in self._section_data().values()]
+
+    @property
+    def file_extension(self) -> str:
+        parts = self.filename.split(".")
+        if len(parts) >= 2:
+            return parts[-1].lower()
+        else:
+            return ""
+
+    @property
+    def file_extension_for_edit(self) -> str:
+        if self.file_extension in self.regular_file_extensions:
+            return self.file_extension
+        else:
+            return "txt"
+
+    def _section_data(self) -> dict[str, dict[str, Any]]:
+        primary_addition = "(primary)"
+        primary_exists = False
+        selections_sections = collections.OrderedDict()
+        nr_sections = len(self.sections)
+        paths_seen = set()
+        for section, path in self.sections.items():
+            display_name = section
+            if path in paths_seen:
+                raise ConfigError(f"Duplicate path '{path}' for section '{section}'")
+            paths_seen.add(path)
+            data = {
+                "display_name": display_name,
+                "path": path,
+            }
+
+            if section == "":
+                display_name = "None"
+
+            if nr_sections == 1:
+                display_name = f"{display_name} {primary_addition}"
+                primary_exists = True
+
+            if data["path"] == "" and not primary_exists:
+                display_name = f"{display_name} {primary_addition}"
+                primary_exists = True
+
+            data["display_name"] = display_name
+            selections_sections[section] = data
+
+        if not primary_exists and nr_sections > 0:
+            _, first_item = selections_sections.popitem(last=False)
+            display_name = first_item["display_name"]
+            first_item.update({"display_name": f"{display_name} {primary_addition}"})
+
+        return selections_sections
+
+    def get_section_for_display_name(self, section_display_name: str) -> str | None:
+        for section, section_data in self._section_data().items():
+            if section_display_name == section_data["display_name"]:
+                return section
+        return None
+
+    def check_filename(self, filename: str) -> bool | str:
+        message = (
+            "Expected filename '{}' to be of format '{{name}}.{{type}}.{{extension}}', "
+            "where '{{name}}' is an arbitrary slug and '{{type}}' is "
+            "one of: {}".format(filename, ", ".join(self.types))
+        )
+
+        elements = filename.split(".")
+        if len(elements) == 4:
+            issue_id = elements[0]
+            type_name = elements[1]
+            increment_nr = elements[2]
+        elif len(elements) == 3 or len(elements) == 2:
+            issue_id = elements[0]
+            type_name = elements[1]
+            increment_nr = "0"
+        else:
+            return message
+
+        if not increment_nr.isdigit():
+            return message
+
+        if type_name not in self.types.keys():
+            return message
+
+        issue_check_result = self.check_issue_pattern(issue_id)
+
+        if issue_check_result is not True:
+            return message
+
+        return True
+
+    def check_issue_pattern(self, issue: str) -> bool | str:
+        if issue == "":
+            return True
+        prompt = f"must match to {self.issue_pattern}"
+        if issue.startswith(self.orphan_prefix):
+            prompt += f" (`{self.orphan_prefix}` if none)"
+
+        if not self.issue_pattern:
+            return True
+
+        pattern = re.compile(self.issue_pattern)
+        if pattern.fullmatch(issue):
+            return True
+        else:
+            return prompt
 
 
 class ConfigError(ClickException):
@@ -82,8 +197,8 @@ def load_config_from_options(
     config_path = os.path.abspath(config_path)
 
     # When a directory is provided (in addition to the config file), use it as the base
-    # directory. Otherwise use the directory containing the config file.
-    if directory is not None:
+    # directory. Otherwise, use the directory containing the config file.
+    if directory and directory != "":
         base_directory = os.path.abspath(directory)
     else:
         base_directory = os.path.dirname(config_path)

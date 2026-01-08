@@ -35,6 +35,7 @@ dependencies = [
     "importlib-metadata>=4.6; python_version<'3.10'",
     "jinja2",
     "tomli; python_version<'3.11'",
+    "questionary",
 ]
 
 [project.optional-dependencies]
