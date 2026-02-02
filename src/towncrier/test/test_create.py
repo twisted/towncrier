@@ -98,13 +98,11 @@ class TestCli(TestCase):
             mock_edit.return_value = "This is line 1"
             self._test_success(
                 content=["This is line 1"],
-                config=dedent(
-                    """\
+                config=dedent("""\
                     [tool.towncrier]
                     package = "foo"
                     filename = "README.md"
-                    """
-                ),
+                    """),
                 additional_args=["--edit"],
             )
             mock_edit.assert_called_once_with(
@@ -123,13 +121,11 @@ class TestCli(TestCase):
             mock_edit.return_value = "This is line 1"
             self._test_success(
                 content=["This is line 1"],
-                config=dedent(
-                    """\
+                config=dedent("""\
                     [tool.towncrier]
                     package = "foo"
                     filename = "README.FIRST"
-                    """
-                ),
+                    """),
                 additional_args=["--edit"],
             )
             mock_edit.assert_called_once_with(
@@ -153,13 +149,11 @@ class TestCli(TestCase):
         argument. The text editor is not invoked, and no eof newline is added if the
         config option is set.
         """
-        config = dedent(
-            """\
+        config = dedent("""\
             [tool.towncrier]
             package = "foo"
             create_eof_newline = false
-            """
-        )
+            """)
         content_line = "This is a content"
         self._test_success(
             content=[content_line],
@@ -190,12 +184,10 @@ class TestCli(TestCase):
     def test_different_directory(self):
         """Ensure non-standard directories are used."""
         runner = CliRunner()
-        config = dedent(
-            """\
+        config = dedent("""\
             [tool.towncrier]
             directory = "releasenotes"
-            """
-        )
+            """)
 
         with runner.isolated_filesystem():
             setup_simple_project(config=config, mkdir_newsfragments=False)
@@ -374,11 +366,9 @@ Created news fragment at {expected}
             mock_edit.assert_called_once()
         expected = os.path.join(os.getcwd(), "foo", "newsfragments", "+")
         self.assertTrue(
-            result.output.startswith(
-                f"""Issue number (`+` if none): +
+            result.output.startswith(f"""Issue number (`+` if none): +
 Fragment type (feature, bugfix, doc, removal, misc): feature
-Created news fragment at {expected}"""
-            ),
+Created news fragment at {expected}"""),
             result.output,
         )
         # Check that the file was created with a random name
@@ -424,16 +414,14 @@ Created news fragment at {expected}
         The default section is either the section with a blank path, or else the first
         section defined in the configuration file.
         """
-        setup_simple_project(
-            extra_config="""
+        setup_simple_project(extra_config="""
 [[tool.towncrier.section]]
 name = "Backend"
 path = "backend"
 [[tool.towncrier.section]]
 name = "Frontend"
 path = ""
-"""
-        )
+""")
         result = runner.invoke(_main, ["123.feature.rst"])
         self.assertFalse(result.exception, result.output)
         frag_path = Path("foo", "newsfragments")
@@ -459,8 +447,7 @@ path = ""
         When multiple sections exist when the interactive prompt is used, the user is
         prompted to select a section.
         """
-        setup_simple_project(
-            extra_config="""
+        setup_simple_project(extra_config="""
 [[tool.towncrier.section]]
 name = "Backend"
 path = ""
@@ -468,8 +455,7 @@ path = ""
 [[tool.towncrier.section]]
 name = "Frontend"
 path = "frontend"
-"""
-        )
+""")
         with mock.patch("click.edit") as mock_edit:
             mock_edit.return_value = "Edited content"
             result = runner.invoke(_main, input="2\n123\nfeature\n")
@@ -498,8 +484,7 @@ Created news fragment at {expected}
         When multiple sections exist and the section is provided via the command line,
         the user isn't prompted to select a section.
         """
-        setup_simple_project(
-            extra_config="""
+        setup_simple_project(extra_config="""
 [[tool.towncrier.section]]
 name = "Backend"
 path = ""
@@ -507,8 +492,7 @@ path = ""
 [[tool.towncrier.section]]
 name = "Frontend"
 path = "frontend"
-"""
-        )
+""")
         with mock.patch("click.edit") as mock_edit:
             mock_edit.return_value = "Edited content"
             result = runner.invoke(
@@ -534,8 +518,7 @@ Created news fragment at {expected}
         """
         When all sections have paths, the first is the default.
         """
-        setup_simple_project(
-            extra_config="""
+        setup_simple_project(extra_config="""
 [[tool.towncrier.section]]
 name = "Frontend"
 path = "frontend"
@@ -543,8 +526,7 @@ path = "frontend"
 [[tool.towncrier.section]]
 name = "Backend"
 path = "backend"
-"""
-        )
+""")
         result = runner.invoke(_main, ["123.feature.rst"])
         self.assertFalse(result.exception, result.output)
         frag_path = Path("foo", "frontend", "newsfragments")

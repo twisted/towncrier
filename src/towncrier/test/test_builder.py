@@ -148,8 +148,7 @@ class TestNewsFragmentsOrdering(TestCase):
     fragments within a section.
     """
 
-    template = dedent(
-        """
+    template = dedent("""
     {% for section_name, category in sections.items() %}
     {% if section_name %}# {{ section_name }}{% endif %}
     {%- for category_name, issues in category.items() %}
@@ -160,8 +159,7 @@ class TestNewsFragmentsOrdering(TestCase):
     {% endfor %}
     {% endfor -%}
     {% endfor -%}
-    """
-    )
+    """)
 
     def render(self, fragments):
         return render_fragments(
@@ -198,13 +196,11 @@ class TestNewsFragmentsOrdering(TestCase):
         )
         # "Eggs" are first because they have an issue with no number, and the first
         # issue for each fragment is what is used for sorting the overall list.
-        assert output == dedent(
-            """
+        assert output == dedent("""
             ## feature
             - Added Eggs (random, gh-2)
             - Added Milk (gh-1)
             - Added Cheese (gh-3, gh-25, #4, #10)
             - Added Bread
             - Added Fish
-"""
-        )
+""")

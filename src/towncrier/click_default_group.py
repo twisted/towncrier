@@ -52,6 +52,7 @@ Then you can invoke that without explicit subcommand name:
    bar
 
 """
+
 import warnings
 
 import click
