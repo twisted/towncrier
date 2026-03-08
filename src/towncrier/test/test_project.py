@@ -13,7 +13,6 @@ from .._project import get_project_name, get_version
 from .._shell import cli as towncrier_cli
 from .helpers import write
 
-
 towncrier_cli.name = "towncrier"
 
 

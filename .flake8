@@ -4,3 +4,5 @@ max-line-length = 99
 extend-ignore =
     # Conflict between flake8 & black about whitespace in slices.
     E203
+    # Conflict between flake8 & black about empty lines after imports.
+    E302
