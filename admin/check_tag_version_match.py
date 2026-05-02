@@ -12,6 +12,7 @@ import sys
 
 from importlib import metadata
 
+
 TAG_PREFIX = "refs/tags/"
 
 if len(sys.argv) < 2:

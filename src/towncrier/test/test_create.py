@@ -414,14 +414,16 @@ Created news fragment at {expected}
         The default section is either the section with a blank path, or else the first
         section defined in the configuration file.
         """
-        setup_simple_project(extra_config="""
+        setup_simple_project(
+            extra_config="""
 [[tool.towncrier.section]]
 name = "Backend"
 path = "backend"
 [[tool.towncrier.section]]
 name = "Frontend"
 path = ""
-""")
+"""
+        )
         result = runner.invoke(_main, ["123.feature.rst"])
         self.assertFalse(result.exception, result.output)
         frag_path = Path("foo", "newsfragments")
@@ -447,7 +449,8 @@ path = ""
         When multiple sections exist when the interactive prompt is used, the user is
         prompted to select a section.
         """
-        setup_simple_project(extra_config="""
+        setup_simple_project(
+            extra_config="""
 [[tool.towncrier.section]]
 name = "Backend"
 path = ""
@@ -455,7 +458,8 @@ path = ""
 [[tool.towncrier.section]]
 name = "Frontend"
 path = "frontend"
-""")
+"""
+        )
         with mock.patch("click.edit") as mock_edit:
             mock_edit.return_value = "Edited content"
             result = runner.invoke(_main, input="2\n123\nfeature\n")
@@ -484,7 +488,8 @@ Created news fragment at {expected}
         When multiple sections exist and the section is provided via the command line,
         the user isn't prompted to select a section.
         """
-        setup_simple_project(extra_config="""
+        setup_simple_project(
+            extra_config="""
 [[tool.towncrier.section]]
 name = "Backend"
 path = ""
@@ -492,7 +497,8 @@ path = ""
 [[tool.towncrier.section]]
 name = "Frontend"
 path = "frontend"
-""")
+"""
+        )
         with mock.patch("click.edit") as mock_edit:
             mock_edit.return_value = "Edited content"
             result = runner.invoke(
@@ -518,7 +524,8 @@ Created news fragment at {expected}
         """
         When all sections have paths, the first is the default.
         """
-        setup_simple_project(extra_config="""
+        setup_simple_project(
+            extra_config="""
 [[tool.towncrier.section]]
 name = "Frontend"
 path = "frontend"
@@ -526,7 +533,8 @@ path = "frontend"
 [[tool.towncrier.section]]
 name = "Backend"
 path = "backend"
-""")
+"""
+        )
         result = runner.invoke(_main, ["123.feature.rst"])
         self.assertFalse(result.exception, result.output)
         frag_path = Path("foo", "frontend", "newsfragments")
@@ -628,8 +636,7 @@ Created news fragment at {expected}
         Path("pyproject.toml").write_text(
             # Important to customize `config.directory` because the default
             # already supports this scenario.
-            "[tool.towncrier]\n"
-            + 'directory = "changelog.d"\n'
+            "[tool.towncrier]\n" + 'directory = "changelog.d"\n'
         )
         Path("foo/foo").mkdir(parents=True)
         Path("foo/foo/__init__.py").write_text("")

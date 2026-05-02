@@ -4,6 +4,7 @@ import os
 
 import nox
 
+
 nox.options.sessions = ["pre_commit", "docs", "typecheck", "tests"]
 nox.options.reuse_existing_virtualenvs = True
 nox.options.error_on_external_run = True
@@ -73,7 +74,6 @@ def docs(session: nox.Session) -> None:
     session.install(".[dev]")
 
     session.run(
-        # fmt: off
         "python", "-m", "sphinx",
         "-T", "-E",
         "-W", "--keep-going",
@@ -82,8 +82,7 @@ def docs(session: nox.Session) -> None:
         "-D", "language=en",
         "docs",
         "docs/_build/html",
-        # fmt: on
-    )
+    )  # fmt: skip
 
 
 @nox.session

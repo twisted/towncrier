@@ -43,11 +43,13 @@ class TomlSettingsTests(TestCase):
         """
         Test a "base config".
         """
-        project_dir = self.mktemp_project(pyproject_toml="""
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
                 [tool.towncrier]
                 package = "foobar"
                 orphan_prefix = "~"
-            """)
+            """
+        )
 
         config = load_config(project_dir)
         self.assertEqual(config.package, "foobar")
@@ -61,11 +63,13 @@ class TomlSettingsTests(TestCase):
         If the filename references an .md file and the builtin template doesn't have an
         extension, add .md rather than .rst.
         """
-        project_dir = self.mktemp_project(pyproject_toml="""
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
                 [tool.towncrier]
                 package = "foobar"
                 filename = "NEWS.md"
-            """)
+            """
+        )
 
         config = load_config(project_dir)
 
@@ -78,12 +82,14 @@ class TomlSettingsTests(TestCase):
         If the filename references an .md file and the builtin template has an
         extension, don't change it.
         """
-        project_dir = self.mktemp_project(pyproject_toml="""
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
                 [tool.towncrier]
                 package = "foobar"
                 filename = "NEWS.md"
                 template = "towncrier:default.rst"
-            """)
+            """
+        )
 
         config = load_config(project_dir)
 
@@ -96,11 +102,13 @@ class TomlSettingsTests(TestCase):
         resource's 'templates' package, it could also be in the specified resource
         directly.
         """
-        project_dir = self.mktemp_project(pyproject_toml="""
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
                 [tool.towncrier]
                 package = "foobar"
                 template = "towncrier.templates:default.rst"
-            """)
+            """
+        )
 
         config = load_config(project_dir)
 
@@ -110,10 +118,12 @@ class TomlSettingsTests(TestCase):
         """
         single_file must be a bool.
         """
-        project_dir = self.mktemp_project(pyproject_toml="""
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
                 [tool.towncrier]
                 single_file = "a"
-            """)
+            """
+        )
 
         with self.assertRaises(ConfigError) as e:
             load_config(project_dir)
@@ -124,10 +134,12 @@ class TomlSettingsTests(TestCase):
         """
         all_bullets must be a bool.
         """
-        project_dir = self.mktemp_project(pyproject_toml="""
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
                 [tool.towncrier]
                 all_bullets = "a"
-            """)
+            """
+        )
 
         with self.assertRaises(ConfigError) as e:
             load_config(project_dir)
@@ -138,10 +150,12 @@ class TomlSettingsTests(TestCase):
         """
         singlefile is not accepted, single_file is.
         """
-        project_dir = self.mktemp_project(pyproject_toml="""
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
                 [tool.towncrier]
                 singlefile = "a"
-            """)
+            """
+        )
 
         with self.assertRaises(ConfigError) as e:
             load_config(project_dir)
@@ -285,10 +299,12 @@ class TomlSettingsTests(TestCase):
         """
         Towncrier will raise an exception saying when it can't find a template.
         """
-        project_dir = self.mktemp_project(towncrier_toml="""
+        project_dir = self.mktemp_project(
+            towncrier_toml="""
                 [tool.towncrier]
                 template = "foo.rst"
-            """)
+            """
+        )
 
         with self.assertRaises(ConfigError) as e:
             load_config(project_dir)
@@ -305,10 +321,12 @@ class TomlSettingsTests(TestCase):
         Towncrier will raise an exception saying when it can't find a template
         from the Towncrier templates.
         """
-        project_dir = self.mktemp_project(towncrier_toml="""
+        project_dir = self.mktemp_project(
+            towncrier_toml="""
                 [tool.towncrier]
                 template = "towncrier:foo"
-            """)
+            """
+        )
 
         with self.assertRaises(ConfigError) as e:
             load_config(project_dir)
@@ -326,7 +344,8 @@ class TomlSettingsTests(TestCase):
         This functionality is considered deprecated, but we continue
         to support it to keep backward compatibility.
         """
-        project_dir = self.mktemp_project(pyproject_toml="""
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
                 [tool.towncrier]
                 package = "foobar"
                 [[tool.towncrier.type]]
@@ -344,7 +363,8 @@ class TomlSettingsTests(TestCase):
                 name="Automatic"
                 showcontent=true
                 check=false
-            """)
+            """
+        )
         config = load_config(project_dir)
         expected = [
             (
@@ -381,7 +401,8 @@ class TomlSettingsTests(TestCase):
         Custom fragment categories can be defined inside
         the toml config file using tables.
         """
-        project_dir = self.mktemp_project(pyproject_toml="""
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
                 [tool.towncrier]
                 package = "foobar"
                 [tool.towncrier.fragment.feat]
@@ -393,7 +414,8 @@ class TomlSettingsTests(TestCase):
                 [tool.towncrier.fragment.auto]
                 name = "Automatic"
                 check = false
-            """)
+            """
+        )
         config = load_config(project_dir)
         expected = {
             "chore": {

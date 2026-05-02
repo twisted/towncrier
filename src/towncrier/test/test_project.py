@@ -13,6 +13,7 @@ from .._project import get_project_name, get_version
 from .._shell import cli as towncrier_cli
 from .helpers import write
 
+
 towncrier_cli.name = "towncrier"
 
 
@@ -230,7 +231,7 @@ class InvocationTests(TestCase):
         try:
             os.chdir(new_dir)
             with open("pyproject.toml", "w") as f:
-                f.write("[tool.towncrier]\n" 'directory = "news"\n')
+                f.write('[tool.towncrier]\ndirectory = "news"\n')
             os.makedirs("news")
             result = runner.invoke(towncrier_cli, ["--help"])
             self.assertIn("[OPTIONS] COMMAND [ARGS]...", result.stdout)

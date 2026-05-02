@@ -57,6 +57,7 @@ import warnings
 
 import click
 
+
 __all__ = ["DefaultGroup"]
 __version__ = "1.2.2"
 
@@ -115,7 +116,7 @@ class DefaultGroup(click.Group):
         if not default:
             return decorator
         warnings.warn(
-            "Use default param of DefaultGroup or " "set_default_command() instead",
+            "Use default param of DefaultGroup or set_default_command() instead",
             DeprecationWarning,
         )
 
