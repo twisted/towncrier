@@ -288,16 +288,16 @@ jobs:
         merge-multiple: true
         path: .
 
-    - name: Combine coverage & fail if it's <100%.
+    - name: Combine coverage & check thresholds.
       run: |
         python -Im coverage combine
         python -Im coverage html --skip-covered --skip-empty
 
-        # Report and write to summary.
+        # Report full coverage (including test code) to summary.
         python -Im coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
 
-        # Report again and fail if under 100%.
-        python -Im coverage report --fail-under=100
+        # Report production code coverage and fail if under 100%.
+        python -Im coverage report --omit="src/towncrier/test/*" --fail-under=100
 
     - name: Upload HTML report if check failed.
       uses: actions/upload-artifact@v4
