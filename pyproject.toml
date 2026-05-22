@@ -170,6 +170,5 @@ exclude_lines = [
 ]
 omit = [
     "src/towncrier/__main__.py",
-    "src/towncrier/test/*",
     "src/towncrier/click_default_group.py",
 ]

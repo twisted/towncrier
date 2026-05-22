@@ -46,7 +46,8 @@ def coverage_report(session: nox.Session) -> None:
     session.install("coverage[toml]")
 
     session.run("coverage", "combine")
-    session.run("coverage", "report")
+    session.run("coverage", "report", "--omit=src/towncrier/test/*")
+    session.run("coverage", "report", "--include=src/towncrier/test/*")
 
 
 @nox.session
