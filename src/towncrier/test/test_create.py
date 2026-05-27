@@ -667,3 +667,99 @@ Created news fragment at {expected}
 
         self.assertEqual(0, result.exit_code)
         self.assertTrue(Path("foo/changelog.d/123.feature.rst").exists())
+
+    @with_isolated_runner
+    def test_index(self, runner):
+        """
+        testing changing files with option --index
+        """
+        Path("pyproject.toml").write_text(
+            # Important to customize `config.directory` because the default
+            # already supports this scenario.
+            "[tool.towncrier]\n"
+            + 'directory = "changelog.d"\n'
+        )
+        Path("foo/foo").mkdir(parents=True)
+        result = runner.invoke(
+            _main,
+            (
+                "--config",
+                "pyproject.toml",
+                "--dir",
+                "foo",
+                "--content",
+                "111",
+                "--index",
+                0,
+                "123.feature",
+            ),
+        )
+
+        self.assertEqual(0, result.exit_code)
+        self.assertTrue(Path("foo/changelog.d/123.feature.rst").exists())
+
+        with open("foo/changelog.d/123.feature.rst") as fh:
+            self.assertEqual("111\n", fh.read())
+
+        result = runner.invoke(
+            _main,
+            (
+                "--config",
+                "pyproject.toml",
+                "--dir",
+                "foo",
+                "--content",
+                "222",
+                "--index",
+                1,
+                "123.feature",
+            ),
+        )
+
+        self.assertEqual(0, result.exit_code)
+        self.assertTrue(Path("foo/changelog.d/123.feature.1.rst").exists())
+
+        with open("foo/changelog.d/123.feature.1.rst") as fh:
+            self.assertEqual("222\n", fh.read())
+
+        result = runner.invoke(
+            _main,
+            (
+                "--config",
+                "pyproject.toml",
+                "--dir",
+                "foo",
+                "--content",
+                "333",
+                "--index",
+                0,
+                "123.feature",
+            ),
+        )
+
+        self.assertEqual(0, result.exit_code)
+        self.assertTrue(Path("foo/changelog.d/123.feature.rst").exists())
+
+        with open("foo/changelog.d/123.feature.rst") as fh:
+            self.assertEqual("333\n", fh.read())
+
+        result = runner.invoke(
+            _main,
+            (
+                "--config",
+                "pyproject.toml",
+                "--dir",
+                "foo",
+                "--content",
+                "444",
+                "--index",
+                1,
+                "123.feature",
+            ),
+        )
+
+        self.assertEqual(0, result.exit_code)
+        self.assertTrue(Path("foo/changelog.d/123.feature.1.rst").exists())
+
+        with open("foo/changelog.d/123.feature.1.rst") as fh:
+            self.assertEqual("444\n", fh.read())
