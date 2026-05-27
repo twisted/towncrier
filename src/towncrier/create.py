@@ -54,6 +54,12 @@ DEFAULT_CONTENT = "Add your info here"
     type=str,
     help="The section to create the fragment for.",
 )
+@click.option(
+    "--index",
+    type=click.IntRange(min=0),
+    default=None,
+    help="Optional numeric index for the fragment filename.",
+)
 @click.argument("filename", default="")
 def _main(
     ctx: click.Context,
@@ -63,6 +69,7 @@ def _main(
     edit: bool | None,
     content: str,
     section: str | None,
+    index: int | None,
 ) -> None:
     """
     Create a new news fragment.
@@ -83,7 +90,7 @@ def _main(
     If the FILENAME base is just '+' (to create a fragment not tied to an
     issue), it will be appended with a random hex string.
     """
-    __main(ctx, directory, config, filename, edit, content, section)
+    __main(ctx, directory, config, filename, edit, content, section, index)
 
 
 def __main(
@@ -94,6 +101,7 @@ def __main(
     edit: bool | None,
     content: str,
     section: str | None,
+    index: int | None,
 ) -> None:
     """
     The main entry point.
@@ -187,6 +195,7 @@ def __main(
             "where '{{name}}' is an arbitrary slug and '{{type}}' is "
             "one of: {}".format(filename, ", ".join(config.types))
         )
+
     if filename_parts[-1] in config.types and filename_ext:
         filename += filename_ext
 
@@ -198,15 +207,22 @@ def __main(
 
     segment_file = os.path.join(fragments_directory, filename)
 
-    retry = 0
     if filename.split(".")[-1] not in config.types:
         filename, extra_ext = os.path.splitext(filename)
     else:
         extra_ext = ""
-    while os.path.exists(segment_file):
-        retry += 1
+
+    if index is None:
+        retry = 0
+        while os.path.exists(segment_file):
+            retry += 1
+            segment_file = os.path.join(
+                fragments_directory, f"{filename}.{retry}{extra_ext}"
+            )
+    else:
         segment_file = os.path.join(
-            fragments_directory, f"{filename}.{retry}{extra_ext}"
+            fragments_directory,
+            f"{filename}{f".{index}" if index > 0 else ""}{extra_ext}",
         )
 
     if edit:
