@@ -62,7 +62,8 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(
             result.output,
-            dedent("""\
+            dedent(
+                """\
                 Loading template...
                 Finding news fragments...
                 Rendering news fragments...
@@ -88,7 +89,8 @@ class TestCli(TestCase):
 
 
 
-                """),
+                """
+            ),
         )
 
     def test_command(self):
@@ -162,10 +164,12 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code)
         self.assertTrue((project_dir / "NEWS.rst").exists())
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         directory = "changelog.d"
-        """)
+        """
+    )
     def test_in_different_dir_with_nondefault_newsfragments_directory(self, runner):
         """
         Using the `--dir` CLI argument, the NEWS file can
@@ -249,27 +253,43 @@ class TestCli(TestCase):
         def run_order_scenario(sections, types):
             with runner.isolated_filesystem():
                 with open("pyproject.toml", "w") as f:
-                    f.write(dedent("""
+                    f.write(
+                        dedent(
+                            """
                     [tool.towncrier]
                         package = "foo"
                         directory = "news"
 
-                    """))
+                    """
+                        )
+                    )
 
                     for section in sections:
-                        f.write(dedent("""
+                        f.write(
+                            dedent(
+                                """
                         [[tool.towncrier.section]]
                             path = "{section}"
                             name = "{section}"
-                        """.format(section=section)))
+                        """.format(
+                                    section=section
+                                )
+                            )
+                        )
 
                     for type_ in types:
-                        f.write(dedent("""
+                        f.write(
+                            dedent(
+                                """
                         [[tool.towncrier.type]]
                             directory = "{type_}"
                             name = "{type_}"
                             showcontent = true
-                        """.format(type_=type_)))
+                        """.format(
+                                    type_=type_
+                                )
+                            )
+                        )
 
                 os.mkdir("foo")
                 with open("foo/__init__.py", "w") as f:
@@ -545,7 +565,8 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,
-            dedent("""
+            dedent(
+                """
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -563,13 +584,16 @@ class TestCli(TestCase):
 
 
 
-            """).lstrip(),
+            """
+            ).lstrip(),
         )
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         version = "7.8.9"
-        """)
+        """
+    )
     def test_version_in_config(self, runner):
         """Calling towncrier with version defined in configfile.
 
@@ -585,7 +609,8 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(
             result.output,
-            dedent("""
+            dedent(
+                """
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -602,13 +627,16 @@ class TestCli(TestCase):
 
 
 
-            """).lstrip(),
+            """
+            ).lstrip(),
         )
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         name = "ImGoProject"
-        """)
+        """
+    )
     def test_project_name_in_config(self, runner):
         """The calling towncrier with project name defined in configfile.
 
@@ -626,7 +654,8 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(
             result.output,
-            dedent("""
+            dedent(
+                """
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -643,7 +672,8 @@ class TestCli(TestCase):
 
 
 
-            """).lstrip(),
+            """
+            ).lstrip(),
         )
 
     @with_project(config="[tool.towncrier]")
@@ -667,7 +697,8 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(
             result.output,
-            dedent("""
+            dedent(
+                """
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -684,14 +715,17 @@ class TestCli(TestCase):
 
 
 
-            """).lstrip(),
+            """
+            ).lstrip(),
         )
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
          single_file=false
          filename="{version}-notes.rst"
-        """)
+        """
+    )
     def test_release_notes_in_separate_files(self, runner):
         """
         When `single_file = false` the release notes for each version are stored
@@ -740,7 +774,8 @@ class TestCli(TestCase):
 
         self.assertEqual(
             outputs[0],
-            dedent("""
+            dedent(
+                """
             foo 7.8.9 (01-01-2001)
             ======================
 
@@ -748,11 +783,13 @@ class TestCli(TestCase):
             --------
 
             - Adds levitation (#123)
-            """).lstrip(),
+            """
+            ).lstrip(),
         )
         self.assertEqual(
             outputs[1],
-            dedent("""
+            dedent(
+                """
             foo 7.9.0 (01-01-2001)
             ======================
 
@@ -760,13 +797,16 @@ class TestCli(TestCase):
             --------
 
             - Adds catapult (#456)
-            """).lstrip(),
+            """
+            ).lstrip(),
         )
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         singlefile="fail!"
-        """)
+        """
+    )
     def test_singlefile_errors_and_explains_cleanly(self, runner):
         """
         Failure to find the configuration file results in a clean explanation
@@ -843,7 +883,8 @@ class TestCli(TestCase):
 
             self.assertEqual(
                 output,
-                dedent("""
+                dedent(
+                    """
                 foo 7.9.0 (01-01-2001)
                 ======================
 
@@ -860,14 +901,17 @@ class TestCli(TestCase):
                 --------
 
                 - Adds levitation (#123)
-                """).lstrip(),
+                """
+                ).lstrip(),
             )
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         template="towncrier:single-file-no-bullets"
         all_bullets=false
-        """)
+        """
+    )
     def test_bullet_points_false(self, runner):
         """
         When all_bullets is false, subsequent lines are not indented.
@@ -903,7 +947,8 @@ class TestCli(TestCase):
 
         self.assertEqual(
             output,
-            dedent("""
+            dedent(
+                """
                 foo 7.8.9 (01-01-2001)
                 ======================
 
@@ -936,14 +981,17 @@ class TestCli(TestCase):
 
                 - Hyphen based bullet list.
                   (#125)
-                """).lstrip(),
+                """
+            ).lstrip(),
         )
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         package = "foo"
         title_format = "[{project_date}] CUSTOM RELEASE for {name} version {version}"
-        """)
+        """
+    )
     def test_title_format_custom(self, runner):
         """
         A non-empty title format adds the specified title.
@@ -967,7 +1015,8 @@ class TestCli(TestCase):
             ],
         )
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -985,17 +1034,20 @@ class TestCli(TestCase):
 
 
 
-        """)
+        """
+        )
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(expected_output, result.output)
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         package = "foo"
         filename = "NEWS.md"
         title_format = "[{project_date}] CUSTOM RELEASE for {name} version {version}"
-        """)
+        """
+    )
     def test_title_format_custom_markdown(self, runner):
         """
         A non-empty title format adds the specified title, and if the target filename is
@@ -1024,7 +1076,8 @@ class TestCli(TestCase):
             ],
         )
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -1039,17 +1092,20 @@ class TestCli(TestCase):
 
 
 
-        """)
+        """
+        )
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(expected_output, result.output)
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         package = "foo"
         filename = "NEWS.md"
         title_format = "### [{project_date}] CUSTOM RELEASE for {name} version {version}"
-        """)
+        """
+    )
     def test_markdown_injected_after_header(self, runner):
         """
         Test that we can inject markdown after some fixed header
@@ -1089,7 +1145,8 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         output = read("NEWS.md")
 
-        expected_output = dedent("""
+        expected_output = dedent(
+            """
             # Top title
 
             ## Section title
@@ -1110,23 +1167,28 @@ class TestCli(TestCase):
 
 
             a footer!
-            """)
+            """
+        )
 
         self.assertEqual(expected_output, output)
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         package = "foo"
         title_format = false
         template = "template.rst"
-        """)
+        """
+    )
     def test_title_format_false(self, runner):
         """
         Setting the title format to false disables the explicit title.  This
         would be used, for example, when the template creates the title itself.
         """
         with open("template.rst", "w") as f:
-            f.write(dedent("""\
+            f.write(
+                dedent(
+                    """\
                 Here's a hardcoded title added by the template
                 ==============================================
                 {% for section in sections %}
@@ -1139,7 +1201,9 @@ class TestCli(TestCase):
                 {% endfor %}
                 {% endfor %}
                 {% endfor %}
-            """))
+            """
+                )
+            )
 
         result = runner.invoke(
             _main,
@@ -1155,7 +1219,8 @@ class TestCli(TestCase):
             catch_exceptions=False,
         )
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -1165,15 +1230,18 @@ class TestCli(TestCase):
             Here's a hardcoded title added by the template
             ==============================================
 
-        """)
+        """
+        )
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(expected_output, result.output)
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         start_string="Release notes start marker"
-        """)
+        """
+    )
     def test_start_string(self, runner):
         """
         The `start_string` configuration is used to detect the starting point
@@ -1203,7 +1271,8 @@ class TestCli(TestCase):
         self.assertTrue(os.path.exists("NEWS.rst"), os.listdir("."))
         output = read("NEWS.rst")
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             a line
 
             another
@@ -1219,7 +1288,8 @@ class TestCli(TestCase):
 
 
             a footer!
-        """)
+        """
+        )
 
         self.assertEqual(expected_output, output)
 
@@ -1249,7 +1319,8 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         output = read("NEWS.rst")
 
-        expected_output = dedent("""
+        expected_output = dedent(
+            """
             a line
 
             another
@@ -1266,15 +1337,18 @@ class TestCli(TestCase):
 
 
             a footer!
-            """)
+            """
+        )
 
         self.assertEqual(expected_output, output)
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         package = "foo"
         filename = "NEWS.md"
-        """)
+        """
+    )
     def test_default_start_string_markdown(self, runner):
         """
         The default start string is ``<!-- towncrier release notes start -->`` for
@@ -1301,7 +1375,8 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         output = read("NEWS.md")
 
-        expected_output = dedent("""
+        expected_output = dedent(
+            """
             a line
 
             another
@@ -1316,17 +1391,20 @@ class TestCli(TestCase):
 
 
             a footer!
-            """)
+            """
+        )
 
         self.assertEqual(expected_output, output)
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         name = ""
         directory = "changes"
         filename = "NEWS.md"
         version = "1.2.3"
-        """)
+        """
+    )
     def test_markdown_no_name_title(self, runner):
         """
         When configured with an empty `name` option,
@@ -1351,7 +1429,8 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         output = read("NEWS.md")
 
-        expected_output = dedent("""
+        expected_output = dedent(
+            """
             A line
 
             <!-- towncrier release notes start -->
@@ -1361,11 +1440,13 @@ class TestCli(TestCase):
             ## Features
 
             - Adds levitation (#123)
-            """)
+            """
+        )
 
         self.assertEqual(expected_output, output)
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         title_format = "{version} - {project_date}"
         template = "template.rst"
@@ -1374,7 +1455,8 @@ class TestCli(TestCase):
           directory = "feature"
           name = ""
           showcontent = true
-        """)
+        """
+    )
     def test_with_topline_and_template_and_draft(self, runner):
         """
         Spacing is proper when drafting with a topline and a template.
@@ -1383,7 +1465,9 @@ class TestCli(TestCase):
         with open("newsfragments/123.feature", "w") as f:
             f.write("Adds levitation")
         with open("template.rst", "w") as f:
-            f.write(dedent("""\
+            f.write(
+                dedent(
+                    """\
                 {% for section in sections %}
                 {% set underline = "-" %}
                 {% for category, val in definitions.items() if category in sections[section] %}
@@ -1394,7 +1478,9 @@ class TestCli(TestCase):
                 {% endfor %}
                 {% endfor %}
                 {% endfor %}
-            """))
+            """
+                )
+            )
 
         result = runner.invoke(
             _main,
@@ -1406,7 +1492,8 @@ class TestCli(TestCase):
             ],
         )
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -1419,14 +1506,17 @@ class TestCli(TestCase):
             - Adds levitation
 
 
-        """)
+        """
+        )
 
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected_output, result.output)
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
-        """)
+        """
+    )
     def test_orphans_in_non_showcontent(self, runner):
         """
         When ``showcontent`` is false (like in the ``misc`` category by default),
@@ -1451,7 +1541,8 @@ class TestCli(TestCase):
             ],
         )
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -1470,15 +1561,18 @@ class TestCli(TestCase):
 
 
 
-        """)
+        """
+        )
 
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected_output, result.output)
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         filename = "CHANGES.md"
-        """)
+        """
+    )
     def test_orphans_in_non_showcontent_markdown(self, runner):
         """
         When ``showcontent`` is false (like in the ``misc`` category by default),
@@ -1503,7 +1597,8 @@ class TestCli(TestCase):
             ],
         )
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -1520,7 +1615,8 @@ class TestCli(TestCase):
 
 
 
-        """)
+        """
+        )
 
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected_output, result.output)
@@ -1561,7 +1657,8 @@ class TestCli(TestCase):
         news_contents = open(path).read()
         self.assertEqual(
             news_contents,
-            dedent("""\
+            dedent(
+                """\
                 Foo 1.2.3 (01-01-2001)
                 ======================
 
@@ -1572,14 +1669,17 @@ class TestCli(TestCase):
                 - Extends levitation. File modified in Git. Extended for an hour. (#124)
                 - Baz levitation. Staged file. (#125)
                 - Fix (literal) crash. File unknown to Git. (#126)
-                """),
+                """
+            ),
         )
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         package = "foo"
         ignore = ["template.jinja", "CAPYBARAS.md", "seq_wildcard_[ab]"]
-        """)
+        """
+    )
     def test_ignored_files(self, runner):
         """
         When `ignore` is set in config, files with those names are ignored.
@@ -1599,11 +1699,13 @@ class TestCli(TestCase):
         result = runner.invoke(_main, ["--draft"])
         self.assertEqual(0, result.exit_code, result.output)
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         package = "foo"
         ignore = []
-        """)
+        """
+    )
     def test_invalid_fragment_name(self, runner):
         """
         When `ignore` is set in config, invalid filenames cause failure.
@@ -1617,12 +1719,14 @@ class TestCli(TestCase):
         self.assertEqual(1, result.exit_code, result.output)
         self.assertIn("Invalid news fragment name: feature.124", result.output)
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         package = "foo"
         template = "foo/newsfragments/template.j2"
         ignore = ["placeholder-to-trigger-strict-checks.txt"]
-        """)
+        """
+    )
     def test_ignore_template_filename(self, runner):
         """
         The `template` filename is automatically ignored when it
@@ -1632,7 +1736,8 @@ class TestCli(TestCase):
             f.write("Brand new thing.")
         with open("foo/newsfragments/template.j2", "w") as f:
             # Just a simple template to check that the file is rendered.
-            f.write("""
+            f.write(
+                """
 {% for section, _ in sections.items() %}
 {% for category, val in definitions.items() if category in sections[section]%}
 {{ definitions[category]['name'] }}
@@ -1643,7 +1748,8 @@ class TestCli(TestCase):
 
 {% endfor %}
 {% endfor %}
-""")
+"""
+            )
 
         result = runner.invoke(_main, ["--draft"])
         self.assertEqual(0, result.exit_code, result.output)
@@ -1665,7 +1771,8 @@ class TestCli(TestCase):
         )
         self.assertEqual(0, result.exit_code, result.output)
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         package = "foo"
         title_format = "{version} - {project_date}"
@@ -1674,7 +1781,8 @@ class TestCli(TestCase):
           directory = "feature"
           name = "Feature"
           # showcontent is not defined in TOML
-    """)
+    """
+    )
     def test_showcontent_default_toml_array(self, runner):
         """
         When configuring custom fragment types with a TOML array
@@ -1685,7 +1793,8 @@ class TestCli(TestCase):
             _main, ["--date", "01-01-2001", "--version", "1.0.0", "--yes"]
         )
         news = read("NEWS.rst")
-        expected = textwrap.dedent("""\
+        expected = textwrap.dedent(
+            """\
             1.0.0 - 01-01-2001
             ==================
 
@@ -1693,11 +1802,13 @@ class TestCli(TestCase):
             -------
 
             - An exciting new feature!
-            """)
+            """
+        )
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected, news, news)
 
-    @with_project(config="""
+    @with_project(
+        config="""
         [tool.towncrier]
         package = "foo"
         title_format = "{version} - {project_date}"
@@ -1710,7 +1821,8 @@ class TestCli(TestCase):
           [[tool.towncrier.type]]
           directory = "deps"
           name = "Dependency"
-        """)
+        """
+    )
     def test_directory_default_toml_array(self, runner):
         """
         When configuring custom fragment types with a TOML array
@@ -1723,7 +1835,8 @@ class TestCli(TestCase):
             _main, ["--date", "01-01-2001", "--version", "1.0.0", "--yes"]
         )
         news = read("NEWS.rst")
-        expected = textwrap.dedent("""\
+        expected = textwrap.dedent(
+            """\
             1.0.0 - 01-01-2001
             ==================
 
@@ -1737,6 +1850,7 @@ class TestCli(TestCase):
             ----------
 
             - We bumped our dependencies.
-            """)
+            """
+        )
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected, news, news)
