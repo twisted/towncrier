@@ -17,6 +17,7 @@ import click
 from ._builder import FragmentsPath
 from ._settings import config_option_help, load_config_from_options
 
+
 DEFAULT_CONTENT = "Add your info here"
 
 
@@ -221,7 +222,7 @@ def __main(
     else:
         segment_file = os.path.join(
             fragments_directory,
-            f"{filename}{f".{index}" if index > 0 else ""}{extra_ext}",
+            f"{filename}{"."+str(index) if index > 0 else ""}{extra_ext}",
         )
 
     if edit:
