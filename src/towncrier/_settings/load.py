@@ -18,7 +18,6 @@ from click import ClickException
 
 from .._settings import fragment_types as ft
 
-
 if sys.version_info < (3, 10):
     import importlib_resources as resources
 else:
