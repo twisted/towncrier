@@ -34,6 +34,7 @@ import os
 from datetime import date
 from importlib.metadata import version
 
+
 towncrier_version = version("towncrier")
 
 

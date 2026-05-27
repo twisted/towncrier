@@ -247,10 +247,12 @@ Old text.
         with open(os.path.join(tempdir, "NEWS.rst")) as f:
             output = f.read()
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             MyProject 1.0 (never)
             =====================
-        """)
+        """
+        )
 
         self.assertEqual(expected_output, output)
 
@@ -283,11 +285,15 @@ Old text.
         # `single_file` default as true
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(dedent("""
+                f.write(
+                    dedent(
+                        """
                     [tool.towncrier]
                     title_format="{name} {version} ({project_date})"
                     filename="{version}-notes.rst"
-                    """).lstrip())
+                    """
+                    ).lstrip()
+                )
             with open("{version}-notes.rst", "w") as f:
                 f.write("Release Notes\n\n.. towncrier release notes start\n")
             os.mkdir("newsfragments")
@@ -330,12 +336,16 @@ Old text.
         # single_file = false
         with runner.isolated_filesystem():
             with open("pyproject.toml", "w") as f:
-                f.write(dedent("""
+                f.write(
+                    dedent(
+                        """
                     [tool.towncrier]
                     single_file=false
                     title_format="{name} {version} ({project_date})"
                     filename="{version}-notes.rst"
-                    """).lstrip())
+                    """
+                    ).lstrip()
+                )
             os.mkdir("newsfragments")
 
             result = do_build_once()
@@ -351,7 +361,8 @@ Old text.
             with open(notes[0]) as f:
                 output = f.read()
 
-        expected_output = dedent("""\
+        expected_output = dedent(
+            """\
             foo 7.8.9 (01-01-2001)
             ======================
 
@@ -359,6 +370,7 @@ Old text.
             --------
 
             - Adds levitation (#123)
-            """)
+            """
+        )
 
         self.assertEqual(expected_output, output)
