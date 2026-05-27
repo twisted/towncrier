@@ -222,7 +222,7 @@ def __main(
     else:
         segment_file = os.path.join(
             fragments_directory,
-            f"{filename}{"."+str(index) if index > 0 else ""}{extra_ext}",
+            f"{filename}{'.'+str(index) if index > 0 else ''}{extra_ext}",
         )
 
     if edit:
