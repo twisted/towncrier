@@ -57,8 +57,10 @@ DEFAULT_CONTENT = "Add your info here"
 @click.option(
     "--index",
     type=click.IntRange(min=0),
+    metavar="x",
     default=None,
-    help="Optional numeric index for the fragment filename.",
+    help="Optional numeric index of the fragment "
+    "(e.g. x=1 -> 'issue.feat.1.md' is accessed and overwritten)",
 )
 @click.argument("filename", default="")
 def _main(
