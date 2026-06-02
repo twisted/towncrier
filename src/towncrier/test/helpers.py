@@ -56,7 +56,7 @@ def setup_simple_project(
     mkdir_newsfragments: bool = True,
 ) -> None:
     if config is None:
-        config = "[tool.towncrier]\n" 'package = "foo"\n' + extra_config
+        config = '[tool.towncrier]\npackage = "foo"\n' + extra_config
     else:
         config = textwrap.dedent(config)
     Path(pyproject_path).write_text(config)

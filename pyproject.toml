@@ -107,36 +107,25 @@ exclude = [
         showcontent = false
 
 
-[tool.black]
-exclude = '''
+[tool.ruff]
+src = ["src", "tests", "docs"]
 
-(
-  /(
-      \.eggs         # exclude a few common directories in the
-    | \.git          # root of the project
-    | \.nox
-    | \.venv
-    | \.env
-    | env
-    | _build
-    | _trial_temp.*
-    | build
-    | dist
-    | debian
-  )/
-)
-'''
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "W",   # pycodestyle warnings
+]
+ignore = [
+    "E501", # leave line-length enforcement to ruff format
+]
 
 
-[tool.isort]
-profile = "attrs"
-line_length = 88
-
-
-[tool.ruff.isort]
-# Match isort's "attrs" profile
-lines-after-imports = 2
+[tool.ruff.lint.isort]
 lines-between-types = 1
+lines-after-imports = 2
 
 
 [tool.mypy]

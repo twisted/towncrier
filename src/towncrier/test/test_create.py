@@ -98,13 +98,11 @@ class TestCli(TestCase):
             mock_edit.return_value = "This is line 1"
             self._test_success(
                 content=["This is line 1"],
-                config=dedent(
-                    """\
+                config=dedent("""\
                     [tool.towncrier]
                     package = "foo"
                     filename = "README.md"
-                    """
-                ),
+                    """),
                 additional_args=["--edit"],
             )
             mock_edit.assert_called_once_with(
@@ -123,13 +121,11 @@ class TestCli(TestCase):
             mock_edit.return_value = "This is line 1"
             self._test_success(
                 content=["This is line 1"],
-                config=dedent(
-                    """\
+                config=dedent("""\
                     [tool.towncrier]
                     package = "foo"
                     filename = "README.FIRST"
-                    """
-                ),
+                    """),
                 additional_args=["--edit"],
             )
             mock_edit.assert_called_once_with(
@@ -153,13 +149,11 @@ class TestCli(TestCase):
         argument. The text editor is not invoked, and no eof newline is added if the
         config option is set.
         """
-        config = dedent(
-            """\
+        config = dedent("""\
             [tool.towncrier]
             package = "foo"
             create_eof_newline = false
-            """
-        )
+            """)
         content_line = "This is a content"
         self._test_success(
             content=[content_line],
@@ -190,12 +184,10 @@ class TestCli(TestCase):
     def test_different_directory(self):
         """Ensure non-standard directories are used."""
         runner = CliRunner()
-        config = dedent(
-            """\
+        config = dedent("""\
             [tool.towncrier]
             directory = "releasenotes"
-            """
-        )
+            """)
 
         with runner.isolated_filesystem():
             setup_simple_project(config=config, mkdir_newsfragments=False)
@@ -374,11 +366,9 @@ Created news fragment at {expected}
             mock_edit.assert_called_once()
         expected = os.path.join(os.getcwd(), "foo", "newsfragments", "+")
         self.assertTrue(
-            result.output.startswith(
-                f"""Issue number (`+` if none): +
+            result.output.startswith(f"""Issue number (`+` if none): +
 Fragment type (feature, bugfix, doc, removal, misc): feature
-Created news fragment at {expected}"""
-            ),
+Created news fragment at {expected}"""),
             result.output,
         )
         # Check that the file was created with a random name
@@ -646,8 +636,7 @@ Created news fragment at {expected}
         Path("pyproject.toml").write_text(
             # Important to customize `config.directory` because the default
             # already supports this scenario.
-            "[tool.towncrier]\n"
-            + 'directory = "changelog.d"\n'
+            "[tool.towncrier]\n" + 'directory = "changelog.d"\n'
         )
         Path("foo/foo").mkdir(parents=True)
         Path("foo/foo/__init__.py").write_text("")

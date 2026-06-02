@@ -62,8 +62,7 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(
             result.output,
-            dedent(
-                """\
+            dedent("""\
                 Loading template...
                 Finding news fragments...
                 Rendering news fragments...
@@ -89,8 +88,7 @@ class TestCli(TestCase):
 
 
 
-                """
-            ),
+                """),
         )
 
     def test_command(self):
@@ -254,41 +252,31 @@ class TestCli(TestCase):
             with runner.isolated_filesystem():
                 with open("pyproject.toml", "w") as f:
                     f.write(
-                        dedent(
-                            """
+                        dedent("""
                     [tool.towncrier]
                         package = "foo"
                         directory = "news"
 
-                    """
-                        )
+                    """)
                     )
 
                     for section in sections:
                         f.write(
-                            dedent(
-                                """
+                            dedent(f"""
                         [[tool.towncrier.section]]
                             path = "{section}"
                             name = "{section}"
-                        """.format(
-                                    section=section
-                                )
-                            )
+                        """)
                         )
 
                     for type_ in types:
                         f.write(
-                            dedent(
-                                """
+                            dedent(f"""
                         [[tool.towncrier.type]]
                             directory = "{type_}"
                             name = "{type_}"
                             showcontent = true
-                        """.format(
-                                    type_=type_
-                                )
-                            )
+                        """)
                         )
 
                 os.mkdir("foo")
@@ -565,8 +553,7 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code)
         self.assertEqual(
             result.output,
-            dedent(
-                """
+            dedent("""
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -584,8 +571,7 @@ class TestCli(TestCase):
 
 
 
-            """
-            ).lstrip(),
+            """).lstrip(),
         )
 
     @with_project(
@@ -609,8 +595,7 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(
             result.output,
-            dedent(
-                """
+            dedent("""
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -627,8 +612,7 @@ class TestCli(TestCase):
 
 
 
-            """
-            ).lstrip(),
+            """).lstrip(),
         )
 
     @with_project(
@@ -654,8 +638,7 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(
             result.output,
-            dedent(
-                """
+            dedent("""
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -672,8 +655,7 @@ class TestCli(TestCase):
 
 
 
-            """
-            ).lstrip(),
+            """).lstrip(),
         )
 
     @with_project(config="[tool.towncrier]")
@@ -697,8 +679,7 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(
             result.output,
-            dedent(
-                """
+            dedent("""
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -715,8 +696,7 @@ class TestCli(TestCase):
 
 
 
-            """
-            ).lstrip(),
+            """).lstrip(),
         )
 
     @with_project(
@@ -774,8 +754,7 @@ class TestCli(TestCase):
 
         self.assertEqual(
             outputs[0],
-            dedent(
-                """
+            dedent("""
             foo 7.8.9 (01-01-2001)
             ======================
 
@@ -783,13 +762,11 @@ class TestCli(TestCase):
             --------
 
             - Adds levitation (#123)
-            """
-            ).lstrip(),
+            """).lstrip(),
         )
         self.assertEqual(
             outputs[1],
-            dedent(
-                """
+            dedent("""
             foo 7.9.0 (01-01-2001)
             ======================
 
@@ -797,8 +774,7 @@ class TestCli(TestCase):
             --------
 
             - Adds catapult (#456)
-            """
-            ).lstrip(),
+            """).lstrip(),
         )
 
     @with_project(
@@ -883,8 +859,7 @@ class TestCli(TestCase):
 
             self.assertEqual(
                 output,
-                dedent(
-                    """
+                dedent("""
                 foo 7.9.0 (01-01-2001)
                 ======================
 
@@ -901,8 +876,7 @@ class TestCli(TestCase):
                 --------
 
                 - Adds levitation (#123)
-                """
-                ).lstrip(),
+                """).lstrip(),
             )
 
     @with_project(
@@ -947,8 +921,7 @@ class TestCli(TestCase):
 
         self.assertEqual(
             output,
-            dedent(
-                """
+            dedent("""
                 foo 7.8.9 (01-01-2001)
                 ======================
 
@@ -981,8 +954,7 @@ class TestCli(TestCase):
 
                 - Hyphen based bullet list.
                   (#125)
-                """
-            ).lstrip(),
+                """).lstrip(),
         )
 
     @with_project(
@@ -1015,8 +987,7 @@ class TestCli(TestCase):
             ],
         )
 
-        expected_output = dedent(
-            """\
+        expected_output = dedent("""\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -1034,8 +1005,7 @@ class TestCli(TestCase):
 
 
 
-        """
-        )
+        """)
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(expected_output, result.output)
@@ -1076,8 +1046,7 @@ class TestCli(TestCase):
             ],
         )
 
-        expected_output = dedent(
-            """\
+        expected_output = dedent("""\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -1092,8 +1061,7 @@ class TestCli(TestCase):
 
 
 
-        """
-        )
+        """)
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(expected_output, result.output)
@@ -1145,8 +1113,7 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         output = read("NEWS.md")
 
-        expected_output = dedent(
-            """
+        expected_output = dedent("""
             # Top title
 
             ## Section title
@@ -1167,8 +1134,7 @@ class TestCli(TestCase):
 
 
             a footer!
-            """
-        )
+            """)
 
         self.assertEqual(expected_output, output)
 
@@ -1187,8 +1153,7 @@ class TestCli(TestCase):
         """
         with open("template.rst", "w") as f:
             f.write(
-                dedent(
-                    """\
+                dedent("""\
                 Here's a hardcoded title added by the template
                 ==============================================
                 {% for section in sections %}
@@ -1201,8 +1166,7 @@ class TestCli(TestCase):
                 {% endfor %}
                 {% endfor %}
                 {% endfor %}
-            """
-                )
+            """)
             )
 
         result = runner.invoke(
@@ -1219,8 +1183,7 @@ class TestCli(TestCase):
             catch_exceptions=False,
         )
 
-        expected_output = dedent(
-            """\
+        expected_output = dedent("""\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -1230,8 +1193,7 @@ class TestCli(TestCase):
             Here's a hardcoded title added by the template
             ==============================================
 
-        """
-        )
+        """)
 
         self.assertEqual(0, result.exit_code)
         self.assertEqual(expected_output, result.output)
@@ -1271,8 +1233,7 @@ class TestCli(TestCase):
         self.assertTrue(os.path.exists("NEWS.rst"), os.listdir("."))
         output = read("NEWS.rst")
 
-        expected_output = dedent(
-            """\
+        expected_output = dedent("""\
             a line
 
             another
@@ -1288,8 +1249,7 @@ class TestCli(TestCase):
 
 
             a footer!
-        """
-        )
+        """)
 
         self.assertEqual(expected_output, output)
 
@@ -1319,8 +1279,7 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         output = read("NEWS.rst")
 
-        expected_output = dedent(
-            """
+        expected_output = dedent("""
             a line
 
             another
@@ -1337,8 +1296,7 @@ class TestCli(TestCase):
 
 
             a footer!
-            """
-        )
+            """)
 
         self.assertEqual(expected_output, output)
 
@@ -1375,8 +1333,7 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         output = read("NEWS.md")
 
-        expected_output = dedent(
-            """
+        expected_output = dedent("""
             a line
 
             another
@@ -1391,8 +1348,7 @@ class TestCli(TestCase):
 
 
             a footer!
-            """
-        )
+            """)
 
         self.assertEqual(expected_output, output)
 
@@ -1429,8 +1385,7 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code, result.output)
         output = read("NEWS.md")
 
-        expected_output = dedent(
-            """
+        expected_output = dedent("""
             A line
 
             <!-- towncrier release notes start -->
@@ -1440,8 +1395,7 @@ class TestCli(TestCase):
             ## Features
 
             - Adds levitation (#123)
-            """
-        )
+            """)
 
         self.assertEqual(expected_output, output)
 
@@ -1466,8 +1420,7 @@ class TestCli(TestCase):
             f.write("Adds levitation")
         with open("template.rst", "w") as f:
             f.write(
-                dedent(
-                    """\
+                dedent("""\
                 {% for section in sections %}
                 {% set underline = "-" %}
                 {% for category, val in definitions.items() if category in sections[section] %}
@@ -1478,8 +1431,7 @@ class TestCli(TestCase):
                 {% endfor %}
                 {% endfor %}
                 {% endfor %}
-            """
-                )
+            """)
             )
 
         result = runner.invoke(
@@ -1492,8 +1444,7 @@ class TestCli(TestCase):
             ],
         )
 
-        expected_output = dedent(
-            """\
+        expected_output = dedent("""\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -1506,8 +1457,7 @@ class TestCli(TestCase):
             - Adds levitation
 
 
-        """
-        )
+        """)
 
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected_output, result.output)
@@ -1541,8 +1491,7 @@ class TestCli(TestCase):
             ],
         )
 
-        expected_output = dedent(
-            """\
+        expected_output = dedent("""\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -1561,8 +1510,7 @@ class TestCli(TestCase):
 
 
 
-        """
-        )
+        """)
 
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected_output, result.output)
@@ -1597,8 +1545,7 @@ class TestCli(TestCase):
             ],
         )
 
-        expected_output = dedent(
-            """\
+        expected_output = dedent("""\
             Loading template...
             Finding news fragments...
             Rendering news fragments...
@@ -1615,8 +1562,7 @@ class TestCli(TestCase):
 
 
 
-        """
-        )
+        """)
 
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected_output, result.output)
@@ -1657,8 +1603,7 @@ class TestCli(TestCase):
         news_contents = open(path).read()
         self.assertEqual(
             news_contents,
-            dedent(
-                """\
+            dedent("""\
                 Foo 1.2.3 (01-01-2001)
                 ======================
 
@@ -1669,8 +1614,7 @@ class TestCli(TestCase):
                 - Extends levitation. File modified in Git. Extended for an hour. (#124)
                 - Baz levitation. Staged file. (#125)
                 - Fix (literal) crash. File unknown to Git. (#126)
-                """
-            ),
+                """),
         )
 
     @with_project(
@@ -1736,8 +1680,7 @@ class TestCli(TestCase):
             f.write("Brand new thing.")
         with open("foo/newsfragments/template.j2", "w") as f:
             # Just a simple template to check that the file is rendered.
-            f.write(
-                """
+            f.write("""
 {% for section, _ in sections.items() %}
 {% for category, val in definitions.items() if category in sections[section]%}
 {{ definitions[category]['name'] }}
@@ -1748,8 +1691,7 @@ class TestCli(TestCase):
 
 {% endfor %}
 {% endfor %}
-"""
-            )
+""")
 
         result = runner.invoke(_main, ["--draft"])
         self.assertEqual(0, result.exit_code, result.output)
@@ -1793,8 +1735,7 @@ class TestCli(TestCase):
             _main, ["--date", "01-01-2001", "--version", "1.0.0", "--yes"]
         )
         news = read("NEWS.rst")
-        expected = textwrap.dedent(
-            """\
+        expected = textwrap.dedent("""\
             1.0.0 - 01-01-2001
             ==================
 
@@ -1802,8 +1743,7 @@ class TestCli(TestCase):
             -------
 
             - An exciting new feature!
-            """
-        )
+            """)
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected, news, news)
 
@@ -1835,8 +1775,7 @@ class TestCli(TestCase):
             _main, ["--date", "01-01-2001", "--version", "1.0.0", "--yes"]
         )
         news = read("NEWS.rst")
-        expected = textwrap.dedent(
-            """\
+        expected = textwrap.dedent("""\
             1.0.0 - 01-01-2001
             ==================
 
@@ -1850,7 +1789,6 @@ class TestCli(TestCase):
             ----------
 
             - We bumped our dependencies.
-            """
-        )
+            """)
         self.assertEqual(0, result.exit_code, result.output)
         self.assertEqual(expected, news, news)

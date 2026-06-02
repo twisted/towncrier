@@ -12,7 +12,7 @@ from collections import defaultdict
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from fnmatch import fnmatch
 from pathlib import Path
-from typing import Any, DefaultDict, NamedTuple
+from typing import Any, NamedTuple
 
 from click import ClickException
 from jinja2 import Template
@@ -138,7 +138,7 @@ def find_fragments(
     fragment_files = []
     # Multiple orphan news fragments are allowed per section, so initialize a counter
     # that can be incremented automatically.
-    orphan_fragment_counter: DefaultDict[str | None, int] = defaultdict(int)
+    orphan_fragment_counter: defaultdict[str | None, int] = defaultdict(int)
 
     for key, section_dir in config.sections.items():
         section_dir = get_section_path(section_dir)
@@ -193,9 +193,7 @@ def find_fragments(
 
             if (issue, category, counter) in file_content:
                 raise ValueError(
-                    "multiple files for {}.{} in {}".format(
-                        issue, category, section_dir
-                    )
+                    f"multiple files for {issue}.{category} in {section_dir}"
                 )
             file_content[issue, category, counter] = data
 

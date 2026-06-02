@@ -211,18 +211,14 @@ class TomlSettingsTests(TestCase):
         This both tests when things are *only* in the pyproject.toml
         and default usage of the data in the towncrier.toml file.
         """
-        pyproject_toml = dedent(
-            """
+        pyproject_toml = dedent("""
         [project]
         name = "foo"
         [tool.towncrier]
-        """
-        )
-        towncrier_toml = dedent(
-            """
+        """)
+        towncrier_toml = dedent("""
         [tool.towncrier]
-        """
-        )
+        """)
         tests = [
             "",
             "name = '{name}'",

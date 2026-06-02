@@ -145,7 +145,7 @@ def __main(
                 click.echo("Pick a section:")
                 default_section_index = None
                 for i, s in enumerate(sections):
-                    click.echo(f" {i+1}: {s or '(primary)'}")
+                    click.echo(f" {i + 1}: {s or '(primary)'}")
                     if not default_section_index and s == section:
                         default_section_index = str(i + 1)
                 section_index = click.prompt(
@@ -174,7 +174,7 @@ def __main(
             file_dir,
             (
                 f"{config.orphan_prefix}{os.urandom(4).hex()}"
-                f"{file_basename[len(config.orphan_prefix):]}"
+                f"{file_basename[len(config.orphan_prefix) :]}"
             ),
         )
     filename_parts = filename.split(".")
