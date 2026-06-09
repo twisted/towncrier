@@ -676,8 +676,7 @@ Created news fragment at {expected}
         Path("pyproject.toml").write_text(
             # Important to customize `config.directory` because the default
             # already supports this scenario.
-            "[tool.towncrier]\n"
-            + 'directory = "changelog.d"\n'
+            "[tool.towncrier]\n" + 'directory = "changelog.d"\n'
         )
         Path("foo/foo").mkdir(parents=True)
         result = runner.invoke(
