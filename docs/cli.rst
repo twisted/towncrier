@@ -104,6 +104,12 @@ If that is the entire fragment name, a random hash will be added for you::
    The section to use for the news fragment.
    Default: the section with no path, or if all sections have a path then the first defined section.
 
+.. option:: --index N
+
+   Optional numeric index of the fragment, N>=0.
+   e.g. x=0 -> 'issue.feat.md' is accessed and overwritten
+   e.g. x=1 -> 'issue.feat.1.md' is accessed and overwritten
+
 
 ``towncrier check``
 -------------------

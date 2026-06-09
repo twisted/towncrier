@@ -1,1 +1,1 @@
-A new option "--index" is added.
+The `towncrier create` command line tool now has the `--index` option that is used when creating multiple fragments for the same issue number.
