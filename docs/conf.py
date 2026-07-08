@@ -55,10 +55,7 @@ master_doc = "index"
 # General information about the project.
 _today = date.today()
 project = "Towncrier"
-copyright = "{}, Towncrier contributors. Ver {}".format(
-    _today.year,
-    towncrier_version,
-)
+copyright = f"{_today.year}, Towncrier contributors. Ver {towncrier_version}"
 author = "Amber Brown"
 
 # The version info for the project you're documenting, acts as replacement for

@@ -74,7 +74,6 @@ def docs(session: nox.Session) -> None:
     session.install(".[dev]")
 
     session.run(
-        # fmt: off
         "python", "-m", "sphinx",
         "-T", "-E",
         "-W", "--keep-going",
@@ -83,8 +82,7 @@ def docs(session: nox.Session) -> None:
         "-D", "language=en",
         "docs",
         "docs/_build/html",
-        # fmt: on
-    )
+    )  # fmt: skip
 
 
 @nox.session

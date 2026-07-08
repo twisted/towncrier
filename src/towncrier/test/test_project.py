@@ -53,8 +53,7 @@ class VersionFetchingTests(TestCase):
         os.makedirs(os.path.join(temp, "mytestprojinc"))
 
         with open(os.path.join(temp, "mytestprojinc", "__init__.py"), "w") as f:
-            f.write(
-                """
+            f.write("""
 class Version:
     '''
     This is emulating a Version object from incremental.
@@ -68,8 +67,7 @@ class Version:
         return '.'.join(map(str, self.version))
 
 __version__ = Version(1, 3, 12, "rc1")
-                """
-            )
+                """)
 
         version = get_version(temp, "mytestprojinc")
         self.assertEqual(version, "1.3.12rc1")
@@ -88,16 +86,14 @@ __version__ = Version(1, 3, 12, "rc1")
         os.makedirs(os.path.join(temp, "mytestprojnotinc"))
 
         with open(os.path.join(temp, "mytestprojnotinc", "__init__.py"), "w") as f:
-            f.write(
-                """
+            f.write("""
 class WeirdVersion:
     def base(self, some_arg):
         return "shouldn't get here"
 
 
 __version__ = WeirdVersion()
-"""
-            )
+""")
         with self.assertRaises(Exception) as e:
             get_version(temp, "mytestprojnotinc")
 
@@ -235,7 +231,7 @@ class InvocationTests(TestCase):
         try:
             os.chdir(new_dir)
             with open("pyproject.toml", "w") as f:
-                f.write("[tool.towncrier]\n" 'directory = "news"\n')
+                f.write('[tool.towncrier]\ndirectory = "news"\n')
             os.makedirs("news")
             result = runner.invoke(towncrier_cli, ["--help"])
             self.assertIn("[OPTIONS] COMMAND [ARGS]...", result.stdout)

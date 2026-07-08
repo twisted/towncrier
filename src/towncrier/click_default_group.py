@@ -116,7 +116,7 @@ class DefaultGroup(click.Group):
         if not default:
             return decorator
         warnings.warn(
-            "Use default param of DefaultGroup or " "set_default_command() instead",
+            "Use default param of DefaultGroup or set_default_command() instead",
             DeprecationWarning,
         )
 

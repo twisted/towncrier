@@ -413,8 +413,7 @@ class TestChecker(TestCase):
         Path("pyproject.toml").write_text(
             # Important to customize `config.directory` because the default
             # already supports this scenario.
-            "[tool.towncrier]\n"
-            + 'directory = "changelog.d"\n'
+            "[tool.towncrier]\n" + 'directory = "changelog.d"\n'
         )
         subproject1 = Path("foo")
         (subproject1 / "foo").mkdir(parents=True)
