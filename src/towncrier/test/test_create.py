@@ -669,14 +669,15 @@ Created news fragment at {expected}
         self.assertTrue(Path("foo/changelog.d/123.feature.rst").exists())
 
     @with_isolated_runner
-    def test_index(self, runner):
+    def test_sub_issue(self, runner):
         """
-        testing changing files with option --index
+        testing changing files with option --sub-issue
         """
         Path("pyproject.toml").write_text(
             # Important to customize `config.directory` because the default
             # already supports this scenario.
-            "[tool.towncrier]\n" + 'directory = "changelog.d"\n'
+            "[tool.towncrier]\n"
+            + 'directory = "changelog.d"\n'
         )
         Path("foo/foo").mkdir(parents=True)
         result = runner.invoke(
@@ -688,7 +689,7 @@ Created news fragment at {expected}
                 "foo",
                 "--content",
                 "111",
-                "--index",
+                "--sub-issue",
                 0,
                 "123.feature",
             ),
@@ -709,7 +710,7 @@ Created news fragment at {expected}
                 "foo",
                 "--content",
                 "222",
-                "--index",
+                "--sub-issue",
                 1,
                 "123.feature",
             ),
@@ -730,7 +731,7 @@ Created news fragment at {expected}
                 "foo",
                 "--content",
                 "333",
-                "--index",
+                "--sub-issue",
                 0,
                 "123.feature",
             ),
@@ -751,7 +752,7 @@ Created news fragment at {expected}
                 "foo",
                 "--content",
                 "444",
-                "--index",
+                "--sub-issue",
                 1,
                 "123.feature",
             ),
