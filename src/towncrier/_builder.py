@@ -356,7 +356,7 @@ def render_fragments(
     fragments: Mapping[str, Mapping[str, Mapping[str, Sequence[str]]]],
     definitions: Mapping[str, Mapping[str, Any]],
     underlines: Sequence[str],
-    wrap: bool,
+    wrap: bool | int,
     versiondata: Mapping[str, str],
     top_underline: str = "=",
     all_bullets: bool = False,
@@ -439,17 +439,20 @@ def render_fragments(
     )
 
     for line in res.split("\n"):
-        if wrap:
+        if wrap is False:
+            done.append(line)
+        else:
+            width = 79 if wrap is True else wrap
+            if width <= 0:
+                width = 79
             done.append(
                 textwrap.fill(
                     line,
-                    width=79,
+                    width=width,
                     subsequent_indent=get_indent(line),
                     break_long_words=False,
                     break_on_hyphens=False,
                 )
             )
-        else:
-            done.append(line)
 
     return "\n".join(done)
