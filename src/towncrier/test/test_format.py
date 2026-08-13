@@ -414,6 +414,64 @@ Features
         )
         self.assertEqual(output, expected_output)
 
+        expected_output = """MyProject 1.0 (never)
+=====================
+
+Features
+--------
+
+- asdf asdf asdf asdf looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong
+  newsfragment. (#1)
+-
+  https://google.com/q=?----------------------------------------------------------------------------------------------------
+  (#2)
+- a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
+  a a a a a a a a a a a a a a a a a a a a a (#3)
+
+
+"""
+
+        output = render_fragments(
+            template,
+            None,
+            fragments,
+            definitions,
+            ["-", "~"],
+            wrap=119,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
+        )
+        self.assertEqual(output, expected_output)
+
+        expected_output = """MyProject 1.0 (never)
+=====================
+
+Features
+--------
+
+- asdf asdf asdf asdf
+  looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong
+  newsfragment. (#1)
+-
+  https://google.com/q=?----------------------------------------------------------------------------------------------------
+  (#2)
+- a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
+  a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
+  a a (#3)
+
+
+"""
+
+        output = render_fragments(
+            template,
+            None,
+            fragments,
+            definitions,
+            ["-", "~"],
+            wrap=0,
+            versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
+        )
+        self.assertEqual(output, expected_output)
+
     def test_line_wrapping_disabled(self):
         """
         Output is not wrapped if it's disabled.
