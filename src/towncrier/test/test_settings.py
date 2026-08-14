@@ -94,7 +94,6 @@ class TomlSettingsTests(TestCase):
         self.assertEqual(list(config.underlines), ["-", "", ""])
         self.assertTrue(config.underlines_configured)
 
-
     def test_explicit_template_extension(self):
         """
         If the filename references an .md file and the builtin template has an
