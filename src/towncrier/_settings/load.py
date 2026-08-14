@@ -50,6 +50,9 @@ class Config:
     title_format: str | Literal[False] = ""
     issue_format: str | None = None
     underlines: Sequence[str] = ("=", "-", "~")
+    # True when the user set ``underlines`` in config (so markdown titles
+    # can honor an explicit setext underline without changing the default).
+    underlines_configured: bool = False
     wrap: bool = False
     all_bullets: bool = True
     orphan_prefix: str = "+"
@@ -234,6 +237,7 @@ def parse_toml(base_path: str, config: Mapping[str, Any]) -> Config:
             )
 
     parsed_data["template"] = template
+    parsed_data["underlines_configured"] = "underlines" in config
 
     # Process 'start_string'.
 

@@ -1070,6 +1070,56 @@ class TestCli(TestCase):
         config="""
         [tool.towncrier]
         package = "foo"
+        filename = "CHANGELOG.md"
+        underlines = ["-", "", ""]
+        title_format = "{version} ({project_date})"
+        """
+    )
+    def test_title_format_markdown_setext_underlines(self, runner):
+        """
+        An explicit ``underlines`` config is honored for markdown titles
+        that are not ATX headings (setext-style Keep a Changelog headers).
+        """
+        with open("foo/newsfragments/123.feature", "w") as f:
+            f.write("Adds levitation")
+        result = runner.invoke(
+            _main,
+            [
+                "--name",
+                "FooBarBaz",
+                "--version",
+                "1.0.0",
+                "--date",
+                "2024-09-03",
+                "--draft",
+            ],
+        )
+
+        expected_output = dedent("""\
+            Loading template...
+            Finding news fragments...
+            Rendering news fragments...
+            Draft only -- nothing has been written.
+            What is seen below is what would be written.
+
+            1.0.0 (2024-09-03)
+            ------------------
+
+            # Features
+
+            - Adds levitation (#123)
+
+
+
+        """)
+
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertEqual(expected_output, result.output)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = "foo"
         filename = "NEWS.md"
         title_format = "### [{project_date}] CUSTOM RELEASE for {name} version {version}"
         """

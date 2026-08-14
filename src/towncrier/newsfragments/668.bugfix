@@ -1,0 +1,1 @@
+Markdown `title_format` now honors an explicit `underlines` setting for setext-style headings.

@@ -243,10 +243,20 @@ def __main(
         top_line = config.title_format.format(
             name=project_name, version=project_version, project_date=project_date
         )
+        parts = [top_line]
+        underline = config.underlines[0] if config.underlines else ""
         if is_markdown:
-            parts = [top_line]
+            # Default markdown titles stay as written (ATX / custom text).
+            # An explicit ``underlines`` config is honored for setext-style
+            # titles such as ``1.0.0 (2024-09-03)`` / ``------------------``.
+            if (
+                config.underlines_configured
+                and underline
+                and not top_line.lstrip().startswith("#")
+            ):
+                parts.append(underline * len(top_line))
         else:
-            parts = [top_line, config.underlines[0] * len(top_line)]
+            parts.append(underline * len(top_line))
         parts.append(rendered)
         content = "\n".join(parts)
     else:
