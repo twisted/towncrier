@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ trunk ]
+    branches: [ "trunk", "fix/741-gh-action-broken" ]
     tags: [ "**" ]
   pull_request:
   workflow_dispatch:
