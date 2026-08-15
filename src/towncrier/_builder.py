@@ -442,7 +442,7 @@ def render_fragments(
         if wrap is False:
             done.append(line)
             continue
-        
+
         width = 79 if wrap is True else wrap
         if width <= 0:
             width = 79
