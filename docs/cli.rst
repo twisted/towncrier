@@ -76,6 +76,8 @@ Create a news fragment in the directory that ``towncrier`` is configured to look
 If you don't provide a file name, ``towncrier`` will prompt you for one.
 
 ``towncrier create`` will enforce that the passed type (e.g. ``bugfix``) is valid.
+The issue identifier (the part before the type) must not contain ``.``,
+because dots separate ``{name}.{type}`` and an optional counter or suffix.
 
 If the fragments directory does not exist, it will be created.
 

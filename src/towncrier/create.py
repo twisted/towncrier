@@ -9,12 +9,13 @@ from __future__ import annotations
 
 import os
 
+from collections.abc import Iterable
 from pathlib import Path
 from typing import cast
 
 import click
 
-from ._builder import FragmentsPath
+from ._builder import FragmentsPath, parse_newfragment_basename
 from ._settings import config_option_help, load_config_from_options
 
 
@@ -187,15 +188,7 @@ def __main(
             ),
         )
     filename_parts = filename.split(".")
-    if len(filename_parts) < 2 or (
-        filename_parts[-1] not in config.types
-        and filename_parts[-2] not in config.types
-    ):
-        raise click.BadParameter(
-            "Expected filename '{}' to be of format '{{name}}.{{type}}', "
-            "where '{{name}}' is an arbitrary slug and '{{type}}' is "
-            "one of: {}".format(filename, ", ".join(config.types))
-        )
+    _validate_create_filename(filename, config.types)
 
     if filename_parts[-1] in config.types and filename_ext:
         filename += filename_ext
@@ -240,6 +233,31 @@ def __main(
     Path(segment_file).write_text(content + "\n" * add_newline, encoding="utf-8")
 
     click.echo(f"Created news fragment at {segment_file}")
+
+
+def _validate_create_filename(filename: str, types: Iterable[str]) -> None:
+    """Reject fragment names that ``build`` cannot parse, or that hide extra dots.
+
+    ``towncrier create`` previously only checked that the last or second-to-last
+    component was a known type. That accepted names such as
+    ``foo.bar.baz.config`` (when ``config`` is a type), which ``build`` then
+    treats as issue ``foo.bar.baz``. The issue identifier must not contain
+    ``.`` because dots separate ``{name}.{type}`` (and an optional counter or
+    suffix).
+    """
+    basename = os.path.basename(filename)
+    issue, category, _counter = parse_newfragment_basename(basename, types)
+    if category is None or issue is None:
+        raise click.BadParameter(
+            "Expected filename '{}' to be of format '{{name}}.{{type}}', "
+            "where '{{name}}' is an arbitrary slug and '{{type}}' is "
+            "one of: {}".format(filename, ", ".join(types))
+        )
+    if "." in issue:
+        raise click.BadParameter(
+            f"Issue identifier '{issue}' in '{filename}' must not contain '.'. "
+            "Dots separate '{name}.{type}' (and an optional counter or suffix)."
+        )
 
 
 def _get_news_content_from_user(message: str, extension: str = "") -> str:
