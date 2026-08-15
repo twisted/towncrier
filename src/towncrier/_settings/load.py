@@ -50,7 +50,7 @@ class Config:
     title_format: str | Literal[False] = ""
     issue_format: str | None = None
     underlines: Sequence[str] = ("=", "-", "~")
-    wrap: bool = False
+    wrap: bool | int = False
     all_bullets: bool = True
     orphan_prefix: str = "+"
     create_eof_newline: bool = True
