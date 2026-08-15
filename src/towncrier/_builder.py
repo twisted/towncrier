@@ -441,18 +441,19 @@ def render_fragments(
     for line in res.split("\n"):
         if wrap is False:
             done.append(line)
-        else:
-            width = 79 if wrap is True else wrap
-            if width <= 0:
-                width = 79
-            done.append(
-                textwrap.fill(
-                    line,
-                    width=width,
-                    subsequent_indent=get_indent(line),
-                    break_long_words=False,
-                    break_on_hyphens=False,
-                )
+            continue
+        
+        width = 79 if wrap is True else wrap
+        if width <= 0:
+            width = 79
+        done.append(
+            textwrap.fill(
+                line,
+                width=width,
+                subsequent_indent=get_indent(line),
+                break_long_words=False,
+                break_on_hyphens=False,
             )
+        )
 
     return "\n".join(done)
