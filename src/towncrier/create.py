@@ -247,7 +247,7 @@ def _validate_create_filename(filename: str, types: Iterable[str]) -> None:
     """
     basename = os.path.basename(filename)
     issue, category, _counter = parse_newfragment_basename(basename, types)
-    if category is None:
+    if category is None or issue is None:
         raise click.BadParameter(
             "Expected filename '{}' to be of format '{{name}}.{{type}}', "
             "where '{{name}}' is an arbitrary slug and '{{type}}' is "

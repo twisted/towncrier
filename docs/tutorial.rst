@@ -90,7 +90,6 @@ The five default types are:
 - ``misc``: An issue has been closed, but it is not of interest to users.
 
 When you create a news fragment, the filename consists of the issue/ticket ID (or some other unique identifier) as well as the 'type'.
-The identifier itself must not contain ``.``; dots separate the identifier from the type (and an optional counter or suffix).
 ``towncrier`` does not care about the fragment's suffix.
 
 You can create those fragments either by hand, or using the ``towncrier create`` command.
