@@ -100,7 +100,7 @@ Top level keys
     ``["=", "-", "~"]`` by default.
 
 ``wrap``
-    Boolean value indicating whether to wrap news fragments to a line length of 79, or an integer value specifying the line length.
+    Boolean value indicating whether to wrap news fragments to a line length of 79, or an integer, greater than 0, specifying the line length.
 
     ``false`` by default.
 
