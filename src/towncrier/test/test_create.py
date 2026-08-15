@@ -217,6 +217,46 @@ class TestCli(TestCase):
             "Expected filename '123.foobar.rst' to be of format", result.output
         )
 
+    def test_dots_in_issue_identifier_rejected(self):
+        """
+        Extra dots in the issue identifier are rejected.
+
+        ``create`` used to accept ``foo.bar.baz.feature`` because the last
+        component was a known type. ``build`` then treated the whole prefix
+        as the issue name, which is not a valid ``{name}.{type}``.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project()
+            result = runner.invoke(_main, ["foo.bar.baz.feature"])
+
+            self.assertEqual([], os.listdir("foo/newsfragments"))
+
+        self.assertEqual(type(result.exception), SystemExit, result.exception)
+        self.assertIn("must not contain '.'", result.output)
+        self.assertIn("foo.bar.baz", result.output)
+
+    def test_type_not_in_last_two_parts_rejected(self):
+        """
+        A type that is only the first component is not a valid create name.
+
+        ``feature.notatype`` used to pass because the second-to-last part was
+        a known type, but ``build`` cannot parse that basename.
+        """
+        runner = CliRunner()
+
+        with runner.isolated_filesystem():
+            setup_simple_project()
+            result = runner.invoke(_main, ["feature.notatype"])
+
+            self.assertEqual([], os.listdir("foo/newsfragments"))
+
+        self.assertEqual(type(result.exception), SystemExit, result.exception)
+        self.assertIn(
+            "Expected filename 'feature.notatype' to be of format", result.output
+        )
+
     @with_isolated_runner
     def test_custom_extension(self, runner: CliRunner):
         """Ensure we can still create fragments with custom extensions."""

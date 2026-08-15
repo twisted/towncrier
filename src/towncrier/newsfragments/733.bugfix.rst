@@ -1,0 +1,1 @@
+``towncrier create`` now rejects fragment names whose issue identifier contains ``.``.
