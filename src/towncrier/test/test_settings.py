@@ -56,6 +56,7 @@ class TomlSettingsTests(TestCase):
         self.assertEqual(config.package_dir, ".")
         self.assertEqual(config.filename, "NEWS.rst")
         self.assertEqual(config.underlines, ("=", "-", "~"))
+        self.assertFalse(config.underlines_configured)
         self.assertEqual(config.orphan_prefix, "~")
 
     def test_markdown(self):
@@ -76,6 +77,22 @@ class TomlSettingsTests(TestCase):
         self.assertEqual(config.filename, "NEWS.md")
 
         self.assertEqual(config.template, ("towncrier.templates", "default.md"))
+
+    def test_underlines_configured(self):
+        """
+        ``underlines_configured`` is true only when the user set underlines.
+        """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [tool.towncrier]
+                package = "foobar"
+                filename = "NEWS.md"
+                underlines = ["-", "", ""]
+            """
+        )
+        config = load_config(project_dir)
+        self.assertEqual(list(config.underlines), ["-", "", ""])
+        self.assertTrue(config.underlines_configured)
 
     def test_explicit_template_extension(self):
         """

@@ -81,8 +81,9 @@ Top level keys
 
     When using reStructuredText, formatted titles are underlined using the ``underlines`` configuration.
     For titles, the first value from ``underlines`` is used to create the underline (which is inserted on the line following the title).
-    If the template has an ``.md`` suffix, we assume we are looking at markdown format and the title is applied as, i.e. full control over the title format is given to the user.
+    If the template has an ``.md`` suffix, we assume we are looking at markdown format and the title is applied as given, i.e. full control over the title format is given to the user.
     The top header level is inferred from this, e.g. ``title_format = "(v{version})=\n### {version}"`` will render the title at level 3, categories at level 4, and so on.
+    If ``underlines`` is set explicitly and the formatted title is not an ATX heading (it does not start with ``#``), the first underline character is also applied to markdown titles so setext-style headings work.
 
 ``issue_format``
     A format string for rendering the issue/ticket number in newsfiles.
@@ -95,7 +96,9 @@ Top level keys
 ``underlines``
     The characters used for underlining headers.
 
-    Not used in the bundled Markdown template.
+    Not used in the bundled Markdown template for section headings.
+    When set explicitly, the first value is also used to underline a
+    markdown ``title_format`` that is not already an ATX heading.
 
     ``["=", "-", "~"]`` by default.
 
