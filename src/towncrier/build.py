@@ -7,11 +7,12 @@ Build a combined news file from news fragments.
 
 from __future__ import annotations
 
+import datetime
 import os
 import re
 import sys
+import time
 
-from datetime import date
 from pathlib import Path
 
 import click
@@ -41,7 +42,9 @@ def _get_date() -> str:
     The build date is interrogated from the current system clock time (via
     `date.today()`).
     """
-    build_date = date.today()
+    build_time = time.time()
+    build_time_unix = int(build_time)
+    build_date = datetime.date.fromtimestamp(build_time_unix)
     build_date_text = build_date.isoformat()
     return build_date_text
 
