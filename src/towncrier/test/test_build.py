@@ -16,7 +16,9 @@ from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from .._shell import cli
-from ..build import _main
+from ..build import (
+    _main,
+)
 from .helpers import (
     read,
     with_fake_fragments,

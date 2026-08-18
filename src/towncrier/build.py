@@ -33,6 +33,10 @@ else:
     from importlib import resources
 
 
+ISO_8601_DATE_FORMAT = "%Y-%m-%d"
+""" Format string, as used with `strftime`, for ISO 8601 date format. """
+
+
 def _get_date() -> str:
     """Get the “build date” text for the changelog.
 
@@ -45,7 +49,7 @@ def _get_date() -> str:
     build_time = time.time()
     build_time_unix = int(build_time)
     build_date = datetime.date.fromtimestamp(build_time_unix)
-    build_date_text = build_date.isoformat()
+    build_date_text = build_date.strftime(ISO_8601_DATE_FORMAT)
     return build_date_text
 
 
