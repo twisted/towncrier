@@ -26,48 +26,49 @@ from .helpers import (
 )
 
 
+_default_fake_fragments = collections.OrderedDict(
+    [
+        # Off the shelf news fragment.
+        ("foo/newsfragments/123.feature", "Adds levitation"),
+        # Towncrier treats this as '124.feature', ignoring '.rst' suffix.
+        ("foo/newsfragments/124.feature.rst", "Extends levitation"),
+        # Towncrier supports non-numeric news fragment file names.
+        ("foo/newsfragments/baz.feature.rst", "Baz levitation"),
+        # Towncrier supports file names that have a dot in the name of the
+        # news fragment
+        ("foo/newsfragments/fix-1.2.feature", "Baz fix levitation"),
+        # Towncrier supports fragments not linked to a feature.
+        ("foo/newsfragments/+anything.feature", "Orphaned feature"),
+        ("foo/newsfragments/+xxx.feature", "Another orphaned feature"),
+        (
+            "foo/newsfragments/+123_orphaned.feature",
+            "An orphaned feature starting with a number",
+        ),
+        (
+            "foo/newsfragments/+12.3_orphaned.feature",
+            "An orphaned feature starting with a dotted number",
+        ),
+        (
+            "foo/newsfragments/+orphaned_123.feature",
+            "An orphaned feature ending with a number",
+        ),
+        (
+            "foo/newsfragments/+orphaned_12.3.feature",
+            "An orphaned feature ending with a dotted number",
+        ),
+        # Towncrier ignores file names that don't have a dot.
+        ("foo/newsfragments/README", "Blah blah"),
+        # And file names that don't have a valid category.
+        ("foo/newsfragments/README.rst", "**Blah blah**"),
+    ],
+)
+
+
 class TestCli(TestCase):
     maxDiff = None
 
     @with_project()
-    @with_fake_fragments(
-        collections.OrderedDict(
-            [
-                # Off the shelf news fragment.
-                ("foo/newsfragments/123.feature", "Adds levitation"),
-                # Towncrier treats this as '124.feature', ignoring '.rst' suffix.
-                ("foo/newsfragments/124.feature.rst", "Extends levitation"),
-                # Towncrier supports non-numeric news fragment file names.
-                ("foo/newsfragments/baz.feature.rst", "Baz levitation"),
-                # Towncrier supports file names that have a dot in the name of the
-                # news fragment
-                ("foo/newsfragments/fix-1.2.feature", "Baz fix levitation"),
-                # Towncrier supports fragments not linked to a feature.
-                ("foo/newsfragments/+anything.feature", "Orphaned feature"),
-                ("foo/newsfragments/+xxx.feature", "Another orphaned feature"),
-                (
-                    "foo/newsfragments/+123_orphaned.feature",
-                    "An orphaned feature starting with a number",
-                ),
-                (
-                    "foo/newsfragments/+12.3_orphaned.feature",
-                    "An orphaned feature starting with a dotted number",
-                ),
-                (
-                    "foo/newsfragments/+orphaned_123.feature",
-                    "An orphaned feature ending with a number",
-                ),
-                (
-                    "foo/newsfragments/+orphaned_12.3.feature",
-                    "An orphaned feature ending with a dotted number",
-                ),
-                # Towncrier ignores file names that don't have a dot.
-                ("foo/newsfragments/README", "Blah blah"),
-                # And file names that don't have a valid category.
-                ("foo/newsfragments/README.rst", "**Blah blah**"),
-            ],
-        ),
-    )
+    @with_fake_fragments(_default_fake_fragments)
     def _test_command(self, command, runner):
         result = runner.invoke(command, ["--draft", "--date", "01-01-2001"])
 
