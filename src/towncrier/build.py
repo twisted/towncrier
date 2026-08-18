@@ -33,6 +33,14 @@ else:
 
 
 def _get_date() -> str:
+    """Get the “build date” text for the changelog.
+
+    :returns: The text value for the build date, in ISO 8601 format
+        ("%Y-%m-%d").
+
+    The build date is interrogated from the current system clock time (via
+    `date.today()`).
+    """
     return date.today().isoformat()
 
 
