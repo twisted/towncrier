@@ -2,11 +2,11 @@
 # See LICENSE for details.
 
 import collections
+import datetime
 import os
 import tempfile
 import textwrap
 
-from datetime import date
 from pathlib import Path
 from subprocess import call
 from textwrap import dedent
@@ -17,6 +17,8 @@ from twisted.trial.unittest import TestCase
 
 from .._shell import cli
 from ..build import (
+    BUILD_TIME_ENV_VAR_NAME,
+    ISO_8601_DATE_FORMAT,
     _main,
 )
 from .helpers import (
@@ -401,14 +403,57 @@ class TestCli(TestCase):
 
     @with_git_project()
     @with_fake_fragments(_default_fake_fragments)
-    def test_draft_no_date(self, runner, commit):
+    def test_draft_no_date_option_source_date_epoch(self, runner, commit):
         """
-        If no date specified, should use system clock.
+        If no date, and 'SOURCE_DATE_EPOCH' set, use it for build date.
         """
         commit()
 
-        today = date.today()
-        result = runner.invoke(_main, ["--draft"])
+        fake_clock_datetime = datetime.datetime(
+            2015,
+            12,
+            24,
+            0,
+            0,
+            0,
+            tzinfo=datetime.timezone.utc,
+        )
+        fake_clock_timestamp = int(fake_clock_datetime.timestamp())
+        fake_clock_timestamp_text = str(fake_clock_timestamp)
+        fake_os_environ = {
+            **os.environ,
+            BUILD_TIME_ENV_VAR_NAME: fake_clock_timestamp_text,
+        }
+        with patch("os.environ", fake_os_environ):
+            result = runner.invoke(_main, ["--draft"])
+
+        self.assertEqual(0, result.exit_code)
+        expected_date = fake_clock_datetime.date()
+        expected_date_text = expected_date.strftime(ISO_8601_DATE_FORMAT)
+        self.assertIn(f"Foo 1.2.3 ({expected_date_text})", result.output)
+
+    @with_git_project()
+    @with_fake_fragments(_default_fake_fragments)
+    def test_draft_no_date_option_no_source_date_epoch(
+        self,
+        runner,
+        commit,
+    ):
+        """
+        If no date option and no 'SOURCE_DATE_EPOCH', should use system clock.
+        """
+        commit()
+
+        # Ensure the 'SOURCE_DATE_EPOCH' environment variable is not set.
+        fake_os_environ = {
+            key: value
+            for key, value in os.environ.items()
+            if (key != BUILD_TIME_ENV_VAR_NAME)
+        }
+
+        today = datetime.date.today()
+        with patch("os.environ", fake_os_environ):
+            result = runner.invoke(_main, ["--draft"])
 
         self.assertEqual(0, result.exit_code)
         self.assertIn(f"Foo 1.2.3 ({today.isoformat()})", result.output)
