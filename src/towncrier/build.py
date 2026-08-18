@@ -41,7 +41,9 @@ def _get_date() -> str:
     The build date is interrogated from the current system clock time (via
     `date.today()`).
     """
-    return date.today().isoformat()
+    build_date = date.today()
+    build_date_text = build_date.isoformat()
+    return build_date_text
 
 
 def _validate_answer(ctx: Context, param: Option, value: bool) -> bool:
