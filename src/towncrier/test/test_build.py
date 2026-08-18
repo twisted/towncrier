@@ -398,17 +398,11 @@ class TestCli(TestCase):
         )
 
     @with_git_project()
+    @with_fake_fragments(_default_fake_fragments)
     def test_draft_no_date(self, runner, commit):
         """
-        If no date is passed, today's date is used.
+        If no date specified, should use system clock.
         """
-        fragment_path1 = "foo/newsfragments/123.feature"
-        fragment_path2 = "foo/newsfragments/124.feature.rst"
-        with open(fragment_path1, "w") as f:
-            f.write("Adds levitation")
-        with open(fragment_path2, "w") as f:
-            f.write("Extends levitation")
-
         commit()
 
         today = date.today()
