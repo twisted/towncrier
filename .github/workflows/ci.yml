@@ -172,7 +172,7 @@ jobs:
             run: nox -e typecheck
             run-if: true
 
-          - name: Check spelling errors
+          - name: Check spelling
             run: nox -e codespell
             run-if: true
 
