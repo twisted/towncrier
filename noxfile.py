@@ -70,6 +70,12 @@ def typecheck(session: nox.Session) -> None:
 
 
 @nox.session
+def codespell(session: nox.Session) -> None:
+    session.install(".", "codespell")
+    session.run("codespell")
+
+
+@nox.session
 def docs(session: nox.Session) -> None:
     session.install(".[dev]")
 

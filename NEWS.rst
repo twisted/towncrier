@@ -74,7 +74,7 @@ Bugfixes
 - The template file is now ignored based only on the file name. (`#638 <https://github.com/twisted/towncrier/issues/638>`_)
 - Control of the header formatting is once again completely up to the user when they are writing markdown files (fixes a regression introduced in [#610](https://github.com/twisted/towncrier/pull/610)). (`#651 <https://github.com/twisted/towncrier/issues/651>`_)
 - Fixed an issue where `issue_template` failed recognizing the issue name of files with a non-category suffix (`.md`) (`#654 <https://github.com/twisted/towncrier/issues/654>`_)
-- Fixed a bug where orphan news fragments (e.g. +abc1234.feature) would fail when an `issue_pattern` is configured. Orphan news fragments are now excempt from `issue_pattern` checks. (`#655 <https://github.com/twisted/towncrier/issues/655>`_)
+- Fixed a bug where orphan news fragments (e.g. +abc1234.feature) would fail when an `issue_pattern` is configured. Orphan news fragments are now exempt from `issue_pattern` checks. (`#655 <https://github.com/twisted/towncrier/issues/655>`_)
 
 
 Deprecations and Removals
@@ -501,7 +501,7 @@ towncrier 19.2.0 (2019-02-15)
 Features
 --------
 
-- Add support for multiple fragements per issue/type pair. This extends the
+- Add support for multiple fragments per issue/type pair. This extends the
   naming pattern of the fragments to `issuenumber.type(.counter)` where counter
   is an optional integer. (`#119 <https://github.com/twisted/towncrier/issues/119>`_)
 - Python 2.7 is now supported. (`#121 <https://github.com/twisted/towncrier/issues/121>`_)
@@ -621,7 +621,7 @@ Bugfixes
 Features
 --------
 
-- Allow configration of the template file, title text and "magic comment" (#35)
+- Allow configuration of the template file, title text and "magic comment" (#35)
 - Towncrier now uses pyproject.toml, as defined in PEP-518. (#40)
 
 
