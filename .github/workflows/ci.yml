@@ -172,6 +172,10 @@ jobs:
             run: nox -e typecheck
             run-if: true
 
+          - name: Check spelling errors
+            run: nox -e codespell
+            run-if: true
+
     steps:
     - uses: actions/checkout@v3
       with:
@@ -196,7 +200,7 @@ jobs:
     - name: Check
       run: |
         ${{ matrix.task.run }}
-      if: ${{ matrix.task.run-if }}
+      if: ${{ !cancelled() && matrix.task.run-if }}
 
 
   pre-commit:
