@@ -84,6 +84,20 @@ The value of ``SOURCE_DATE_EPOCH`` represents the build timestamp as a Unix time
 This environment variable will override the system clock when computing the build date for the generated document. See the `'SOURCE_DATE_EPOCH' specification`_ for details.
 
 
+..  _build-timestamp-precedence-order:
+
+Build timestamp precedence order
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The build date, used for the generated news document, is computed as the earliest found from this sequence:
+
+* Value of the run-time ``--date`` option.
+
+* Computed from the timestamp value set in :ref:`environment variable 'SOURCE_DATE_EPOCH' <reproducible-builds>`.
+
+* Computed from the system clock value.
+
+
 ``towncrier create``
 --------------------
 
