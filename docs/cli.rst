@@ -54,7 +54,7 @@ the fragments directory if now empty).
 
    The date in `ISO format <https://xkcd.com/1179/>`_ to use in the news file.
 
-   Default: today's date
+   Default: See :ref:`build-timestamp-precedence-order`.
 
 .. option:: --yes
 
@@ -81,7 +81,7 @@ The value of ``SOURCE_DATE_EPOCH`` represents the build timestamp as a Unix time
     $ export SOURCE_DATE_EPOCH="$( date +'%s' --date='2018-01-01' )"
     $ towncrier build
 
-This environment variable will override the system clock when computing the build date for the generated document. See the `'SOURCE_DATE_EPOCH' specification`_ for details.
+This environment variable will :ref:`override the system clock <build-timestamp-precedence-order>` when computing the build date for the generated document. See the `'SOURCE_DATE_EPOCH' specification`_ for details.
 
 
 ..  _build-timestamp-precedence-order:
