@@ -72,6 +72,14 @@ You can change this with the ``--date`` flag::
 
    $ towncrier build --date=2018-01-01
 
+To conform to `Reproducible Builds`_ practices, Towncrier also supports the `'SOURCE_DATE_EPOCH' specification`_. See :ref:`reproducible-builds` for more on how this works::
+
+    $ export SOURCE_DATE_EPOCH="$( date +'%s' --date='2018-01-01' )"
+    $ towncrier build
+
+..  _Reproducible Builds: https://reproducible-builds.org/
+..  _'SOURCE_DATE_EPOCH' specification: https://reproducible-builds.org/specs/source-date-epoch/
+
 
 Creating News Fragments
 -----------------------
