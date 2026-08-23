@@ -44,6 +44,7 @@ dev = [
     "furo >= 2024.05.06",
     "twisted",
     "nox",
+    "codespell >= 2.4"
 ]
 
 [project.scripts]
@@ -162,3 +163,9 @@ omit = [
     "src/towncrier/test/*",
     "src/towncrier/click_default_group.py",
 ]
+
+[tool.codespell]
+skip = 'venv*, .venv*, .nox*, .git*, dist*'
+count = false
+quiet-level = 3
+check-hidden = true

@@ -153,7 +153,7 @@ Top level keys
 ``issue_pattern``
     Ensure the issue name (file name excluding the category and suffix) matches a certain regex pattern.
     Make sure to use escape characters properly (e.g. "\\d+" for digit-only file names).
-    When emptry (``""``), all issue names will be considered valid.
+    When empty (``""``), all issue names will be considered valid.
 
     ``""`` by default.
 
