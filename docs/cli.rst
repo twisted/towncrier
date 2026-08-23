@@ -54,7 +54,7 @@ the fragments directory if now empty).
 
    The date in `ISO format <https://xkcd.com/1179/>`_ to use in the news file.
 
-   Default: today's date
+   Default: See :ref:`build-timestamp-precedence-order`.
 
 .. option:: --yes
 
@@ -64,6 +64,38 @@ the fragments directory if now empty).
 .. option:: --keep
 
    Don't delete news fragments after the build and don't ask for confirmation whether to delete or keep the fragments.
+
+
+..  _reproducible-builds:
+
+Reproducible Builds
+~~~~~~~~~~~~~~~~~~~
+
+To conform to `Reproducible Builds`_ practices, Towncrier supports the `'SOURCE_DATE_EPOCH' specification`_. Your build procedure can set a static build timestamp in the ``SOURCE_DATE_EPOCH`` environment variable.
+
+..  _Reproducible Builds: https://reproducible-builds.org/
+..  _'SOURCE_DATE_EPOCH' specification: https://reproducible-builds.org/specs/source-date-epoch/
+
+The value of ``SOURCE_DATE_EPOCH`` represents the build timestamp as a Unix timestamp (number of seconds since the Unix epoch); the 'date(1)' utility will emit this format on request::
+
+    $ export SOURCE_DATE_EPOCH="$( date +'%s' --date='2018-01-01' )"
+    $ towncrier build
+
+This environment variable will :ref:`override the system clock <build-timestamp-precedence-order>` when computing the build date for the generated document. See the `'SOURCE_DATE_EPOCH' specification`_ for details.
+
+
+..  _build-timestamp-precedence-order:
+
+Build timestamp precedence order
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The build date, used for the generated news document, is computed as the earliest found from this sequence:
+
+* Value of the run-time ``--date`` option.
+
+* Computed from the timestamp value set in :ref:`environment variable 'SOURCE_DATE_EPOCH' <reproducible-builds>`.
+
+* Computed from the system clock value.
 
 
 ``towncrier create``

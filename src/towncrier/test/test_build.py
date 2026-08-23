@@ -1,11 +1,12 @@
 # Copyright (c) Amber Brown, 2015
 # See LICENSE for details.
 
+import collections
+import datetime
 import os
 import tempfile
 import textwrap
 
-from datetime import date
 from pathlib import Path
 from subprocess import call
 from textwrap import dedent
@@ -15,48 +16,64 @@ from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
 from .._shell import cli
-from ..build import _main
-from .helpers import read, with_git_project, with_project, write
+from ..build import (
+    BUILD_TIME_ENV_VAR_NAME,
+    ISO_8601_DATE_FORMAT,
+    _main,
+)
+from .helpers import (
+    read,
+    with_fake_fragments,
+    with_git_project,
+    with_project,
+    write,
+)
+
+
+_default_fake_fragments = collections.OrderedDict(
+    [
+        # Off the shelf news fragment.
+        ("foo/newsfragments/123.feature", "Adds levitation"),
+        # Towncrier treats this as '124.feature', ignoring '.rst' suffix.
+        ("foo/newsfragments/124.feature.rst", "Extends levitation"),
+        # Towncrier supports non-numeric news fragment file names.
+        ("foo/newsfragments/baz.feature.rst", "Baz levitation"),
+        # Towncrier supports file names that have a dot in the name of the
+        # news fragment
+        ("foo/newsfragments/fix-1.2.feature", "Baz fix levitation"),
+        # Towncrier supports fragments not linked to a feature.
+        ("foo/newsfragments/+anything.feature", "Orphaned feature"),
+        ("foo/newsfragments/+xxx.feature", "Another orphaned feature"),
+        (
+            "foo/newsfragments/+123_orphaned.feature",
+            "An orphaned feature starting with a number",
+        ),
+        (
+            "foo/newsfragments/+12.3_orphaned.feature",
+            "An orphaned feature starting with a dotted number",
+        ),
+        (
+            "foo/newsfragments/+orphaned_123.feature",
+            "An orphaned feature ending with a number",
+        ),
+        (
+            "foo/newsfragments/+orphaned_12.3.feature",
+            "An orphaned feature ending with a dotted number",
+        ),
+        # Towncrier ignores file names that don't have a dot.
+        ("foo/newsfragments/README", "Blah blah"),
+        # And file names that don't have a valid category.
+        ("foo/newsfragments/README.rst", "**Blah blah**"),
+    ],
+)
 
 
 class TestCli(TestCase):
     maxDiff = None
 
     @with_project()
+    @with_fake_fragments(_default_fake_fragments)
     def _test_command(self, command, runner):
-        # Off the shelf newsfragment
-        with open("foo/newsfragments/123.feature", "w") as f:
-            f.write("Adds levitation")
-        # Towncrier treats this as 124.feature, ignoring .rst extension
-        with open("foo/newsfragments/124.feature.rst", "w") as f:
-            f.write("Extends levitation")
-        # Towncrier supports non-numeric newsfragment names.
-        with open("foo/newsfragments/baz.feature.rst", "w") as f:
-            f.write("Baz levitation")
-        # Towncrier supports files that have a dot in the name of the
-        # newsfragment
-        with open("foo/newsfragments/fix-1.2.feature", "w") as f:
-            f.write("Baz fix levitation")
-        # Towncrier supports fragments not linked to a feature
-        with open("foo/newsfragments/+anything.feature", "w") as f:
-            f.write("Orphaned feature")
-        with open("foo/newsfragments/+xxx.feature", "w") as f:
-            f.write("Another orphaned feature")
-        with open("foo/newsfragments/+123_orphaned.feature", "w") as f:
-            f.write("An orphaned feature starting with a number")
-        with open("foo/newsfragments/+12.3_orphaned.feature", "w") as f:
-            f.write("An orphaned feature starting with a dotted number")
-        with open("foo/newsfragments/+orphaned_123.feature", "w") as f:
-            f.write("An orphaned feature ending with a number")
-        with open("foo/newsfragments/+orphaned_12.3.feature", "w") as f:
-            f.write("An orphaned feature ending with a dotted number")
-        # Towncrier ignores files that don't have a dot
-        with open("foo/newsfragments/README", "w") as f:
-            f.write("Blah blah")
-        # And files that don't have a valid category
-        with open("foo/newsfragments/README.rst", "w") as f:
-            f.write("**Blah blah**")
-
         result = runner.invoke(command, ["--draft", "--date", "01-01-2001"])
 
         self.assertEqual(0, result.exit_code, result.output)
@@ -385,21 +402,58 @@ class TestCli(TestCase):
         )
 
     @with_git_project()
-    def test_draft_no_date(self, runner, commit):
+    @with_fake_fragments(_default_fake_fragments)
+    def test_draft_no_date_option_source_date_epoch(self, runner, commit):
         """
-        If no date is passed, today's date is used.
+        If no date, and 'SOURCE_DATE_EPOCH' set, use it for build date.
         """
-        fragment_path1 = "foo/newsfragments/123.feature"
-        fragment_path2 = "foo/newsfragments/124.feature.rst"
-        with open(fragment_path1, "w") as f:
-            f.write("Adds levitation")
-        with open(fragment_path2, "w") as f:
-            f.write("Extends levitation")
-
         commit()
 
-        today = date.today()
-        result = runner.invoke(_main, ["--draft"])
+        fake_clock_datetime = datetime.datetime(
+            2015,
+            12,
+            24,
+            0,
+            0,
+            0,
+            tzinfo=datetime.timezone.utc,
+        )
+        fake_clock_timestamp = int(fake_clock_datetime.timestamp())
+        fake_clock_timestamp_text = str(fake_clock_timestamp)
+        fake_os_environ = {
+            **os.environ,
+            BUILD_TIME_ENV_VAR_NAME: fake_clock_timestamp_text,
+        }
+        with patch("os.environ", fake_os_environ):
+            result = runner.invoke(_main, ["--draft"])
+
+        self.assertEqual(0, result.exit_code)
+        expected_date = fake_clock_datetime.date()
+        expected_date_text = expected_date.strftime(ISO_8601_DATE_FORMAT)
+        self.assertIn(f"Foo 1.2.3 ({expected_date_text})", result.output)
+
+    @with_git_project()
+    @with_fake_fragments(_default_fake_fragments)
+    def test_draft_no_date_option_no_source_date_epoch(
+        self,
+        runner,
+        commit,
+    ):
+        """
+        If no date option and no 'SOURCE_DATE_EPOCH', should use system clock.
+        """
+        commit()
+
+        # Ensure the 'SOURCE_DATE_EPOCH' environment variable is not set.
+        fake_os_environ = {
+            key: value
+            for key, value in os.environ.items()
+            if (key != BUILD_TIME_ENV_VAR_NAME)
+        }
+
+        today = datetime.date.today()
+        with patch("os.environ", fake_os_environ):
+            result = runner.invoke(_main, ["--draft"])
 
         self.assertEqual(0, result.exit_code)
         self.assertIn(f"Foo 1.2.3 ({today.isoformat()})", result.output)

@@ -1,0 +1,1 @@
+`towncrier build` now support setting the date via the `SOURCE_DATE_EPOCH` specification. This adds support for Reproducible Builds.

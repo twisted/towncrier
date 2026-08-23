@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import collections
 import textwrap
 
 from functools import wraps
@@ -24,6 +25,38 @@ def write(path: str | Path, contents: str, dedent: bool = False) -> None:
     if dedent:
         contents = textwrap.dedent(contents)
     p.write_text(contents)
+
+
+def write_fake_fragments(
+    fragments: collections.OrderedDict[(str | Path), str],
+) -> None:
+    """Write `fragments` as change log entry fragments.
+
+    :param fragments: A `collections.OrderedDict` with items
+        {`file_path`: `fragment_text`}.
+    """
+    for out_path, fragment_text in fragments.items():
+        write(out_path, fragment_text)
+
+
+def with_fake_fragments(
+    fragments: collections.OrderedDict[(str | Path), str],
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    """Test case decorator to write `fake_fragments` as a fixture.
+
+    :param fragments: The fragments to write, as expected by
+        `write_fake_fragments`.
+    """
+
+    def decorator(fn: Callable[..., Any]) -> Callable[..., Any]:
+        @wraps(fn)
+        def test(*args: Any, **kwargs: Any) -> Any:
+            write_fake_fragments(fragments)
+            return fn(*args, **kwargs)
+
+        return test
+
+    return decorator
 
 
 def read_pkg_resource(path: str) -> str:

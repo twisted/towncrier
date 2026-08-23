@@ -7,11 +7,12 @@ Build a combined news file from news fragments.
 
 from __future__ import annotations
 
+import datetime
 import os
 import re
 import sys
+import time
 
-from datetime import date
 from pathlib import Path
 
 import click
@@ -32,8 +33,35 @@ else:
     from importlib import resources
 
 
+BUILD_TIME_ENV_VAR_NAME = "SOURCE_DATE_EPOCH"
+""" Environment variable name for the build timestamp.
+
+    See the Reproducible Builds 'SOURCE_DATE_EPOCH' standard,
+    <https://reproducible-builds.org/specs/source-date-epoch/>.
+    """
+
+ISO_8601_DATE_FORMAT = "%Y-%m-%d"
+""" Format string, as used with `strftime`, for ISO 8601 date format. """
+
+
 def _get_date() -> str:
-    return date.today().isoformat()
+    """Get the “build date” text, respecting reproducible build.
+
+    :returns: The text value for the build date, in ISO 8601 format
+        ("%Y-%m-%d").
+
+    The `SOURCE_DATE_EPOCH` environment variable, if set, is used as
+    the build timestamp (and not the system clock), as specified
+    in <https://reproducible-builds.org/specs/source-date-epoch/>.
+
+    If the `SOURCE_DATE_EPOCH` environment variable is not set, the
+    default is the current system clock time (via `time.time()`).
+    """
+    build_time = time.time()
+    build_time_unix = int(os.environ.get(BUILD_TIME_ENV_VAR_NAME, build_time))
+    build_date = datetime.date.fromtimestamp(build_time_unix)
+    build_date_text = build_date.strftime(ISO_8601_DATE_FORMAT)
+    return build_date_text
 
 
 def _validate_answer(ctx: Context, param: Option, value: bool) -> bool:
