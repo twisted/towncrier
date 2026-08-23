@@ -1,4 +1,1 @@
-Support the `'SOURCE_DATE_EPOCH' specification`_ for the build date in the generated news document. This allows conformance to the `Reproducible Builds`_ practices, for projects that uses Towncrier.
-
-..  _Reproducible Builds: https://reproducible-builds.org/
-..  _'SOURCE_DATE_EPOCH' specification: https://reproducible-builds.org/specs/source-date-epoch/
+`towncrier build` now support setting the date via the `SOURCE_DATE_EPOCH` specification. This adds support for Reproducible Builds.
