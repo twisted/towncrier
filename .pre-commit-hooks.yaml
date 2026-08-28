@@ -1,16 +1,27 @@
-- id: towncrier-check
-  name: towncrier-check
+- id: towncrier-draft
+  name: towncrier build --draft
   description: Check towncrier changelog updates
-  entry: towncrier --draft
+  language: python
+  entry: towncrier build --draft
   pass_filenames: false
   types: [text]
-  files: newsfragments/
+
+- id: towncrier-checks
+  name: towncrier check
+  description: Check for missing news fragments
   language: python
-- id: towncrier-update
-  name: towncrier-update
-  description: Update changelog with towncrier
-  entry: towncrier
+  entry: towncrier check
   pass_filenames: false
-  args: ["--yes"]
-  files: newsfragments/
+  stages:
+    - pre-push
+  always_run: true
+
+- id: towncrier-update
+  name: towncrier build
+  description: Update changelog with towncrier
   language: python
+  entry: towncrier build --yes
+  pass_filenames: false
+  always_run: true
+  stages:
+    - manual
