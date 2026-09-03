@@ -123,6 +123,7 @@ def find_fragments(
         "readme",
         "readme.md",
         "readme.rst",
+        "*~",
     }
     if isinstance(config.template, str):
         # Template can be a tuple of (package_name, resource_name).
