@@ -1704,6 +1704,32 @@ class TestCli(TestCase):
         ignore = []
         """
     )
+    def test_ignore_backup_files(self, runner):
+        """
+        When a file ends with `~` it must be ignored.
+        """
+        with open("foo/newsfragments/123.feature", "w") as f:
+            f.write("This has a valid filename (control case)")
+        with open("foo/newsfragments/001.feature~", "w") as f:
+            f.write("This file must be ignored")
+        with open("foo/newsfragments/002.feature.rst~", "w") as f:
+            f.write("Even if it has an extension it must be equally ignored")
+
+        result = runner.invoke(_main, ["--draft"])
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertIn("This has a valid filename (control case)", result.output)
+        self.assertNotIn("This file must be ignored", result.output)
+        self.assertNotIn(
+            "Even if it has an extension it must be equally ignored", result.output
+        )
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = "foo"
+        ignore = []
+        """
+    )
     def test_invalid_fragment_name(self, runner):
         """
         When `ignore` is set in config, invalid filenames cause failure.
