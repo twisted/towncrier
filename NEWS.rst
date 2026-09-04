@@ -5,6 +5,31 @@ Release notes
 
 .. towncrier release notes start
 
+towncrier 26.9.0 (2026-09-04)
+=============================
+
+No significant changes since the previous release candidate.
+
+Features
+--------
+
+- `towncrier build` now support setting the date via the `SOURCE_DATE_EPOCH` specification. This adds support for Reproducible Builds. (`#746 <https://github.com/twisted/towncrier/issues/746>`_)
+- Wrapped line length can now be configured by setting `wrap` to an integer value greater than 0, using 79 by default if set to `true`. (`#464 <https://github.com/twisted/towncrier/issues/464>`_)
+- The `towncrier create` command line tool now has the `--sub-issue` option that is used when creating multiple fragments for the same issue number. (`#714 <https://github.com/twisted/towncrier/issues/714>`_)
+
+
+Bugfixes
+--------
+
+- ``towncrier create`` now rejects fragment names whose issue identifier contains ``.``. (`#733 <https://github.com/twisted/towncrier/issues/733>`_)
+
+
+Misc
+----
+
+- `#719 <https://github.com/twisted/towncrier/issues/719>`_, `#729 <https://github.com/twisted/towncrier/issues/729>`_, `#736 <https://github.com/twisted/towncrier/issues/736>`_, `#741 <https://github.com/twisted/towncrier/issues/741>`_, `#747 <https://github.com/twisted/towncrier/issues/747>`_
+
+
 towncrier 25.8.0 (2025-08-30)
 =============================
 

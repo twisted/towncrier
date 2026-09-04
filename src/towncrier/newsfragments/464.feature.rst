@@ -1,1 +1,0 @@
-Wrapped line length can now be configured by setting `wrap` to an integer value greater than 0, using 79 by default if set to `true`.
