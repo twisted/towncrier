@@ -5,8 +5,10 @@ Release notes
 
 .. towncrier release notes start
 
-towncrier 26.9.0rc1 (2026-09-03)
-================================
+towncrier 26.9.0 (2026-09-04)
+=============================
+
+No significant changes since the previous release candidate.
 
 Features
 --------
