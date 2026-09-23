@@ -236,14 +236,17 @@ def __main(
 
 
 def _validate_create_filename(filename: str, types: Iterable[str]) -> None:
-    """Reject fragment names that ``build`` cannot parse, or that hide extra dots.
+    """Reject fragment names that ``build`` cannot parse.
 
     ``towncrier create`` previously only checked that the last or second-to-last
-    component was a known type. That accepted names such as
-    ``foo.bar.baz.config`` (when ``config`` is a type), which ``build`` then
-    treats as issue ``foo.bar.baz``. The issue identifier must not contain
-    ``.`` because dots separate ``{name}.{type}`` (and an optional counter or
-    suffix).
+    component was a known type. That accepted names such as ``feature.notatype``,
+    which ``build`` cannot parse at all. Validation now uses the same parser as
+    ``build``, so ``create`` accepts exactly the names that ``build`` consumes.
+
+    In particular, dotted issue identifiers such as ``fix-1.2.3.feature`` are
+    valid: ``parse_newfragment_basename`` treats everything before the type as
+    the issue identifier, which supports names carrying version numbers or
+    subsystem tags.
     """
     basename = os.path.basename(filename)
     issue, category, _counter = parse_newfragment_basename(basename, types)
@@ -252,11 +255,6 @@ def _validate_create_filename(filename: str, types: Iterable[str]) -> None:
             "Expected filename '{}' to be of format '{{name}}.{{type}}', "
             "where '{{name}}' is an arbitrary slug and '{{type}}' is "
             "one of: {}".format(filename, ", ".join(types))
-        )
-    if "." in issue:
-        raise click.BadParameter(
-            f"Issue identifier '{issue}' in '{filename}' must not contain '.'. "
-            "Dots separate '{name}.{type}' (and an optional counter or suffix)."
         )
 
 

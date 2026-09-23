@@ -11,6 +11,7 @@ from unittest import mock
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
+from ..build import _main as build_main
 from ..create import DEFAULT_CONTENT, _main
 from .helpers import setup_simple_project, with_isolated_runner
 
@@ -217,25 +218,29 @@ class TestCli(TestCase):
             "Expected filename '123.foobar.rst' to be of format", result.output
         )
 
-    def test_dots_in_issue_identifier_rejected(self):
+    def test_dots_in_issue_identifier_accepted(self):
         """
-        Extra dots in the issue identifier are rejected.
+        Dots inside the issue identifier are accepted, matching ``build``.
 
-        ``create`` used to accept ``foo.bar.baz.feature`` because the last
-        component was a known type. ``build`` then treated the whole prefix
-        as the issue name, which is not a valid ``{name}.{type}``.
+        ``parse_newfragment_basename`` treats everything before the type as
+        the issue identifier, supporting names such as ``fix-1.2.3.feature``
+        (version numbers) or ``ISSUE-123.subsystem.bugfix`` (subsystem tags).
+        ``create`` must accept exactly what ``build`` can consume (issue #755).
         """
         runner = CliRunner()
 
         with runner.isolated_filesystem():
             setup_simple_project()
-            result = runner.invoke(_main, ["foo.bar.baz.feature"])
+            result = runner.invoke(_main, ["fix-1.2.3.feature", "-c", "Demo entry."])
 
-            self.assertEqual([], os.listdir("foo/newsfragments"))
+            self.assertEqual(0, result.exit_code, result.output)
+            self.assertEqual(["fix-1.2.3.feature.rst"], os.listdir("foo/newsfragments"))
 
-        self.assertEqual(type(result.exception), SystemExit, result.exception)
-        self.assertIn("must not contain '.'", result.output)
-        self.assertIn("foo.bar.baz", result.output)
+            # ``build`` consumes the fragment the same way ``create`` named it.
+            result = runner.invoke(build_main, ["--draft", "--version", "1.2.3"])
+            self.assertEqual(0, result.exit_code, result.output)
+            self.assertIn("Demo entry.", result.output)
+            self.assertIn("fix-1.2.3", result.output)
 
     def test_type_not_in_last_two_parts_rejected(self):
         """
