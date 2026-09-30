@@ -8,7 +8,7 @@ from textwrap import dedent
 from click.testing import CliRunner
 from twisted.trial.unittest import TestCase
 
-from .._settings import ConfigError, load_config
+from .._settings import ConfigError, load_config, load_config_from_options
 from .._shell import cli
 from .helpers import with_isolated_runner, write
 
@@ -262,6 +262,65 @@ class TomlSettingsTests(TestCase):
                 else:
                     # fall-back to package name
                     self.assertEqual(config.name, package)
+
+    def test_pyproject_version_fallback(self):
+        """
+        The version falls back to [project.version] in pyproject.toml.
+        """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [project]
+                name = "a"
+                version = "1.2.3"
+            """,
+        )
+
+        config = load_config(project_dir)
+
+        self.assertEqual(config.version, "1.2.3")
+
+    def test_pyproject_version_explicit(self):
+        """
+        An explicit towncrier version is preferred over [project.version].
+        """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [project]
+                name = "a"
+                version = "1.2.3"
+                [tool.towncrier]
+                version = "4.5.6"
+            """,
+        )
+
+        config = load_config(project_dir)
+
+        self.assertEqual(config.version, "4.5.6")
+
+    def test_config_option_pyproject_fallback(self):
+        """
+        With an explicit config file, name and version fall back to the
+        [project] table of the pyproject.toml in the base directory.
+
+        The package is left empty so the default fragments directory
+        does not move.
+        """
+        config_dir = self.mktemp_project(towncrier_toml="[tool.towncrier]")
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [project]
+                name = "a"
+                version = "1.2.3"
+            """,
+        )
+
+        _, config = load_config_from_options(
+            project_dir, os.path.join(config_dir, "towncrier.toml")
+        )
+
+        self.assertEqual(config.name, "a")
+        self.assertEqual(config.version, "1.2.3")
+        self.assertEqual(config.package, "")
 
     @with_isolated_runner
     def test_load_no_config(self, runner: CliRunner):

@@ -92,6 +92,12 @@ def load_config_from_options(
         raise ConfigError(f"Configuration file '{config_path}' not found.")
     config = load_config_from_file(base_directory, config_path)
 
+    # Unlike discovery, `package` is not derived from [project.name]:
+    # it would move the default fragments directory.
+    project = load_project_metadata(base_directory)
+    config.name = config.name or project.get("name", "")
+    config.version = config.version or project.get("version")
+
     return base_directory, config
 
 
@@ -119,15 +125,6 @@ def load_config(directory: str) -> Config | None:
     towncrier_toml = os.path.join(directory, "towncrier.toml")
     pyproject_toml = os.path.join(directory, "pyproject.toml")
 
-    # In case the [tool.towncrier.name|package] is not specified
-    # we'll read it from [project.name]
-
-    if os.path.exists(pyproject_toml):
-        pyproject_config = load_toml_from_file(pyproject_toml)
-    else:
-        # make it empty so it won't be used as a backup plan
-        pyproject_config = {}
-
     if os.path.exists(towncrier_toml):
         config_toml = towncrier_toml
     elif os.path.exists(pyproject_toml):
@@ -138,16 +135,32 @@ def load_config(directory: str) -> Config | None:
     # Read the default configuration. Depending on which exists
     config = load_config_from_file(directory, config_toml)
 
-    # Fallback certain values depending on the [project.name]
-    if project_name := pyproject_config.get("project", {}).get("name", ""):
+    # Fallback certain values depending on the [project] table.
+    project = load_project_metadata(directory)
+    if project_name := project.get("name", ""):
         # Fallback to the project name for the configuration name
         # and the configuration package entries.
         if not config.package:
             config.package = project_name
         if not config.name:
             config.name = config.package
+    config.version = config.version or project.get("version")
 
     return config
+
+
+def load_project_metadata(directory: str) -> Mapping[str, Any]:
+    """
+    Return the [project] table of the pyproject.toml in the given directory.
+
+    Only static values are present: dynamic ones are absent from the table.
+    """
+    pyproject_toml = os.path.join(directory, "pyproject.toml")
+    if not os.path.exists(pyproject_toml):
+        return {}
+
+    project: Mapping[str, Any] = load_toml_from_file(pyproject_toml).get("project", {})
+    return project
 
 
 def load_toml_from_file(config_file: str) -> Mapping[str, Any]:

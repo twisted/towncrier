@@ -208,6 +208,37 @@ class TestCli(TestCase):
         self.assertEqual(0, result.exit_code)
         self.assertTrue(Path("foo/NEWS.rst").exists())
 
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = ""
+        name = ""
+        """,
+        pyproject_path="towncrier.toml",
+    )
+    def test_config_option_reads_project_metadata(self, runner):
+        """
+        With `--config` and `--dir`, the name and version are read from the
+        [project] table of the pyproject.toml in `--dir`.
+        """
+        write(
+            "project_a/pyproject.toml",
+            """
+            [project]
+            name = "project-a"
+            version = "1.2.3"
+            """,
+            dedent=True,
+        )
+        write("project_a/newsfragments/123.feature", "Adds levitation")
+
+        result = runner.invoke(
+            cli, ("--yes", "--config", "towncrier.toml", "--dir", "project_a")
+        )
+
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertIn("project-a 1.2.3", read("project_a/NEWS.rst"))
+
     @with_project()
     def test_no_newsfragment_directory(self, runner):
         """

@@ -48,5 +48,8 @@ To build the news file for the same project:
 
    towncrier build --config towncrier.toml --dir project_a --version 1.5
 
-Note that we must explicitly pass ``--version``, there is no other way to get the version number.
-The ``towncrier.toml`` can only contain one version number and the ``package`` field is of no use for the same reason.
+If ``project_a`` has a ``pyproject.toml``, its ``[project.name]`` and static ``[project.version]`` are used, so ``--version`` can be omitted:
+
+.. code-block:: console
+
+   towncrier build --config towncrier.toml --dir project_a

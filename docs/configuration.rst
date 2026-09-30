@@ -42,6 +42,8 @@ Top level keys
 ``version``
     The version of your project.
 
+    Defaults to the key ``[project.version]`` in ``pyproject.toml`` (if present and not dynamic).
+
     Python projects that provide the ``package`` key, if left empty then the version will be automatically determined from the installed package's version metadata or a ``__version__`` variable in the package's module.
 
     If not provided or able to be determined, the version must be passed explicitly by the command line argument ``--version``.
@@ -168,6 +170,7 @@ Extra top level keys for Python projects
     Changes the default ``directory`` to be a ``newsfragments`` directory within this package.
 
     Defaults to the key ``[project.name]`` in ``pyproject.toml`` (if present), otherwise defaults to the empty string ``""``.
+    This fallback is skipped when ``--config`` is passed.
 
 ``package_dir``
     The folder your package lives.
