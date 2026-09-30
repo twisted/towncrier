@@ -15,13 +15,15 @@ Below is a minimal example:
   │   │   └── 123.added
   │   ├── project_a
   │   │   └── __init__.py
-  │   └── NEWS.rst
+  │   ├── NEWS.rst
+  │   └── pyproject.toml
   ├── project_b
   │   ├── newsfragments
   │   │   └── 120.bugfix
   │   ├── project_b
   │   │   └── __init__.py
-  │   └── NEWS.rst
+  │   ├── NEWS.rst
+  │   └── pyproject.toml
   └── towncrier.toml
 
 The ``towncrier.toml`` looks like this:
@@ -33,6 +35,14 @@ The ``towncrier.toml`` looks like this:
   # because we have more than one package/name to manage.
   package = ""
   name = ""
+
+Each ``pyproject.toml`` provides the project's name and version:
+
+.. code-block:: toml
+
+  [project]
+  name = "project_a"
+  version = "1.5"
 
 Now to add a fragment:
 
@@ -46,10 +56,7 @@ To build the news file for the same project:
 
 .. code-block:: console
 
-   towncrier build --config towncrier.toml --dir project_a --version 1.5
-
-If ``project_a`` has a ``pyproject.toml``, its ``[project.name]`` and static ``[project.version]`` are used, so ``--version`` can be omitted:
-
-.. code-block:: console
-
    towncrier build --config towncrier.toml --dir project_a
+
+The name and version are read from ``project_a/pyproject.toml``.
+If the version is dynamic, pass it explicitly with ``--version``.
