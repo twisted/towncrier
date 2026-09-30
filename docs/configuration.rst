@@ -42,7 +42,7 @@ Top level keys
 ``version``
     The version of your project.
 
-    Defaults to the key ``[project.version]`` in ``pyproject.toml`` (if present).
+    If ``package`` is empty, defaults to the key ``[project.version]`` in ``pyproject.toml`` (if present).
 
     Python projects that provide the ``package`` key, if left empty then the version will be automatically determined from the installed package's version metadata or a ``__version__`` variable in the package's module.
 

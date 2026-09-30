@@ -1,1 +1,1 @@
-When ``--config`` is passed, ``name`` and ``version`` now fall back to ``[project.name]`` and ``[project.version]`` of the ``pyproject.toml`` in the base directory (``--dir``). Without ``--config``, ``version`` also falls back to ``[project.version]``.
+If ``package`` is empty, ``name`` and ``version`` now fall back to ``[project.name]`` and ``[project.version]`` of the ``pyproject.toml`` in the base directory, also when ``--config`` is passed.

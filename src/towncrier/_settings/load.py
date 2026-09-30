@@ -94,9 +94,7 @@ def load_config_from_options(
 
     # Unlike discovery, `package` is not derived from [project.name]:
     # it would move the default fragments directory.
-    project = load_project_metadata(base_directory)
-    config.name = config.name or project.get("name", "")
-    config.version = config.version or project.get("version")
+    apply_project_metadata(config, load_project_metadata(base_directory))
 
     return base_directory, config
 
@@ -137,6 +135,7 @@ def load_config(directory: str) -> Config | None:
 
     # Fallback certain values depending on the [project] table.
     project = load_project_metadata(directory)
+    apply_project_metadata(config, project)
     if project_name := project.get("name", ""):
         # Fallback to the project name for the configuration name
         # and the configuration package entries.
@@ -144,9 +143,21 @@ def load_config(directory: str) -> Config | None:
             config.package = project_name
         if not config.name:
             config.name = config.package
-    config.version = config.version or project.get("version")
 
     return config
+
+
+def apply_project_metadata(config: Config, project: Mapping[str, Any]) -> None:
+    """
+    Fill an empty name and version from the [project] table.
+
+    Skipped when `package` is set: the package then provides both.
+    """
+    if config.package:
+        return
+
+    config.name = config.name or project.get("name", "")
+    config.version = config.version or project.get("version")
 
 
 def load_project_metadata(directory: str) -> Mapping[str, Any]:

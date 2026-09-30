@@ -297,6 +297,25 @@ class TomlSettingsTests(TestCase):
 
         self.assertEqual(config.version, "4.5.6")
 
+    def test_pyproject_version_package(self):
+        """
+        An explicit package is preferred over [project.version].
+        """
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [project]
+                name = "a"
+                version = "1.2.3"
+                [tool.towncrier]
+                package = "b"
+            """,
+        )
+
+        config = load_config(project_dir)
+
+        self.assertIsNone(config.version)
+        self.assertEqual(config.name, "b")
+
     def test_config_option_pyproject_fallback(self):
         """
         With an explicit config file, name and version fall back to the
@@ -321,6 +340,32 @@ class TomlSettingsTests(TestCase):
         self.assertEqual(config.name, "a")
         self.assertEqual(config.version, "1.2.3")
         self.assertEqual(config.package, "")
+
+    def test_config_option_pyproject_package(self):
+        """
+        With an explicit config file, a package is preferred over the
+        [project] table.
+        """
+        config_dir = self.mktemp_project(
+            towncrier_toml="""
+                [tool.towncrier]
+                package = "b"
+            """,
+        )
+        project_dir = self.mktemp_project(
+            pyproject_toml="""
+                [project]
+                name = "a"
+                version = "1.2.3"
+            """,
+        )
+
+        _, config = load_config_from_options(
+            project_dir, os.path.join(config_dir, "towncrier.toml")
+        )
+
+        self.assertEqual(config.name, "")
+        self.assertIsNone(config.version)
 
     @with_isolated_runner
     def test_load_no_config(self, runner: CliRunner):
