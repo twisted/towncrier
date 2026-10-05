@@ -70,32 +70,20 @@ Top level keys
 
     ``".. towncrier release notes start\n"`` by default unless ``filename`` ends with ``.md``, in which case the default is ``"<!-- towncrier release notes start -->\n"``.
 
-title_format
-A format string for the title of your project.
+``title_format``
+    A format string for the title of your project.
 
-The explicit value of ``False`` will disable the title entirely.
-Any other empty value means the template should render the title (the bundled templates use ``<name> <version> (<date>)``).
-Strings should use the following keys to render the title dynamically: ``{name}``, ``{version}``, and ``{project_date}``.
+    The explicit value of ``False`` will disable the title entirely.
+    Any other empty value means the template should render the title (the bundled templates use ``<name> <version> (<date>)``).
+    Strings should use the following keys to render the title dynamically: ``{name}``, ``{version}``, and ``{project_date}``.
 
-``""`` by default.
+    ``""`` by default.
 
-When using reStructuredText, formatted titles are underlined using the ``underlines`` configuration.
-For titles, the first value from ``underlines`` is used to create the underline (which is inserted on the line following the title).
-
-When using Markdown (when the template has an ``.md`` suffix), ``title_format`` controls the complete Markdown title, including its heading level.
-To ensure the title is recognised as a Markdown heading, include the appropriate number of ``#`` characters in ``title_format``.
-
-For example::
-
-    title_format = "# {name} {version} ({project_date})"
-
-This renders the title as a level 1 heading. Towncrier infers the heading levels used for the rest of the changelog from this title, with categories rendered at the next level.
-
-A different starting level can be selected by using additional ``#`` characters. For example::
-
-    title_format = "### {version}"
-
-renders the title at level 3, categories at level 4, and so on.
+    When using reStructuredText, formatted titles are underlined using the ``underlines`` configuration.
+    For titles, the first value from ``underlines`` is used to create the underline (which is inserted on the line following the title).
+    If the template has an ``.md`` suffix, we assume we are looking at markdown format and the title is applied as, i.e. full control over the title format is given to the user.
+    To ensure the title is recognised as a Markdown heading, include the appropriate number of ``#`` characters in ``title_format``, e.g. ``title_format = "# {name} {version} ({project_date})"``.
+    The top header level is inferred from this, e.g. ``title_format = "### {version}"`` will render the title at level 3, categories at level 4, and so on.
 
 ``issue_format``
     A format string for rendering the issue/ticket number in newsfiles.
