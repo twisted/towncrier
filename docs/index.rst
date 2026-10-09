@@ -14,6 +14,7 @@ Narrative
    tutorial
    markdown
    monorepo
+   ci
 
 
 Reference
