@@ -1,1 +1,1 @@
-Use SOURCE_DATE_EPOCH in UTC, not local time
+The SOURCE_DATE_EPOCH is now loaded in UTC. It was previously loaded as local time.
