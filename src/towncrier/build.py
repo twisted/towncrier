@@ -59,7 +59,7 @@ def _get_date() -> str:
     """
     build_time = time.time()
     build_time_unix = int(os.environ.get(BUILD_TIME_ENV_VAR_NAME, build_time))
-    build_date = datetime.date.fromtimestamp(build_time_unix)
+    build_date = datetime.datetime.fromtimestamp(build_time_unix, datetime.timezone.utc)
     build_date_text = build_date.strftime(ISO_8601_DATE_FORMAT)
     return build_date_text
 

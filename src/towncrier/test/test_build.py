@@ -451,12 +451,12 @@ class TestCli(TestCase):
             if (key != BUILD_TIME_ENV_VAR_NAME)
         }
 
-        today = datetime.date.today()
+        today = datetime.datetime.now(datetime.timezone.utc)
         with patch("os.environ", fake_os_environ):
             result = runner.invoke(_main, ["--draft"])
 
         self.assertEqual(0, result.exit_code)
-        self.assertIn(f"Foo 1.2.3 ({today.isoformat()})", result.output)
+        self.assertIn(f"Foo 1.2.3 ({today.date().isoformat()})", result.output)
 
     @with_git_project()
     def test_no_confirmation(self, runner, commit):
