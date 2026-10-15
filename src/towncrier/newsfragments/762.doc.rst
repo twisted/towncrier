@@ -1,0 +1,1 @@
+Added a documentation page with configuration steps for using towncrier in CI/CD pipelines (GitHub Actions, GitLab CI, and pre-commit in CI).
