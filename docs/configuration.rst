@@ -168,7 +168,9 @@ Extra top level keys for Python projects
     Allows ``name`` and ``version`` to be automatically determined from the Python package.
     Changes the default ``directory`` to be a ``newsfragments`` directory within this package.
 
-    Defaults to the key ``[project.name]`` in ``pyproject.toml`` (if present), otherwise defaults to the empty string ``""``.
+    ``""`` by default. When unset, the news fragments live in a
+    ``newsfragments`` directory relative to the configuration file, so the
+    fragment location is the same regardless of the project name.
 
 ``package_dir``
     The folder your package lives.

@@ -1,0 +1,5 @@
+Fixed a regression in towncrier 25 where the default news fragment location
+varied with the project name. The ``package`` setting no longer falls back to
+``[project.name]`` from ``pyproject.toml``, so with only a ``[project]`` name
+the fragments live in a stable ``newsfragments`` directory next to the
+configuration file instead of under a directory named after the project.

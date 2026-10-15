@@ -183,13 +183,14 @@ def __main(
     if project_version is None:
         project_version = config.version
     if project_version is None:
-        if not config.package:
+        if not config.package and not config.name:
             raise UsageError(
                 "'--version' is required since the config file does "
                 "not contain 'version' or 'package'."
             )
         project_version = get_version(
-            os.path.join(base_directory, config.package_dir), config.package
+            os.path.join(base_directory, config.package_dir),
+            config.package or config.name,
         ).strip()
 
     click.echo("Loading template...", err=to_err)

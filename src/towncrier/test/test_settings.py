@@ -182,10 +182,12 @@ class TomlSettingsTests(TestCase):
 
     def test_pyproject_only_pyproject_toml(self):
         """
-        Towncrier will fallback to the [project.name] value in pyproject.toml.
+        Towncrier will fallback to the [project.name] value in pyproject.toml
+        for the name, but not for the package.
 
-        This tests asserts that the minimal configuration is to do *nothing*
-        when using a pyproject.toml file.
+        Not falling back the package keeps the default fragment location
+        stable (a ``newsfragments`` directory next to the configuration
+        file), regardless of the project name. See #727.
         """
         project_dir = self.mktemp_project(
             pyproject_toml="""
@@ -195,7 +197,7 @@ class TomlSettingsTests(TestCase):
         )
 
         config = load_config(project_dir)
-        self.assertEqual(config.package, "a")
+        self.assertEqual(config.package, "")
         self.assertEqual(config.name, "a")
 
     def test_pyproject_assert_fallback(self):
@@ -249,19 +251,26 @@ class TomlSettingsTests(TestCase):
 
                 # Now the values depend on where the fallback
                 # is.
-                # If something is in towncrier.toml, it will be preferred
-                # name fallsback to package
+                # If something is in towncrier.toml, it will be preferred.
+                # The package only falls back to the explicit
+                # ``[tool.towncrier] package``; the project name is not
+                # used, to keep the fragment location stable (see #727).
+                # The name falls back to the package, then to the
+                # project name.
                 if "package" in tc_fields:
                     package = "d"
                 else:
-                    package = "foo"
+                    package = ""
                 self.assertEqual(config.package, package)
 
                 if "name" in tc_fields:
                     self.assertEqual(config.name, "c")
+                elif "package" in tc_fields:
+                    # fall-back to the explicit package name
+                    self.assertEqual(config.name, "d")
                 else:
-                    # fall-back to package name
-                    self.assertEqual(config.name, package)
+                    # fall-back to the project name
+                    self.assertEqual(config.name, "foo")
 
     @with_isolated_runner
     def test_load_no_config(self, runner: CliRunner):

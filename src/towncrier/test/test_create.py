@@ -55,6 +55,38 @@ class TestCli(TestCase):
         """Ensure both file and output directory created if necessary."""
         self._test_success(mkdir=False)
 
+    @with_isolated_runner
+    def test_create_without_package_falls_back_to_project_name(
+        self, runner: CliRunner
+    ) -> None:
+        """
+        With only a ``[project] name`` and no ``package`` key, the fragments
+        must be created in a stable ``newsfragments`` directory next to the
+        configuration file, not under a directory named after the project.
+        See #727.
+        """
+        with runner.isolated_filesystem():
+            (Path("pyproject.toml")).write_text(
+                dedent(
+                    """
+                    [project]
+                    name = "mycoolproj"
+
+                    [tool.towncrier]
+                    title_format = "{version}"
+                    """
+                )
+            )
+
+            result = runner.invoke(_main, ["123.feature.rst"])
+
+            self.assertEqual(0, result.exit_code)
+            self.assertEqual(
+                ["newsfragments"],
+                [d for d in os.listdir(".") if os.path.isdir(d)],
+            )
+            self.assertEqual(["123.feature.rst"], os.listdir("newsfragments"))
+
     def test_edit_without_comments(self):
         """Create file with dynamic content."""
         content = ["This is line 1", "This is line 2"]
