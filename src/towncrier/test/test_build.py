@@ -1456,6 +1456,52 @@ class TestCli(TestCase):
     @with_project(
         config="""
         [tool.towncrier]
+        package = "foo"
+        filename = "NEWS.md"
+        all_bullets = false
+        """
+    )
+    def test_markdown_all_bullets_false(self, runner):
+        """
+        With ``all_bullets = false`` the default Markdown template renders
+        entries as plain lines instead of a ``- `` bullet list. See #662.
+        """
+        write("foo/newsfragments/123.feature", "Adds levitation")
+        write("foo/newsfragments/124.feature", "")
+        write(
+            "NEWS.md",
+            contents="""
+                a line
+
+                <!-- towncrier release notes start -->
+            """,
+            dedent=True,
+        )
+
+        result = runner.invoke(
+            _main, ["--date", "01-01-2001", "--yes"], catch_exceptions=False
+        )
+        self.assertEqual(0, result.exit_code, result.output)
+        output = read("NEWS.md")
+
+        expected_output = dedent("""
+            a line
+
+            <!-- towncrier release notes start -->
+
+            # Foo 1.2.3 (01-01-2001)
+
+            ## Features
+
+            #124
+            Adds levitation (#123)
+            """)
+
+        self.assertEqual(expected_output, output)
+
+    @with_project(
+        config="""
+        [tool.towncrier]
         title_format = "{version} - {project_date}"
         template = "template.rst"
 

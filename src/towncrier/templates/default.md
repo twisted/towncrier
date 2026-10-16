@@ -21,6 +21,16 @@ Purpose:
     Consistent newline handling. -#}
 {%- set newline = "\n" -%}
 
+{#-
+─── Variable: bullet / issue_indent ────────────────────────────────────────
+Purpose:
+    Entry bullet and issue-reference indent. With ``all_bullets`` false the
+    entries are plain lines, so there is no bullet and no hanging indent
+    before a trailing issue reference. See #662.
+-#}
+{%- set bullet = "- " if all_bullets else "" -%}
+{%- set issue_indent = "  " if all_bullets else "" -%}
+
 {#- ════════════════════════ TEMPLATE GENERATION ════════════════════════ -#}
 {#- ─── TITLE HEADING ─── #}
 {#- render_title is false when title_format is specified in the config #}
@@ -64,26 +74,26 @@ Purpose:
                 {%- set text_has_sublist = (("\n  - " in text) or ("\n  * " in text)) %}
 
                 {#- CASE 1: No text, only issues #}
-                {#- Output: -  #1, #9, #142 #}
+                {#- Output: -  #1, #9, #142 (or #1, #9, #142 without a bullet) #}
                 {%- if not text and issues_list %}
-                    {{- "- " ~ issues_list ~ newline }}
+                    {{- bullet ~ issues_list ~ newline }}
 
                 {#- Cases where both text and issues exist #}
                 {%- elif text and issues_list %}
                     {%- if text_has_sublist %}
                         {#- CASE 3: Text with sublist #}
                         {#- Output: - TEXT\n\n  (#1, #9, #142) #}
-                        {{- "- " ~ text ~ newline ~ newline ~ "  (" ~ issues_list ~ ")" ~ newline }}
+                        {{- bullet ~ text ~ newline ~ newline ~ issue_indent ~ "(" ~ issues_list ~ ")" ~ newline }}
                     {%- else %}
                         {#- CASE 2: Text, no sublist #}
                         {#- Output: - TEXT (#1, #9, #142) #}
-                        {{- "- " ~ text ~ " (" ~ issues_list ~ ")" ~ newline }}
+                        {{- bullet ~ text ~ " (" ~ issues_list ~ ")" ~ newline }}
                     {%- endif %}
 
                 {%- elif text %}
                     {#- Implicit Case: Text, but no issues #}
                     {#- Output: - TEXT #}
-                    {{- "- " ~ text ~ newline }}
+                    {{- bullet ~ text ~ newline }}
                 {%- endif %}
             {%- endfor %}
 

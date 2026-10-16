@@ -1,0 +1,1 @@
+Make the default Markdown template honour all_bullets = false, rendering entries as plain lines instead of a bullet list.

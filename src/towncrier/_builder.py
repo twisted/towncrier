@@ -360,7 +360,7 @@ def render_fragments(
     wrap: bool | int,
     versiondata: Mapping[str, str],
     top_underline: str = "=",
-    all_bullets: bool = False,
+    all_bullets: bool = True,
     render_title: bool = True,
     md_header_level: int = 1,
 ) -> str:
@@ -429,6 +429,7 @@ def render_fragments(
 
     res = jinja_template.render(
         render_title=render_title,
+        all_bullets=all_bullets,
         sections=data,
         definitions=definitions,
         underlines=underlines,
