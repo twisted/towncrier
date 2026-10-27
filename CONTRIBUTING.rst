@@ -46,6 +46,7 @@ The source code is managed using Git and is hosted on GitHub::
     https://github.com/twisted/towncrier
     git@github.com:twisted/towncrier.git
 
+Note that this project follows the `Twisted AI Policy <https://docs.twisted.org/en/latest/development/ai-policy.html>`_.
 
 We recommend the following workflow:
 
