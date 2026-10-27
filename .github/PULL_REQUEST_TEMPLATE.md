@@ -15,3 +15,6 @@ Fixes #<!-- add the associated GitHub Issue ID>
 * [ ] Ensure `docs/tutorial.rst` is still up-to-date.
 * [ ] If you add new **CLI arguments** (or change the meaning of existing ones), make sure `docs/cli.rst` reflects those changes.
 * [ ] If you add new **configuration options** (or change the meaning of existing ones), make sure `docs/configuration.rst` reflects those changes.
+* [ ] I have not directly included the output of any generative AI system in this pull request, as per our [policy on generative AI](https://docs.twisted.org/en/latest/development/ai-policy.html).
+  Our bot will trigger the review process, by applying the pending review label
+  and requesting a review from the Twisted dev team.
