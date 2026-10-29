@@ -1,0 +1,1 @@
+Allow ``towncrier create`` to create valid fragment names whose issue identifier contains dots.
