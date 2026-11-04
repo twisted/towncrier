@@ -217,13 +217,12 @@ class TestCli(TestCase):
             "Expected filename '123.foobar.rst' to be of format", result.output
         )
 
-    def test_dots_in_issue_identifier_rejected(self):
+    def test_dots_in_issue_identifier_allowed(self):
         """
-        Extra dots in the issue identifier are rejected.
+        Dots in the issue identifier are accepted when ``build`` can parse them.
 
-        ``create`` used to accept ``foo.bar.baz.feature`` because the last
-        component was a known type. ``build`` then treated the whole prefix
-        as the issue name, which is not a valid ``{name}.{type}``.
+        This keeps ``create`` consistent with ``build``, which treats the whole
+        prefix before a known fragment type as the issue identifier.
         """
         runner = CliRunner()
 
@@ -231,11 +230,11 @@ class TestCli(TestCase):
             setup_simple_project()
             result = runner.invoke(_main, ["foo.bar.baz.feature"])
 
-            self.assertEqual([], os.listdir("foo/newsfragments"))
+            self.assertEqual(
+                ["foo.bar.baz.feature.rst"], os.listdir("foo/newsfragments")
+            )
 
-        self.assertEqual(type(result.exception), SystemExit, result.exception)
-        self.assertIn("must not contain '.'", result.output)
-        self.assertIn("foo.bar.baz", result.output)
+        self.assertEqual(0, result.exit_code)
 
     def test_type_not_in_last_two_parts_rejected(self):
         """
