@@ -81,6 +81,19 @@ class TestChecker(TestCase):
             self.assertIn("git produced output while failing", result.output)
             self.assertIn("hblaugh", result.output)
 
+    def test_git_fails_exits_cleanly(self):
+        """
+        A git failure is reported without dumping a traceback and exits 1.
+        """
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            create_project("pyproject.toml")
+
+            result = runner.invoke(towncrier_check, ["--compare-with", "hblaugh"])
+            self.assertEqual(1, result.exit_code)
+            self.assertIsInstance(result.exception, SystemExit)
+            self.assertNotIn("Traceback", result.output)
+
     def test_no_changes_made(self):
         self._test_no_changes_made(
             "pyproject.toml", lambda runner, main, argv: runner.invoke(main, argv)

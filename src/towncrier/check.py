@@ -85,7 +85,7 @@ def __main(
     except CalledProcessError as e:
         click.echo("git produced output while failing:")
         click.echo(e.output)
-        raise
+        sys.exit(1)
 
     if not files_changed:
         click.echo(
