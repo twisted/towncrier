@@ -38,7 +38,8 @@ dev = [
     "furo >= 2024.05.06",
     "twisted",
     "nox >= 2026.08.10",
-    "codespell >= 2.4"
+    "codespell >= 2.4",
+    "mercurial",
 ]
 
 [project.scripts]
