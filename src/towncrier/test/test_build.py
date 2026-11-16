@@ -416,7 +416,7 @@ class TestCli(TestCase):
             0,
             0,
             0,
-            tzinfo=datetime.timezone.utc,
+            tzinfo=datetime.UTC,
         )
         fake_clock_timestamp = int(fake_clock_datetime.timestamp())
         fake_clock_timestamp_text = str(fake_clock_timestamp)
@@ -451,7 +451,7 @@ class TestCli(TestCase):
             if (key != BUILD_TIME_ENV_VAR_NAME)
         }
 
-        today = datetime.datetime.now(datetime.timezone.utc)
+        today = datetime.datetime.now(datetime.UTC)
         with patch("os.environ", fake_os_environ):
             result = runner.invoke(_main, ["--draft"])
 

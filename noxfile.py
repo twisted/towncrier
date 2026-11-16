@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-import os
-
 import nox
 
 
-nox.options.sessions = ["pre_commit", "docs", "typecheck", "tests"]
+nox.options.sessions = ["pre_commit", "docs", "typecheck", "tests", "coverage_report"]
 nox.options.reuse_existing_virtualenvs = True
 nox.options.error_on_external_run = True
+nox.needs_version = ">=2026.08.10"  # for allow_parallel
+nox.options.default_venv_backend = "uv|virtualenv"
 
 
-@nox.session
+@nox.session(allow_parallel=True)
 def pre_commit(session: nox.Session) -> None:
     session.install("pre-commit")
 
@@ -18,10 +18,12 @@ def pre_commit(session: nox.Session) -> None:
 
 
 # Keep list in-sync with ci.yml/test-linux & pyproject.toml
-@nox.session(python=["pypy3.10", "3.9", "3.10", "3.11", "3.12", "3.13"])
+@nox.session(
+    python=["pypy3.11", "3.11", "3.12", "3.13", "3.14", "3.15"], allow_parallel=True
+)
 def tests(session: nox.Session) -> None:
     session.env["PYTHONWARNDEFAULTENCODING"] = "1"
-    session.install("Twisted", "coverage[toml]")
+    session.install("Twisted", "coverage")
     posargs = list(session.posargs)
 
     try:
@@ -37,19 +39,16 @@ def tests(session: nox.Session) -> None:
 
     session.run("coverage", "run", "--module", "twisted.trial", *posargs)
 
-    if os.environ.get("CI") != "true":
-        session.notify("coverage_report")
 
-
-@nox.session
+@nox.session(requires=["tests"])
 def coverage_report(session: nox.Session) -> None:
-    session.install("coverage[toml]")
+    session.install("coverage")
 
     session.run("coverage", "combine")
     session.run("coverage", "report")
 
 
-@nox.session
+@nox.session(allow_parallel=True)
 def check_newsfragment(session: nox.Session) -> None:
     session.install(".")
     session.run("python", "-m", "towncrier.check", "--compare-with", "origin/trunk")
@@ -61,7 +60,7 @@ def draft_newsfragment(session: nox.Session) -> None:
     session.run("python", "-m", "towncrier.build", "--draft")
 
 
-@nox.session
+@nox.session(allow_parallel=True)
 def typecheck(session: nox.Session) -> None:
     # Click 8.1.4 is bad type hints -- lets not complicate packaging and only
     # pin here.
@@ -69,13 +68,13 @@ def typecheck(session: nox.Session) -> None:
     session.run("mypy", "src")
 
 
-@nox.session
+@nox.session(allow_parallel=True)
 def codespell(session: nox.Session) -> None:
     session.install(".", "codespell")
     session.run("codespell")
 
 
-@nox.session
+@nox.session(allow_parallel=True)
 def docs(session: nox.Session) -> None:
     session.install(".[dev]")
 
