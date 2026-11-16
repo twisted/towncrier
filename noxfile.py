@@ -3,7 +3,7 @@ from __future__ import annotations
 import nox
 
 
-nox.options.sessions = ["pre_commit", "docs", "typecheck", "tests"]
+nox.options.sessions = ["pre_commit", "docs", "typecheck", "tests", "coverage_report"]
 nox.options.reuse_existing_virtualenvs = True
 nox.options.error_on_external_run = True
 nox.needs_version = ">=2026.08.10"  # for allow_parallel
