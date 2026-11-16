@@ -125,6 +125,10 @@ The following list contains some ways how to run the test suite:
   You may want to add the ``--no-error-on-missing-interpreters`` option to avoid errors
   when a specific Python interpreter version couldn't be found.
 
+* The full run is *much* faster if you run nox in parallel mode::
+
+    $ nox --parallel auto
+
 *  To get a complete list of the available targets, run::
 
     $ nox -l
