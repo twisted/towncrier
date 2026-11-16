@@ -17,7 +17,7 @@ Hear ye, hear ye, says the ``towncrier``
 
 Rather than reading the Git history, or having one single file which developers all write to and produce merge conflicts, ``towncrier`` reads "news fragments" which contain information useful to **end users**.
 
-Used by `Twisted <https://github.com/twisted/twisted>`_, `pytest <https://github.com/pytest-dev/pytest/>`_, `pip <https://github.com/pypa/pip/>`_, `BuildBot <https://github.com/buildbot/buildbot>`_, and `attrs <https://github.com/python-attrs/attrs>`_, among others.
+Used by `Twisted <https://github.com/twisted/twisted>`_, `pytest <https://github.com/pytest-dev/pytest/>`_, `pip <https://github.com/pypa/pip/>`_, `BuildBot <https://github.com/buildbot/buildbot>`_, `attrs <https://github.com/python-attrs/attrs>`_, and `AnyIO <https://github.com/agronholm/anyio>`_, among others.
 
 While the command line tool ``towncrier`` requires Python to run, as long as you don't use any Python-specific affordances (like auto-detection of the project version), it is usable with **any project type** on **any platform**.
 
