@@ -96,8 +96,11 @@ jobs:
         allow-prereleases: true
         cache: pip
 
+    - name: Install Mercurial
+      run: sudo apt-get update && sudo apt-get install -y mercurial
+
     - name: Install dependencies
-      run: python -m pip install --upgrade pip nox mercurial
+      run: python -m pip install --upgrade pip nox
 
     - uses: twisted/python-info-action@v1
 
