@@ -3,11 +3,12 @@ from __future__ import annotations
 import collections
 import textwrap
 
+from collections.abc import Callable
 from functools import wraps
 from importlib import resources
 from pathlib import Path
 from subprocess import call
-from typing import Any, Callable
+from typing import Any
 
 from click.testing import CliRunner
 

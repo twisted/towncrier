@@ -64,18 +64,18 @@ jobs:
       matrix:
         # Keep list in-sync with noxfile/tests & pyproject.toml.
         python:
-          - name: CPython 3.9
-            action: 3.9
-          - name: CPython 3.10
-            action: '3.10'
           - name: CPython 3.11
             action: '3.11'
           - name: CPython 3.12
             action: '3.12'
           - name: CPython 3.13
             action: '3.13'
-          - name: PyPy 3.10
-            action: pypy3.10
+          - name: CPython 3.14
+            action: '3.14'
+          - name: CPython 3.15
+            action: '3.15'
+          - name: PyPy 3.11
+            action: pypy3.11
         task:
           - name: Test
             nox: tests
