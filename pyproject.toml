@@ -39,7 +39,6 @@ dev = [
     "twisted",
     "nox >= 2026.08.10",
     "codespell >= 2.4",
-    "mercurial",
 ]
 
 [project.scripts]

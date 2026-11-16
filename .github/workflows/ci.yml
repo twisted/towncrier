@@ -97,7 +97,7 @@ jobs:
         cache: pip
 
     - name: Install dependencies
-      run: python -m pip install --upgrade pip nox
+      run: python -m pip install --upgrade pip nox mercurial
 
     - uses: twisted/python-info-action@v1
 
