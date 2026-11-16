@@ -1,4 +1,4 @@
-*.lock
+_trial_temp*.lock
 *.o
 *.py[co]
 *.pyproj
