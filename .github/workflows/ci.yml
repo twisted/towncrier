@@ -25,8 +25,8 @@ jobs:
           - name: Linux
             runs-on: ubuntu-latest
         python:
-          - name: CPython 3.9
-            action: 3.9
+          - name: CPython 3.15
+            action: 3.15
         task:
           - name: Build
             nox: build
@@ -121,8 +121,8 @@ jobs:
       fail-fast: false
       matrix:
         python:
-          - name: CPython 3.9
-            action: '3.9'
+          - name: CPython 3.15
+            action: '3.15'
         task:
           - name: Test
             nox: tests
