@@ -1,0 +1,1 @@
+The default Markdown template now respects all_bullets = false for fragments that already contain their own formatting.

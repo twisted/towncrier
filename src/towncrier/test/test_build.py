@@ -1125,6 +1125,41 @@ class TestCli(TestCase):
         [tool.towncrier]
         package = "foo"
         filename = "NEWS.md"
+        all_bullets = false
+        """
+    )
+    def test_markdown_all_bullets_false(self, runner):
+        """
+        The default Markdown template does not add bullets when fragments
+        are already formatted because all_bullets is false.
+        """
+        write("foo/newsfragments/123.feature", "- Adds levitation")
+        write("foo/newsfragments/124.feature", "Plain paragraph")
+
+        result = runner.invoke(
+            _main, ["--draft", "--date", "01-01-2001"], catch_exceptions=False
+        )
+
+        self.assertEqual(0, result.exit_code, result.output)
+        self.assertIn(
+            dedent("""
+                # Foo 1.2.3 (01-01-2001)
+
+                ## Features
+
+                - Adds levitation
+                  (#123)
+                Plain paragraph
+                (#124)
+                """),
+            result.output,
+        )
+
+    @with_project(
+        config="""
+        [tool.towncrier]
+        package = "foo"
+        filename = "NEWS.md"
         title_format = "### [{project_date}] CUSTOM RELEASE for {name} version {version}"
         """
     )

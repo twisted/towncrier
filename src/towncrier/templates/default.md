@@ -70,20 +70,29 @@ Purpose:
 
                 {#- Cases where both text and issues exist #}
                 {%- elif text and issues_list %}
-                    {%- if text_has_sublist %}
+                    {%- if all_bullets and text_has_sublist %}
                         {#- CASE 3: Text with sublist #}
                         {#- Output: - TEXT\n\n  (#1, #9, #142) #}
                         {{- "- " ~ text ~ newline ~ newline ~ "  (" ~ issues_list ~ ")" ~ newline }}
-                    {%- else %}
+                    {%- elif all_bullets %}
                         {#- CASE 2: Text, no sublist #}
                         {#- Output: - TEXT (#1, #9, #142) #}
                         {{- "- " ~ text ~ " (" ~ issues_list ~ ")" ~ newline }}
+                    {%- else %}
+                        {#- The fragment is already formatted. #}
+                        {#- Output: TEXT\n(#1, #9, #142) #}
+                        {{- text ~ newline }}
+                        {{- get_indent(text) ~ "(" ~ issues_list ~ ")" ~ newline }}
                     {%- endif %}
 
                 {%- elif text %}
                     {#- Implicit Case: Text, but no issues #}
-                    {#- Output: - TEXT #}
-                    {{- "- " ~ text ~ newline }}
+                    {#- Output: - TEXT, or TEXT when the fragment is already formatted #}
+                    {%- if all_bullets %}
+                        {{- "- " ~ text ~ newline }}
+                    {%- else %}
+                        {{- text ~ newline }}
+                    {%- endif %}
                 {%- endif %}
             {%- endfor %}
 

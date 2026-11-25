@@ -437,6 +437,7 @@ def render_fragments(
         get_indent=get_indent,  # simplify indentation in the jinja template.
         issues_by_category=issues_by_category,
         header_prefix="#" * md_header_level,
+        all_bullets=all_bullets,
     )
 
     for line in res.split("\n"):

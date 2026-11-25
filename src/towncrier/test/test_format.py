@@ -248,6 +248,7 @@ No significant changes.
             ["-", "~"],
             wrap=True,
             versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
+            all_bullets=True,
         )
         self.assertEqual(output, expected_output)
 
@@ -309,6 +310,7 @@ No significant changes.
             ["-", "~"],
             wrap=True,
             versiondata={"name": "MyProject", "version": "1.0", "date": "never"},
+            all_bullets=True,
         )
 
         self.assertEqual(output, expected_output)
